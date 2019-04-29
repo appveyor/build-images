@@ -1,0 +1,21 @@
+﻿Write-Host "Installing JDK 12 ..." -ForegroundColor Cyan
+
+$jdkPath = 'C:\Program Files\Java\jdk12'
+
+if(Test-Path $jdkPath) {
+    Remove-Item $jdkPath -Recurse -Force
+}
+
+Write-Host "Downloading..."
+$zipPath = "$env:TEMP\openjdk-12_windows-x64_bin.zip"
+(New-Object Net.WebClient).DownloadFile('https://download.java.net/java/GA/jdk12/GPL/openjdk-12_windows-x64_bin.zip', $zipPath)
+
+Write-Host "Unpacking..."
+7z x $zipPath -oC:\jdk12_temp | Out-Null
+[IO.Directory]::Move('C:\jdk12_temp\jdk-12', $jdkPath)
+Remove-Item 'C:\jdk12_temp' -Recurse -Force
+del $zipPath
+
+# cmd /c "$jdkPath\java --version"
+
+Write-Host "JDK 12 installed" -ForegroundColor Green

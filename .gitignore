@@ -1,0 +1,11 @@
+/iso
+# GCE keys
+AppVeyor_CI-*.json
+*.env
+
+*.log
+packer_cache/
+*.exe
+appveyor-tools/
+.DS_Store
+var-file-azure.json

@@ -1,0 +1,17 @@
+{
+  "azure_subscription_id": "",
+  "azure_tenant_id": "",
+  "azure_client_id": "",
+  "azure_client_secret": "",
+  "azure_location": "",
+  "azure_resource_group_name": "",
+  "azure_storage_account": "",
+  "install_password": "",
+
+  "install_user": "appveyor",
+  "azure_vm_size": "Standard_D4s_v3",
+  "build_agent_mode": "Azure",
+  "image_description": "Windows Server 2019 Azure",
+  
+  "appveyor_url": ""
+}

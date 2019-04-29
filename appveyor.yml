@@ -1,0 +1,116 @@
+# This YAML instructs Appveyor to build images of different OSes on different Clouds
+image: ubuntu
+
+environment:
+  matrix:
+    - TEMPLATE: windows
+      CLOUD: Azure
+    - TEMPLATE: ubuntu1804
+      CLOUD: Azure
+    - TEMPLATE: ubuntu1604
+      CLOUD: Azure
+
+    - TEMPLATE: windows
+      CLOUD: GCE
+    - TEMPLATE: ubuntu1804
+      CLOUD: GCE
+    - TEMPLATE: ubuntu1604
+      CLOUD: GCE
+
+    - TEMPLATE: windows
+      CLOUD: AWS
+    - TEMPLATE: ubuntu1804
+      CLOUD: AWS
+    - TEMPLATE: ubuntu1604
+      CLOUD: AWS
+
+init:
+- sh: |
+    should_exit=false
+    if [[ "$SKIP_TEMPLATE" =~ $TEMPLATE ]]; then
+      appveyor AddMessage "Skipped due to SKIP_TEMPLATE='$SKIP_TEMPLATE'" -Category Information
+      should_exit=true
+    fi
+    if [[ "$SKIP_CLOUD" =~ $CLOUD ]]; then
+      appveyor AddMessage "Skipped due to SKIP_CLOUD='$SKIP_CLOUD'" -Category Information
+      should_exit=true
+    fi
+    if [[ "$should_exit" = true ]]; then
+      appveyor exit
+    fi
+- sh: |
+    # get latest docker container if Version not provided
+    if [ -z "${BUILD_CONTAINER_BUILD_VERSION}" ]; then
+      export BUILD_CONTAINER_BUILD_VERSION=latest
+    fi
+
+- sh: |
+    #init azure cli
+    az login --service-principal -u ${azure_client_id} -p ${azure_client_secret} --tenant ${azure_tenant_id} &> /dev/null
+    az account set --subscription ${azure_subscription_id}
+    sleep 5
+
+build_script:
+
+- sh: |
+    CONTAINER_ENVS=( )
+    CONTAINER_SECURE_ENVS=( )
+
+- sh: |
+    # find propper azure_storage_account
+    case "${TEMPLATE}" in
+      windows )
+        azure_storage_account=${azure_storage_account_prem}
+        ;;
+      ubuntu* )
+        azure_storage_account=${azure_storage_account_std}
+        ;;
+    esac
+- sh: |
+    # prepare variables for different Clouds
+    case "${CLOUD}" in
+      Azure )
+        builders=azure-arm
+        CONTAINER_ENVS+=( "azure_location=${azure_location}" )
+        CONTAINER_ENVS+=( "azure_resource_group_name=${azure_resource_group_name}" )
+        CONTAINER_ENVS+=( "azure_storage_account=${azure_storage_account}" )
+        CONTAINER_SECURE_ENVS+=( "azure_client_id=${azure_client_id}" )
+        CONTAINER_SECURE_ENVS+=( "azure_client_secret=${azure_client_secret}" )
+        CONTAINER_SECURE_ENVS+=( "azure_subscription_id=${azure_subscription_id}" )
+        ;;
+      GCE )
+        builders=googlecompute
+        CONTAINER_ENVS+=( gce_zone=${gce_zone} )
+        CONTAINER_ENVS+=( gce_project=${gce_project} )
+        CONTAINER_SECURE_ENVS+=( gce_account_file=${gce_account_file} )
+        ;;
+      AWS )
+        builders=amazon-ebs
+        CONTAINER_SECURE_ENVS+=( aws_access_key=${aws_access_key} )
+        CONTAINER_SECURE_ENVS+=( aws_secret_key=${aws_secret_key} )
+        CONTAINER_SECURE_ENVS+=( aws_region=${aws_region} )
+        ;;
+    esac
+
+- sh: |
+    # start baking image in West US region
+    az container create -g test-westus \
+      --name bake-${CLOUD,,}-${TEMPLATE}-image \
+      --image appveyor/build-images:${BUILD_CONTAINER_BUILD_VERSION} \
+      --cpu 2 --memory 2 --restart-policy Never \
+      --azure-file-volume-account-name ${packer_logs_storage_account_name} \
+      --azure-file-volume-account-key ${packer_logs_storage_account_key} \
+      --azure-file-volume-share-name packer-logs \
+      --azure-file-volume-mount-path /mnt/packer-logs \
+      --environment-variables \
+        "${CONTAINER_ENVS[@]}" \
+        appveyor_user=${appveyor_user} \
+        build_agent_mode=${build_agent_mode} \
+        APPVEYOR_BUILD_VERSION=${APPVEYOR_BUILD_VERSION} \
+        builders=${builders} \
+        TEMPLATE=${TEMPLATE} \
+      --secure-environment-variables \
+        "${CONTAINER_SECURE_ENVS[@]}" \
+        appveyor_password=${appveyor_password}
+
+test: off

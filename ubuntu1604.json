@@ -1,0 +1,311 @@
+{
+  "variables": {
+    "appveyor_username": "appveyor",
+    "appveyor_password": "appveyor",
+    "appveyor_home":"/home/appveyor",
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "aws_region": "",
+    "gce_account_file": "",
+    "gce_zone": "",
+    "gce_project": "",
+    "gce_source_image": "ubuntu-1604-xenial-v20190212",
+    "gce_source_image_family": "ubuntu-1604-lts",
+    "iso_checksum_md5": "6a7f31eb125a0b2908cf2333d7777c82",
+    "azure_client_id": "",
+    "azure_client_secret": "",
+    "azure_location": "",
+    "azure_resource_group_name": "",
+    "azure_storage_account": "",
+    "azure_subscription_id": "",
+    "azure_vm_size": "Standard_A2_v2",
+    "image_description": "",
+    "deploy_parts": "",
+    "datemark": ""
+  },
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "distrib",
+      "destination": "./",
+      "generated": "true"
+    },
+    {
+      "type": "file",
+      "source": "scripts/Ubuntu/",
+      "destination": "./"
+    },
+    {
+      "type": "shell",
+      "environment_vars": [
+        "USER_NAME={{ user `appveyor_username` }}",
+        "USER_HOME={{ user `appveyor_home` }}",
+        "DATEMARK={{ user `datemark` }}"
+      ],
+      "execute_command": "echo '{{ user `appveyor_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",
+      "scripts": [
+        "scripts/Ubuntu/basicconfig.sh"
+      ]
+    },
+    {
+      "type": "file",
+      "direction": "download",
+      "source": "versions-{{ user `datemark` }}.log",
+      "destination": "./"
+    },
+    {
+      "type": "file",
+      "direction": "download",
+      "source": "pwd-{{ user `datemark` }}.log",
+      "destination": "./"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "if [ -f {{ user `appveyor_home` }}/pwd-{{ user `datemark` }}.log ]; then rm {{ user `appveyor_home` }}/pwd-{{ user `datemark` }}.log; fi",
+        "if [ -f {{ user `appveyor_home` }}/.ssh/authorized_keys ]; then rm {{ user `appveyor_home` }}/.ssh/authorized_keys; fi"
+       ]
+    }
+  ],
+  "builders": [
+    {
+      "type": "googlecompute",
+      "account_file": "{{user `gce_account_file`}}",
+      "project_id": "{{ user `gce_project` }}",
+      "zone": "{{ user `gce_zone` }}",
+      "source_image": "{{ user `gce_source_image` }}",
+      "state_timeout" : "15m",
+      "scopes": [
+          "https://www.googleapis.com/auth/userinfo.email",
+          "https://www.googleapis.com/auth/compute",
+          "https://www.googleapis.com/auth/devstorage.full_control",
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring.write",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/trace.append" 
+        ],
+      "machine_type": "n1-standard-1",
+      "ssh_username": "{{ user `appveyor_username` }}",
+      "instance_name": "packer-ubuntu1604-{{uuid}}",
+      "image_name": "packer-ubuntu1604-{{timestamp}}",
+      "image_description": "{{ user `image_description` }}",
+      "disk_size": 40
+    },
+    {
+      "type": "hyperv-iso",
+      "boot_command": [
+        "<enter><wait><f6><esc><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "/install/vmlinuz<wait>",
+        " initrd=/install/initrd.gz<wait>",
+        " auto-install/enable=true<wait>",
+        " debconf/priority=critical<wait>",
+        " noapic<wait>",
+        " netcfg/disable_autoconfig=true<wait>",
+        " netcfg/get_ipaddress=192.168.0.9<wait>",
+        " netcfg/get_netmask=255.255.248.0<wait>",
+        " netcfg/get_gateway=192.168.0.1<wait>",
+        " netcfg/get_nameservers=8.8.8.8<wait>",
+        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
+        " -- <wait>",
+        "<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "http_directory": "http",
+      "iso_urls": [
+        "iso/ubuntu-16.04.4-server-amd64.iso",
+        "http://releases.ubuntu.com/16.04/ubuntu-16.04.4-server-amd64.iso"
+      ],
+      "iso_checksum": "{{user `iso_checksum_md5`}}",
+      "iso_checksum_type": "md5",
+      "communicator":"ssh",
+      "ssh_username": "{{ user `appveyor_username` }}",
+      "ssh_password": "{{ user `appveyor_password` }}",
+      "ssh_timeout" : "1h",
+      "shutdown_command": "echo '{{ user `appveyor_password` }}' | sudo -S shutdown -P now",
+      "cpu": "1",
+      "ram_size": "2048",
+      "disk_size": 40960,
+      "enable_secure_boot": false,
+      "generation": 1
+    },
+    {
+      "type": "hyperv-vmcx",
+      "clone_from_vm_name": "u16-empty",
+      "vm_name": "packer-u16-{{ user `datemark` }}",
+      "ssh_username": "{{ user `appveyor_username` }}",
+      "ssh_password": "{{ user `appveyor_password` }}",
+      "shutdown_command": "echo '{{ user `appveyor_password` }}' | sudo -S shutdown -P now",
+      "http_directory": "http",
+      "communicator":"ssh",
+      "ssh_timeout" : "1h",
+      "cpu": "1",
+      "ram_size": "3072",
+      "enable_secure_boot": "false"
+    },
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "{{user `aws_region`}}",
+      "source_ami_filter": {
+        "filters": {
+        "virtualization-type": "hvm",
+        "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+        "root-device-type": "ebs"
+        },
+        "owners": ["099720109477"],
+        "most_recent": true
+      },
+      "instance_type": "t2.micro",
+      "ssh_username": "ubuntu",
+      "ssh_timeout": "1000s",
+      "ami_name": "Appveyor Worker Ubuntu1604 {{timestamp}}",
+      "ami_description": "{{user `image_description`}}",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_size": 40,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ]
+    },
+    {
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<enter><wait><f6><esc><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "/install/vmlinuz<wait>",
+        " initrd=/install/initrd.gz<wait>",
+        " auto-install/enable=true<wait>",
+        " debconf/priority=critical<wait>",
+        " noapic<wait>",
+        " netcfg/disable_autoconfig=true<wait>",
+        " netcfg/get_ipaddress=192.168.100.9<wait>",
+        " netcfg/get_netmask=255.255.248.0<wait>",
+        " netcfg/get_gateway=192.168.100.1<wait>",
+        " netcfg/get_nameservers=8.8.8.8<wait>",
+        " preseed/url=http://192.168.100.1:{{ .HTTPPort }}/preseed.cfg",
+        " -- <wait>",
+        "<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": 40960,
+      "guest_os_type": "Ubuntu_64",
+      "headless": true,
+      "http_directory": "http",
+      "iso_urls": [
+        "iso/ubuntu-16.04.4-server-amd64.iso",
+        "http://releases.ubuntu.com/16.04/ubuntu-16.04.4-server-amd64.iso"
+      ],
+      "iso_checksum": "{{user `iso_checksum_md5`}}",
+      "iso_checksum_type": "md5",
+      "ssh_username": "{{ user `appveyor_username` }}",
+      "ssh_password": "{{ user `appveyor_password` }}",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo 'appveyor'|sudo -S shutdown -P now",
+      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+      "virtualbox_version_file": ".vbox_version",
+      "vm_name": "packer-ubuntu-16.04",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "1024" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "1" ],
+        [ "modifyvm", "{{.Name}}", "--nic1", "hostonly" ],
+        [ "modifyvm", "{{.Name}}", "--hostonlyadapter1", "vboxnet0" ],
+        [ "modifyvm", "{{.Name}}", "--nicpromisc1", "allow-all" ],
+        [ "modifyvm", "{{.Name}}", "--cableconnected1", "on" ]
+      ]
+    },
+    {
+      "type": "vmware-iso",
+      "boot_command": [
+        "<enter><wait><f6><esc><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "/install/vmlinuz<wait>",
+        " auto<wait>",
+        " console-setup/ask_detect=false<wait>",
+        " console-setup/layoutcode=us<wait>",
+        " console-setup/modelcode=pc105<wait>",
+        " debconf/frontend=noninteractive<wait>",
+        " debian-installer=en_US<wait>",
+        " fb=false<wait>",
+        " initrd=/install/initrd.gz<wait>",
+        " kbd-chooser/method=us<wait>",
+        " keyboard-configuration/layout=USA<wait>",
+        " keyboard-configuration/variant=USA<wait>",
+        " locale=en_US<wait>",
+        " netcfg/get_domain=vm<wait>",
+        " netcfg/get_hostname=vagrant<wait>",
+        " grub-installer/bootdev=/dev/sda<wait>",
+        " noapic<wait>",
+        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
+        " -- <wait>",
+        "<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": 40960,
+      "guest_os_type": "ubuntu-64",
+      "headless": true,
+      "http_directory": "http",
+      "iso_urls": [
+        "iso/ubuntu-16.04.4-server-amd64.iso",
+        "http://releases.ubuntu.com/16.04/ubuntu-16.04.4-server-amd64.iso"
+      ],
+      "iso_checksum": "{{user `iso_checksum_md5`}}",
+      "iso_checksum_type": "md5",
+      "output_directory": "packer-ubuntu-16.04-amd64-vmware",
+      "shutdown_command": "echo 'appveyor'|sudo -S shutdown -P now",
+      "ssh_username": "{{ user `appveyor_username` }}",
+      "ssh_password": "{{ user `appveyor_password` }}",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "tools_upload_flavor": "linux",
+      "vm_name": "packer-ubuntu-16.04-amd64",
+      "vmx_data": {
+        "cpuid.coresPerSocket": "1",
+        "memsize": "1024",
+        "numvcpus": "1"
+      }
+    },
+    {
+      "type": "azure-arm",
+      "subscription_id": "{{ user `azure_subscription_id` }}",
+      "client_id": "{{ user `azure_client_id` }}",
+      "client_secret": "{{ user `azure_client_secret` }}",
+      "location": "{{ user `azure_location` }}",
+
+      "temp_resource_group_name": "packer-RG-u16-{{uuid}}",
+      "temp_compute_name": "packer-u16-{{uuid}}",
+
+      "os_type": "Linux",
+      "image_publisher": "Canonical",
+      "image_offer": "UbuntuServer",
+      "image_sku": "16.04-LTS",
+      "vm_size": "{{user `azure_vm_size`}}",
+
+      "capture_container_name": "appveyor-images-u16",
+      "capture_name_prefix": "u16-{{user `datemark`}}",
+      "resource_group_name": "{{ user `azure_resource_group_name` }}",
+      "storage_account": "{{ user `azure_storage_account` }}",
+
+      "communicator": "ssh",
+
+      "azure_tags": {
+        "automation": "packer",
+        "OS": "ubuntu1604",
+        "description": "{{user `image_description`}}",
+        "date": "{{user `datemark`}}"
+      }
+    }
+  ]
+}

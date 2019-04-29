@@ -1,0 +1,1 @@
+Write-host "custom software installation script 1"

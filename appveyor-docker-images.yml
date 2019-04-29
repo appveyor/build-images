@@ -1,0 +1,43 @@
+environment:
+  matrix:
+    - IMAGE_TAG: appveyor/build-image:minimal-nanoserver-1809
+      APPVEYOR_BUILD_WORKER_IMAGE: Windows Server 2019
+      OS_NAME: windows-nanoserver
+      DOCKER_ISOLATION: default
+      BUILD_IMAGE: mcr.microsoft.com/windows/servercore:ltsc2019
+      BASE_IMAGE: mcr.microsoft.com/windows/nanoserver:1809
+
+    - IMAGE_TAG: appveyor/build-image:minimal-nanoserver-1803
+      APPVEYOR_BUILD_WORKER_IMAGE: Windows Server 2019
+      OS_NAME: windows-nanoserver
+      DOCKER_ISOLATION: hyperv
+      BUILD_IMAGE: mcr.microsoft.com/windows/servercore:1803
+      BASE_IMAGE: mcr.microsoft.com/windows/nanoserver:1803
+
+    - IMAGE_TAG: appveyor/build-image:minimal-windowsservercore-ltsc2019
+      APPVEYOR_BUILD_WORKER_IMAGE: Windows Server 2019
+      OS_NAME: windows-servercore
+      DOCKER_ISOLATION: default
+      BASE_IMAGE: mcr.microsoft.com/windows/servercore:ltsc2019
+
+    - IMAGE_TAG: appveyor/build-image:minimal-windowsservercore-ltsc2016
+      APPVEYOR_BUILD_WORKER_IMAGE: Windows Server 2019
+      OS_NAME: windows-servercore
+      DOCKER_ISOLATION: hyperv
+      BASE_IMAGE: mcr.microsoft.com/windows/servercore:ltsc2016
+
+    - IMAGE_TAG: appveyor/build-image:minimal-ubuntu-18.04
+      APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
+      OS_NAME: linux
+      BASE_IMAGE: mcr.microsoft.com/powershell:ubuntu-18.04
+
+build_script:
+- cmd: docker build -t %IMAGE_TAG% --isolation %DOCKER_ISOLATION% --build-arg BUILD_IMAGE=%BUILD_IMAGE% --build-arg BASE_IMAGE=%BASE_IMAGE% -f .\docker\%OS_NAME%-build-image.Dockerfile .
+- sh: docker build -t ${IMAGE_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} -f ./docker/${OS_NAME}-build-image.Dockerfile .
+
+#deploy_script:
+# publish image
+#- docker login -u %DOCKER_USER% -p %DOCKER_PWD%
+#- docker push %IMAGE_TAG%
+
+test: off

@@ -1,0 +1,38 @@
+# This YAML instruct Appveyor to build and publish Docker container
+image: ubuntu
+
+init:
+  - echo SKIP_TEMPLATE=${SKIP_TEMPLATE}
+  - echo SKIP_CLOUD=${SKIP_CLOUD}
+
+build_script:
+- docker build -t appveyor/build-images:${APPVEYOR_BUILD_VERSION} .
+
+deploy_script:
+# publish image
+- docker login -u ${DOCKER_USER} -p ${DOCKER_PWD}
+- docker push appveyor/build-images:${APPVEYOR_BUILD_VERSION}
+
+
+
+on_success:
+  - ps: |
+      $token = $env:APPVEYOR_TOKEN
+      $headers = @{
+        "Authorization" = "Bearer $token"
+        "Content-type" = "application/json"
+      }
+      $body = @{
+          accountName="appveyor"
+          projectSlug="build-images"
+          branch=$env:APPVEYOR_REPO_BRANCH
+          environmentVariables = @{
+             BUILD_CONTAINER_JOB_ID=$env:APPVEYOR_JOB_ID
+             BUILD_CONTAINER_BUILD_VERSION=$env:APPVEYOR_BUILD_VERSION
+             SKIP_TEMPLATE=$env:SKIP_TEMPLATE
+             SKIP_CLOUD=$env:SKIP_CLOUD
+          }
+      }
+      $body = $body | ConvertTo-Json
+      Invoke-RestMethod -Uri 'https://ci.appveyor.com/api/builds' -Headers $headers  -Body $body -Method POST
+
