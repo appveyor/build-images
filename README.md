@@ -1,2 +1,3 @@
-# build-images
-Automation scripts for creating AppVeyor build worker images
+# AppVeyor Build Images
+
+Automation scripts for creating AppVeyor build worker Docker images and master VM images.
