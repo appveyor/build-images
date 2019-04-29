@@ -36,8 +36,12 @@ build_script:
 - sh: docker build -t ${IMAGE_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} -f ./docker/${OS_NAME}-build-image.Dockerfile .
 
 deploy_script:
-# publish image
-- ps: docker login -u $env:DOCKER_USER -p $env:DOCKER_PWD
-- ps: docker push $env:IMAGE_TAG
+# publish image from Linux builds
+- sh: docker login -u ${DOCKER_USER} -p ${DOCKER_PWD}
+- sh: docker push ${IMAGE_TAG}
+
+# publish image from Windows builds
+- cmd: docker login -u %DOCKER_USER% -p %DOCKER_PWD%
+- cmd: docker push %IMAGE_TAG%
 
 test: off
