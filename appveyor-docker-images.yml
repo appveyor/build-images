@@ -35,9 +35,9 @@ build_script:
 - cmd: docker build -t %IMAGE_TAG% --isolation %DOCKER_ISOLATION% --build-arg BUILD_IMAGE=%BUILD_IMAGE% --build-arg BASE_IMAGE=%BASE_IMAGE% -f .\docker\%OS_NAME%-build-image.Dockerfile .
 - sh: docker build -t ${IMAGE_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} -f ./docker/${OS_NAME}-build-image.Dockerfile .
 
-#deploy_script:
+deploy_script:
 # publish image
-#- docker login -u %DOCKER_USER% -p %DOCKER_PWD%
-#- docker push %IMAGE_TAG%
+- ps: docker login -u $env:DOCKER_USER -p $env:DOCKER_PWD
+- ps: docker push $env:IMAGE_TAG
 
 test: off
