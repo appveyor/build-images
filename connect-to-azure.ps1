@@ -5,36 +5,38 @@ param
   [string]$appveyor_api_key,
 
   [Parameter(Mandatory=$false)]
+  [string]$azure_prefix,  
+
+  [Parameter(Mandatory=$false)]
   [string]$appveyor_url = "https://ci.appveyor.com",
+
+  [Parameter(Mandatory=$false)]
+  [string]$image_description = "Windows Server 2019 on Azure",
+
+  [Parameter(Mandatory=$false)]
+  [string]$packer_template = ".\minimal-windows-server-2019.json",
 
   [Parameter(Mandatory=$false)]
   [string]$install_password  
 )
 
-
-###### Optionaly customize those veriables ######
-
-$azure_resource_group_name = "appveyor-image-rg"
-$azure_storage_account = "appveyorimagesa"
-$azure_storage_container = "build-vms"
-$azure_vnet_name = "appveyor-vnet"
-$azure_subnet_name = "appveyor-subnet"
-$azure_nsg_name = "appveyor-nsg"
-$azure_service_principal_name = "appveyor-sp"
-$install_user = "appveyor"
-$build_cloud_name = "Azure-build-environment"
-$image_description = "Windows Server 2019 on Azure"
-
-##################################################
-
-
 $ErrorActionPreference = "Stop";
 
-#Generate install_password
-if (-not $install_password) {
-    Add-Type -AssemblyName System.Web
-    $install_password = [System.Web.Security.Membership]::GeneratePassword(12, 4)
+if (-not $azure_prefix) {
+    $azure_prefix = "appveyor"
 }
+
+$azure_service_principal_name = "$($azure_prefix)-sp"
+$azure_resource_group_name = "$($azure_prefix)-rg"
+$azure_storage_account = "$($azure_prefix)sa"
+$azure_storage_container = "$($azure_prefix)-vms"
+$azure_vnet_name = "$($azure_prefix)-vnet"
+$azure_subnet_name = "$($azure_prefix)-subnet"
+$azure_nsg_name = "$($azure_prefix)-nsg"
+$build_cloud_name = "$($azure_prefix)-build-environment"
+
+#TODO: hard-code or parametrize?
+$install_user = "appveyor"
 
 #Sanitize input
 $appveyor_url = $appveyor_url.TrimEnd("/")
@@ -45,21 +47,32 @@ if ($appveyor_api_key -like "v2.*") {
     return
 }
 
+if ((Invoke-WebRequest -Uri $appveyor_url -ErrorAction SilentlyContinue).StatusCode -ne 200) {
+    Write-warning "AppVeyor did not respond successfully on address $($appveyor_url)"
+    return
+}
+
+if (-not (test-path $packer_template)) {
+    Write-Warning "Please provide correct relative path as the packer_template parameter"
+    return
+}
+
+#Validate that $appveyor_api_key can call $appveyor_url based API
+
 #TODO VALIDATE IF PBC ENABLED
 
 #TODO regex from prod code -- validate build_cloud_name
 
 #Validate that Az module is installed (and maybe AzureRm is not)
 
-if ((Invoke-WebRequest -Uri $appveyor_url -ErrorAction SilentlyContinue).StatusCode -ne 200) {
-    Write-warning "AppVeyor did not respond successfully on address $($appveyor_url)"
-    return
+#Validate that packer is installed
+
+
+#Generate install_password (TODO ensure works on Linux)
+if (-not $install_password) {
+    Add-Type -AssemblyName System.Web
+    $install_password = [System.Web.Security.Membership]::GeneratePassword(12, 4)
 }
-
-
-# TODO - hardcode when calling Packer
-$build_agent_mode = "Azure"
-
 
 #Login to Azure and select subscription
 Write-host "Selecting Azure User and subscription..." -ForegroundColor Cyan
@@ -135,6 +148,37 @@ Write-host "Using location $($selected_location.DisplayName)" -ForegroundColor D
 $azure_location = $selected_location.Location
 $azure_location_full = $selected_location.DisplayName
 
+#Get or create resource group
+Write-host "`nGetting or creating Azure resource group..." -ForegroundColor Cyan
+$rg = Get-AzResourceGroup -Name $azure_resource_group_name -ErrorAction Ignore
+if (-not $rg) {
+    $rg = New-AzResourceGroup -Name $azure_resource_group_name -Location $azure_location
+}
+elseif ($rg.Location -ne $azure_location) {
+    Write-Warning "Resource group $($azure_resource_group_name) exists in location $($rg.Location) which is different from the location you choose ($($azure_location))"
+    $changelocation = Read-Host "Enter 1 to use $($rg.Location) location or 2 to delete resource group $($azure_resource_group_name) in $($rg.Location) and re-create it in $($azure_location)"
+    if ($changelocation -eq 1) {
+        $azure_location = $rg.Location
+        $azure_location_full = ($locations | ? {$_.Location -eq $rg.Location}).DisplayName
+    }
+    elseif ($changelocation -eq 2) {
+        $recreate = Read-Host "Please type '$($azure_resource_group_name)' if you are sure to delete the resource group $($azure_resource_group_name) with all nested resources"
+        if ($recreate -eq $azure_resource_group_name){
+            Remove-AzResourceGroup -Name $azure_resource_group_name -Force | Out-Null
+            $rg = New-AzResourceGroup -Name $azure_resource_group_name -Location $azure_location
+        }
+        else {
+            Write-Warning "Please consider if you need to change a location or re-create a resource group and start over. ALternatively you can use 'azure_prefix' script parameter to form alternative resource group name."
+            return        
+        }
+    }
+    else {
+        Write-Warning "Invalid input. Enter either 1 or 2."
+        return
+    }
+ }
+ Write-host "Using resource group $($azure_resource_group_name) in location $($azure_location_full)" -ForegroundColor DarkGray
+
 #Select VM size
 Write-host "`nSelecting VM size..." -ForegroundColor Cyan
 $vmsizes = Get-AzVMSize -Location $azure_location
@@ -143,6 +187,49 @@ $location_number = Read-Host "Enter your selection"
 $selected_vmsize = $vmsizes[$location_number - 1]
 Write-host "Using VM size $($selected_vmsize.Name)" -ForegroundColor DarkGray
 $azure_vm_size = $selected_vmsize.Name
+
+#Get or create storage account
+Write-host "`nGetting or creating Azure storage account..." -ForegroundColor Cyan
+$sa = Get-AzStorageAccount -Name $azure_storage_account -ResourceGroupName $azure_resource_group_name -ErrorAction Ignore
+if (-not $rg) {
+    $sa = New-AzStorageAccount -Name $azure_storage_account -ResourceGroupName $azure_resource_group_name -Location $azure_location -SkuName Standard_LRS  -Kind Storage
+}
+Write-host "Using storage account $($azure_storage_account)" -ForegroundColor DarkGray
+
+#Get or create vnet
+Write-host "`nGetting or creating Azure virtual network..." -ForegroundColor Cyan
+$vnet = Get-AzVirtualNetwork -Name $azure_vnet_name -ResourceGroupName $azure_resource_group_name -ErrorAction Ignore
+if (-not $rg) {
+    $vnet = New-AzVirtualNetwork -Name $azure_vnet_name -ResourceGroupName $azure_resource_group_name -Subnet $azure_subnet_name
+}
+Write-host "Using virtual network $($azure_vnet_name) and subnet $($azure_subnet_name)" -ForegroundColor DarkGray
+
+#Get or create nsg
+Write-host "`nGetting or creating Azure network security group..." -ForegroundColor Cyan
+$nsg = Get-AzNetworkSecurityGroup -Name $azure_nsg_name -ResourceGroupName $azure_resource_group_name -ErrorAction Ignore
+if (-not $rg) {
+    $nsg = New-AzNetworkSecurityGroup -Name $azure_nsg_name -ResourceGroupName $azure_resource_group_name -Location $azure_location
+}
+Write-host "Using virtual network $($azure_nsg_name)" -ForegroundColor DarkGray
+
+
+#Run packet to create an image
+$date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
+& packer build '--only=azure-arm' `
+-var "azure_subscription_id=$azure_subscription_id" `
+-var "azure_tenant_id=$azure_tenant_id" `
+-var "azure_client_id=$azure_client_id" `
+-var "azure_client_secret=$azure_client_secret" `
+-var "azure_location=$azure_location" `
+-var "azure_resource_group_name=$azure_resource_group_name" `
+-var "azure_storage_account=$azure_storage_account" `
+-var "install_password=$install_password" `
+-var "install_user=$install_user" `
+-var "azure_vm_size=$azure_vm_size" `
+-var "build_agent_mode=Azure" `
+-var "image_description=$image_description" `
+-var "datemark=$date_mark" `
+$packer_template
 
 
 
