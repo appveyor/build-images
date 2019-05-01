@@ -256,8 +256,9 @@ elseif ($rg.Location -ne $azure_location) {
 Write-host "`nSelecting VM size..." -ForegroundColor Cyan
 if (-not $azure_vm_size) {
     $vmsizes = Get-AzVMSize -Location $azure_location
+    Write-Warning "Please use VM size which supports Premium storage (at least DS-series!)"
     for ($i = 1; $i -le $vmsizes.Count; $i++) {"Select $i for $($vmsizes[$i - 1].Name)"}
-    Write-Warning "Please use at least Standard_DS2_v2"
+    Write-Warning "Please use VM size which supports Premium storage (at least DS-series!)"
     Write-Warning "Add '-azure_vm_size' parameter to skip this dialog next time."
     $location_number = Read-Host "Enter your selection"
     $selected_vmsize = $vmsizes[$location_number - 1]
@@ -270,7 +271,17 @@ Write-host "`nGetting or creating Azure storage accounts..." -ForegroundColor Cy
 function CreateStorageAccount ($azure_storage_account_name, $sku_name) {
 $sa = Get-AzStorageAccount -Name $azure_storage_account_name -ResourceGroupName $azure_resource_group_name -ErrorAction Ignore
 if (-not $sa) {
-    $sa = New-AzStorageAccount -Name $azure_storage_account_name -ResourceGroupName $azure_resource_group_name -Location $azure_location -SkuName $sku_name  -Kind Storage
+    $sacreatecount = 0
+    try {
+        $sacreatecount++
+        $sa = New-AzStorageAccount -Name $azure_storage_account_name -ResourceGroupName $azure_resource_group_name -Location $azure_location -SkuName $sku_name  -Kind Storage
+    }
+    catch {
+        if ($sacreatecount -ge 3) {
+            Write-Warning "Unable to create storage account '$($azure_storage_account_name)'. Error: $($error[0].Exception)"
+            return
+        }
+    }
 }
 Write-host "Using storage account '$($azure_storage_account_name)' (SKU: $($sku_name))" -ForegroundColor DarkGray
 }
@@ -331,6 +342,10 @@ if (-not $vhd_full_path) {
     $packer_template
 
     #Get VHD path
+    if (-not (test-path ".\$($packer_manifest)")) {
+        Write-Warning "Unable to find .\$($packer_manifest). Please ensure Packer job finsihed OK."
+        return
+    }
     Write-host "`nGetting VHD path..." -ForegroundColor Cyan
     $manifest = Get-Content -Path ".\$($packer_manifest)" | ConvertFrom-Json
     $vhd_full_path = $manifest.builds[0].artifact_id
