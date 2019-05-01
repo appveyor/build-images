@@ -128,5 +128,12 @@
           "date": "{{user `datemark`}}"
         }
     }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "{{user `packer_manifest`}}",
+      "strip_path": true
+    }
   ]
 }
