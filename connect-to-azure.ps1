@@ -80,6 +80,11 @@ if (-not (Get-Module -Name *Az.* -ListAvailable)) {
     return
 }
 
+if (Get-Module -Name *AzureRM.* -ListAvailable) {
+    Write-Warning "It is safer to uninstall AzureRM PowerShell module or use different computer to run this script. We noticed unperdicted behaviour when both Az and AzureRM modules are installed. Enter Ctrl-C to stop the script and run 'Uninstall-AzureRm' or do nothing to continue as is.`nWaiting 30 seconds..."
+    for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
+}
+
 if (-not (Get-Command packer -ErrorAction Ignore)) {
     Write-Warning "This script depends on Packer by HashiCorp. Please install it with 'choco install packer' command or from download page https://www.packer.io/downloads.html. If it is already installed, please ensure that PATH environment variable contains path to it."
     return
@@ -90,14 +95,23 @@ $headers = @{
   "Content-type" = "application/json"
 }
 try {
-    Invoke-RestMethod -Uri "$($appveyor_url)/api/build-clouds" -Headers $headers -Method Get | Out-Null
+    Invoke-RestMethod -Uri "$($appveyor_url)/api/projects" -Headers $headers -Method Get | Out-Null
 }
 catch {
     Write-warning "Unable to call AppVeyor REST API, please verify 'appveyor_api_key' and ensure '-appveyor_url' parameter is set if you are using on-premise AppVeyor Server."
     return
 }
 
-#TODO VALIDATE IF PBC ENABLED
+if ($appveyor_url -eq "https://ci.appveyor.com") {
+      try {
+        Invoke-RestMethod -Uri "$($appveyor_url)/api/build-clouds" -Headers $headers -Method Get | Out-Null
+    }
+    catch {
+        Write-warning "Please contact support@appveyor.com and ask to enable 'Private build clouds' feature."
+        return
+    }
+}
+
 #TODO regex from prod code -- validate build_cloud_name
 
 #TODO decide if we need this parameter at all -- some special characters confuse Packer
@@ -138,7 +152,7 @@ else {
     $subs = Get-AzSubscription
     $subs = $subs | ? {$_.State -eq "Enabled"}
     if (-not $subs -or $subs.Count -eq 0) {
-        Write-Warning "No Azure subscriptions enabled"
+        Write-Warning "No Azure subscriptions enabled. Please login to the Azure portal and create or enable one."
         return
     }
     if ($subs.Count -gt 1) {
@@ -286,7 +300,7 @@ Write-host "Using virtual network '$($azure_nsg_name)'" -ForegroundColor DarkGra
 #Run packet to create an image
 if (-not $vhd_full_path) {
     Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
-    Write-host "Add '-vhd_full_path' parameter with VHD URL value if you want to reuse existing VHD. Enter Ctrl-C to stop the script and restart with '-vhd_full_path' parameter if needed.`nWaiting 30 seconds..." -ForegroundColor Yellow
+    Write-Warning "Add '-vhd_full_path' parameter with VHD URL value if you want to reuse existing VHD. Enter Ctrl-C to stop the script and restart with '-vhd_full_path' parameter or do nothing and let the script to create a new VHD.`nWaiting 30 seconds..."
     for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
     Write-Host "`n`nPacker progress:`n"
     $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
