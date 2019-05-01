@@ -309,7 +309,7 @@ Write-host "Using virtual network '$($azure_nsg_name)'" -ForegroundColor DarkGra
 #Run packet to create an image
 if (-not $vhd_full_path) {
     Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
-    Write-Warning "Add '-vhd_full_path' parameter with VHD URL value if you want to reuse existing VHD. Enter Ctrl-C to stop the script and restart with '-vhd_full_path' parameter or do nothing and let the script to create a new VHD.`nWaiting 30 seconds..."
+    Write-Warning "Add '-vhd_full_path' parameter with VHD URL value if you want to reuse existing VHD (which must be in '$($azure_storage_account)' storage account). Enter Ctrl-C to stop the script and restart with '-vhd_full_path' parameter or do nothing and let the script to create a new VHD.`nWaiting 30 seconds..."
     for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
     Write-Host "`n`nPacker progress:`n"
     $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
