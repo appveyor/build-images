@@ -37,25 +37,6 @@ $ErrorActionPreference = "Stop"
 $StopWatch = New-Object System.Diagnostics.Stopwatch
 $StopWatch.Start()
 
-if (-not $azure_prefix) {
-    $azure_prefix = "appveyor"
-}
-
-$azure_service_principal_name = "$($azure_prefix)-sp"
-$azure_resource_group_name = "$($azure_prefix)-rg"
-$azure_storage_account = "$($azure_prefix)vmsa"
-$azure_storage_account_cache = "$($azure_prefix)cachesa"
-$azure_storage_account_artifacts = "$($azure_prefix)artifactsa"
-$azure_storage_container = "$($azure_prefix)-vms"
-$azure_vnet_name = "$($azure_prefix)-vnet"
-$azure_subnet_name = "$($azure_prefix)-subnet"
-$azure_nsg_name = "$($azure_prefix)-nsg"
-$build_cloud_name = "$($azure_prefix)-build-environment"
-
-#TODO: hard-code or parametrize?
-$install_user = "appveyor"
-$packer_manifest = "packer-manifest.json"
-
 #Sanitize input
 $appveyor_url = $appveyor_url.TrimEnd("/")
 
@@ -81,8 +62,9 @@ if (-not (Get-Module -Name *Az.* -ListAvailable)) {
 }
 
 if (Get-Module -Name *AzureRM.* -ListAvailable) {
-    Write-Warning "It is safer to uninstall AzureRM PowerShell module or use different computer to run this script. We noticed unperdicted behaviour when both Az and AzureRM modules are installed. Enter Ctrl-C to stop the script and run 'Uninstall-AzureRm' or do nothing to continue as is.`nWaiting 30 seconds..."
+    Write-Warning "It is safer to uninstall AzureRM PowerShell module or use different computer to run this script. We noticed unperdictable behaviour when both Az and AzureRM modules are installed. Enter Ctrl-C to stop the script and run 'Uninstall-AzureRm' or do nothing to continue as is.`nWaiting 30 seconds..."
     for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
+    Write-Host ""
 }
 
 if (-not (Get-Command packer -ErrorAction Ignore)) {
@@ -112,13 +94,39 @@ if ($appveyor_url -eq "https://ci.appveyor.com") {
     }
 }
 
-#TODO regex from prod code -- validate build_cloud_name
 
-#TODO decide if we need this parameter at all -- some special characters confuse Packer
-#Generate install_password
-if (-not $install_password) {
-    $install_password = "ABC" + (New-Guid).ToString().SubString(0, 12).Replace("-", "") + "!"
+$max_azure_prefix = 24 - "artifact".Length #"artifact" is longest storage accpunt name postfix
+if (-not $azure_prefix) {
+    $azure_prefix = "appveyor"
 }
+elseif ($azure_prefix.Length -ge  $max_azure_prefix){
+     Write-warning "Length of 'azure_prefix' must be under $($max_azure_prefix)"
+     return
+}
+
+#Make sa names unique
+$md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
+$utf8 = new-object -TypeName System.Text.UTF8Encoding
+$api_key_hash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($appveyor_api_key)))
+$infix = $api_key_hash.Replace("-", "").Substring(0, ($max_azure_prefix - $azure_prefix.Length)).ToLower()
+
+$azure_service_principal_name = "$($azure_prefix)-sp"
+$azure_resource_group_name = "$($azure_prefix)-rg"
+$azure_storage_account = "$($azure_prefix)$($infix)vm"
+$azure_storage_account_cache = "$($azure_prefix)$($infix)cache"
+$azure_storage_account_artifacts = "$($azure_prefix)$($infix)artifact"
+$azure_storage_container = "$($azure_prefix)-vms"
+$azure_vnet_name = "$($azure_prefix)-vnet"
+$azure_subnet_name = "$($azure_prefix)-subnet"
+$azure_nsg_name = "$($azure_prefix)-nsg"
+$build_cloud_name = "$($azure_prefix)-build-environment"
+$packer_manifest = "packer-manifest.json"
+$install_user = "appveyor" #TODO: hard-code or parametrize?
+if (-not $install_password) {
+    $install_password = "ABC" + (New-Guid).ToString().SubString(0, 12).Replace("-", "") + "!" #TODO decide if we need this parameter at all -- some special characters confuse Packer
+}
+
+#TODO regex from prod code -- validate build_cloud_name
 
 #Login to Azure and select subscription
 Write-host "Selecting Azure user and subscription..." -ForegroundColor Cyan
@@ -128,7 +136,7 @@ if (-not $contenxt) {
 }
 elseif (-not $use_current_azure_login) {
     Write-host "You are currently logged to Azure as $($contenxt.Account)"
-    Write-host "Add '-use_current_azure_login' switch parameter to use currently logged Azure user and skip this dialog next time." -ForegroundColor Yellow
+    Write-Warning "Add '-use_current_azure_login' switch parameter to use currently logged Azure user and skip this dialog next time."
     $relogin = Read-Host "Enter 1 if you want continue or 2 to re-login to Azure"
     if ($relogin -eq 1) {
         Write-host "Using Azure user '$($contenxt.Account)'" -ForegroundColor DarkGray
@@ -205,7 +213,7 @@ if ($azure_location) {
 }
 else {
     for ($i = 1; $i -le $locations.Count; $i++) {"Select $i for $($locations[$i - 1].DisplayName)"}
-    Write-host "Add '-azure_location' parameter to skip this dialog next time." -ForegroundColor Yellow
+    Write-Warning "Add '-azure_location' parameter to skip this dialog next time."
     $location_number = Read-Host "Enter your selection"
     $selected_location = $locations[$location_number - 1]
     $azure_location = $selected_location.Location
@@ -249,7 +257,8 @@ Write-host "`nSelecting VM size..." -ForegroundColor Cyan
 if (-not $azure_vm_size) {
     $vmsizes = Get-AzVMSize -Location $azure_location
     for ($i = 1; $i -le $vmsizes.Count; $i++) {"Select $i for $($vmsizes[$i - 1].Name)"}
-    Write-host "Add '-azure_vm_size' parameter to skip this dialog next time." -ForegroundColor Yellow
+    Write-Warning "Please use at least Standard_DS2_v2"
+    Write-Warning "Add '-azure_vm_size' parameter to skip this dialog next time."
     $location_number = Read-Host "Enter your selection"
     $selected_vmsize = $vmsizes[$location_number - 1]
     $azure_vm_size = $selected_vmsize.Name
