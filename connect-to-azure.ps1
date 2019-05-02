@@ -62,7 +62,7 @@ if (-not (Get-Module -Name *Az.* -ListAvailable)) {
 }
 
 if (Get-Module -Name *AzureRM.* -ListAvailable) {
-    Write-Warning "It is safer to uninstall AzureRM PowerShell module or use different computer to run this script. We noticed unperdictable behaviour when both Az and AzureRM modules are installed. Enter Ctrl-C to stop the script and run 'Uninstall-AzureRm' or do nothing to continue as is.`nWaiting 30 seconds..."
+    Write-Warning "It is safer to uninstall AzureRM PowerShell module or use different computer to run this script. We noticed unpredictable behaviour when both Az and AzureRM modules are installed. Enter Ctrl-C to stop the script and run 'Uninstall-AzureRm' or do nothing to continue as is.`nWaiting 30 seconds..."
     for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
     Write-Host ""
 }
@@ -89,7 +89,7 @@ if ($appveyor_url -eq "https://ci.appveyor.com") {
         Invoke-RestMethod -Uri "$($appveyor_url)/api/build-clouds" -Headers $headers -Method Get | Out-Null
     }
     catch {
-        Write-warning "Please contact support@appveyor.com and ask to enable 'Private build clouds' feature."
+        Write-warning "Please contact support@appveyor.com and request enabling of 'Private build clouds' feature."
         return
     }
 }
@@ -135,8 +135,8 @@ if (-not $contenxt) {
     Login-AzAccount | Out-Null
 }
 elseif (-not $use_current_azure_login) {
-    Write-host "You are currently logged to Azure as $($contenxt.Account)"
-    Write-Warning "Add '-use_current_azure_login' switch parameter to use currently logged Azure user and skip this dialog next time."
+    Write-host "You are currently logged in to Azure as $($contenxt.Account)"
+    Write-Warning "Add '-use_current_azure_login' switch parameter to use currently logged in Azure user and skip this dialog next time."
     $relogin = Read-Host "Enter 1 if you want continue or 2 to re-login to Azure"
     if ($relogin -eq 1) {
         Write-host "Using Azure user '$($contenxt.Account)'" -ForegroundColor DarkGray
@@ -152,7 +152,7 @@ else {
 }
 
 if ($context.Subscription -and $use_current_azure_login) {
-    Write-host "Using subsciption '$($contenxt.Subscription.Name)'" -ForegroundColor DarkGray
+    Write-host "Using subscription '$($contenxt.Subscription.Name)'" -ForegroundColor DarkGray
     $azure_subscription_id = $contenxt.Subscription.Id
     $azure_tenant_id = $contenxt.Subscription.TenantId
 }
@@ -164,17 +164,17 @@ else {
         return
     }
     if ($subs.Count -gt 1) {
-        Write-host "There are more than one enabled subscription under your account"
+        Write-host "There is more than one enabled subscription under your account"
         for ($i = 1; $i -le $subs.Count; $i++) {"Select $i for $($subs[$i - 1].name)"}
         $subscription_number = Read-Host "Enter your selection"
         $selected_subscription = $subs[$subscription_number - 1]
-        Write-host "Using subsciption '$($selected_subscription.name)'" -ForegroundColor DarkGray
+        Write-host "Using subscription '$($selected_subscription.name)'" -ForegroundColor DarkGray
         Set-AzContext -SubscriptionId $selected_subscription.Id | Out-Null
         $azure_subscription_id = $selected_subscription.Id
         $azure_tenant_id = $selected_subscription.TenantId
     }
     else {
-        Write-host "Using subsciption '$($subs[0].name)'" -ForegroundColor DarkGray
+        Write-host "Using subscription '$($subs[0].name)'" -ForegroundColor DarkGray
         Set-AzContext -SubscriptionId $subs[0].Id | Out-Null
         $azure_subscription_id = $subs[0].Id
         $azure_tenant_id = $subs[0].TenantId
@@ -186,7 +186,7 @@ Write-host "`nGetting or creating Azure AD service principal..." -ForegroundColo
 $sp = Get-AzADServicePrincipal -DisplayName $azure_service_principal_name
 $app = Get-AzADApplication -DisplayName $azure_service_principal_name
 if (-not $sp -and $app) {
-    Write-Warning "Service principal '$($azure_service_principal_name)' does not exist, but Azure AD application with the same name already exist." 
+    Write-Warning "Service principal '$($azure_service_principal_name)' does not exist, but Azure AD application with the same name already exists." 
     "`nPlease either delete that Azure Ad Application or use another service principal name."
     return
 }
@@ -228,7 +228,7 @@ if (-not $rg) {
     $rg = New-AzResourceGroup -Name $azure_resource_group_name -Location $azure_location
 }
 elseif ($rg.Location -ne $azure_location) {
-    Write-Warning "Resource group $($azure_resource_group_name) exists in location $($rg.Location) which is different from the location you choose ($($azure_location))"
+    Write-Warning "Resource group $($azure_resource_group_name) exists in location $($rg.Location) which is different from the location you chose ($($azure_location))"
     $changelocation = Read-Host "Enter 1 to use $($rg.Location) location or 2 to delete resource group $($azure_resource_group_name) in $($rg.Location) and re-create it in $($azure_location)"
     if ($changelocation -eq 1) {
         $azure_location = $rg.Location
@@ -241,7 +241,7 @@ elseif ($rg.Location -ne $azure_location) {
             $rg = New-AzResourceGroup -Name $azure_resource_group_name -Location $azure_location
         }
         else {
-            Write-Warning "Please consider if you need to change a location or re-create a resource group and start over. ALternatively you can use 'azure_prefix' script parameter to form alternative resource group name."
+            Write-Warning "Please consider whether you need to change a location or re-create a resource group and start over. ALternatively, you can use 'azure_prefix' script parameter to form alternative resource group name."
             return
         }
     }
@@ -320,7 +320,7 @@ Write-host "Using virtual network '$($azure_nsg_name)'" -ForegroundColor DarkGra
 #Run packet to create an image
 if (-not $vhd_full_path) {
     Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
-    Write-Warning "Add '-vhd_full_path' parameter with VHD URL value if you want to reuse existing VHD (which must be in '$($azure_storage_account)' storage account). Enter Ctrl-C to stop the script and restart with '-vhd_full_path' parameter or do nothing and let the script to create a new VHD.`nWaiting 30 seconds..."
+    Write-Warning "Add '-vhd_full_path' parameter with VHD URL value if you want to reuse existing VHD (which must be in '$($azure_storage_account)' storage account). Enter Ctrl-C to stop the script and restart with '-vhd_full_path' parameter or do nothing and let the script create a new VHD.`nWaiting 30 seconds..."
     for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
     Write-Host "`n`nPacker progress:`n"
     $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
@@ -343,7 +343,7 @@ if (-not $vhd_full_path) {
 
     #Get VHD path
     if (-not (test-path ".\$($packer_manifest)")) {
-        Write-Warning "Unable to find .\$($packer_manifest). Please ensure Packer job finsihed OK."
+        Write-Warning "Unable to find .\$($packer_manifest). Please ensure Packer job finsihed successfully."
         return
     }
     Write-host "`nGetting VHD path..." -ForegroundColor Cyan
@@ -352,7 +352,7 @@ if (-not $vhd_full_path) {
     $vhd_path = $vhd_full_path.Replace("https://$($azure_storage_account).blob.core.windows.net/", "")
     Remove-Item ".\$($packer_manifest)" -Force -ErrorAction Ignore
     Write-host "Build image VHD created by Packer and available at '$($vhd_full_path)'" -ForegroundColor DarkGray
-    Write-Host "Default build VM credentials: User: 'appveyor', Password: '$($install_password)'. Normally you do not need this password as it will be reset to the random when build starts. However you can use it if you need ro create and update a VM from the Packer-created VHD manually"  -ForegroundColor DarkGray
+    Write-Host "Default build VM credentials: User: 'appveyor', Password: '$($install_password)'. Normally you do not need this password as it will be reset to a random string when the build starts. However you can use it if you need to create and update a VM from the Packer-created VHD manually"  -ForegroundColor DarkGray
 }
 else {
     Write-host "Using VHD path '$($vhd_full_path)'" -ForegroundColor DarkGray
@@ -372,7 +372,7 @@ else {
 #TODO artifacts
 
 #Create or update cloud
-Write-host "`nCreatiog or updating build environment on AppVeyor..." -ForegroundColor Cyan
+Write-host "`nCreating or updating build environment on AppVeyor..." -ForegroundColor Cyan
 $clouds = Invoke-RestMethod -Uri "$($appveyor_url)/api/build-clouds" -Headers $headers -Method Get
 $cloud = $clouds | ? ({$_.name -eq $build_cloud_name})[0]
 if (-not $cloud) {
