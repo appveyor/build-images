@@ -4,8 +4,14 @@ param
   [Parameter(Mandatory=$true)]
   [string]$appveyor_api_key,
 
+  [Parameter(Mandatory=$true)]
+  [string]$appveyor_url,
+
   [Parameter(Mandatory=$false)]
   [switch]$use_current_azure_login,
+
+  [Parameter(Mandatory=$false)]
+  [switch]$skip_disclaimer,
 
   [Parameter(Mandatory=$false)]
   [string]$azure_location,
@@ -20,16 +26,10 @@ param
   [string]$azure_prefix,
 
   [Parameter(Mandatory=$false)]
-  [string]$appveyor_url = "https://ci.appveyor.com",
-
-  [Parameter(Mandatory=$false)]
   [string]$image_description = "Windows Server 2019 on Azure",
 
   [Parameter(Mandatory=$false)]
-  [string]$packer_template = ".\minimal-windows-server-2019.json",
-
-  [Parameter(Mandatory=$false)]
-  [string]$install_password
+  [string]$packer_template = ".\minimal-windows-server-2019.json"
 )
 
 $ErrorActionPreference = "Stop"
@@ -46,9 +46,16 @@ if ($appveyor_api_key -like "v2.*") {
     return
 }
 
-if ((Invoke-WebRequest -Uri $appveyor_url -ErrorAction SilentlyContinue).StatusCode -ne 200) {
-    Write-warning "AppVeyor did not respond successfully on address '$($appveyor_url)'"
-    return
+try {
+    $responce = Invoke-WebRequest -Uri $appveyor_url -ErrorAction SilentlyContinue
+    if ($responce.StatusCode -ne 200) {
+        Write-warning "AppVeyor URL '$($appveyor_url)' respondd with code $($responce.StatusCode)"
+        return
+    }
+}
+catch {
+    Write-warning "Unable to connect to AppVeyor URL '$($appveyor_url)'. Error: $($error[0].Exception.Message)"
+        return
 }
 
 if (-not (test-path $packer_template)) {
@@ -121,10 +128,8 @@ $azure_subnet_name = "$($azure_prefix)-subnet"
 $azure_nsg_name = "$($azure_prefix)-nsg"
 $build_cloud_name = "$($azure_prefix)-build-environment"
 $packer_manifest = "packer-manifest.json"
-$install_user = "appveyor" #TODO: hard-code or parametrize?
-if (-not $install_password) {
-    $install_password = "ABC" + (New-Guid).ToString().SubString(0, 12).Replace("-", "") + "!" #TODO decide if we need this parameter at all -- some special characters confuse Packer
-}
+$install_user = "appveyor"
+$install_password = "ABC" + (New-Guid).ToString().SubString(0, 12).Replace("-", "") + "!"
 
 #TODO regex from prod code -- validate build_cloud_name
 
@@ -179,6 +184,11 @@ else {
         $azure_subscription_id = $subs[0].Id
         $azure_tenant_id = $subs[0].TenantId
     }
+}
+
+if (-not $skip_disclaimer) {
+     Write-Warning "`nThis script will create Azure resources such as storage accounts, containers, virtual networks and subnets in subscription '$((Get-AzContext).Subscription.Name)'. Also, it will run Hashicorp Packer which will create its own temporary Azure resources and leave VHD blob in the storage account created by this script for future use by AppVeyor build VMs. Please be aware of possible charges from Azure. `nIf subscription '$((Get-AzContext).Subscription.Name)' contains production resources, it is safer to create a separate subscription and run this script against it. Additionally, separate subscription is better to distinguish Azure bills for CI machines from other Azure bills. `nPress Enter to continue or Ctrl-C to exit the script. Use '-skip_disclaimer' switch parameter to skip this message next time."
+     $disclaimer = Read-Host
 }
 
 #Get or create service principal
@@ -278,7 +288,7 @@ if (-not $sa) {
     }
     catch {
         if ($sacreatecount -ge 3) {
-            Write-Warning "Unable to create storage account '$($azure_storage_account_name)'. Error: $($error[0].Exception)"
+            Write-Warning "Unable to create storage account '$($azure_storage_account_name)'. Error: $($error[0].Exception.Message)"
             return
         }
     }
