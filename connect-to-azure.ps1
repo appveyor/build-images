@@ -1,10 +1,10 @@
 [CmdletBinding()]
 param
 (
-  [Parameter(Mandatory=$true)]
+  [Parameter(Mandatory=$true,HelpMessage="API key for specific account (not 'All accounts')`nHosted AppVeyor users can find it at https://ci.appveyor.com/api-keys`nAppveyor Server users can find it at <appveyor_server_url>/api-keys")]
   [string]$appveyor_api_key,
 
-  [Parameter(Mandatory=$true)]
+  [Parameter(Mandatory=$true,HelpMessage="AppVeyor URL`nFor hosted AppVeyor it is https://ci.appveyor.com`nFor Appveyor Server users it is URL of on-premise AppVeyor Server installation")]
   [string]$appveyor_url,
 
   [Parameter(Mandatory=$false)]
@@ -23,7 +23,7 @@ param
   [string]$vhd_full_path,
 
   [Parameter(Mandatory=$false)]
-  [string]$azure_prefix,
+  [string]$azure_prefix = "appveyor",
 
   [Parameter(Mandatory=$false)]
   [string]$image_description = "Windows Server 2019 on Azure",
@@ -41,6 +41,18 @@ $StopWatch.Start()
 $appveyor_url = $appveyor_url.TrimEnd("/")
 
 #Validate input
+$regex =[regex] "^([A-Za-z0-9]+)+(-?[A-Za-z0-9])*$"
+if (-not $regex.Match($azure_prefix).Success) {
+    Write-Warning "'azure_prefix' can contain letters, numbers and dash (-)"
+    return
+}
+
+$maxazureprefix = 24 - "artifact".Length #"artifact" is longest storage account name postfix
+if ($azure_prefix.Length -ge  $maxazureprefix){
+     Write-warning "Length of 'azure_prefix' must be under $($maxazureprefix)"
+     return
+}
+
 if ($appveyor_api_key -like "v2.*") {
     Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($appveyor_url)/api-keys'"
     return
@@ -101,37 +113,30 @@ if ($appveyor_url -eq "https://ci.appveyor.com") {
     }
 }
 
-
-$max_azure_prefix = 24 - "artifact".Length #"artifact" is longest storage accpunt name postfix
-if (-not $azure_prefix) {
-    $azure_prefix = "appveyor"
-}
-elseif ($azure_prefix.Length -ge  $max_azure_prefix){
-     Write-warning "Length of 'azure_prefix' must be under $($max_azure_prefix)"
-     return
-}
-
-#Make sa names unique
+#Make storage account names globally unique
 $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
 $utf8 = new-object -TypeName System.Text.UTF8Encoding
-$api_key_hash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($appveyor_api_key)))
-$infix = $api_key_hash.Replace("-", "").Substring(0, ($max_azure_prefix - $azure_prefix.Length)).ToLower()
+$apikeyhash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($appveyor_api_key)))
+$infix = $apikeyhash.Replace("-", "").Substring(0, ($maxazureprefix - $azure_prefix.Length)).ToLower()
 
-$azure_service_principal_name = "$($azure_prefix)-sp"
-$azure_resource_group_name = "$($azure_prefix)-rg"
 $azure_storage_account = "$($azure_prefix)$($infix)vm"
 $azure_storage_account_cache = "$($azure_prefix)$($infix)cache"
 $azure_storage_account_artifacts = "$($azure_prefix)$($infix)artifact"
+
 $azure_storage_container = "$($azure_prefix)-vms"
+$azure_cache_storage_name = "$($azure_prefix)-cache"
+$azure_artifact_storage_name = "$($azure_prefix)-artifacts"
+
+$azure_service_principal_name = "$($azure_prefix)-sp"
+$azure_resource_group_name = "$($azure_prefix)-rg"
 $azure_vnet_name = "$($azure_prefix)-vnet"
 $azure_subnet_name = "$($azure_prefix)-subnet"
 $azure_nsg_name = "$($azure_prefix)-nsg"
 $build_cloud_name = "$($azure_prefix)-build-environment"
+
 $packer_manifest = "packer-manifest.json"
 $install_user = "appveyor"
 $install_password = "ABC" + (New-Guid).ToString().SubString(0, 12).Replace("-", "") + "!"
-
-#TODO regex from prod code -- validate build_cloud_name
 
 #Login to Azure and select subscription
 Write-host "Selecting Azure user and subscription..." -ForegroundColor Cyan
@@ -324,10 +329,7 @@ if (-not $nsg) {
 }
 Write-host "Using virtual network '$($azure_nsg_name)'" -ForegroundColor DarkGray
 
-#TODO Rollback -- delete Azure entites. Not sure in which case
-#Remove-AzureRmResourceGroup -Name $azure_resource_group_name -Verbose -Force
-
-#Run packet to create an image
+#Run Packer to create an image
 if (-not $vhd_full_path) {
     Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
     Write-Warning "Add '-vhd_full_path' parameter with VHD URL value if you want to reuse existing VHD (which must be in '$($azure_storage_account)' storage account). Enter Ctrl-C to stop the script and restart with '-vhd_full_path' parameter or do nothing and let the script create a new VHD.`nWaiting 30 seconds..."
@@ -378,8 +380,63 @@ else {
     }
 }
 
-#TODO cache
-#TODO artifacts
+#Create or update build cache storage settings
+Write-host "`nCreating or updating build cache storage settings on AppVeyor..." -ForegroundColor Cyan
+$storagekeycache = (Get-AzStorageAccountKey -ResourceGroupName $azure_resource_group_name -Name $azure_storage_account_cache)[0].Value
+$buildcaches = Invoke-RestMethod -Uri "$($appveyor_url)/api/build-caches" -Headers $headers -Method Get
+$buildcache = $buildcaches | ? ({$_.name -eq $azure_cache_storage_name})[0]
+if (-not $buildcache) {
+    $body = @{
+        name = $azure_cache_storage_name
+        cacheType = "Azure"
+        settings = @{
+            accountName = $azure_storage_account_cache
+            accountAccessKey = $storagekeycache
+        }
+    }
+    $jsonBody = $body | ConvertTo-Json -Depth 10
+    Invoke-RestMethod -Uri "$($appveyor_url)/api/build-caches" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
+    Write-host "AppVeyor build cache storage '$($azure_cache_storage_name)' has been created." -ForegroundColor DarkGray
+}
+else {
+    $settings = Invoke-RestMethod -Uri "$($appveyor_url)/api/build-caches/$($buildcache.buildCacheId)" -Headers $headers -Method Get
+    $settings.name = $azure_cache_storage_name
+    $settings.cacheType = "Azure"
+    $settings.settings.accountName = $azure_storage_account_cache
+    $settings.settings.accountAccessKey = $storagekeycache
+    $jsonBody = $settings | ConvertTo-Json -Depth 10
+    Invoke-RestMethod -Uri "$($appveyor_url)/api/build-caches"-Headers $headers -Body $jsonBody -Method Put | Out-Null
+    Write-host "AppVeyor build cache storage '$($azure_cache_storage_name)' has been updated." -ForegroundColor DarkGray
+}
+
+#Create or update artifacts storage settings
+Write-host "`nCreating or updating artifacts storage settings on AppVeyor..." -ForegroundColor Cyan
+$storagekeyartifacts = (Get-AzStorageAccountKey -ResourceGroupName $azure_resource_group_name -Name $azure_storage_account_artifacts)[0].Value
+$artifactstorages = Invoke-RestMethod -Uri "$($appveyor_url)/api/artifact-storages" -Headers $headers -Method Get
+$artifactstorage = $artifactstorages | ? ({$_.name -eq $azure_artifact_storage_name})[0]
+if (-not $artifactstorage) {
+    $body = @{
+        name = $azure_artifact_storage_name
+        storageType = "Azure"
+        settings = @{
+            accountName = $azure_storage_account_artifacts
+            accountAccessKey = $storagekeyartifacts
+        }
+    }
+    $jsonBody = $body | ConvertTo-Json -Depth 10
+    Invoke-RestMethod -Uri "$($appveyor_url)/api/artifact-storages" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
+    Write-host "AppVeyor artifacts storage '$($azure_artifact_storage_name)' has been created." -ForegroundColor DarkGray
+}
+else {
+    $settings = Invoke-RestMethod -Uri "$($appveyor_url)/api/artifact-storages/$($artifactstorage.artifactStorageId)" -Headers $headers -Method Get
+    $settings.name = $azure_artifact_storage_name
+    $settings.storageType = "Azure"
+    $settings.settings.accountName = $azure_storage_account_artifacts
+    $settings.settings.accountAccessKey = $storagekeyartifacts
+    $jsonBody = $settings | ConvertTo-Json -Depth 10
+    Invoke-RestMethod -Uri "$($appveyor_url)/api/artifact-storages"-Headers $headers -Body $jsonBody -Method Put | Out-Null
+    Write-host "AppVeyor artifacts storage '$($azure_artifact_storage_name)' has been updated." -ForegroundColor DarkGray
+}
 
 #Create or update cloud
 Write-host "`nCreating or updating build environment on AppVeyor..." -ForegroundColor Cyan
@@ -391,8 +448,8 @@ if (-not $cloud) {
         cloudType = "Azure"
         workersCapacity = 20
         settings = @{
-            artifactStorageName = $null
-            buildCacheName = $null
+            artifactStorageName = $azure_artifact_storage_name
+            buildCacheName = $azure_cache_storage_name
             failureStrategy = @{
                 jobStartTimeoutSeconds = 180
                 provisioningAttempts = 3
@@ -437,8 +494,18 @@ else {
     $settings.name = $build_cloud_name
     $settings.cloudType = "Azure"
     $settings.workersCapacity = 20
-    $settings.settings  | Add-Member NoteProperty "artifactStorageName" $null -force
-    $settings.settings  | Add-Member NoteProperty "buildCacheName" $null -force
+    if (-not $settings.settings.artifactStorageName ) {
+        $settings.settings  | Add-Member NoteProperty "artifactStorageName" $azure_artifact_storage_name -force
+    }
+    else {
+        $settings.settings.artifactStorageName = $azure_artifact_storage_name 
+    }
+    if (-not $settings.settings.buildCacheName ) {
+        $settings.settings  | Add-Member NoteProperty "buildCacheName" $azure_cache_storage_name -force
+    }
+    else {
+        $settings.settings.buildCacheName = $azure_cache_storage_name 
+    }
     $settings.settings.failureStrategy.jobStartTimeoutSeconds = 180
     $settings.settings.failureStrategy.provisioningAttempts = 3
     $settings.settings.cloudSettings.azureAccount.clientId = $azure_client_id
