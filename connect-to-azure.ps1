@@ -187,7 +187,7 @@ else {
 }
 
 if (-not $skip_disclaimer) {
-     Write-Warning "`nThis script will create Azure resources such as storage accounts, containers, virtual networks and subnets in subscription '$((Get-AzContext).Subscription.Name)'. Also, it will run Hashicorp Packer which will create its own temporary Azure resources and leave VHD blob in the storage account created by this script for future use by AppVeyor build VMs. Please be aware of possible charges from Azure. `nIf subscription '$((Get-AzContext).Subscription.Name)' contains production resources, it is safer to create a separate subscription and run this script against it. Additionally, separate subscription is better to distinguish Azure bills for CI machines from other Azure bills. `nPress Enter to continue or Ctrl-C to exit the script. Use '-skip_disclaimer' switch parameter to skip this message next time."
+     Write-Warning "`nThis script will create Azure resources such as storage accounts, containers, virtual networks and subnets in subscription '$((Get-AzContext).Subscription.Name)'. Also, it will run Hashicorp Packer which will create its own temporary Azure resources and leave VHD blob in the storage account created by this script for future use by AppVeyor build VMs. Please be aware of possible charges from Azure. `nIf subscription '$((Get-AzContext).Subscription.Name)' contains production resources, it is safer to create a separate subscription and run this script against it. Additionally, a separate subscription is better to distinguish Azure bills for CI machines from other Azure bills. `nPress Enter to continue or Ctrl-C to exit the script. Use '-skip_disclaimer' switch parameter to skip this message next time."
      $disclaimer = Read-Host
 }
 
