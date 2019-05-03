@@ -30,7 +30,7 @@ while ($i -lt 20) {
   $installed = ContainersFeatureInstalled
   if ($installed) {Write-Host "OK"; break}
   Write-warning "Retrying in 10 seconds..."
-  sleep 10;
+  Start-Sleep -s 10;
 }
 
 if (-not $installed) {
@@ -47,7 +47,6 @@ Install-Module DockerMsftProvider -Force
 Write-Host "Install-Package Docker"
 Install-Package -Name docker -ProviderName DockerMsftProvider -Force
 
-$lcowEnabled = $false
 if ($osVer.Major -eq 10 -and $osVer.Build -ge 16299) {
 	# 1709 and above is required for LCOW
 	
@@ -62,7 +61,9 @@ if ($osVer.Major -eq 10 -and $osVer.Build -ge 16299) {
 	Write-Host "Re-registering Docker with experimental features enabled"
 	dockerd --unregister-service
 	dockerd --register-service --experimental
-	$lcowEnabled = $true
+
+	# run simplest test
+	docker run --rm busybox echo hello_world
 }
 
 Write-Host "Installing docker-compose"
@@ -77,39 +78,3 @@ Write-Host "Downloading docker-credential-wincred"
 (New-Object Net.WebClient).DownloadFile('https://github.com/docker/docker-credential-helpers/releases/download/v0.6.0/docker-credential-wincred-v0.6.0-amd64.zip', "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip")
 Expand-Archive -Path "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip" -DestinationPath "$env:ProgramFiles\Docker" -Force
 Remove-Item "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip"
-
-
-if ($lcowEnabled) {
-	docker run --rm busybox echo hello_world
-	
-	# TODO
-	# Mapping local folder to a Linux container:
-	# docker run --rm -v C:\Test:/c-test busybox cat /c-test/readme.txt	
-}
-
-function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
-	$hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
-	$hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
-
-	if ($osVer.Build -ge $minOsBuild) {
-		# Windows Server 2016 or above
-		
-		$isolation = $null
-		if ($osVer.Build -gt $minOsBuild -and $hypervInstalled) {
-			$isolation = 'hyperv'
-		} elseif ($osVer.Build -eq $minOsBuild) {
-			$isolation = 'default'
-		}
-		
-		if ($isolation) {
-			Write-Host "Pulling and running '$serverCoreTag' images in '$isolation' mode"
-			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
-			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
-		}
-	}
-}
-
-PullRunDockerImages 14393 'ltsc2016' 'sac2016'
-PullRunDockerImages 16299 '1709' '1709'
-PullRunDockerImages 17134 '1803' '1803'
-PullRunDockerImages 17763 'ltsc2019' '1809'
