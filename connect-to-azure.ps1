@@ -562,4 +562,6 @@ if (-not $vhd_full_path) {
 #Report results and next steps
 Write-host "`nNext steps:"  -ForegroundColor Cyan
 Write-host " - Optionally review build environment '$($build_cloud_name)' at '$($appveyor_url)/build-clouds/$($cloud.buildCloudId)'" -ForegroundColor DarkGray
-Write-host " - To start buling on Azure set '$($image_description)' build worker image in AppVeyor project settings or appveyor.yml." -ForegroundColor DarkGray
+Write-host " - To start buling on Azure set " -ForegroundColor DarkGray -NoNewline
+Write-host "$($image_description) " -NoNewline 
+Write-host "build worker image in AppVeyor project settings or appveyor.yml." -ForegroundColor DarkGray
