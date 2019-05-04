@@ -555,9 +555,8 @@ else {
 }
 
 $StopWatch.Stop()
-if (-not $vhd_full_path) {
-    Write-Host "`nCompleted in $($StopWatch.elapsed.minutes) minutes."
-}
+$completed = "{0:hh}:{0:mm}:{0:ss}" -f $StopWatch.elapsed
+Write-Host "`nCompleted in $completed."
 
 #Report results and next steps
 Write-host "`nNext steps:"  -ForegroundColor Cyan

@@ -64,6 +64,7 @@
     {
         "type": "powershell",
         "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
             "{{ template_dir }}/scripts/Windows/install_test_agent_build_tools_2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_dotnet_sdk.ps1"
         ],
