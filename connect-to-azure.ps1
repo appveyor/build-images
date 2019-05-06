@@ -1,3 +1,49 @@
+<#
+.SYNOPSIS
+    Script to enable Azure builds. Works with both hosted AppVeyor and AppVeyor server.
+
+.DESCRIPTION
+    You can connect you AppVeyor account (on both hosted AppVeyor and on-premise AppVeyor Server) to your own Azure subscription for AppVeyor to instantiate build VMs in it. It has a lot of benefits like having ability to customize your build image, select desired VM size, set custom build timeout and many others. To simplify setup process for you, we created script which provisions necessary Azure resources, runs Hashicorp Packer to create a basic build image (based on Windows Server 2019), and put all AppVeyor configuration together. After running this script, you should be able to start builds on Azure immediately (and optionally customize your Azure build environment later).
+
+.PARAMETER appveyor_api_key
+    API key for specific account (not 'All accounts'). Hosted AppVeyor users can find it at https://ci.appveyor.com/api-keys. Appveyor Server users can find it at <appveyor_server_url>/api-keys.
+
+.PARAMETER appveyor_url
+    AppVeyor URL. For hosted AppVeyor it is https://ci.appveyor.com. For Appveyor Server users it is URL of on-premise AppVeyor Server installation
+
+.PARAMETER use_current_azure_login
+    Use Azure user currently logged in PowerShell and its selected subscription. If this parameter is not set or no Azure user is already logged in PowerShell, script will ask to login to Azure and (if user has multiple subscriptions) select the subscription. It is not recommended to use this switch parameter for the first script run, and select Azure user and subscription carefully. But it can come handy if you need to re-run the script.
+
+.PARAMETER skip_disclaimer
+    Skip warning related to Azure resources creation and potential Azure charges. It is recommended to read the warning at least once, but it can come handy if you need to re-run the script.
+
+.PARAMETER azure_location
+    Azure location (or region) where you want script to create build worker image and all additional required resources. Also AppVeyor will create build VMs in this location. Use short notation (not display name) e.g. 'westus', not 'West US'.
+    
+.PARAMETER azure_vm_size
+    Size of Azure build VM. Use short notation (not display name) e.g. 'Standard_D2s_v3', not 'Standard D2s v3'.
+
+.PARAMETER vhd_full_path
+    It can happen that you run the script, and it created a valid VHD, but some AppVeyor settings were not set correctly (or just you want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating a VHD) and pass already created VHD path to this parameter.
+
+.PARAMETER azure_prefix
+    Script will prepend all created Azure resources and AppVeyor build environment name with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
+
+.PARAMETER image_description
+    Description to be passed to the Packer and name to be used for AppVeyor image. Default value is 'Windows Server 2019 on Azure'.
+
+.PARAMETER packer_template
+    If you are familiar with the Hashicorp Packer, you can replace template used by this script with another one. Default value is '.\minimal-windows-server-2019.json'.
+
+    .EXAMPLE
+    .\connect-to-azure.ps1
+    Let script collect all required information
+
+    .EXAMPLE
+    .\connect-to-azure.ps1 -appveyor_api_key XXXXXXXXXXXXXXXXXXXXX -appveyor_url "https://ci.appveyor.com" -azure_location westus -azure_vm_size Standard_D2s_v3 -skip_disclaimer -use_current_azure_login
+    Run script with all required parameters so script will ask now questions. It will create resources in Azure West US region will connect it to the hosted AppVeyor.
+#>
+
 [CmdletBinding()]
 param
 (
@@ -41,9 +87,9 @@ $StopWatch.Start()
 $appveyor_url = $appveyor_url.TrimEnd("/")
 
 #Validate input
-$regex =[regex] "^([A-Za-z0-9]+)+(-?[A-Za-z0-9])*$"
+$regex =[regex] "^([A-Za-z0-9]+)$"
 if (-not $regex.Match($azure_prefix).Success) {
-    Write-Warning "'azure_prefix' can contain letters, numbers and dash (-)"
+    Write-Warning "'azure_prefix' can contain only letters and numbers"
     return
 }
 
@@ -119,9 +165,9 @@ $utf8 = new-object -TypeName System.Text.UTF8Encoding
 $apikeyhash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($appveyor_api_key)))
 $infix = $apikeyhash.Replace("-", "").Substring(0, ($maxazureprefix - $azure_prefix.Length)).ToLower()
 
-$azure_storage_account = "$($azure_prefix)$($infix)vm"
-$azure_storage_account_cache = "$($azure_prefix)$($infix)cache"
-$azure_storage_account_artifacts = "$($azure_prefix)$($infix)artifact"
+$azure_storage_account = "$($azure_prefix)$($infix)vm".ToLower()
+$azure_storage_account_cache = "$($azure_prefix)$($infix)cache".ToLower()
+$azure_storage_account_artifacts = "$($azure_prefix)$($infix)artifact".ToLower()
 
 $azure_storage_container = "$($azure_prefix)-vms"
 $azure_cache_storage_name = "$($azure_prefix)-cache"
