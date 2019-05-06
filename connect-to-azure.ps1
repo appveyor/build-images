@@ -276,6 +276,10 @@ else {
     for ($i = 1; $i -le $locations.Count; $i++) {"Select $i for $($locations[$i - 1].DisplayName)"}
     Write-Warning "Add '-azure_location' parameter to skip this dialog next time."
     $location_number = Read-Host "Enter your selection"
+    if (-not $location_number) {
+        Write-Warning "No Azure location selected."
+        return
+    }
     $selected_location = $locations[$location_number - 1]
     $azure_location = $selected_location.Location
     $azure_location_full = $selected_location.DisplayName
@@ -374,6 +378,13 @@ if (-not $nsg) {
     $nsg = New-AzNetworkSecurityGroup -Name $azure_nsg_name -ResourceGroupName $azure_resource_group_name -Location $azure_location
 }
 Write-host "Using virtual network '$($azure_nsg_name)'" -ForegroundColor DarkGray
+
+Write-host "`nAllowing RDP access to build VMs..." -ForegroundColor Cyan
+if (-not ($nsg.SecurityRules | ? {$_.DestinationPortRange -eq {3389} -and $_.Direction -eq "Inbound" -and $_.Access -eq "Allow"})) {
+    $nsg | Add-AzNetworkSecurityRuleConfig -Name rdp-in -Description "Allow RDP" -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix Internet -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389 | Set-AzNetworkSecurityGroup | Out-Null
+    Write-host "Created inbound rule to allow TCP 3389 (RDP)" -ForegroundColor DarkGray
+}
+else {Write-host "Inbound rule to allow TCP 3389 (RDP) already exist in network security group '$($azure_nsg_name)'" -ForegroundColor DarkGray}
 
 #Run Packer to create an image
 if (-not $vhd_full_path) {
@@ -607,6 +618,6 @@ Write-Host "`nCompleted in $completed."
 #Report results and next steps
 Write-host "`nNext steps:"  -ForegroundColor Cyan
 Write-host " - Optionally review build environment '$($build_cloud_name)' at '$($appveyor_url)/build-clouds/$($cloud.buildCloudId)'" -ForegroundColor DarkGray
-Write-host " - To start buling on Azure set " -ForegroundColor DarkGray -NoNewline
+Write-host " - To start building on Azure set " -ForegroundColor DarkGray -NoNewline
 Write-host "$($image_description) " -NoNewline 
 Write-host "build worker image in AppVeyor project settings or appveyor.yml." -ForegroundColor DarkGray
