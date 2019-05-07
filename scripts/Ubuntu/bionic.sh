@@ -167,7 +167,7 @@ function install_sqlserver() {
 }
 
 function install_azurecli() {
-    AZ_REPO=$(lsb_release -cs)
+    AZ_REPO=$OS_CODENAME
     apt-key adv --keyserver packages.microsoft.com --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF ||
         { echo "[ERROR] Cannot add microsoft's repository key." 1>&2; return 5; }
     add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" ||
