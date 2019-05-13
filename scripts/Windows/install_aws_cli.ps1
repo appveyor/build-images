@@ -9,7 +9,7 @@ cmd /c start /wait msiexec /i $msiPath /quiet
 del $msiPath
 
 Add-SessionPath "$env:ProgramFiles\Amazon\AWSCLI"
-Add-Path "$env:ProgramFiles\Amazon\AWSCLI
+Add-Path "$env:ProgramFiles\Amazon\AWSCLI"
 
 # checking installation
 # aws --version
