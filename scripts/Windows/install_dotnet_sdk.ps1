@@ -19,7 +19,12 @@ function Install-SDK($sdkVersion) {
     Write-Host "Installed .NET Core SDK $sdkVersion" -ForegroundColor Green
 }
 
+Install-SDK "1.1.14"
 Install-SDK "2.1.503"
+Install-SDK "2.1.507"
 Install-SDK "2.1.603"
+Install-SDK "2.1.604"
 Install-SDK "2.2.103"
+Install-SDK "2.2.107"
 Install-SDK "2.2.203"
+Install-SDK "2.2.204"
