@@ -107,7 +107,10 @@
             "{{ template_dir }}/scripts/Windows/install_cmake.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres96.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres10.ps1",
-            "{{ template_dir }}/scripts/Windows/install_postgres11.ps1"
+            "{{ template_dir }}/scripts/Windows/install_postgres11.ps1",
+            "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
+            "{{ template_dir }}/scripts/Windows/install_erlang.ps1",
+            "{{ template_dir }}/scripts/Windows/install_mongo.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
