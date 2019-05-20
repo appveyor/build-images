@@ -128,13 +128,10 @@
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
-    }
-        "type": "powershell",
-        "scripts":[            
-            "{{ template_dir }}/scripts/Windows/wait_docker.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "windows-restart",
+        "restart_timeout": "30m"
     }
   ],
   "builders": [
