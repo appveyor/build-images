@@ -87,7 +87,7 @@ $WorkLoads = '--add Microsoft.VisualStudio.Workload.ManagedDesktop ' + `
 		'--add component.android.sdk27 '
 
 $Sku = 'Community'
-$VSBootstrapperURL = 'https://aka.ms/vs/15/release/vs_community.exe'
+$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
 
 $ErrorActionPreference = 'Stop'
 
