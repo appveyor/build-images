@@ -84,6 +84,7 @@ $WorkLoads = '--add Microsoft.VisualStudio.Workload.ManagedDesktop ' + `
 		'--add microsoft.visualstudio.component.azure.mobileappssdk ' + `
 		'--add microsoft.visualstudio.component.azure.servicefabric.tools ' + `
 		'--add microsoft.visualstudio.component.teamoffice ' + `
+		'--add microsoft.visualstudio.component.winxp ' + `
 		'--add component.android.sdk27 '
 
 $Sku = 'Community'
