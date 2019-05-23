@@ -57,12 +57,23 @@ else
     echo "[WARNING] /etc/os-release not found - cant find VERSION_CODENAME. Will not install OS specific applications."
 fi
 
+function monitoring_host() {
+    echo
+    echo "-------------- Monitoring info ---------------"
+    df -h
+    ping 8.8.8.8 -c 4
+    echo "-------------- Monitoring info ---------------"
+    echo
+}
+
 function _abort() {
+    monitoring_host
     echo "Aborting." 1>&2
     exit "$1"
 }
 
 function _continue() {
+    monitoring_host
     echo "Continue installation..." 1>&2
 }
 
