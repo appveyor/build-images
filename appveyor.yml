@@ -3,7 +3,7 @@ image: ubuntu
 
 environment:
   matrix:
-    - TEMPLATE: windows
+    - TEMPLATE: ws2019
       CLOUD: Azure
     - TEMPLATE: vs2019
       CLOUD: Azure
@@ -12,7 +12,7 @@ environment:
     - TEMPLATE: ubuntu1604
       CLOUD: Azure
 
-    - TEMPLATE: windows
+    - TEMPLATE: ws2019
       CLOUD: GCE
     - TEMPLATE: vs2019
       CLOUD: GCE
@@ -21,7 +21,7 @@ environment:
     - TEMPLATE: ubuntu1604
       CLOUD: GCE
 
-    - TEMPLATE: windows
+    - TEMPLATE: ws2019
       CLOUD: AWS
     - TEMPLATE: vs2019
       CLOUD: AWS
@@ -65,7 +65,7 @@ build_script:
 - sh: |
     # find propper azure_storage_account
     case "${TEMPLATE}" in
-      windows )
+      ws2019 )
         azure_storage_account=${azure_storage_account_prem}
         ;;
       vs2019 )

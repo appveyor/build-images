@@ -179,7 +179,7 @@
         "client_secret": "{{ user `azure_client_secret` }}",
         "location": "{{ user `azure_location` }}",
 
-        "temp_resource_group_name": "packer-RG-win-{{uuid}}",
+        "temp_resource_group_name": "packer-RG-ws2019-{{uuid}}",
 
         "os_type": "Windows",
         "image_publisher": "MicrosoftWindowsServer",
@@ -188,8 +188,8 @@
         "vm_size": "{{user `azure_vm_size`}}",
         "os_disk_size_gb": 128,
 
-        "capture_container_name": "appveyor-images-win",
-        "capture_name_prefix": "win-{{user `datemark`}}",
+        "capture_container_name": "appveyor-images-ws2019",
+        "capture_name_prefix": "ws2019-{{user `datemark`}}",
         "resource_group_name": "{{ user `azure_resource_group_name` }}",
         "storage_account": "{{ user `azure_storage_account` }}",
 
