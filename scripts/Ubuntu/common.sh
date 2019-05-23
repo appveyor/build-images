@@ -229,8 +229,9 @@ function install_tools() {
 #        tools_array+=( "linux-virtual-lts-${OS_CODENAME}" "linux-tools-virtual-lts-${OS_CODENAME}" "linux-cloud-tools-virtual-lts-${OS_CODENAME}" )
         tools_array+=( "linux-tools-generic" "linux-cloud-tools-generic" )
     fi
+    sleep 5
     apt-get -y -q install "${tools_array[@]}" --no-install-recommends ||
-        { echo "[ERROR] Cannot install various packages." 1>&2; return 10; }
+        { echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2; return 10; }
     log_exec dpkg -l "${tools_array[@]}"
 }
 
