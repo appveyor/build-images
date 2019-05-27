@@ -100,6 +100,10 @@ build_script:
         CONTAINER_SECURE_ENVS+=( aws_region=${aws_region} )
         ;;
     esac
+- sh: |
+    if [[ -n ${slackhook_url} ]]; then
+      CONTAINER_SECURE_ENVS+=( slackhook_url=${slackhook_url} )
+    fi
 
 - sh: |
     # start baking image in West US region

@@ -110,3 +110,11 @@ if [ -d /mnt/packer-logs ]; then
         mv "./pwd-${DATEMARK}.log" /mnt/packer-logs/
     fi
 fi
+
+# slack notification
+if [[ -n "${slackhook_url}" ]]; then
+    curl -X POST -H 'Content-type: application/json' \
+    --data "{'text':'Image Build finished:\\n${TEMPLATE}\\n${DESCR}\\n${PACKER_LOG}\\nversions-${DATEMARK}.log\\npwd-${DATEMARK}.log'}" \
+    "${slackhook_url}"
+fi
+
