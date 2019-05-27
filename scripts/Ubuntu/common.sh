@@ -230,8 +230,15 @@ function install_tools() {
         tools_array+=( "linux-tools-generic" "linux-cloud-tools-generic" )
     fi
     sleep 5
-    apt-get -y -q install "${tools_array[@]}" --no-install-recommends ||
-        { echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2; return 10; }
+    APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true -o Debug::pkgDPkgPM=true"
+    apt-get -y ${APT_GET_OPTIONS} install "${tools_array[@]}" --no-install-recommends ||
+        { 
+            echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2;
+            apt-cache policy gcc 
+            apt-cache policy zip
+            apt-cache policy make
+            return 10;
+        }
     log_exec dpkg -l "${tools_array[@]}"
 }
 
