@@ -59,7 +59,7 @@ function install_pip() {
 }
 
 function prepare_dotnet_packages() {
-    declare SDK_VERSIONS=( "2.1.105" "2.1.200" "2.1.201" "2.1.202" "2.1" "2.2" )
+    declare SDK_VERSIONS=( "2.1.105" "2.1.200" "2.1.201" "2.1" "2.2" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.0.7" "2.1" "2.2" )
