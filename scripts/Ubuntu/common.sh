@@ -307,7 +307,7 @@ json.dump(a,open('${CONFIG_FILE}','w'))" &&
         { echo "[ERROR] Cannot update config file '${CONFIG_FILE}'." 1>&2; popd; return 40; }
 
     echo "[Unit]
-Description=AppVeyor Build Agent
+Description=Appveyor Build Agent
 
 [Service]
 WorkingDirectory=${AGENT_DIR}
@@ -355,6 +355,7 @@ function install_buildagent_docker() {
 }
 
 # install dotnet prior executing this function, otherwise systemd will be configured incorrectly.
+# This one is an old approach and was deprecated.
 function install_buildagent() {
     AGENT_MODE=$1
     AGENT_FILE=appveyor-build-agent-xplat.zip
@@ -390,11 +391,11 @@ json.dump(a,open('${CONFIG_FILE}','w'))" &&
         { echo "[ERROR] Cannot update config file '${CONFIG_FILE}'." 1>&2; popd; return 40; }
 
     echo "[Unit]
-Description=AppVeyor Build Agent
+Description=Appveyor Build Agent
 
 [Service]
 WorkingDirectory=${AGENT_DIR}
-ExecStart=$(which dotnet) ${AGENT_DIR}/AppVeyor.BuildAgent.Service.dll
+ExecStart=$(which dotnet) ${AGENT_DIR}/Appveyor.BuildAgent.Service.dll
 Restart=no
 SyslogIdentifier=appveyor-build-agent
 User=appveyor
@@ -597,23 +598,24 @@ function configure_powershell() {
     local PROFILE_NAME=Microsoft.PowerShell_profile.ps1
     # configure PWSH profile
     mkdir -p ${PROFILE_PATH} &&
-    write_line "${PROFILE_PATH}/${PROFILE_NAME}" "Import-Module ${AGENT_DIR}/AppVeyor.BuildAgent.PowerShell.dll" ||
+    write_line "${PROFILE_PATH}/${PROFILE_NAME}" "Import-Module ${AGENT_DIR}/Appveyor.BuildAgent.PowerShell.dll" ||
         { echo "[ERROR] Cannot create and change PWSH profile ${PROFILE_PATH}/${PROFILE_NAME}." 1>&2; return 30; }
 
     pwsh -c 'Install-Module Pester -Force'
 }
 
+# This module was deprecated
 function add_appveyor_module() {
     if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
     if [[ -z "${USER_HOME}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
-    local MODULES_PATH=${USER_HOME}/.local/share/powershell/Modules/AppVeyor/
+    local MODULES_PATH=${USER_HOME}/.local/share/powershell/Modules/Appveyor/
     mkdir -p ${MODULES_PATH} &&
-    for file in "AppVeyor.BuildAgent.Api.dll" "AppVeyor.BuildAgent.Models.dll" "AppVeyor.BuildAgent.PowerShell.dll"; do
+    for file in "Appveyor.BuildAgent.Api.dll" "Appveyor.BuildAgent.Models.dll" "Appveyor.BuildAgent.PowerShell.dll"; do
         cp "${AGENT_DIR}/${file}" "${MODULES_PATH}" ||
             { echo "[ERROR] Cannot copy '${AGENT_DIR}/${file}' to '${MODULES_PATH}'." 1>&2; return 30; }
     done
     echo "@{
-RootModule = 'AppVeyor.BuildAgent.PowerShell.dll'
+RootModule = 'Appveyor.BuildAgent.PowerShell.dll'
 ModuleVersion = '1.0'
 GUID = '1a9a19d4-28de-4d1f-aa44-aecf16b423cb'
 Author = 'Vasily Pleshakov'
@@ -628,7 +630,7 @@ PrivateData = @{
     }
 }
 }
-" > ${MODULES_PATH}/AppVeyor.psd1
+" > ${MODULES_PATH}/Appveyor.psd1
 }
 
 function dotnet_packages() {
