@@ -230,7 +230,7 @@ function install_tools() {
         tools_array+=( "linux-tools-generic" "linux-cloud-tools-generic" )
     fi
     sleep 5
-    APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true -o Debug::pkgDPkgPM=true"
+    APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
     apt-get -y ${APT_GET_OPTIONS} install "${tools_array[@]}" --no-install-recommends ||
         { 
             echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2;
