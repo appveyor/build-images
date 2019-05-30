@@ -135,10 +135,10 @@ function add_user() {
 
     local PASSWD
     PASSWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${PASSWD_LENGTH};)
-    if LOGGING; then
-        echo -e "${PASSWD}\n${PASSWD}\n" | passwd "${USER_NAME}"
+    echo -e "${PASSWD}\n${PASSWD}\n" | passwd "${USER_NAME}"
+    if "${LOGGING}"; then
+        echo "PASSWD=${PASSWD}" >${HOME}/pwd-$DATEMARK.log
     fi
-    echo "PASSWD=${PASSWD}" >${HOME}/pwd-$DATEMARK.log
     return 0
 }
 
