@@ -29,6 +29,8 @@ case  ${PACKER_BUILDER_TYPE} in
         BUILD_AGENT_MODE=HyperV;;
     azure* )
         BUILD_AGENT_MODE=Azure;;
+    amazon-* )
+        BUILD_AGENT_MODE=AmazonEC2;;
     * )
         BUILD_AGENT_MODE=GCE;;
 esac
