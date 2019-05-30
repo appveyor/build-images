@@ -103,6 +103,8 @@ add_user ||
 
 chown_logfile || _continue
 
+wait_cloudinit || _continue
+
 configure_apt ||
     _abort $?
 
