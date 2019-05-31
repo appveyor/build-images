@@ -6,12 +6,21 @@ init:
   - echo SKIP_CLOUD=${SKIP_CLOUD}
 
 build_script:
-- docker build -t appveyor/build-images:${APPVEYOR_BUILD_VERSION} .
+  - ps: |
+      # packer requires add_ssh_known_hosts.ps1
+      $AddhostsScriptPath = [io.path]::combine($env:APPVEYOR_BUILD_FOLDER, "scripts", "Ubuntu", "add_ssh_known_hosts.ps1")
+      $AddhostsScriptUrl = 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enterprise/add_ssh_known_hosts.ps1'
+      (New-Object Net.WebClient).DownloadFile($AddhostsScriptUrl, $AddhostsScriptPath)
+      if (-Not(Test-Path -Path $AddhostsScriptPath)) {
+        echo "[ERROR] There is no add_ssh_known_hosts.ps1 file. Aborting build."
+        exit 10
+      }
+  - docker build -t appveyor/build-images:${APPVEYOR_BUILD_VERSION} .
 
 deploy_script:
 # publish image
-- docker login -u ${DOCKER_USER} -p ${DOCKER_PWD}
-- docker push appveyor/build-images:${APPVEYOR_BUILD_VERSION}
+  - docker login -u ${DOCKER_USER} -p ${DOCKER_PWD}
+  - docker push appveyor/build-images:${APPVEYOR_BUILD_VERSION}
 
 
 
