@@ -62,7 +62,17 @@ PACKER_PARAMS+=( "-var"  "datemark=${DATEMARK}" )
 
 if check_env_vars ${APPVEYOR_VARS}; then
     DESCR="build N ${APPVEYOR_BUILD_NUMBER}, ${APPVEYOR_REPO_COMMIT:0:7}, ${APPVEYOR_REPO_COMMIT_MESSAGE}"
-    PACKER_PARAMS+=( "-var"  "image_description=${DESCR}" )
+    PACKER_PARAMS+=( "-var" "image_description=${DESCR}" )
+fi
+
+if [[ -n "${DEPLOY_PARTS}" ]]; then
+    PACKER_PARAMS+=( "-var" "deploy_parts=${DEPLOY_PARTS}" )
+    echo "DEPLOY_PARTS set to ${DEPLOY_PARTS}"
+fi
+
+if [[ -n "${GCE_IMAGE_NAME}" ]]; then
+    echo "gce_source_image set to ${GCE_IMAGE_NAME}"
+    PACKER_PARAMS+=( "-var" "gce_source_image=${GCE_IMAGE_NAME}" )
 fi
 
 # check template exists
