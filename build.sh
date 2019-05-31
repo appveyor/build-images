@@ -116,5 +116,7 @@ if [[ -n "${slackhook_url}" ]]; then
     curl -X POST -H 'Content-type: application/json' \
     --data "{'text':'Image Build finished:\\n${TEMPLATE}\\n${DESCR}\\n${PACKER_LOG}\\nversions-${DATEMARK}.log\\npwd-${DATEMARK}.log'}" \
     "${slackhook_url}"
+else
+    echo 'Cannot notify Slack: $slackhook_url not set'
 fi
 
