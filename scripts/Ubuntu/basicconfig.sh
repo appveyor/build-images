@@ -196,7 +196,7 @@ su -l ${USER_NAME} -c "
         $(declare -f configure_svn)
         configure_svn" ||
     _abort $?
-install_virtualbox 6.0.6 ||
+install_virtualbox 6.0.8 ||
     _continue $?
 install_mysql ||
     _abort $?
@@ -291,7 +291,7 @@ disable_sqlserver ||
 
 install_yarn ||
     _abort $?
-install_packer 1.4.0 ||
+install_packer 1.4.1 ||
     _abort $?
 
 install_awscli ||
@@ -301,7 +301,7 @@ install_azurecli ||
     _abort $?
 install_kubectl ||
     _abort $?
-install_cmake 3.14.3 ||
+install_cmake 3.14.4 ||
     _abort $?
 # install_curl 7.63.0 ||
 #     _abort $?
