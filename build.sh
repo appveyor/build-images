@@ -12,6 +12,7 @@
 readonly AZURE_VARS="azure_client_id azure_client_secret azure_location azure_resource_group_name azure_storage_account azure_subscription_id"
 readonly GCE_VARS="gce_account_file gce_project gce_zone"
 readonly AWS_VARS="aws_access_key aws_secret_key aws_region"
+readonly AWS_OPT_VARS="aws_ssh_keypair_name aws_ssh_private_key_file"
 readonly APPVEYOR_CREDENTIALS="appveyor_user appveyor_password"
 readonly APPVEYOR_VARS="APPVEYOR_BUILD_NUMBER APPVEYOR_REPO_COMMIT APPVEYOR_REPO_COMMIT_MESSAGE"
 PACKER_PARAMS=( )
@@ -27,7 +28,9 @@ function check_env_vars() {
 
 function make_params() {
     for v in "$@"; do
-        PACKER_PARAMS+=( "-var"  "${v}=${!v}" )
+        if [[ -n "${!v}" ]]; then
+            PACKER_PARAMS+=( "-var"  "${v}=${!v}" )
+        fi
     done
 }
 
@@ -42,9 +45,15 @@ case "${builders}" in
     echo "${gce_account_file}" > gce_account.json
     gce_account_file=gce_account.json
     ;;
+  amazon-* )
+    # prepare ssh private key file, if exist
+    if [[ -n "${aws_ssh_private_key_file}" ]] && [[ -n "${aws_ssh_private_key_base64}" ]]; then
+        echo "${aws_ssh_private_key_base64}" | base64 -d > "${aws_ssh_private_key_file}"
+    fi
+    ;;
 esac
 if [[ $builders =~ azure- ]]; then check_env_vars ${AZURE_VARS} || exit $?; make_params ${AZURE_VARS}; fi
-if [[ $builders =~ amazon- ]]; then check_env_vars ${AWS_VARS} || exit $?; make_params ${AWS_VARS}; fi
+if [[ $builders =~ amazon- ]]; then check_env_vars ${AWS_VARS} || exit $?; make_params ${AWS_VARS} ${AWS_OPT_VARS}; fi
 if [[ $builders =~ google ]]; then check_env_vars ${GCE_VARS} || exit $?; make_params ${GCE_VARS}; fi
 
 # check secret files passed to container
