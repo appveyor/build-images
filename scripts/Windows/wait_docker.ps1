@@ -16,5 +16,5 @@ while ($i -lt (300)) {
 }
 
 if (-not $finished) {
-	Throw "Docker peparation was not finished"    
+    Throw "Docker peparation was not finished"
 }
