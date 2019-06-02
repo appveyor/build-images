@@ -541,7 +541,7 @@ password-stores =" > .subversion/config ||
     popd
 }
 
-function install_pip() {
+function install_pip_old() {
     easy_install pip ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
@@ -552,6 +552,17 @@ function install_pip() {
     log_exec pip --version
 }
 
+function install_pip() {
+    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
+        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
+    python get-pip.py ||
+        { echo "[WARNING] Cannot install pip." ; return 10; }
+
+    log_exec pip --version
+
+    #cleanup
+    rm get-pip.py
+}
 function install_pythons(){
     declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.8.0a4" )
     for i in "${PY_VERSIONS[@]}"; do
