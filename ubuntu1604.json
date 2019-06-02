@@ -178,7 +178,21 @@
           "volume_type": "gp2",
           "delete_on_termination": true
         }
-      ]
+      ],
+      "run_tags": {
+        "OS_Version": "Ubuntu1604",
+        "datemark": "{{user `datemark`}}",
+        "description": "{{user `image_description`}}",
+        "Base_AMI_Name": "{{ .SourceAMIName }}",
+        "Extra": "{{ .SourceAMITags.TagName }}"
+      },
+      "tags": {
+        "OS_Version": "Ubuntu1604",
+        "datemark": "{{user `datemark`}}",
+        "description": "{{user `image_description`}}",
+        "Base_AMI_Name": "{{ .SourceAMIName }}",
+        "Extra": "{{ .SourceAMITags.TagName }}"
+      }
     },
     {
       "type": "virtualbox-iso",
