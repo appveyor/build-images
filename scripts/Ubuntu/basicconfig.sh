@@ -97,6 +97,7 @@ if [ "$#" -gt 0 ]; then
         esac
         shift
     done
+    cleanup         #cleanup should be executed each time.
     exit 0
 fi
 
