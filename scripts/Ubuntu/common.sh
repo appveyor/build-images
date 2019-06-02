@@ -553,7 +553,7 @@ function install_pip() {
 }
 
 function install_pythons(){
-    declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.8.0" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.8.0a4" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
