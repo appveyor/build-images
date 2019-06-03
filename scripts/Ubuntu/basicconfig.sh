@@ -139,6 +139,9 @@ install_p7zip
 install_pip ||
     _abort $?
 
+install_virtualenv ||
+    _abort $?
+
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f install_pythons)

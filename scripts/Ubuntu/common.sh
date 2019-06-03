@@ -220,7 +220,7 @@ function install_tools() {
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" )
     # python packages
     tools_array+=( "python" "python-dev" "python3" )
-    tools_array+=( "python-virtualenv" "virtualenv" "python-setuptools" )
+    tools_array+=( "python-setuptools" )
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
     tools_array+=( "libbz2-dev" "python3-tk" "tk-dev" "libsqlite3-dev" )
@@ -550,6 +550,13 @@ function install_pip_old() {
     # pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
 
     log_exec pip --version
+}
+
+function install_virtualenv() {
+    pip install virtualenv||
+        { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
+
+    log_exec virtualenv --version
 }
 
 function install_pip() {
