@@ -6,6 +6,7 @@ $exePath = "$env:temp\LLVM-$llvmVersion-win64.exe"
 Write-Host "Installing..."
 cmd /c start /wait $exePath /S
 Add-Path "$env:ProgramFiles\LLVM\bin"
+Add-SessionPath "$env:ProgramFiles\LLVM\bin"
 
 cmd /c clang --version
 
