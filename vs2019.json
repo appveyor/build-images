@@ -111,7 +111,10 @@
             "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
             "{{ template_dir }}/scripts/Windows/install_erlang.ps1",
             "{{ template_dir }}/scripts/Windows/install_mongo.ps1",
-            "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1"
+            "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1",
+            "{{ template_dir }}/scripts/Windows/install_java.ps1",
+            "{{ template_dir }}/scripts/Windows/install_jdk11.ps1",
+            "{{ template_dir }}/scripts/Windows/install_jdk11.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
