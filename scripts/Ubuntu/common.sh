@@ -541,19 +541,8 @@ password-stores =" > .subversion/config ||
     popd
 }
 
-function install_pip_old() {
-    easy_install pip ||
-        { echo "[WARNING] Cannot install pip." ; return 10; }
-
-    # update all system's Python packages - Somehow this lead to inability to login via SSH later. 
-    # I suppose it is because pip updates google's packages in system Python.
-    # pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
-
-    log_exec pip --version
-}
-
 function install_virtualenv() {
-    pip install virtualenv||
+    pip install virtualenv ||
         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
 
     log_exec virtualenv --version
@@ -570,6 +559,7 @@ function install_pip() {
     #cleanup
     rm get-pip.py
 }
+
 function install_pythons(){
     declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.8.0a4" )
     for i in "${PY_VERSIONS[@]}"; do
