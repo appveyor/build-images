@@ -117,7 +117,9 @@
             "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
             "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix311.ps1",
-            "{{ template_dir }}/scripts/Windows/install_chrome_browser.ps1"
+            "{{ template_dir }}/scripts/Windows/install_chrome_browser.ps1",
+            "{{ template_dir }}/scripts/Windows/install_llvm.ps1",
+            "{{ template_dir }}/scripts/Windows/install_llvm_extension_vs2019.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
