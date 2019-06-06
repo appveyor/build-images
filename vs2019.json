@@ -116,7 +116,8 @@
             "{{ template_dir }}/scripts/Windows/install_jdk11.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
             "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
-            "{{ template_dir }}/scripts/Windows/install_wix311.ps1"
+            "{{ template_dir }}/scripts/Windows/install_wix311.ps1",
+            "{{ template_dir }}/scripts/Windows/install_chrome_browser.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
