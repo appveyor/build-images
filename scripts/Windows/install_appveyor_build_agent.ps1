@@ -23,6 +23,6 @@ Set-ItemProperty "HKLM:\Software\AppVeyor\Build Agent" -Name "Mode" -Value $env:
 New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "Run" -Force | Out-Null
 
 Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "AppVeyor.BuildAgent" `
-	-Value 'powershell -File "C:\Program Files\AppVeyor\BuildAgent\start-appveyor-agent.ps1"'
+	-Value 'powershell -File "C:\Program Files\AppVeyor\BuildAgent\update-appveyor-agent.ps1"'
 
 Write-Host "AppVeyor Build Agent installed"
