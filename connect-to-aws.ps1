@@ -88,7 +88,7 @@ param
   [string]$image_description = "Windows Server 2016 on AWS",
 
   [Parameter(Mandatory=$false)]
-  [string]$packer_template = ".\minimal-windows-server.json"
+  [string]$packer_template = "./minimal-windows-server.json"
 )
 
 $ErrorActionPreference = "Stop"
@@ -123,12 +123,12 @@ if (-not (test-path $packer_template)) {
 }
 
 if (-not (Get-Module -Name *AWSPowerShell* -ListAvailable)) {
-    Write-Warning "This script depends on AWS Tools for PowerShell. Please install them with `Install-Module -Name AWSPowerShell` or `Install-Module -Name AWSPowerShell.NetCore` depending on your PowerShell platform"
+    Write-Warning "This script depends on AWS Tools for PowerShell. Please install them with 'Install-Module -Name AWSPowerShell'"
     return
 }
 
 if (-not (Get-Command packer -ErrorAction Ignore)) {
-    Write-Warning "This script depends on Packer by HashiCorp. Please install it with 'choco install packer' command or from download page https://www.packer.io/downloads.html. If it is already installed, please ensure that PATH environment variable contains path to it."
+    Write-Warning "This script depends on Packer by HashiCorp. Please install it with 'choco install packer' ('apt get packer' for Linux) command or follow https://www.packer.io/intro/getting-started/install.html. If it is already installed, please ensure that PATH environment variable contains path to it."
     return
 }
 
@@ -187,7 +187,7 @@ $aws_cache_storage_name = "$($common_prefix)-aws-cache"
 $aws_artifact_storage_name = "$($common_prefix)-aws-artifacts"
 $aws_sg_name = "$($common_prefix)-sg"
 $aws_kp_name = "$($common_prefix)-kp"
-$aws_kp_path = Join-Path -Path $env:userprofile -ChildPath "$aws_kp_name.pem"
+$aws_kp_path = if ($isLinux) {Join-Path -Path $home -ChildPath "$aws_kp_name.pem"} else {Join-Path -Path $env:userprofile -ChildPath "$aws_kp_name.pem"}
 $aws_profile = "$($common_prefix)-temp"
 $build_cloud_name = "$($common_prefix)-aws-build-environment"
 
