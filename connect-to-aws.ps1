@@ -187,6 +187,7 @@ $aws_cache_storage_name = "$($common_prefix)-aws-cache"
 $aws_artifact_storage_name = "$($common_prefix)-aws-artifacts"
 $aws_sg_name = "$($common_prefix)-sg"
 $aws_kp_name = "$($common_prefix)-kp"
+$aws_kp_path = Join-Path -Path $env:userprofile -ChildPath "$aws_kp_name.pem"
 $aws_profile = "$($common_prefix)-temp"
 $build_cloud_name = "$($common_prefix)-aws-build-environment"
 
@@ -484,8 +485,8 @@ try {
     $kp = Get-EC2KeyPair -Region $aws_region -ErrorAction Ignore | ? {$_.KeyName -eq $aws_kp_name}
     if (-not $kp) {
         $kp = New-EC2KeyPair -KeyName $aws_kp_name -Region $aws_region
-        $kp.KeyMaterial | Out-File -Encoding ascii .\$aws_kp_name.pem
-        Write-Warning "AWS key pair $($aws_kp_name) has been created. Please store private key $(Resolve-Path .\$aws_kp_name.pem) in a secure location" 
+        $kp.KeyMaterial | Out-File -Encoding ascii $aws_kp_path
+        Write-Warning "AWS key pair $($aws_kp_name) has been created. Please store private key $($aws_kp_path) in a secure location" 
     }
     Write-host "Using key pair '$($aws_kp_name)'" -ForegroundColor DarkGray
 
@@ -747,13 +748,13 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
     Write-host " - To start building on AWS set " -ForegroundColor DarkGray -NoNewline
     Write-host "$($image_description) " -NoNewline 
     Write-host "build worker image in AppVeyor project settings or appveyor.yml." -ForegroundColor DarkGray
-    if (Test-Path .\$aws_kp_name.pem) {
-        Write-Host " - Please do not forget to move $(Resolve-Path .\$aws_kp_name.pem) to a secure location." -ForegroundColor DarkGray
+    if (Test-Path $aws_kp_path) {
+        Write-Host " - Please do not forget to move $($aws_kp_path) to a secure location." -ForegroundColor DarkGray
     }
 }
 
 catch {
-    Write-Warning "Script exited with error: $($_.Exception.Message)"
+    Write-Warning "Script exited with error: $($_.Exception)"
     exitScript
 }
 
