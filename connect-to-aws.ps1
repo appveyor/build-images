@@ -3,7 +3,7 @@
     Script to enable AWS builds. Works with both hosted AppVeyor and AppVeyor server.
 
 .DESCRIPTION
-    You can connect you AppVeyor account (on both hosted AppVeyor and on-premise AppVeyor Server) to your own AWS account for AppVeyor to instantiate build VMs in it. It has a lot of benefits like having ability to customize your build image, select desired VM size, set custom build timeout and many others. To simplify setup process for you, we created script which provisions necessary AWS resources, runs Hashicorp Packer to create a basic build image, and put all AppVeyor configuration together. After running this script, you should be able to start builds on AWS immediately (and optionally customize your AWS build environment later).
+    You can connect your AppVeyor account (on both hosted AppVeyor and on-premise AppVeyor Server) to your own AWS account for AppVeyor to instantiate build VMs in it. There are several benefits like having the ability to customize your build image, select desired VM size, set custom build timeout and many others. To simplify the setup process for you, we created a script which provisions necessary AWS resources, runs Hashicorp Packer to create a basic build image, and puts all the AppVeyor configuration together. After running this script, you should be able to start builds on AWS immediately (and optionally customize your AWS build environment later).
 
 .PARAMETER appveyor_api_key
     API key for specific account (not 'All accounts'). Hosted AppVeyor users can find it at https://ci.appveyor.com/api-keys. Appveyor Server users can find it at <appveyor_server_url>/api-keys.
@@ -12,17 +12,17 @@
     AppVeyor URL. For hosted AppVeyor it is https://ci.appveyor.com. For Appveyor Server users it is URL of on-premise AppVeyor Server installation
 
 .PARAMETER aws_access_key_id
-    AWS Access Key ID to be used both by Packer to create and AMI and by AppVeyor to create required AWS resources and provision build VMs.
+    AWS Access Key ID to be used both by Packer to create an AMI and by AppVeyor to create required AWS resources and provision build VMs.
 
 .PARAMETER aws_secret_access_key
-    AWS Secret Access Key to be used both by Packer to create and AMI and by AppVeyor to create required AWS resources and provision build VMs.
-    Note later you can replace those credentials with Role ARN to assume in AppVeyor settings fro your AWS build environment.
+    AWS Secret Access Key to be used both by Packer to create an AMI and by AppVeyor to create required AWS resources and provision build VMs.
+    Note: later you can replace those credentials with Role ARN to assume in AppVeyor settings for your AWS build environment.
 
 .PARAMETER skip_disclaimer
     Skip warning related to AWS resources creation and potential charges. It is recommended to read the warning at least once, but it can come handy if you need to re-run the script.
 
 .PARAMETER aws_region
-    AWS region where you want script to create build worker AMI and all additional required resources. Also AppVeyor will create build VMs in this location. Use short notation (not display name) e.g. 'us-east-1', not 'US East (Virginia)'.
+    AWS region where you want the script to create a build worker AMI and all additional required resources. Also, AppVeyor will create build VMs in this location. Use short notation (not display name) e.g. 'us-east-1', not 'US East (Virginia)'.
 
 .PARAMETER aws_instance_type
     Type of EC2 instance, e.g. 'm4.large'
@@ -31,16 +31,16 @@
     Subnet ID for a subnet where build VMs will be created.
 
 .PARAMETER aws_ami_id
-    It can happen that you run the script, and it created a valid AMI, but some AppVeyor settings were not set correctly (or just you want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating an AMI) and pass already created AMI ID to this parameter.
+    It may be that you run the script, and it creates a valid AMI, but some AppVeyor settings are not set correctly (or you may just want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating an AMI) and pass the existing AMI ID to this parameter.
 
 .PARAMETER common_prefix
     Script will prepend all created AWS resources and AppVeyor build environment name with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
 
 .PARAMETER image_description
-    Description to be passed to the Packer and name to be used for AppVeyor image. Default value is 'Windows Server 2016 on AWS'.
+    Description to be passed to Packer and name to be used for AppVeyor image. Default value is 'Windows Server 2016 on AWS'.
 
 .PARAMETER packer_template
-    If you are familiar with the Hashicorp Packer, you can replace template used by this script with another one. Default value is '.\minimal-windows-server.json'.
+    If you are familiar with Hashicorp Packer, you can replace template used by this script with another one. Default value is '.\minimal-windows-server.json'.
 
     .EXAMPLE
     .\connect-to-aws.ps1
@@ -48,7 +48,7 @@
 
     .EXAMPLE
     .\connect-to-aws.ps1 -appveyor_api_key XXXXXXXXXXXXXXXXXXXXX -appveyor_url "https://ci.appveyor.com" -aws_access_key_id XXXXXXXXXXXXXXXXXXXX -aws_secret_access_key XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -skip_disclaimer -aws_region us-east-1 -aws_instance_type m4.large -aws_subnet subnet-xxxxxxxx
-    Run script with all required parameters so script will ask now questions. It will create resources in AWS US East (Virginia region will connect it to the hosted AppVeyor.
+    Run script with all required parameters so script will ask no questions. It will create resources in AWS US East (Virginia) region and will connect it to hosted AppVeyor.
 #>
 
 [CmdletBinding()]
@@ -108,7 +108,7 @@ if ($appveyor_api_key -like "v2.*") {
 try {
     $responce = Invoke-WebRequest -Uri $appveyor_url -ErrorAction SilentlyContinue
     if ($responce.StatusCode -ne 200) {
-        Write-warning "AppVeyor URL '$($appveyor_url)' respondd with code $($responce.StatusCode)"
+        Write-warning "AppVeyor URL '$($appveyor_url)' responded with code $($responce.StatusCode)"
         return
     }
 }
@@ -196,7 +196,7 @@ $install_user = "appveyor"
 $install_password = "ABC" + (New-Guid).ToString().SubString(0, 12).Replace("-", "") + "!"
 
 if (-not $skip_disclaimer) {
-     Write-Warning "`nThis script will create EC2 resources such as security group and key pair. Also, it will run Hashicorp Packer which will create its own temporary EC2 resources and leave AMI for future use by AppVeyor build VMs. Please be aware of possible charges from Amazon. `nIf AWS account you are authorized to contains production resources, you might consider to create a separate account and run this script against it. Additionally, a separate account is better to distinguish AWS bills for CI machines from other AWS bills. `nPress Enter to continue or Ctrl-C to exit the script. Use '-skip_disclaimer' switch parameter to skip this message next time."
+     Write-Warning "`nThis script will create EC2 resources such as security group and key pair. Also, it will run Hashicorp Packer which will create its own temporary EC2 resources and leave AMI for future use by AppVeyor build VMs. Please be aware of possible charges from Amazon. `nIf AWS account you are authorized to contains production resources, you might consider creating a separate account and run this script against it. Additionally, a separate account is better to distinguish AWS bills for CI machines from other AWS bills. `nPress Enter to continue or Ctrl-C to exit the script. Use '-skip_disclaimer' switch parameter to skip this message next time."
      $disclaimer = Read-Host
      }
 
@@ -500,7 +500,7 @@ try {
         $bucketregion = (Get-S3BucketLocation -BucketName $aws_s3_bucket_cache).Value
         if ($bucketregion -and ($bucketregion -ne $aws_region)) {
             Write-Warning @"
-S3 bucket $($aws_s3_bucket_cache) id in '$($bucketregion)' region, while build environment is being set up in '$($aws_region)' region. This may lead to slower builds and unnessesary carges
+S3 bucket $($aws_s3_bucket_cache) id in '$($bucketregion)' region, while build environment is being set up in '$($aws_region)' region. This may lead to slower builds and unnecessary charges
 `nYou have one of the following options:
 `n- Restart use $($bucketregion) region instead of $($aws_region)to setup build environment.
 `n- Use another prefix to name AWS objects (use 'common_prefix' paremeter).
@@ -521,7 +521,7 @@ S3 bucket $($aws_s3_bucket_cache) id in '$($bucketregion)' region, while build e
         $bucketregion = (Get-S3BucketLocation -BucketName $aws_s3_bucket_artifacts).Value
         if ($bucketregion -and ($bucketregion -ne $aws_region)) {
             Write-Warning @"
-S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while build environment is being set up in '$($aws_region)' region. This may lead to slower builds and unnessesary carges
+S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while build environment is being set up in '$($aws_region)' region. This may lead to slower builds and unnecessary charges
 `nYou have one of the following options:
 `n- Restart use $($bucketregion) region instead of $($aws_region)to setup build environment.
 `n- Use another prefix to name AWS objects (use 'common_prefix' paremeter).
