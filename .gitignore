@@ -9,3 +9,4 @@ packer_cache/
 appveyor-tools/
 .DS_Store
 packer-manifest.*
+*.pem
