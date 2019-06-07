@@ -6,6 +6,10 @@
       "destination": "C:/"
     },
     {
+        "type": "windows-restart",
+        "restart_timeout": "30m"
+    },
+    {
         "type": "powershell",
         "scripts": [
             "{{ template_dir }}/scripts/Windows/create_appveyor_user.ps1"
@@ -64,17 +68,6 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
-            "{{ template_dir }}/scripts/Windows/install_test_agent_build_tools_2019.ps1",
-            "{{ template_dir }}/scripts/Windows/install_dotnet_devpack.ps1",
-            "{{ template_dir }}/scripts/Windows/install_dotnet_sdk.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}"
-    },
-    {
-        "type": "powershell",
-        "scripts":[
             "{{ template_dir }}/scripts/Windows/install_appveyor_build_agent_core.ps1",
             "{{ template_dir }}/scripts/Windows/enable_autologon.ps1"
         ],
@@ -93,6 +86,13 @@
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
+    },
+    {
+    "type": "powershell",
+    "inline": [
+        "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/InitializeInstance.ps1 -Schedule"
+    ],
+    "only": ["amazon-ebs"]
     }
   ],
   "builders": [
@@ -129,6 +129,40 @@
           "description": "{{user `image_description`}}",
           "date": "{{user `datemark`}}"
         }
+    },
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "{{user `aws_region`}}",
+
+      "source_ami_filter": {
+        "filters": {
+        "virtualization-type": "hvm",
+        "name": "Windows_Server-2016-English-Full-Base*",
+        "root-device-type": "ebs"
+        },
+        "owners": ["801119661308"],
+        "most_recent": true
+      },
+      "instance_type": "{{user `aws_instance_type`}}",
+
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+      "winrm_use_ssl": true,
+      "winrm_insecure": true,
+      "user_data_file":"./scripts/Windows/ec2-userdata.ps1",
+
+      "ami_name": "Appveyor Worker Windows2019 {{uuid}}",
+      "ami_description": "{{user `image_description`}}",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_size": 128,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ]
     }
   ],
   "post-processors": [

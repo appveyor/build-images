@@ -26,14 +26,14 @@
 .PARAMETER vhd_full_path
     It can happen that you run the script, and it created a valid VHD, but some AppVeyor settings were not set correctly (or just you want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating a VHD) and pass already created VHD path to this parameter.
 
-.PARAMETER azure_prefix
+.PARAMETER common_prefix
     Script will prepend all created Azure resources and AppVeyor build environment name with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
 
 .PARAMETER image_description
     Description to be passed to the Packer and name to be used for AppVeyor image. Default value is 'Windows Server 2019 on Azure'.
 
 .PARAMETER packer_template
-    If you are familiar with the Hashicorp Packer, you can replace template used by this script with another one. Default value is '.\minimal-windows-server-2019.json'.
+    If you are familiar with the Hashicorp Packer, you can replace template used by this script with another one. Default value is '.\minimal-windows-server.json'.
 
     .EXAMPLE
     .\connect-to-azure.ps1
@@ -69,13 +69,13 @@ param
   [string]$vhd_full_path,
 
   [Parameter(Mandatory=$false)]
-  [string]$azure_prefix = "appveyor",
+  [string]$common_prefix = "appveyor",
 
   [Parameter(Mandatory=$false)]
   [string]$image_description = "Windows Server 2019 on Azure",
 
   [Parameter(Mandatory=$false)]
-  [string]$packer_template = ".\minimal-windows-server-2019.json"
+  [string]$packer_template = ".\minimal-windows-server.json"
 )
 
 $ErrorActionPreference = "Stop"
@@ -87,18 +87,6 @@ $StopWatch.Start()
 $appveyor_url = $appveyor_url.TrimEnd("/")
 
 #Validate input
-$regex =[regex] "^([A-Za-z0-9]+)$"
-if (-not $regex.Match($azure_prefix).Success) {
-    Write-Warning "'azure_prefix' can contain only letters and numbers"
-    return
-}
-
-$maxazureprefix = 24 - "artifact".Length #"artifact" is longest storage account name postfix
-if ($azure_prefix.Length -ge  $maxazureprefix){
-     Write-warning "Length of 'azure_prefix' must be under $($maxazureprefix)"
-     return
-}
-
 if ($appveyor_api_key -like "v2.*") {
     Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($appveyor_url)/api-keys'"
     return
@@ -159,26 +147,46 @@ if ($appveyor_url -eq "https://ci.appveyor.com") {
     }
 }
 
+$regex =[regex] "^([A-Za-z0-9]+)$"
+if (-not $regex.Match($common_prefix).Success) {
+    Write-Warning "'common_prefix' can contain only letters and numbers"
+    return
+}
+
+#"artifact" is longest name postfix. 
+#24 is storage account name limit
+#5 is minumum lenght of infix to be unique
+$maxtotallength = 24
+$mininfix = 5
+$maxpostfix = "artifact".Length
+$maxprefix = $maxtotallength - $maxpostfix - $mininfix
+if ($common_prefix.Length -ge  $maxprefix){
+     Write-warning "Length of 'common_prefix' must be under $($maxprefix)"
+     return
+}
+
 #Make storage account names globally unique
 $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
 $utf8 = new-object -TypeName System.Text.UTF8Encoding
 $apikeyhash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($appveyor_api_key)))
-$infix = $apikeyhash.Replace("-", "").Substring(0, ($maxazureprefix - $azure_prefix.Length)).ToLower()
+$infix = $apikeyhash.Replace("-", "").ToLower()
+$maxinfix = ($maxtotallength - $common_prefix.Length - $maxpostfix)
+if ($infix.Length -gt $maxinfix){$infix = $infix.Substring(0, $maxinfix)}
 
-$azure_storage_account = "$($azure_prefix)$($infix)vm".ToLower()
-$azure_storage_account_cache = "$($azure_prefix)$($infix)cache".ToLower()
-$azure_storage_account_artifacts = "$($azure_prefix)$($infix)artifact".ToLower()
+$azure_storage_account = "$($common_prefix)$($infix)vm".ToLower()
+$azure_storage_account_cache = "$($common_prefix)$($infix)cache".ToLower()
+$azure_storage_account_artifacts = "$($common_prefix)$($infix)artifact".ToLower()
 
-$azure_storage_container = "$($azure_prefix)-vms"
-$azure_cache_storage_name = "$($azure_prefix)-cache"
-$azure_artifact_storage_name = "$($azure_prefix)-artifacts"
+$azure_storage_container = "$($common_prefix)-vms"
+$azure_cache_storage_name = "$($common_prefix)-azure-cache"
+$azure_artifact_storage_name = "$($common_prefix)-azure-artifacts"
 
-$azure_service_principal_name = "$($azure_prefix)-sp"
-$azure_resource_group_name = "$($azure_prefix)-rg"
-$azure_vnet_name = "$($azure_prefix)-vnet"
-$azure_subnet_name = "$($azure_prefix)-subnet"
-$azure_nsg_name = "$($azure_prefix)-nsg"
-$build_cloud_name = "$($azure_prefix)-build-environment"
+$azure_service_principal_name = "$($common_prefix)-sp"
+$azure_resource_group_name = "$($common_prefix)-rg"
+$azure_vnet_name = "$($common_prefix)-vnet"
+$azure_subnet_name = "$($common_prefix)-subnet"
+$azure_nsg_name = "$($common_prefix)-nsg"
+$build_cloud_name = "$($common_prefix)-azure-build-environment"  
 
 $packer_manifest = "packer-manifest.json"
 $install_user = "appveyor"
@@ -306,7 +314,7 @@ elseif ($rg.Location -ne $azure_location) {
             $rg = New-AzResourceGroup -Name $azure_resource_group_name -Location $azure_location
         }
         else {
-            Write-Warning "Please consider whether you need to change a location or re-create a resource group and start over. ALternatively, you can use 'azure_prefix' script parameter to form alternative resource group name."
+            Write-Warning "Please consider whether you need to change a location or re-create a resource group and start over. ALternatively, you can use 'common_prefix' script parameter to form alternative resource group name."
             return
         }
     }
