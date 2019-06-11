@@ -891,6 +891,17 @@ function install_golangs() {
     log_exec go version
 }
 
+function pull_dockerimages() {
+    local DOCKER_IMAGES
+    local IMAGE
+    declare DOCKER_IMAGES=( "microsoft/aspnetcore" "debian" "ubuntu" "centos" "alpine" "busybox" )
+    for IMAGE in "${DOCKER_IMAGES[@]}"; do
+        docker pull $IMAGE
+    done
+    log_exec docker images
+    log_exec docker system df
+}
+
 function install_docker() {
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
     add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
@@ -902,6 +913,7 @@ function install_docker() {
     systemctl is-active docker ||
         { echo "[ERROR] Docker service failed to start." 1>&2; return 30; }
     usermod -aG docker ${USER_NAME}
+    pull_dockerimages
     systemctl disable docker
 
     log_exec dpkg -l docker-ce
