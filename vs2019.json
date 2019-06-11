@@ -111,7 +111,12 @@
             "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
             "{{ template_dir }}/scripts/Windows/install_erlang.ps1",
             "{{ template_dir }}/scripts/Windows/install_mongo.ps1",
-            "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1"
+            "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1",
+            "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
+            "{{ template_dir }}/scripts/Windows/install_wix311.ps1",
+            "{{ template_dir }}/scripts/Windows/install_chrome_browser.ps1",
+            "{{ template_dir }}/scripts/Windows/install_llvm.ps1",
+            "{{ template_dir }}/scripts/Windows/install_llvm_extension_vs2019.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
