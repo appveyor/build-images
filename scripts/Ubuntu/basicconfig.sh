@@ -88,6 +88,7 @@ if [ "$#" -gt 0 ]; then
             install_buildagent)     install_buildagent "${BUILD_AGENT_MODE}" || _abort $?; ;;
             install_appveyoragent)  install_appveyoragent "${BUILD_AGENT_MODE}" || _abort $?; ;;
             install_pythons)        install_pythons || _abort $?; ;;
+            install_docker)        install_docker || _abort $?; ;;
             add_user)               add_user || _abort $?; ;;
             cleanup)                cleanup || _abort $?; ;;
             *)                      echo "[ERROR] Unknown argument '$1'"; ;;
