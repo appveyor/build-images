@@ -75,9 +75,6 @@ function _continue() {
     echo "Continue installation..." 1>&2
 }
 
-# we have to create pwd.log, otherwise packer will fail on provisioner which downloads it.
-touch ${HOME}/pwd.log
-
 init_logging
 
 # execute only required parts of deployment
