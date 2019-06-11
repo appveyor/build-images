@@ -80,7 +80,7 @@ function _continue() {
 }
 
 # we have to create pwd.log, otherwise packer will fail on provisioner which downloads it.
-touch ${HOME}/pwd.log
+touch ${HOME}/pwd-${DATEMARK}.log
 
 init_logging
 
