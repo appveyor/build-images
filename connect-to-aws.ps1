@@ -483,7 +483,7 @@ try {
       Grant-EC2SecurityGroupIngress -GroupName $aws_sg_name -Region $aws_region -ipPermission $ipPermission
       Write-host "Created inbound rule to allow TCP $($remoteaccessport) ($(remoteaccessname))" -ForegroundColor DarkGray
     }
-    else {Write-host "TCP $($remoteaccessport) ($(remoteaccessname)) inbound rule already exist for security group '$($aws_sg_name)'" -ForegroundColor DarkGray}
+    else {Write-host "TCP $($remoteaccessport) ($($remoteaccessname)) inbound rule already exist for security group '$($aws_sg_name)'" -ForegroundColor DarkGray}
 
     #Get or create key pair
     Write-host "`nGetting or creating AWS key pair..." -ForegroundColor Cyan
