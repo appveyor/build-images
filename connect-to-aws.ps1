@@ -125,7 +125,7 @@ catch {
 }
 
 if (-not (Get-Module -Name *AWSPowerShell* -ListAvailable)) {
-    Write-Warning "This script depends on AWS Tools for PowerShell. Please install them with 'Install-Module -Name AWSPowerShell'"
+    Write-Warning "This script depends on AWS Tools for PowerShell. Please install them with the foll command: 'Install-Module -Name AWSPowerShell -Force; Get-Command -Module AWSPowerShell | Out-Null'"
     return
 }
 
