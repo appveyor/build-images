@@ -122,6 +122,9 @@ fi
 install_appveyoragent "${BUILD_AGENT_MODE}" ||
     _abort $?
 
+install_powershell ||
+    _abort $?
+
 install_cvs ||
     _abort $?
 su -l ${USER_NAME} -c "
