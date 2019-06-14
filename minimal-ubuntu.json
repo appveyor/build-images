@@ -1,37 +1,9 @@
 {
-  "variables": {
-    "appveyor_username": "appveyor",
-    "appveyor_password": "appveyor",
-    "appveyor_home":"/home/appveyor",
-    "host_ip_addr": "192.168.0.9",
-    "host_ip_mask": "255.255.248.0",
-    "host_ip_gw": "192.168.0.1",
-    "aws_access_key": "",
-    "aws_secret_key": "",
-    "aws_region": "",
-    "gce_account_file": "",
-    "gce_zone": "",
-    "gce_project": "",
-    "gce_source_image": "ubuntu-1804-bionic-v20190212a",
-    "gce_source_image_family": "ubuntu-1804-lts",
-    "iso_checksum_md5": "e8264fa4c417216f4304079bd94f895e",
-    "azure_client_id": "",
-    "azure_client_secret": "",
-    "azure_location": "",
-    "azure_resource_group_name": "",
-    "azure_storage_account": "",
-    "azure_subscription_id": "",
-    "azure_vm_size": "Standard_A2_v2",
-    "image_description": "",
-    "deploy_parts": "",
-    "datemark": ""
-  },
   "provisioners": [
     {
       "type": "file",
       "source": "distrib",
-      "destination": "./",
-      "generated": "true"
+      "destination": "./"
     },
     {
       "type": "file",
@@ -160,7 +132,7 @@
         "owners": ["099720109477"],
         "most_recent": true
       },
-      "instance_type": "t2.micro",
+      "instance_type": "{{user `aws_instance_type`}}",
       "ssh_username": "ubuntu",
       "ssh_timeout": "1000s",
       "ami_name": "Appveyor Worker Ubuntu1804 {{timestamp}}",

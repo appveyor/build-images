@@ -431,9 +431,9 @@ try {
     Write-host "`nSelecting EC2 instance type..." -ForegroundColor Cyan
     if (-not $aws_instance_type) {
         #Unable to get a list (https://github.com/aws/aws-cli/issues/1279) so people need to enter.
-        Write-Warning "Minimum recommended is 'm4.large'"
+        if ($image_os -eq "Windows") {Write-Warning "Minimum recommended is 'm4.large'"}
         for ($i = 1; $i -le $instancetypes.Count; $i++) {"Select $i for $($instancetypes[$i - 1])"}
-        Write-Warning "Minimum recommended is 'm4.large'"
+        if ($image_os -eq "Windows") {Write-Warning "Minimum recommended is 'm4.large'"}
         Write-Warning "Add '-aws_instance_type' parameter to skip this dialog next time."
         $instance_number = Read-Host "Enter your selection"
         if (-not $instance_number) {
