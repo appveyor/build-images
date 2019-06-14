@@ -473,7 +473,7 @@ try {
     Write-host "Using security group '$($aws_sg_name)'" -ForegroundColor DarkGray
     $remoteaccessport = if ($image_os -eq "Windows") {3389} elseif ($image_os -eq "Linux") {22}
     $remoteaccessname = if ($image_os -eq "Windows") {"RDP"} elseif ($image_os -eq "Linux") {"SSH"}
-    Write-host "`nAllowing $(remoteaccessname) access to build VMs..." -ForegroundColor Cyan
+    Write-host "`nAllowing $($remoteaccessname) access to build VMs..." -ForegroundColor Cyan
     if (-not ($sg.IpPermission | ? {$_.ToPort -eq $remoteaccessport})) {
       $ipPermission = New-Object Amazon.EC2.Model.IpPermission
       $ipPermission.IpProtocol = "tcp"
@@ -481,7 +481,7 @@ try {
       $ipPermission.FromPort = $remoteaccessport
       $ipPermission.IpRange = "0.0.0.0/0"
       Grant-EC2SecurityGroupIngress -GroupName $aws_sg_name -Region $aws_region -ipPermission $ipPermission
-      Write-host "Created inbound rule to allow TCP $($remoteaccessport) ($(remoteaccessname))" -ForegroundColor DarkGray
+      Write-host "Created inbound rule to allow TCP $($remoteaccessport) ($($remoteaccessname))" -ForegroundColor DarkGray
     }
     else {Write-host "TCP $($remoteaccessport) ($($remoteaccessname)) inbound rule already exist for security group '$($aws_sg_name)'" -ForegroundColor DarkGray}
 
