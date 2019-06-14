@@ -36,11 +36,14 @@
 .PARAMETER common_prefix
     Script will prepend all created AWS resources and AppVeyor build environment name with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
 
+.PARAMETER image_os
+    Operating system of build VM image. Valid values: 'Windows', 'Linux'. Default value is 'Windows'.
+
 .PARAMETER image_description
-    Description to be passed to Packer and name to be used for AppVeyor image. Default value is 'Windows Server 2016 on AWS'.
+    Description to be passed to Packer and name to be used for AppVeyor image.  Default value generated is based on the value of 'image_os' parameter.
 
 .PARAMETER packer_template
-    If you are familiar with Hashicorp Packer, you can replace template used by this script with another one. Default value is '.\minimal-windows-server.json'.
+    If you are familiar with Hashicorp Packer, you can replace template used by this script with another one.  Default value generated is based on the value of 'image_os' parameter.
 
     .EXAMPLE
     .\connect-to-aws.ps1
@@ -85,10 +88,14 @@ param
   [string]$common_prefix = "appveyor",
 
   [Parameter(Mandatory=$false)]
-  [string]$image_description = "Windows Server 2016 on AWS",
+  [ValidateSet('Windows','Linux')]
+  [string]$image_os = "Windows",
 
   [Parameter(Mandatory=$false)]
-  [string]$packer_template = "./minimal-windows-server.json"
+  [string]$image_description,
+
+  [Parameter(Mandatory=$false)]
+  [string]$packer_template
 )
 
 $ErrorActionPreference = "Stop"
@@ -115,11 +122,6 @@ try {
 catch {
     Write-warning "Unable to connect to AppVeyor URL '$($appveyor_url)'. Error: $($error[0].Exception.Message)"
         return
-}
-
-if (-not (test-path $packer_template)) {
-    Write-Warning "Please provide correct relative path as the packer_template parameter"
-    return
 }
 
 if (-not (Get-Module -Name *AWSPowerShell* -ListAvailable)) {
@@ -189,7 +191,10 @@ $aws_sg_name = "$($common_prefix)-sg"
 $aws_kp_name = "$($common_prefix)-kp"
 $aws_kp_path = if ($isLinux) {Join-Path -Path $home -ChildPath "$aws_kp_name.pem"} else {Join-Path -Path $env:userprofile -ChildPath "$aws_kp_name.pem"}
 $aws_profile = "$($common_prefix)-temp"
-$build_cloud_name = "$($common_prefix)-aws-build-environment"
+
+$build_cloud_name = "$($image_os)-AWS-build-environment"
+$image_description = if ($image_description) {$image_description} else {"$($image_os) on AWS"}
+$packer_template = if ($packer_template) {$packer_template} elseif ($image_os -eq "Windows") {"./minimal-windows-server.json"} elseif ($image_os -eq "Linux") {"./minimal-ubuntu.json"}
 
 $packer_manifest = "packer-manifest.json"
 $install_user = "appveyor"
@@ -440,20 +445,20 @@ try {
     }
     Write-host "Using instance type '$($aws_instance_type)'" -ForegroundColor DarkGray
 
-    #Select subnet
-    #Not creating a subnet because it is problematic to make it idempotent (there are name to set and not sure if tag is good approach to avoid creation duplication).
-    Write-host "`nSelecting subnet..." -ForegroundColor Cyan
+    Write-host "`nGetting default subnet in the first availability zone..." -ForegroundColor Cyan
     if (-not $aws_subnet_id) {
-        $subnets = Get-EC2Subnet -Region $aws_region
-        for ($i = 1; $i -le $subnets.Count; $i++) {"Select $i for $($subnets[$i - 1].SubnetId) (CIDR $($subnets[$i - 1].CidrBlock), Availability zone $($subnets[$i - 1].AvailabilityZone))"}
-        Write-Warning "Add '-aws_subnet_id' parameter to skip this dialog next time."
-        $subnet_number = Read-Host "Enter your selection"
-        if (-not $subnet_number) {
-            Write-Warning "No subnet selected."
+        $availabilityzones = Get-EC2AvailabilityZone -Region $aws_region | ? {$_.State -eq "available"} | Sort-Object -Property ZoneName -ErrorAction Ignore
+        if (-not $availabilityzones -or $availabilityzones.Count -lt 1) {
+            Write-Warning "Unable to find EC2 availability zone with 'available' state."
             exitScript
         }
-        $selected_subnet = $subnets[$subnet_number - 1]
-        $aws_subnet_id = $selected_subnet.SubnetId
+        $availabilityzone = $availabilityzones[0]
+        $subnet = Get-EC2Subnet -Region $aws_region | ? {$_.AvailabilityZone -eq $AvailabilityZone.ZoneName -and $_.State -eq "available" -and $_.DefaultForAz -eq $true}
+        if (-not $subnet) {
+            Write-Warning "Unable to find default available subnet in the availability zone $($AvailabilityZone.ZoneName). Please use 'aws_subnet_id' parameter to specify a subnet"
+            exitScript
+        }
+        $aws_subnet_id = $subnet.SubnetId
     }
     Write-host "Using subnet '$($aws_subnet_id)'" -ForegroundColor DarkGray
 
@@ -466,19 +471,19 @@ try {
     $sg = Get-EC2SecurityGroup -GroupName $aws_sg_name -Region $aws_region
     $aws_sg_id = $sg.GroupId
     Write-host "Using security group '$($aws_sg_name)'" -ForegroundColor DarkGray
-
-
-    Write-host "`nAllowing RDP access to build VMs..." -ForegroundColor Cyan
-    if (-not ($sg.IpPermission | ? {$_.ToPort -eq "3389"})) {
+    $remoteaccessport = if ($image_os -eq "Windows") {3389} elseif ($image_os -eq "Linux") {22}
+    $remoteaccessname = if ($image_os -eq "Windows") {"RDP"} elseif ($image_os -eq "Linux") {"SSH"}
+    Write-host "`nAllowing $(remoteaccessname) access to build VMs..." -ForegroundColor Cyan
+    if (-not ($sg.IpPermission | ? {$_.ToPort -eq $remoteaccessport})) {
       $ipPermission = New-Object Amazon.EC2.Model.IpPermission
       $ipPermission.IpProtocol = "tcp"
-      $ipPermission.ToPort = 3389
-      $ipPermission.FromPort = 3389
+      $ipPermission.ToPort = $remoteaccessport
+      $ipPermission.FromPort = $remoteaccessport
       $ipPermission.IpRange = "0.0.0.0/0"
       Grant-EC2SecurityGroupIngress -GroupName $aws_sg_name -Region $aws_region -ipPermission $ipPermission
-      Write-host "Created inbound rule to allow TCP 3389 (RDP)" -ForegroundColor DarkGray
+      Write-host "Created inbound rule to allow TCP $($remoteaccessport) ($(remoteaccessname))" -ForegroundColor DarkGray
     }
-    else {Write-host "TCP 3389 (RDP) RULE already exist FOR security group '$($aws_sg_name)'" -ForegroundColor DarkGray}
+    else {Write-host "TCP $($remoteaccessport) ($(remoteaccessname)) inbound rule already exist for security group '$($aws_sg_name)'" -ForegroundColor DarkGray}
 
     #Get or create key pair
     Write-host "`nGetting or creating AWS key pair..." -ForegroundColor Cyan
@@ -717,11 +722,12 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
     Write-host "`nEnsuring build worker image is available for AppVeyor projects..." -ForegroundColor Cyan
     $images = Invoke-RestMethod -Uri "$($appveyor_url)/api/build-worker-images" -Headers $headers -Method Get
     $image = $images | ? ({$_.name -eq $image_description})[0]
+    $osType = if ($image_os -eq "Windows") {"Windows"} elseif ($image_os -eq "Linux") {"Ubuntu"}
     if (-not $image) {
         $body = @{
             name = $image_description
             buildCloudName = $build_cloud_name
-            osType = "Windows"
+            osType = $osType
         }
 
         $jsonBody = $body | ConvertTo-Json
@@ -731,7 +737,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
     else {
         $image.name = $image_description
         $image.buildCloudName = $build_cloud_name
-        $image.osType = "Windows"
+        $image.osType = $osType
 
         $jsonBody = $image | ConvertTo-Json
         Invoke-RestMethod -Uri "$($appveyor_url)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Put | Out-Null
