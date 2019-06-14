@@ -1,65 +1,32 @@
-﻿# Install manually SQL Server 2017 Developer
-# SQL Server: https://www.microsoft.com/en-us/sql-server/sql-server-downloads
-# Reporting services: https://www.microsoft.com/en-us/download/details.aspx?id=55252
+﻿Write-Host "Downloading SQL Server 2017..."
+$boxPath = "$env:USERPROFILE\SQLServer2017-DEV-x64-ENU.box"
+(New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/E/F/2/EF23C21D-7860-4F05-88CE-39AA114B014B/SQLServer2017-DEV-x64-ENU.box', $boxPath)
+$exePath = "$env:USERPROFILE\SQLServer2017-DEV-x64-ENU.exe"
+(New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/E/F/2/EF23C21D-7860-4F05-88CE-39AA114B014B/SQLServer2017-DEV-x64-ENU.exe', $exePath)
 
-# delete C:\SQLServer2017Media
+Write-Host "Extracting..."
+$extractPath = "$env:USERPROFILE\SQL2017Developer"
+Start-Process "$exePath" "/Q /x:`"$extractPath`"" -Wait
 
-Write-Host "Stopping services..."
+Write-Host "Installing..."
+cmd /c start /wait $extractPath\setup.exe /q /ACTION=Install /FEATURES=SQLEngine,FullText,RS /INSTANCENAME=SQL2017 /SQLSYSADMINACCOUNTS="BUILTIN\ADMINISTRATORS" /TCPENABLED=1 /SECURITYMODE=SQL /SAPWD=Password12! /IACCEPTSQLSERVERLICENSETERMS
 
-Set-Service 'MSSQL$SQL2017' -StartupType Manual
-Set-Service 'MSSQLFDLauncher$SQL2017' -StartupType Manual
-Set-Service 'SQLAgent$SQL2017' -StartupType Manual
-Set-Service 'MSOLAP$SQL2017' -StartupType Manual
-Set-Service 'SSASTELEMETRY$SQL2017' -StartupType Manual
-Set-Service 'SQLTELEMETRY$SQL2017' -StartupType Manual
-Set-Service 'SQLBrowser' -StartupType Manual
-Set-Service 'SQLServerReportingServices' -StartupType Manual
-Set-Service 'SQLWriter' -StartupType Manual
+Write-Host "Deleting temporary files..."
+Remove-Item $exePath -Force -ErrorAction Ignore
+Remove-Item $boxPath -Force -ErrorAction Ignore
+Remove-Item $extractPath -Recurse -Force -ErrorAction Ignore
 
-Stop-Service 'MSSQL$SQL2017'
-Stop-Service 'MSSQLFDLauncher$SQL2017'
-Stop-Service 'SQLAgent$SQL2017'
-Stop-Service 'MSOLAP$SQL2017'
-Stop-Service 'SSASTELEMETRY$SQL2017'
-Stop-Service 'SQLTELEMETRY$SQL2017'
-Stop-Service 'SQLBrowser'
-Stop-Service 'SQLServerReportingServices'
-Stop-Service 'SQLWriter'
+Write-Host "OK"
 
+Write-Host "Downloading SQL Server Reporting Services..."
+$reportingPath = "$env:USERPROFILE\SQLServerReportingServices.exe"
+(New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/E/6/4/E6477A2A-9B58-40F7-8AD6-62BB8491EA78/SQLServerReportingServices.exe', $reportingPath)
 
-Import-Module "sqlps" -DisableNameChecking -ErrorAction SilentlyContinue 3> $null
-$instanceName = 'SQL2017'
-$computerName = $env:COMPUTERNAME
-$smo = 'Microsoft.SqlServer.Management.Smo.'
-$wmi = New-Object ($smo + 'Wmi.ManagedComputer')
+Write-Host "Installing..."
+cmd /c start /wait $reportingPath /quiet /norestart /IACCEPTLICENSETERMS /Edition=Dev
 
-# For the named instance, on the current computer, for the TCP protocol,
-# loop through all the IPs and configure them to use the standard port
-# of 1433.
-$uri = "ManagedComputer[@Name='$computerName']/ ServerInstance[@Name='$instanceName']/ServerProtocol[@Name='Tcp']"
-$Tcp = $wmi.GetSmoObject($uri)
-ForEach ($ipAddress in $Tcp.IPAddresses)
-{
-    $ipAddress.IPAddressProperties["TcpDynamicPorts"].Value = ""
-    $ipAddress.IPAddressProperties["TcpPort"].Value = "1433"
-}
-$Tcp.IsEnabled = $true
-$Tcp.Alter()
+Write-Host "Deleting temporary files..."
+Remove-Item $reportingPath -Force -ErrorAction Ignore
 
-# Start services
-Set-Service SQLBrowser -StartupType Manual
-Start-Service SQLBrowser
-Restart-Service "MSSQL`$$instanceName"
+Write-Host "OK"
 
-<#
-
-net start MSSQL$SQL2016
-
-sqlcmd -S (local)\SQL2016 -U sa -P Password12! -Q "SELECT name from sys.databases"
-net stop MSSQL$SQL2016
-
-sqllocaldb create "test" 13.0 -s
-sqllocaldb stop "test"
-sqllocaldb delete "test"
-
-#>
