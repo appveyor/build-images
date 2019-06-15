@@ -189,7 +189,7 @@ $aws_cache_storage_name = "$($common_prefix)-aws-cache"
 $aws_artifact_storage_name = "$($common_prefix)-aws-artifacts"
 $aws_sg_name = "$($common_prefix)-sg"
 $aws_kp_name = "$($common_prefix)-kp"
-$aws_kp_path = if ($isLinux) {Join-Path -Path $home -ChildPath "$aws_kp_name.pem"} else {Join-Path -Path $env:userprofile -ChildPath "$aws_kp_name.pem"}
+$aws_kp_path = if (-not $IsWindows) {Join-Path -Path $home -ChildPath "$aws_kp_name.pem"} else {Join-Path -Path $env:userprofile -ChildPath "$aws_kp_name.pem"}
 $aws_profile = "$($common_prefix)-temp"
 
 $build_cloud_name = "$($image_os)-AWS-build-environment"
