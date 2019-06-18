@@ -496,7 +496,7 @@ try {
     Write-host "Using key pair '$($aws_kp_name)'" -ForegroundColor DarkGray
 
     #Create S3 bucket for cache storage
-    Write-host "`nGetting or S3 bucket for cache storage..." -ForegroundColor Cyan
+    Write-host "`nGetting or creating S3 bucket for cache storage..." -ForegroundColor Cyan
     $bucket = Get-S3Bucket -BucketName $aws_s3_bucket_cache
     if (-not $bucket) {
         $bucket = New-S3Bucket -BucketName $aws_s3_bucket_cache -Region $aws_region
@@ -517,7 +517,7 @@ S3 bucket $($aws_s3_bucket_cache) id in '$($bucketregion)' region, while build e
     Write-host "Using S3 bucket '$($aws_s3_bucket_cache)' for cache storage" -ForegroundColor DarkGray
 
     #Create S3 bucket for artifacts
-        Write-host "`nGetting or S3 bucket for artifacts storage..." -ForegroundColor Cyan
+        Write-host "`nGetting or creating S3 bucket for artifacts storage..." -ForegroundColor Cyan
     $bucket = Get-S3Bucket -BucketName $aws_s3_bucket_artifacts
     if (-not $bucket) {
         $bucket = New-S3Bucket -BucketName $aws_s3_bucket_artifacts -Region $aws_region
