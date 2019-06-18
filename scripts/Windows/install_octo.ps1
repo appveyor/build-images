@@ -14,6 +14,7 @@ $zipPath = "$env:TEMP\OctopusTools.zip"
 del $zipPath
 
 Add-Path $destPath
+Add-SessionPath $destPath
 
 cmd /c octo --version
 
