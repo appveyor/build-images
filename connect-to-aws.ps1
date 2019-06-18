@@ -98,6 +98,11 @@ param
   [string]$packer_template
 )
 
+function exitScript {
+    if ($aws_profile -and (Get-AWSCredentials -ProfileName $aws_profile)) {Remove-AWSCredentialProfile -ProfileName $aws_profile -ErrorAction Ignore -force}
+    exit 1
+}
+
 $ErrorActionPreference = "Stop"
 
 $StopWatch = New-Object System.Diagnostics.Stopwatch
@@ -109,29 +114,29 @@ $appveyor_url = $appveyor_url.TrimEnd("/")
 #Validate input
 if ($appveyor_api_key -like "v2.*") {
     Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($appveyor_url)/api-keys'"
-    return
+    exitScript
 }
 
 try {
     $responce = Invoke-WebRequest -Uri $appveyor_url -ErrorAction SilentlyContinue
     if ($responce.StatusCode -ne 200) {
         Write-warning "AppVeyor URL '$($appveyor_url)' responded with code $($responce.StatusCode)"
-        return
+        exitScript
     }
 }
 catch {
     Write-warning "Unable to connect to AppVeyor URL '$($appveyor_url)'. Error: $($error[0].Exception.Message)"
-        return
+    exitScript
 }
 
 if (-not (Get-Module -Name *AWSPowerShell* -ListAvailable)) {
     Write-Warning "This script depends on AWS Tools for PowerShell. Please install them with the foll command: 'Install-Module -Name AWSPowerShell -Force; Get-Command -Module AWSPowerShell | Out-Null'"
-    return
+    exitScript
 }
 
 if (-not (Get-Command packer -ErrorAction Ignore)) {
     Write-Warning "This script depends on Packer by HashiCorp. Please install it with 'choco install packer' ('apt get packer' for Linux) command or follow https://www.packer.io/intro/getting-started/install.html. If it is already installed, please ensure that PATH environment variable contains path to it."
-    return
+    exitScript
 }
 
 $headers = @{
@@ -143,7 +148,7 @@ try {
 }
 catch {
     Write-warning "Unable to call AppVeyor REST API, please verify 'appveyor_api_key' and ensure '-appveyor_url' parameter is set if you are using on-premise AppVeyor Server."
-    return
+    exitScript
 }
 
 if ($appveyor_url -eq "https://ci.appveyor.com") {
@@ -152,14 +157,14 @@ if ($appveyor_url -eq "https://ci.appveyor.com") {
     }
     catch {
         Write-warning "Please contact support@appveyor.com and request enabling of 'Private build clouds' feature."
-        return
+        exitScript
     }
 }
 
 $regex =[regex] "^([A-Za-z0-9]+)$"
 if (-not $regex.Match($common_prefix).Success) {
     Write-Warning "'common_prefix' can contain only letters and numbers"
-    return
+    exitScript
 }
 
 #"artifact" is longest name postfix. 
@@ -171,7 +176,7 @@ $maxpostfix = "artifact".Length
 $maxprefix = $maxtotallength - $maxpostfix - $mininfix
 if ($common_prefix.Length -ge  $maxprefix){
      Write-warning "Length of 'common_prefix' must be under $($maxprefix)"
-     return
+     exitScript
 }
 
 #Make S3 names globally unique
@@ -204,11 +209,6 @@ if (-not $skip_disclaimer) {
      Write-Warning "`nThis script will create EC2 resources such as security group and key pair. Also, it will run Hashicorp Packer which will create its own temporary EC2 resources and leave AMI for future use by AppVeyor build VMs. Please be aware of possible charges from Amazon. `nIf AWS account you are authorized to contains production resources, you might consider creating a separate account and run this script against it. Additionally, a separate account is better to distinguish AWS bills for CI machines from other AWS bills. `nPress Enter to continue or Ctrl-C to exit the script. Use '-skip_disclaimer' switch parameter to skip this message next time."
      $disclaimer = Read-Host
      }
-
-function exitScript {
-    if (Get-AWSCredentials -ProfileName $aws_profile) {Remove-AWSCredentialProfile -ProfileName $aws_profile -ErrorAction Ignore -force}
-    exit
-}
 
 try {
     #Set AWS Credentials
@@ -562,7 +562,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
         #Get VHD path
         if (-not (test-path ".\$($packer_manifest)")) {
             Write-Warning "Unable to find .\$($packer_manifest). Please ensure Packer job finsihed successfully."
-            return
+            exitScript
         }
         Write-host "`nGetting AMI ID..." -ForegroundColor Cyan
         $manifest = Get-Content -Path ".\$($packer_manifest)" | ConvertFrom-Json
