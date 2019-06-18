@@ -1,3 +1,5 @@
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 function Install-SDK($sdkVersion) {
     
     if (Test-Path "$env:ProgramFiles\dotnet\sdk\$sdkVersion") {
