@@ -1343,8 +1343,6 @@ function cleanup() {
     chown ${USER_NAME}:${USER_NAME} -R ${USER_HOME}
 
     # cleanup script guts
-    for f in "$HOME/common.sh" "$HOME/bionic.sh" "$HOME/xenial.sh" "$HOME/basicconfig.sh" "$HOME/adduser.sh"; do
-        if [ -f "$f" ]; then rm "$f"; fi
-    done
+    find $HOME -maxdepth 1 -name "*.sh" -delete
     if [ -d "$HOME/distrib" ]; then rm -rf "$HOME/distrib"; fi
 }
