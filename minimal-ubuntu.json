@@ -66,7 +66,8 @@
       "instance_name": "packer-ubuntu1804-{{uuid}}",
       "image_name": "packer-ubuntu1804-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
-      "disk_size": 40
+      "disk_size": 40,
+      "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"]
     },
     {
       "type": "hyperv-iso",
@@ -134,6 +135,8 @@
       },
       "instance_type": "{{user `aws_instance_type`}}",
       "ssh_username": "ubuntu",
+      "ssh_keypair_name": "{{user `aws_ssh_keypair_name`}}",
+      "ssh_private_key_file": "{{user `aws_ssh_private_key_file`}}",
       "ssh_timeout": "1000s",
       "ami_name": "Appveyor Worker Ubuntu1804 {{timestamp}}",
       "ami_description": "{{user `image_description`}}",
@@ -144,7 +147,21 @@
           "volume_type": "gp2",
           "delete_on_termination": true
         }
-      ]
+      ],
+      "run_tags": {
+        "OS_Version": "Ubuntu1804",
+        "datemark": "{{user `datemark`}}",
+        "description": "{{user `image_description`}}",
+        "Base_AMI_Name": "{{ .SourceAMIName }}",
+        "Extra": "{{ .SourceAMITags.TagName }}"
+      },
+      "tags": {
+        "OS_Version": "Ubuntu1804",
+        "datemark": "{{user `datemark`}}",
+        "description": "{{user `image_description`}}",
+        "Base_AMI_Name": "{{ .SourceAMIName }}",
+        "Extra": "{{ .SourceAMITags.TagName }}"
+      }
     },
     {
       "type": "virtualbox-iso",
