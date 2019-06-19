@@ -120,8 +120,8 @@
       "boot_wait": "10s",
       "http_directory": "http",
       "iso_urls": [
-        "iso/ubuntu-16.04.4-server-amd64.iso",
-        "http://releases.ubuntu.com/16.04/ubuntu-16.04.4-server-amd64.iso"
+        "iso/ubuntu-16.04.6-server-amd64.iso",
+        "http://releases.ubuntu.com/xenial/ubuntu-16.04.6-server-amd64.iso"
       ],
       "iso_checksum": "{{user `iso_checksum_md5`}}",
       "iso_checksum_type": "md5",
@@ -221,8 +221,8 @@
       "headless": true,
       "http_directory": "http",
       "iso_urls": [
-        "iso/ubuntu-16.04.4-server-amd64.iso",
-        "http://releases.ubuntu.com/16.04/ubuntu-16.04.4-server-amd64.iso"
+        "iso/ubuntu-16.04.6-server-amd64.iso",
+        "http://releases.ubuntu.com/xenial/ubuntu-16.04.6-server-amd64.iso"
       ],
       "iso_checksum": "{{user `iso_checksum_md5`}}",
       "iso_checksum_type": "md5",
@@ -277,8 +277,8 @@
       "headless": true,
       "http_directory": "http",
       "iso_urls": [
-        "iso/ubuntu-16.04.4-server-amd64.iso",
-        "http://releases.ubuntu.com/16.04/ubuntu-16.04.4-server-amd64.iso"
+        "iso/ubuntu-16.04.6-server-amd64.iso",
+        "http://releases.ubuntu.com/xenial/ubuntu-16.04.6-server-amd64.iso"
       ],
       "iso_checksum": "{{user `iso_checksum_md5`}}",
       "iso_checksum_type": "md5",

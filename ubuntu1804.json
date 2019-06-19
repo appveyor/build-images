@@ -122,8 +122,8 @@
       "boot_wait": "10s",
       "http_directory": "http",
       "iso_urls": [
-        "iso/ubuntu-18.04.1-server-amd64.iso",
-        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.1-server-amd64.iso"
+        "iso/ubuntu-18.04.2-server-amd64.iso",
+        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.2-server-amd64.iso"
       ],
 
       "iso_checksum": "{{user `iso_checksum_md5`}}",
@@ -219,8 +219,8 @@
       "headless": true,
       "http_directory": "http",
       "iso_urls": [
-        "iso/ubuntu-18.04-server-amd64.iso",
-        "http://cdimage.ubuntu.com/ubuntu/releases/bionic/release/ubuntu-18.04-server-amd64.iso"
+        "iso/ubuntu-18.04.2-server-amd64.iso",
+        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.2-server-amd64.iso"
       ],
       "iso_checksum": "{{user `iso_checksum_md5`}}",
       "iso_checksum_type": "md5",
