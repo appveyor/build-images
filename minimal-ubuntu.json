@@ -70,56 +70,6 @@
       "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"]
     },
     {
-      "type": "hyperv-iso",
-      "boot_command": [
-        "<esc><wait>",
-        "<esc><wait>",
-        "<enter><wait>",
-        "/install/vmlinuz<wait>",
-        " initrd=/install/initrd.gz<wait>",
-        " auto-install/enable=true<wait>",
-        " debconf/priority=critical<wait>",
-        " noapic<wait>",
-        " netcfg/disable_autoconfig=true<wait>",
-        " netcfg/get_ipaddress=192.168.0.9<wait>",
-        " netcfg/get_netmask=255.255.248.0<wait>",
-        " netcfg/get_gateway=192.168.0.1<wait>",
-        " preseed/url=http://192.168.0.1:{{ .HTTPPort }}/preseed18.cfg<wait>",
-        " netcfg/get_nameservers=8.8.8.8",
-        " -- <wait>",
-        "<enter><wait>"
-      ],
-      "boot_wait": "10s",
-      "http_directory": "http",
-      "iso_urls": [
-        "iso/ubuntu-18.04.1-server-amd64.iso",
-        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.1-server-amd64.iso"
-      ],
-
-      "iso_checksum": "{{user `iso_checksum_md5`}}",
-      "iso_checksum_type": "md5",
-      "ssh_username": "{{ user `appveyor_username` }}",
-      "ssh_password": "{{ user `appveyor_password` }}",
-      "shutdown_command": "echo '{{ user `appveyor_password` }}' | sudo -S shutdown -P now",
-      "disk_size": 40960
-    },
-    {
-      "type": "hyperv-vmcx",
-      "clone_from_vm_name": "u18-empty",
-      "vm_name": "packer-u18-{{ user `datemark` }}",
-      "ssh_username": "{{ user `appveyor_username` }}",
-      "ssh_password": "{{ user `appveyor_password` }}",
-      "shutdown_command": "echo '{{ user `appveyor_password` }}' | sudo -S shutdown -P now",
-      "http_directory": "http",
-      "communicator":"ssh",
-      "ssh_timeout" : "1h",
-      "ssh_port": 22,
-      "ssh_host": "{{user `host_ip_addr`}}",
-      "cpu": "1",
-      "ram_size": "3072",
-      "enable_secure_boot": "false"
-    },
-    {
       "type": "amazon-ebs",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
@@ -162,81 +112,6 @@
         "Base_AMI_Name": "{{ .SourceAMIName }}",
         "Extra": "{{ .SourceAMITags.TagName }}"
       }
-    },
-    {
-      "type": "virtualbox-iso",
-      "boot_command": [
-        "<esc><wait>",
-        "<esc><wait>",
-        "<enter><wait>",
-        "/install/vmlinuz<wait>",
-        " initrd=/install/initrd.gz<wait>",
-        " auto-install/enable=true<wait>",
-        " debconf/priority=critical<wait>",
-        " noapic<wait>",
-        " netcfg/disable_autoconfig=true<wait>",
-        " netcfg/get_ipaddress={{user `host_ip_addr`}}<wait>",
-        " netcfg/get_netmask={{user `host_ip_mask`}}<wait>",
-        " netcfg/get_gateway={{user `host_ip_GW`}}<wait>",
-        " preseed/url=http://192.168.0.1:{{ .HTTPPort }}/preseed18.cfg<wait>",
-        " netcfg/get_nameservers=8.8.8.8",
-        " -- <wait>",
-        "<enter><wait>"
-      ],
-      "boot_wait": "10s",
-      "disk_size": 40960,
-      "guest_os_type": "Ubuntu_64",
-      "headless": true,
-      "http_directory": "http",
-      "iso_urls": [
-        "iso/ubuntu-18.04-server-amd64.iso",
-        "http://cdimage.ubuntu.com/ubuntu/releases/bionic/release/ubuntu-18.04-server-amd64.iso"
-      ],
-      "iso_checksum": "{{user `iso_checksum_md5`}}",
-      "iso_checksum_type": "md5",
-      "ssh_username": "{{ user `appveyor_username` }}",
-      "ssh_password": "{{ user `appveyor_password` }}",
-      "ssh_port": 22,
-      "ssh_wait_timeout": "10000s",
-      "ssh_host": "{{user `host_ip_addr`}}",
-      "ssh_skip_nat_mapping": "true",
-      "shutdown_command": "echo 'appveyor'|sudo -S shutdown -P now",
-      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
-      "virtualbox_version_file": ".vbox_version",
-      "vm_name": "packer-ubuntu-18.04",
-      "vboxmanage": [
-        [ "modifyvm", "{{.Name}}", "--memory", "3072" ],
-        [ "modifyvm", "{{.Name}}", "--cpus", "1" ],
-        [ "modifyvm", "{{.Name}}", "--nic1", "hostonly" ],
-        [ "modifyvm", "{{.Name}}", "--hostonlyadapter1", "vboxnet0" ],
-        [ "modifyvm", "{{.Name}}", "--nicpromisc1", "allow-all" ],
-        [ "modifyvm", "{{.Name}}", "--cableconnected1", "on" ]
-      ]
-    },
-    {
-      "type": "virtualbox-ovf",
-      "source_path": "ovf/packer-ubuntu-18.04.ovf",
-      "boot_wait": "10s",
-      "headless": true,
-      "http_directory": "http",
-      "ssh_username": "{{ user `appveyor_username` }}",
-      "ssh_password": "{{ user `appveyor_password` }}",
-      "ssh_port": 22,
-      "ssh_wait_timeout": "10000s",
-      "ssh_host": "{{user `host_ip_addr`}}",
-      "ssh_skip_nat_mapping": "true",
-      "shutdown_command": "echo '{{user `appveyor_password`}}'|sudo -S shutdown -P now",
-      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
-      "virtualbox_version_file": ".vbox_version",
-      "vm_name": "packer-ubuntu-18.04",
-      "vboxmanage": [
-        [ "modifyvm", "{{.Name}}", "--memory", "3072" ],
-        [ "modifyvm", "{{.Name}}", "--cpus", "1" ],
-        [ "modifyvm", "{{.Name}}", "--nic1", "hostonly" ],
-        [ "modifyvm", "{{.Name}}", "--hostonlyadapter1", "vboxnet0" ],
-        [ "modifyvm", "{{.Name}}", "--nicpromisc1", "allow-all" ],
-        [ "modifyvm", "{{.Name}}", "--cableconnected1", "on" ]
-      ]
     },
     {
       "type": "azure-arm",
