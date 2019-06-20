@@ -1229,6 +1229,10 @@ function install_curl() {
     DIR_NAME=$(tar -ztf ${TAR_FILE} |cut -d'/' -f1|sort|uniq|head -n1)
     cd -- ${DIR_NAME} ||
         { echo "[ERROR] Cannot change directory to ${DIR_NAME}." 1>&2; popd; return 20; }
+#  apt-get remove libcurl4-gnutls-dev
+#  apt-get remove libcurl3-gnutls-dev
+#  apt-get remove libcurl3-gnutls
+#  apt-get remove libcurl3-gnutls:amd64
     ./configure &&
     make &&
     make install ||

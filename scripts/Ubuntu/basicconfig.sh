@@ -312,7 +312,7 @@ install_kubectl ||
     _abort $?
 install_cmake 3.14.4 ||
     _abort $?
-# install_curl 7.63.0 ||
+# install_curl 7.65.1 ||
 #     _abort $?
 install_browsers ||
     _abort $?
