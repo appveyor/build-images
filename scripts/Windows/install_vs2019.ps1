@@ -86,6 +86,7 @@ $WorkLoads = '--add Microsoft.VisualStudio.Workload.ManagedDesktop ' + `
 		'--add microsoft.visualstudio.component.teamoffice ' + `
 		'--add microsoft.visualstudio.component.winxp ' + `
 		'--add microsoft.visualStudio.component.vc.llvm.clang ' + `
+		'--add microsoft.visualStudio.component.vc.ATLMFC ' + `
 		'--add component.android.sdk27 '
 
 $Sku = 'Community'
