@@ -87,6 +87,7 @@ $WorkLoads = '--add Microsoft.VisualStudio.Workload.ManagedDesktop ' + `
 		'--add microsoft.visualstudio.component.winxp ' + `
 		'--add microsoft.visualStudio.component.vc.llvm.clang ' + `
 		'--add microsoft.visualStudio.component.vc.ATLMFC ' + `
+		'--add microsoft.visualStudio.component.vc.Runtimes.x86.x64.Spectre ' + `
 		'--add component.android.sdk27 ' + `
 		'--add component.android.NDK.R16B '
 
