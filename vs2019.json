@@ -118,7 +118,8 @@
             "{{ template_dir }}/scripts/Windows/install_chrome_browser.ps1",
             "{{ template_dir }}/scripts/Windows/install_llvm.ps1",
             "{{ template_dir }}/scripts/Windows/install_llvm_extension_vs2019.ps1",
-            "{{ template_dir }}/scripts/Windows/install_vcpkg.ps1"
+            "{{ template_dir }}/scripts/Windows/install_vcpkg.ps1",
+            "{{ template_dir }}/scripts/Windows/install_innosetup.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
