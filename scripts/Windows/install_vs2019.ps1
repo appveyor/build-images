@@ -85,11 +85,21 @@ $WorkLoads = '--add Microsoft.VisualStudio.Workload.ManagedDesktop ' + `
 		'--add microsoft.visualstudio.component.azure.servicefabric.tools ' + `
 		'--add microsoft.visualstudio.component.teamoffice ' + `
 		'--add microsoft.visualstudio.component.winxp ' + `
-		'--add microsoft.visualStudio.component.vc.llvm.clang ' + `
-		'--add microsoft.visualStudio.component.vc.ATLMFC ' + `
-		'--add microsoft.visualStudio.component.vc.Runtimes.x86.x64.Spectre ' + `
+		'--add microsoft.visualstudio.component.vc.llvm.clang ' + `
+		'--add microsoft.visualstudio.component.vc.atlmfc ' + `
+		'--add microsoft.visualstudio.component.vc.tools.arm64 ' + `
+		'--add microsoft.visualstudio.component.vc.tools.arm ' + `
+		'--add microsoft.visualstudio.component.vc.atl.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.atl.arm.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.atl.arm64.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.runtimes.arm.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.runtimes.arm64.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.runtimes.x86.x64.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.atl.arm ' + `
+		'--add microsoft.visualstudio.component.vc.atl.arm64 ' + `
+		'--add microsoft.visualstudio.component.vc.14.20.x86.x64 ' + `
 		'--add component.android.sdk27 ' + `
-		'--add component.android.NDK.R16B '
+		'--add component.android.ndk.r16b '
 
 $Sku = 'Community'
 $VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
