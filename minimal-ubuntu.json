@@ -7,6 +7,11 @@
     },
     {
       "type": "file",
+      "source": "{{ template_dir }}/scripts/Ubuntu/custom-scripts",
+      "destination": "./custom-scripts"
+    },
+    {
+      "type": "file",
       "source": "scripts/Ubuntu/",
       "destination": "./"
     },
@@ -21,6 +26,12 @@
       "scripts": [
         "scripts/Ubuntu/minimalconfig.sh"
       ]
+    },
+    {
+        "type": "shell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Ubuntu/run_custom_scripts.sh"
+        ]
     },
     {
       "type": "file",
