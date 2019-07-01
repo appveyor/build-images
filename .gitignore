@@ -10,3 +10,4 @@ appveyor-tools/
 .DS_Store
 packer-manifest.*
 *.pem
+output-hyperv-iso/
