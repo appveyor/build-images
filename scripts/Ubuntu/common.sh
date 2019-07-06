@@ -131,6 +131,7 @@ function add_user() {
     {
     echo -e "${USER_NAME}\tALL=(ALL)\tNOPASSWD: ALL"
     echo -e "Defaults:${USER_NAME}        !requiretty"
+    echo -e 'Defaults    env_keep += "DEBIAN_FRONTEND ACCEPT_EULA"'
     } > /etc/sudoers.d/${USER_NAME}
 
     local PASSWD
