@@ -1342,6 +1342,10 @@ function cleanup() {
 
     apt-get -y -q autoremove
 
+    # cleanup Systemd Journals
+    journalctl --rotate
+    journalctl --vacuum-time=1s
+
     # clean bash_history
     cat /dev/null > ${HOME}/.bash_history
     cat /dev/null > ${USER_HOME}/.bash_history
