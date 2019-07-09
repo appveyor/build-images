@@ -11,3 +11,4 @@ del $exePath
 Write-Host "Installed" -ForegroundColor Green
 
 Add-Path 'C:\Program Files (x86)\NSIS'
+Add-SessionPath 'C:\Program Files (x86)\NSIS'
