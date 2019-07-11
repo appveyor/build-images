@@ -129,6 +129,7 @@ if [ -d /mnt/packer-logs ]; then
     if [ -f "./pwd-${DATEMARK}.log" ]; then
         mv "./pwd-${DATEMARK}.log" /mnt/packer-logs/
     fi
+    # this might be parametrized with packer_manifest variable
     if [ -f "./packer-manifest.json" ]; then
         mv "./packer-manifest.json" /mnt/packer-logs/packer-manifest-${DATEMARK}.json
     fi
