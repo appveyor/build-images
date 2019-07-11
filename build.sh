@@ -129,6 +129,9 @@ if [ -d /mnt/packer-logs ]; then
     if [ -f "./pwd-${DATEMARK}.log" ]; then
         mv "./pwd-${DATEMARK}.log" /mnt/packer-logs/
     fi
+    if [ -f "./packer-manifest.json" ]; then
+        mv "./packer-manifest.json" /mnt/packer-logs/packer-manifest-${DATEMARK}.json
+    fi
 fi
 
 # slack notification
