@@ -13,8 +13,8 @@ readonly AZURE_VARS="azure_client_id azure_client_secret azure_location azure_re
 readonly GCE_VARS="gce_account_file gce_project gce_zone"
 readonly AWS_VARS="aws_access_key aws_secret_key aws_region"
 readonly AWS_OPT_VARS="aws_ssh_keypair_name aws_ssh_private_key_file"
-readonly APPVEYOR_CREDENTIALS="appveyor_user appveyor_password"
-readonly APPVEYOR_VARS="APPVEYOR_BUILD_NUMBER APPVEYOR_REPO_COMMIT APPVEYOR_REPO_COMMIT_MESSAGE"
+readonly APPVEYOR_CREDENTIALS="appveyor_username appveyor_password"
+readonly APPVEYOR_BUILD_VARS="APPVEYOR_BUILD_NUMBER APPVEYOR_REPO_COMMIT APPVEYOR_REPO_COMMIT_MESSAGE"
 PACKER_PARAMS=( )
 
 function check_env_vars() {
@@ -55,6 +55,7 @@ esac
 if [[ $builders =~ azure- ]]; then check_env_vars ${AZURE_VARS} || exit $?; make_params ${AZURE_VARS}; fi
 if [[ $builders =~ amazon- ]]; then check_env_vars ${AWS_VARS} || exit $?; make_params ${AWS_VARS} ${AWS_OPT_VARS}; fi
 if [[ $builders =~ google ]]; then check_env_vars ${GCE_VARS} || exit $?; make_params ${GCE_VARS}; fi
+make_params ${APPVEYOR_CREDENTIALS}
 
 # check secret files passed to container
 if [[ $builders =~ google ]]; then
@@ -69,7 +70,7 @@ PACKER_CMD=$(which packer)
 DATEMARK=$(date +%Y%m%d%H%M%S)
 PACKER_PARAMS+=( "-var"  "datemark=${DATEMARK}" )
 
-if check_env_vars ${APPVEYOR_VARS}; then
+if check_env_vars ${APPVEYOR_BUILD_VARS}; then
     DESCR="build N ${APPVEYOR_BUILD_NUMBER}, ${APPVEYOR_REPO_COMMIT:0:7}, ${APPVEYOR_REPO_COMMIT_MESSAGE}"
     PACKER_PARAMS+=( "-var" "image_description=${DESCR}" )
 fi
