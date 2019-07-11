@@ -1302,6 +1302,23 @@ function install_clang() {
     log_exec clang --version
 }
 
+function install_octo() {
+    local OCTO_URL
+    OCTO_URL=$1
+    local TMP_DIR=$(mktemp -d)
+    pushd -- ${TMP_DIR}
+    curl -fsSL "${OCTO_URL}" -o OctopusTools.tar.gz ||
+        { echo "[ERROR] Cannot download OctopusTools." 1>&2; popd; return 10; }
+    mkdir /opt/octopus &&
+    tar zxf OctopusTools.tar.gz -C /opt/octopus ||
+        { echo "[ERROR] Cannot unpack and copy OctopusTools." 1>&2; popd; return 20; }
+    write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
+    log_exec /opt/octopus/Octo version
+    # cleanup
+    rm OctopusTools.tar.gz
+    popd
+}
+
 function add_ssh_known_hosts() {
     if [ -f "add_ssh_known_hosts.ps1" ] && command -v pwsh; then
         pwsh ./add_ssh_known_hosts.ps1

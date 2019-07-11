@@ -140,6 +140,9 @@ install_p7zip
 install_pip ||
     _abort $?
 
+install_octo "https://download.octopusdeploy.com/octopus-tools/6.2.3/OctopusTools.6.2.3.ubuntu.16.04-x64.tar.gz" ||
+    _abort $?
+
 install_virtualenv ||
     _abort $?
 
