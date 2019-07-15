@@ -2,6 +2,7 @@
 #shellcheck disable=SC2086,SC2015,SC2164
 
 # set variables
+declare BASH_ATTRIBUTES
 declare PACKAGES=( )
 declare SDK_VERSIONS=( )
 declare PROFILE_LINES=( )
@@ -12,6 +13,22 @@ else
     echo "[WARNING] /etc/os-release not found - cant find VERSION_CODENAME and VERSION_ID."
 fi
 if [[ -z "${LOGGING}" ]]; then LOGGING=true; fi
+
+function save_bash_attributes() {
+    BASH_ATTRIBUTES=$(set -o)
+}
+
+function restore_bash_attributes() {
+    if [[ -n "$BASH_ATTRIBUTES" && "${#BASH_ATTRIBUTES}" -gt "0" ]]; then
+        while read -r BUILT STATUS; do
+            if [ "$STATUS" == "on" ]; then
+                set -o $BUILT
+            else
+                set +o $BUILT
+            fi
+        done <<< "$BASH_ATTRIBUTES"
+    fi
+}
 
 function init_logging() {
     if [[ -z $LOG_FILE ]]; then
