@@ -112,8 +112,8 @@ fi
 # run packer
 PACKER_LOG_PATH=${APPVEYOR_LOGS_PATH} PACKER_LOG=1 CHECKPOINT_DISABLE=1 ${PACKER_CMD} build \
         --only=${builders} \
-        -var "install_user=${appveyor_user}" \
-        -var "install_password=${appveyor_password}" \
+        -var "install_user=${install_user}" \
+        -var "install_password=${install_password}" \
         -var "build_agent_mode=${build_agent_mode}" \
         "${PACKER_PARAMS[@]}" \
         ${TEMPLATE}.json

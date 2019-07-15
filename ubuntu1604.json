@@ -46,6 +46,7 @@
       "type": "shell",
       "environment_vars": [
         "USER_NAME={{ user `install_user` }}",
+        "USER_PASSWORD={{ user `install_password` }}",
         "USER_HOME={{ user `install_home` }}",
         "DATEMARK={{ user `datemark` }}"
       ],

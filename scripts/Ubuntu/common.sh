@@ -139,24 +139,29 @@ function check_apt_locks() {
 }
 
 function add_user() {
-    PASSWD_LENGTH=${1:-32}
+    local USER_PASSWORD_LENGTH=${1:-32}
+    save_bash_attributes
+    set +o xtrace
+    #generate password if it was not set before
+    if [[ -z "$USER_PASSWORD" || "${#USER_PASSWORD}" = "0" ]]; then
+        USER_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${USER_PASSWORD_LENGTH};)
+    fi
     id -u ${USER_NAME} >/dev/null 2>&1 || \
         useradd ${USER_NAME} --shell /bin/bash --create-home --password ${USER_NAME}
     usermod -aG sudo ${USER_NAME}
 
     # Add Appveyor user to sudoers.d
     {
-    echo -e "${USER_NAME}\tALL=(ALL)\tNOPASSWD: ALL"
-    echo -e "Defaults:${USER_NAME}        !requiretty"
-    echo -e 'Defaults    env_keep += "DEBIAN_FRONTEND ACCEPT_EULA"'
+        echo -e "${USER_NAME}\tALL=(ALL)\tNOPASSWD: ALL"
+        echo -e "Defaults:${USER_NAME}        !requiretty"
+        echo -e 'Defaults    env_keep += "DEBIAN_FRONTEND ACCEPT_EULA"'
     } > /etc/sudoers.d/${USER_NAME}
 
-    local PASSWD
-    PASSWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${PASSWD_LENGTH};)
-    echo -e "${PASSWD}\n${PASSWD}\n" | passwd "${USER_NAME}"
+    echo -e "${USER_PASSWORD}\n${USER_PASSWORD}\n" | passwd "${USER_NAME}"
     if "${LOGGING}"; then
-        echo "PASSWD=${PASSWD}" >${HOME}/pwd-$DATEMARK.log
+        echo "USER_PASSWORD=${USER_PASSWORD}" >${HOME}/pwd-$DATEMARK.log
     fi
+    restore_bash_attributes
     return 0
 }
 
