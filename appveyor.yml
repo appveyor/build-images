@@ -42,6 +42,7 @@ init:
       should_exit=true
     fi
     if [[ "$should_exit" = true ]]; then
+      appveyor UpdateBuild -Message "[SKIPPED] $APPVEYOR_JOB_NAME"
       appveyor exit
     fi
 - sh: |
