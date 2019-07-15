@@ -18,11 +18,11 @@
     {
       "type": "shell",
       "environment_vars": [
-        "USER_NAME={{ user `appveyor_username` }}",
-        "USER_HOME={{ user `appveyor_home` }}",
+        "USER_NAME={{ user `install_user` }}",
+        "USER_HOME={{ user `install_home` }}",
         "DATEMARK={{ user `datemark` }}"
       ],
-      "execute_command": "echo '{{ user `appveyor_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",
+      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",
       "scripts": [
         "scripts/Ubuntu/minimalconfig.sh"
       ]
@@ -48,8 +48,8 @@
     {
       "type": "shell",
       "inline": [
-        "if [ -f {{ user `appveyor_home` }}/pwd-{{ user `datemark` }}.log ]; then rm {{ user `appveyor_home` }}/pwd-{{ user `datemark` }}.log; fi",
-        "if [ -f {{ user `appveyor_home` }}/.ssh/authorized_keys ]; then rm {{ user `appveyor_home` }}/.ssh/authorized_keys; fi"
+        "if [ -f {{ user `install_home` }}/pwd-{{ user `datemark` }}.log ]; then rm {{ user `install_home` }}/pwd-{{ user `datemark` }}.log; fi",
+        "if [ -f {{ user `install_home` }}/.ssh/authorized_keys ]; then rm {{ user `install_home` }}/.ssh/authorized_keys; fi"
        ]
     }
   ],
@@ -73,7 +73,7 @@
           "https://www.googleapis.com/auth/trace.append" 
         ],
       "machine_type": "n1-standard-1",
-      "ssh_username": "{{ user `appveyor_username` }}",
+      "ssh_username": "{{ user `install_user` }}",
       "instance_name": "packer-ubuntu1804-{{uuid}}",
       "image_name": "packer-ubuntu1804-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",

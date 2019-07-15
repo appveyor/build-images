@@ -1,8 +1,8 @@
 {
   "variables": {
-    "appveyor_username": "appveyor",
-    "appveyor_password": "appveyor",
-    "appveyor_home":"/home/appveyor",
+    "install_user": "appveyor",
+    "install_password": "appveyor",
+    "install_home":"/home/appveyor",
     "host_ip_addr": "192.168.0.9",
     "host_ip_mask": "255.255.248.0",
     "host_ip_gw": "192.168.0.1",
@@ -48,11 +48,11 @@
     {
       "type": "shell",
       "environment_vars": [
-        "USER_NAME={{ user `appveyor_username` }}",
-        "USER_HOME={{ user `appveyor_home` }}",
+        "USER_NAME={{ user `install_user` }}",
+        "USER_HOME={{ user `install_home` }}",
         "DATEMARK={{ user `datemark` }}"
       ],
-      "execute_command": "echo '{{ user `appveyor_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",
+      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",
       "scripts": [
         "scripts/Ubuntu/basicconfig.sh"
       ]
@@ -78,8 +78,8 @@
     {
       "type": "shell",
       "inline": [
-        "if [ -f {{ user `appveyor_home` }}/pwd-{{ user `datemark` }}.log ]; then rm {{ user `appveyor_home` }}/pwd-{{ user `datemark` }}.log; fi",
-        "if [ -f {{ user `appveyor_home` }}/.ssh/authorized_keys ]; then rm {{ user `appveyor_home` }}/.ssh/authorized_keys; fi"
+        "if [ -f {{ user `install_home` }}/pwd-{{ user `datemark` }}.log ]; then rm {{ user `install_home` }}/pwd-{{ user `datemark` }}.log; fi",
+        "if [ -f {{ user `install_home` }}/.ssh/authorized_keys ]; then rm {{ user `install_home` }}/.ssh/authorized_keys; fi"
        ]
     }
   ],
@@ -103,7 +103,7 @@
           "https://www.googleapis.com/auth/trace.append" 
         ],
       "machine_type": "n1-standard-1",
-      "ssh_username": "{{ user `appveyor_username` }}",
+      "ssh_username": "{{ user `install_user` }}",
       "instance_name": "packer-ubuntu1804-{{uuid}}",
       "image_name": "packer-ubuntu1804-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
@@ -139,18 +139,18 @@
 
       "iso_checksum": "{{user `iso_checksum_md5`}}",
       "iso_checksum_type": "md5",
-      "ssh_username": "{{ user `appveyor_username` }}",
-      "ssh_password": "{{ user `appveyor_password` }}",
-      "shutdown_command": "echo '{{ user `appveyor_password` }}' | sudo -S shutdown -P now",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
+      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now",
       "disk_size": 40960
     },
     {
       "type": "hyperv-vmcx",
       "clone_from_vm_name": "u18-empty",
       "vm_name": "packer-u18-{{ user `datemark` }}",
-      "ssh_username": "{{ user `appveyor_username` }}",
-      "ssh_password": "{{ user `appveyor_password` }}",
-      "shutdown_command": "echo '{{ user `appveyor_password` }}' | sudo -S shutdown -P now",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
+      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now",
       "http_directory": "http",
       "communicator":"ssh",
       "ssh_timeout" : "1h",
@@ -235,8 +235,8 @@
       ],
       "iso_checksum": "{{user `iso_checksum_md5`}}",
       "iso_checksum_type": "md5",
-      "ssh_username": "{{ user `appveyor_username` }}",
-      "ssh_password": "{{ user `appveyor_password` }}",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
       "ssh_port": 22,
       "ssh_wait_timeout": "10000s",
       "ssh_host": "{{user `host_ip_addr`}}",
@@ -260,13 +260,13 @@
       "boot_wait": "10s",
       "headless": true,
       "http_directory": "http",
-      "ssh_username": "{{ user `appveyor_username` }}",
-      "ssh_password": "{{ user `appveyor_password` }}",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
       "ssh_port": 22,
       "ssh_wait_timeout": "10000s",
       "ssh_host": "{{user `host_ip_addr`}}",
       "ssh_skip_nat_mapping": "true",
-      "shutdown_command": "echo '{{user `appveyor_password`}}'|sudo -S shutdown -P now",
+      "shutdown_command": "echo '{{user `install_password`}}'|sudo -S shutdown -P now",
       "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
       "virtualbox_version_file": ".vbox_version",
       "vm_name": "packer-ubuntu-18.04",
