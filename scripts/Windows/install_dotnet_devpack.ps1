@@ -6,7 +6,7 @@ function install-devpack ($version, $location) {
     (New-Object Net.WebClient).DownloadFile($location, $exePath)
     Write-Host "Installing..."
     cmd /c start /wait "$exePath" /quiet /norestart
-    del $exePath
+    Remove-Item $exePath -Force -ErrorAction Ignore
 
     Write-Host "Installed" -ForegroundColor Green
 }
