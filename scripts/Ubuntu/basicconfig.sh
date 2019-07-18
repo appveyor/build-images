@@ -252,7 +252,9 @@ install_jdk 11 https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_linux-x6
     _abort $?
 install_jdk 12 https://download.java.net/openjdk/jdk12/ri/openjdk-12+32_linux-x64_bin.tar.gz ||
     _abort $?
-install_jdk 13 https://download.java.net/java/early_access/jdk13/21/GPL/openjdk-13-ea+21_linux-x64_bin.tar.gz ||
+install_jdk 13 https://download.java.net/java/early_access/jdk13/29/GPL/openjdk-13-ea+29_linux-x64_bin.tar.gz ||
+    _abort $?
+install_jdk 14 https://download.java.net/java/early_access/jdk14/5/GPL/openjdk-14-ea+5_linux-x64_bin.tar.gz ||
     _abort $?
 
 OFS=$IFS
