@@ -13,7 +13,7 @@ readonly AZURE_VARS="azure_client_id azure_client_secret azure_location azure_re
 readonly GCE_VARS="gce_account_file gce_project gce_zone"
 readonly AWS_VARS="aws_access_key aws_secret_key aws_region"
 readonly AWS_OPT_VARS="aws_ssh_keypair_name aws_ssh_private_key_file"
-readonly APPVEYOR_CREDENTIALS="install_user install_password"
+readonly APPVEYOR_CREDENTIALS="aws_region install_user install_password"
 readonly APPVEYOR_BUILD_VARS="APPVEYOR_BUILD_NUMBER APPVEYOR_REPO_COMMIT APPVEYOR_REPO_COMMIT_MESSAGE"
 PACKER_PARAMS=( )
 
