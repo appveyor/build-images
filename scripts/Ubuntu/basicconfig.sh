@@ -315,7 +315,7 @@ install_azurecli ||
     _abort $?
 install_kubectl ||
     _abort $?
-install_cmake 3.14.4 ||
+install_cmake 3.15.0 ||
     _abort $?
 # install_curl 7.65.1 ||
 #     _abort $?
