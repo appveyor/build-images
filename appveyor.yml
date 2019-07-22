@@ -1,5 +1,5 @@
 # This YAML instructs Appveyor to build images of different OSes on different Clouds
-image: Previous Ubuntu
+image: ubuntu
 
 environment:
   matrix:
