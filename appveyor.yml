@@ -120,7 +120,7 @@ build_script:
         install_user=${install_user} \
         install_password=${install_password} \
         build_agent_mode=${build_agent_mode} \
-        APPVEYOR_BUILD_NUMBER=${APPVEYOR_BUILD_NUMBER} \
+        APPVEYOR_BUILD_VERSION=${APPVEYOR_BUILD_VERSION} \
         builders=${builders} \
         TEMPLATE=${TEMPLATE} \
       --secure-environment-variables \
