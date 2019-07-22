@@ -162,7 +162,7 @@ install_powershell ||
 #      _abort $?
 
 
-make_git 2.21.0 ||
+make_git 2.22.0 ||
     _abort $?
 
 install_gitlfs ||
@@ -208,7 +208,7 @@ su -l ${USER_NAME} -c "
         $(declare -f configure_svn)
         configure_svn" ||
     _abort $?
-install_virtualbox 6.0.8 ||
+install_virtualbox 6.0.10 ||
     _continue $?
 install_mysql ||
     _abort $?
@@ -305,7 +305,7 @@ disable_sqlserver ||
 
 install_yarn ||
     _abort $?
-install_packer 1.4.1 ||
+install_packer 1.4.2 ||
     _abort $?
 
 install_awscli ||
