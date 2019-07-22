@@ -18,7 +18,7 @@ function install-runtime ($version, $location, $release) {
     cmd /c start /wait "$exePath" /quiet /norestart
     Remove-Item $exePath -Force -ErrorAction Ignore
     Write-Host "Installed" -ForegroundColor Green
-    Set-Content -Path $env:tmp\dotnet-runtime-installed.txt -Value installed
+    Set-Content -Path $env:SystemDrive\dotnet-runtime-installed.txt -Value installed
   }
 }
 
