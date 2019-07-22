@@ -14,7 +14,7 @@ readonly GCE_VARS="gce_account_file gce_project gce_zone"
 readonly AWS_VARS="aws_access_key aws_secret_key aws_region"
 readonly AWS_OPT_VARS="aws_ssh_keypair_name aws_ssh_private_key_file"
 readonly APPVEYOR_CREDENTIALS="aws_region install_user install_password"
-readonly APPVEYOR_BUILD_VARS="APPVEYOR_BUILD_NUMBER APPVEYOR_REPO_COMMIT APPVEYOR_REPO_COMMIT_MESSAGE"
+readonly APPVEYOR_BUILD_VARS="APPVEYOR_BUILD_VERSION APPVEYOR_BUILD_NUMBER APPVEYOR_REPO_COMMIT APPVEYOR_REPO_COMMIT_MESSAGE"
 PACKER_PARAMS=( )
 
 function check_env_vars() {
@@ -71,7 +71,7 @@ DATEMARK=$(date +%Y%m%d%H%M%S)
 PACKER_PARAMS+=( "-var"  "datemark=${DATEMARK}" )
 
 if check_env_vars ${APPVEYOR_BUILD_VARS}; then
-    DESCR="build N ${APPVEYOR_BUILD_NUMBER}, ${APPVEYOR_REPO_COMMIT:0:7}, ${APPVEYOR_REPO_COMMIT_MESSAGE}"
+    DESCR="build N ${APPVEYOR_BUILD_VERSION}, ${APPVEYOR_REPO_COMMIT:0:7}, ${APPVEYOR_REPO_COMMIT_MESSAGE}"
     PACKER_PARAMS+=( "-var" "image_description=${DESCR}" )
 fi
 
