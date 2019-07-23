@@ -71,49 +71,49 @@ $rubies = @(
         "bundlerV2" = $true
     }
     @{
-        "version" = "Ruby 2.4.5-1"
+        "version" = "Ruby 2.4.6-1"
         "install_path" = "C:\Ruby24"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/rubyinstaller-2.4.5-1/rubyinstaller-2.4.5-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.6-1/rubyinstaller-2.4.6-1-x86.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
     }
     @{
-        "version" = "Ruby 2.4.5-1 (x64)"
+        "version" = "Ruby 2.4.6-1 (x64)"
         "install_path" = "C:\Ruby24-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/rubyinstaller-2.4.5-1/rubyinstaller-2.4.5-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.6-1/rubyinstaller-2.4.6-1-x64.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
     }
     @{
-        "version" = "Ruby 2.5.3-1"
+        "version" = "Ruby 2.5.5-1"
         "install_path" = "C:\Ruby25"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/rubyinstaller-2.5.3-1/rubyinstaller-2.5.3-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.5-1/rubyinstaller-2.5.5-1-x86.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
     }
     @{
-        "version" = "Ruby 2.5.3-1 (x64)"
+        "version" = "Ruby 2.5.5-1 (x64)"
         "install_path" = "C:\Ruby25-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/rubyinstaller-2.5.3-1/rubyinstaller-2.5.3-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.5-1/rubyinstaller-2.5.5-1-x64.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
     }
     @{
-        "version" = "Ruby 2.6.1-1"
+        "version" = "Ruby 2.6.3-1"
         "install_path" = "C:\Ruby26"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.1-1/rubyinstaller-2.6.1-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.3-1/rubyinstaller-2.6.3-1-x86.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
     }    
     @{
-        "version" = "Ruby 2.6.1-1 (x64)"
+        "version" = "Ruby 2.6.3-1 (x64)"
         "install_path" = "C:\Ruby26-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.1-1/rubyinstaller-2.6.1-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.3-1/rubyinstaller-2.6.3-1-x64.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
