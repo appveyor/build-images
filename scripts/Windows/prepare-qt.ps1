@@ -1,6 +1,6 @@
 function CreateJuncton ($link, $target) {
   if (test-path $link) {
-    rd $link -force -recurce
+    rd $link -force -recurse
   }
   cmd /c mklink /J $link $target
 }
