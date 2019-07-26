@@ -88,7 +88,6 @@ init_logging
 if [ "$#" -gt 0 ]; then
     while [[ "$#" -gt 0 ]]; do
         case "$1" in
-            install_buildagent)     install_buildagent "${BUILD_AGENT_MODE}" || _abort $?; ;;
             install_appveyoragent)  install_appveyoragent "${BUILD_AGENT_MODE}" || _abort $?; ;;
             install_pythons)        install_pythons || _abort $?; ;;
             install_docker)         install_docker || _abort $?; ;;
@@ -157,10 +156,6 @@ install_dotnets ||
     _abort $?
 install_powershell ||
     _abort $?
-
-# install_buildagent "${BUILD_AGENT_MODE}" ||
-#      _abort $?
-
 
 make_git 2.22.0 ||
     _abort $?
