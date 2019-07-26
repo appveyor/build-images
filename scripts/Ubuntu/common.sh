@@ -291,7 +291,10 @@ function install_KVP_packages(){
 }
 
 function copy_appveyoragent() {
-    AGENT_FILE=appveyor-build-agent-${AGENT_VERSION}-linux-x64.tar.gz
+    if [[ -z "$APPVEYOR_BUILD_AGENT_VERSION" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
+        APPVEYOR_BUILD_AGENT_VERSION=7.0.2326;
+    fi
+    AGENT_FILE=appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-x64.tar.gz
 
     if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
 
@@ -303,7 +306,7 @@ function copy_appveyoragent() {
     if [ -f "${HOME}/distrib/${AGENT_FILE}" ]; then
         cp "${HOME}/distrib/${AGENT_FILE}" ./
     else
-        curl -fsSL https://appveyordownloads.blob.core.windows.net/appveyor/${AGENT_VERSION}/${AGENT_FILE} -o ${AGENT_FILE}
+        curl -fsSL https://appveyordownloads.blob.core.windows.net/appveyor/${APPVEYOR_BUILD_AGENT_VERSION}/${AGENT_FILE} -o ${AGENT_FILE}
     fi &&
     tar -zxf ${AGENT_FILE} ||
         { echo "[ERROR] Cannot download and untar ${AGENT_FILE}." 1>&2; popd; return 20; }

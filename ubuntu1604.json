@@ -3,6 +3,7 @@
     "install_user": "appveyor",
     "install_password": "appveyor",
     "install_home":"/home/appveyor",
+    "APPVEYOR_BUILD_AGENT_VERSION": "{{env `APPVEYOR_BUILD_AGENT_VERSION`}}",
     "aws_access_key": "",
     "aws_secret_key": "",
     "aws_region": "",
@@ -48,6 +49,7 @@
         "USER_NAME={{ user `install_user` }}",
         "USER_PASSWORD={{ user `install_password` }}",
         "USER_HOME={{ user `install_home` }}",
+        "APPVEYOR_BUILD_AGENT_VERSION={{user `APPVEYOR_BUILD_AGENT_VERSION` }}",
         "DATEMARK={{ user `datemark` }}"
       ],
       "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",

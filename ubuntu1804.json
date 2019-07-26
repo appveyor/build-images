@@ -3,6 +3,7 @@
     "install_user": "appveyor",
     "install_password": "appveyor",
     "install_home":"/home/appveyor",
+    "APPVEYOR_BUILD_AGENT_VERSION": "{{env `APPVEYOR_BUILD_AGENT_VERSION`}}",
     "host_ip_addr": "192.168.0.9",
     "host_ip_mask": "255.255.248.0",
     "host_ip_gw": "192.168.0.1",
@@ -51,6 +52,7 @@
         "USER_NAME={{ user `install_user` }}",
         "USER_PASSWORD={{ user `install_password` }}",
         "USER_HOME={{ user `install_home` }}",
+        "APPVEYOR_BUILD_AGENT_VERSION={{user `APPVEYOR_BUILD_AGENT_VERSION` }}",
         "DATEMARK={{ user `datemark` }}"
       ],
       "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",
