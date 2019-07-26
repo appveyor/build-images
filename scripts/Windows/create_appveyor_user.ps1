@@ -11,4 +11,6 @@ if ($env:appveyor_password) {
 cmd /c net localgroup Administrators %appveyor_user% /add
 cmd /c 'winrm set winrm/config/service/auth @{Basic="true"}'
 
+Set-LocalUser -Name $env:appveyor_user -PasswordNeverExpires:$true
+
 Write-Host "User created"
