@@ -322,7 +322,7 @@ function install_appveyoragent() {
     SERVICE_NAME=appveyor-build-agent.service
     if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
 
-    copy_appveyoragent || return "$1"
+    copy_appveyoragent || return "$?"
 
     if id -u ${USER_NAME}; then
         chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR}
