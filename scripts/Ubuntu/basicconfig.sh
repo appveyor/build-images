@@ -2,9 +2,9 @@
 #shellcheck disable=SC2086,SC2015,SC2164
 DEBUG=false
 
-if [[ -z "$USER_NAME" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; fi
-if [[ -z "$USER_HOME" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/home/appveyor; fi
-if [[ -z "$DATEMARK" || "${#DATEMARK}" = "0" ]]; then DATEMARK=$(date +%Y%m%d%H%M%S); fi
+if [[ -z "${USER_NAME-}" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; fi
+if [[ -z "${USER_HOME-}" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/home/appveyor; fi
+if [[ -z "${DATEMARK-}" || "${#DATEMARK}" = "0" ]]; then DATEMARK=$(date +%Y%m%d%H%M%S); fi
 HOST_NAME=appveyor-vm
 MSSQL_SA_PASSWORD=Password12!
 MYSQL_ROOT_PASSWORD=Password12!
@@ -139,7 +139,7 @@ install_p7zip
 install_pip ||
     _abort $?
 
-install_octo "https://download.octopusdeploy.com/octopus-tools/6.2.3/OctopusTools.6.2.3.ubuntu.16.04-x64.tar.gz" ||
+install_octo ||
     _abort $?
 
 install_virtualenv ||
@@ -157,7 +157,7 @@ install_dotnets ||
 install_powershell ||
     _abort $?
 
-make_git 2.22.0 ||
+make_git ||
     _abort $?
 
 install_gitlfs ||
@@ -203,7 +203,7 @@ su -l ${USER_NAME} -c "
         $(declare -f configure_svn)
         configure_svn" ||
     _abort $?
-install_virtualbox 6.0.10 ||
+install_virtualbox ||
     _continue $?
 install_mysql ||
     _abort $?
@@ -237,19 +237,6 @@ su -l ${USER_NAME} -c "
     _abort $?
 
 install_jdks ||
-    _abort $?
-
-install_jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz ||
-    _abort $?
-install_jdk 10 https://download.java.net/openjdk/jdk10/ri/openjdk-10+44_linux-x64_bin_ri.tar.gz ||
-    _abort $?
-install_jdk 11 https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_linux-x64_bin.tar.gz ||
-    _abort $?
-install_jdk 12 https://download.java.net/openjdk/jdk12/ri/openjdk-12+32_linux-x64_bin.tar.gz ||
-    _abort $?
-install_jdk 13 https://download.java.net/java/early_access/jdk13/29/GPL/openjdk-13-ea+29_linux-x64_bin.tar.gz ||
-    _abort $?
-install_jdk 14 https://download.java.net/java/early_access/jdk14/5/GPL/openjdk-14-ea+5_linux-x64_bin.tar.gz ||
     _abort $?
 
 OFS=$IFS
@@ -300,7 +287,7 @@ disable_sqlserver ||
 
 install_yarn ||
     _abort $?
-install_packer 1.4.2 ||
+install_packer ||
     _abort $?
 
 install_awscli ||
@@ -310,9 +297,9 @@ install_azurecli ||
     _abort $?
 install_kubectl ||
     _abort $?
-install_cmake 3.15.0 ||
+install_cmake ||
     _abort $?
-# install_curl 7.65.1 ||
+# install_curl ||
 #     _abort $?
 install_browsers ||
     _abort $?

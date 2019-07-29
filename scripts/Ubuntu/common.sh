@@ -143,7 +143,7 @@ function add_user() {
     save_bash_attributes
     set +o xtrace
     #generate password if it was not set before
-    if [[ -z "$USER_PASSWORD" || "${#USER_PASSWORD}" = "0" ]]; then
+    if [[ -z "${USER_PASSWORD-}" || "${#USER_PASSWORD}" = "0" ]]; then
         USER_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${USER_PASSWORD_LENGTH};)
     fi
     id -u ${USER_NAME} >/dev/null 2>&1 || \
@@ -386,7 +386,12 @@ function install_nvm() {
 }
 
 function install_nvm_nodejs() {
-    local CURRENT_NODEJS=$1
+    local CURRENT_NODEJS
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        CURRENT_NODEJS=8
+    else
+        CURRENT_NODEJS=$1
+    fi
     # this must be executed as appveyor user
     if [ "$(whoami)" != ${USER_NAME} ]; then
         echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
@@ -406,8 +411,13 @@ function install_nvm_nodejs() {
 }
 
 function make_git() {
-    GIT_VERSION=$1
-    if command -v git && [[ $(git --version) =~ ${GIT_VERSION} ]]; then
+    local GIT_VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        GIT_VERSION=2.22.0
+    else
+        GIT_VERSION=$1
+    fi
+    if command -v git && [[ $(git --version| cut -d' ' -f 3) =~ ${GIT_VERSION} ]]; then
         echo "[WARNING] git version ${GIT_VERSION} already installed.";
         return 0
     fi
@@ -682,7 +692,7 @@ function install_mono() {
     log_exec mcs --version
 }
 
-function install_jdks() {
+function install_jdks_from_repository() {
     add-apt-repository -y ppa:openjdk-r/ppa
     apt-get -y -qq update && {
         apt-get -y -q install --no-install-recommends openjdk-7-jdk
@@ -691,6 +701,23 @@ function install_jdks() {
     } ||
         { echo "[ERROR] Cannot install JDKs." 1>&2; return 10; }
     update-java-alternatives --set java-1.8.0-openjdk-amd64
+}
+
+function install_jdks() {
+    install_jdks_from_repository || return $?
+
+    install_jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz ||
+        return $?
+    install_jdk 10 https://download.java.net/openjdk/jdk10/ri/openjdk-10+44_linux-x64_bin_ri.tar.gz ||
+        return $?
+    install_jdk 11 https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_linux-x64_bin.tar.gz ||
+        return $?
+    install_jdk 12 https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz ||
+        return $?
+    install_jdk 13 https://download.java.net/java/early_access/jdk13/31/GPL/openjdk-13-ea+31_linux-x64_bin.tar.gz ||
+        return $?
+    install_jdk 14 https://download.java.net/java/early_access/jdk14/7/GPL/openjdk-14-ea+7_linux-x64_bin.tar.gz ||
+        return $?
 }
 
 function install_jdk() {
@@ -1048,7 +1075,12 @@ function install_p7zip() {
 }
 
 function install_packer() {
-    local VERSION=$1
+    local VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        VERSION=1.4.2
+    else
+        VERSION=$1
+    fi
     local ZIPNAME=packer_${VERSION}_linux_amd64.zip
     curl -fsSL -O https://releases.hashicorp.com/packer/${VERSION}/${ZIPNAME} &&
     unzip -q -o ${ZIPNAME} -d /usr/local/bin ||
@@ -1105,7 +1137,12 @@ function install_azurecli() {
 }
 
 function install_cmake() {
-    local VERSION=$1
+    local VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        VERSION=3.15.1
+    else
+        VERSION=$1
+    fi
     local TAR_FILE=cmake-${VERSION}-Linux-x86_64.tar.gz
     local TMP_DIR=$(mktemp -d)
     pushd -- ${TMP_DIR}
@@ -1159,7 +1196,12 @@ function install_gcc() {
 }
 
 function install_curl() {
-    local VERSION=$1
+    local VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        VERSION=7.65.1
+    else
+        VERSION=$1
+    fi
     local TAR_FILE=curl-${VERSION}.tar.gz
     local TMP_DIR=$(mktemp -d)
     pushd -- ${TMP_DIR}
@@ -1199,8 +1241,14 @@ function install_browsers() {
 # https://download.virtualbox.org/virtualbox/6.0.6/virtualbox-6.0_6.0.6-130049~Ubuntu~bionic_amd64.deb
 # https://download.virtualbox.org/virtualbox/6.0.6/virtualbox-6.0_6.0.6-130049~Ubuntu~xenial_amd64.deb
 function install_virtualbox() {
-    local VB_VERSION=${1%.*}
-    local VBE_URL=https://download.virtualbox.org/virtualbox/${1}/Oracle_VM_VirtualBox_Extension_Pack-${1}.vbox-extpack
+    local VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        VERSION=6.0.10
+    else
+        VERSION=$1
+    fi
+    local VB_VERSION=${VERSION%.*}
+    local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
     echo "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" >/etc/apt/sources.list.d/virtualboxorg.list &&
     curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add - ||
@@ -1243,12 +1291,16 @@ function install_clang() {
 
 function install_octo() {
     local OCTO_URL
-    OCTO_URL=$1
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        OCTO_URL="https://download.octopusdeploy.com/octopus-tools/6.2.3/OctopusTools.6.2.3.ubuntu.16.04-x64.tar.gz"
+    else
+        OCTO_URL=$1
+    fi
     local TMP_DIR=$(mktemp -d)
     pushd -- ${TMP_DIR}
     curl -fsSL "${OCTO_URL}" -o OctopusTools.tar.gz ||
         { echo "[ERROR] Cannot download OctopusTools." 1>&2; popd; return 10; }
-    mkdir /opt/octopus &&
+    mkdir -p /opt/octopus &&
     tar zxf OctopusTools.tar.gz -C /opt/octopus ||
         { echo "[ERROR] Cannot unpack and copy OctopusTools." 1>&2; popd; return 20; }
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'

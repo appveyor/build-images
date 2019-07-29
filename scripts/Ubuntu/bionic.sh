@@ -109,7 +109,7 @@ function install_mongodb() {
     log_exec dpkg -l mongodb
 }
 
-function install_jdks() {
+function install_jdks_from_repository() {
     add-apt-repository -y ppa:openjdk-r/ppa
     apt-get -y -qq update && {
         apt-get -y -q install --no-install-recommends openjdk-8-jdk
