@@ -292,7 +292,7 @@ function install_KVP_packages(){
 
 function copy_appveyoragent() {
     if [[ -z "$APPVEYOR_BUILD_AGENT_VERSION" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
-        APPVEYOR_BUILD_AGENT_VERSION=7.0.2326;
+        APPVEYOR_BUILD_AGENT_VERSION=7.0.2329;
     fi
     AGENT_FILE=appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-x64.tar.gz
 

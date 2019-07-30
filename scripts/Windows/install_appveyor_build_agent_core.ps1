@@ -1,3 +1,5 @@
+$AGENT_VERSION = '7.0.2329'
+
 Write-Host "Installing AppVeyor Build Agent Core"
 Write-Host "===================================="
 
@@ -11,7 +13,7 @@ if (Test-Path $destPath) {
 
 Write-Host "Downloading..."
 $zipPath = "$env:TEMP\appveyor-build-agent.zip"
-(New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/appveyor/7.0.2326/appveyor-build-agent-7.0.2326-win-x64.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/appveyor/$AGENT_VERSION/appveyor-build-agent-$AGENT_VERSION-win-x64.zip", $zipPath)
 
 Write-Host "Unpacking..."
 7z x $zipPath -o"$destPath" | Out-Null
