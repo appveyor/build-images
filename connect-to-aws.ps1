@@ -653,7 +653,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
                 artifactStorageName = $aws_artifact_storage_name
                 buildCacheName = $aws_cache_storage_name
                 failureStrategy = @{
-                    jobStartTimeoutSeconds = 240
+                    jobStartTimeoutSeconds = 300
                     provisioningAttempts = 3
                 }
                 cloudSettings = @{
@@ -702,7 +702,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
         else {
             $settings.settings.buildCacheName = $aws_cache_storage_name 
         }
-        $settings.settings.failureStrategy.jobStartTimeoutSeconds = 240
+        $settings.settings.failureStrategy.jobStartTimeoutSeconds = 300
         $settings.settings.failureStrategy.provisioningAttempts = 3
         $settings.settings.cloudSettings.awsAccount.accessKeyId = $aws_access_key_id
         $settings.settings.cloudSettings.awsAccount.secretAccessKey = $aws_secret_access_key
