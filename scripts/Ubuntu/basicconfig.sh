@@ -154,6 +154,8 @@ su -l ${USER_NAME} -c "
 # .NET stuff
 install_dotnets ||
     _abort $?
+install_dotnetv3_preview ||
+    _abort $?
 install_powershell ||
     _abort $?
 

@@ -624,6 +624,7 @@ function global_json() {
 function preheat_dotnet_sdks() {
     declare SDK_VERSIONS=("$@")
     for i in "${SDK_VERSIONS[@]}"; do
+        echo "Preheating .NET SDK version $i"
         TMP_DIR=$(mktemp -d)
         pushd  ${TMP_DIR}
         global_json ${i} >global.json
@@ -680,6 +681,49 @@ function install_dotnets() {
 
     #pre-heat
     preheat_dotnet_sdks "${SDK_VERSIONS[@]}"
+    log_exec dotnet --list-sdks
+    log_exec dotnet --list-runtimes
+}
+
+function install_dotnetv3_preview() {
+    local DOTNET3_SDK_URL
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        DOTNET3_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/c624c5d6-0e9c-4dd9-9506-6b197ef44dc8/ad61b332f3abcc7dec3a49434e4766e1/dotnet-sdk-3.0.100-preview7-012821-linux-x64.tar.gz"
+    else
+        DOTNET3_SDK_URL=$1
+    fi
+    local DOTNET3_SDK_TAR=${DOTNET3_SDK_URL##*/}
+
+    # install Prerequisites
+    local DOTNET3_PRE
+    DOTNET3_PRE="libicu60 openssl1.0"
+    apt-get -y -q install $DOTNET3_PRE ||
+        { echo "[ERROR] Cannot install prerequisites for .NET SDK 3.0 :  ." 1>&2; return 10; }
+
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    curl -fsSL -O "${DOTNET3_SDK_URL}" &&
+    tar -zxf "${DOTNET3_SDK_TAR}" -C /usr/share/dotnet/ ||
+        { echo "[ERROR] Cannot download and unpack .NET SDK 3.0 preview from url '${DOTNET3_SDK_URL}'." 1>&2; popd; return 20; }
+
+    #install runtimes
+    local DOTNET3_RUNTIME_URL
+    if [[ -z "${2-}" || "${#2}" = "0" ]]; then
+        DOTNET3_RUNTIME_URL="https://download.visualstudio.microsoft.com/download/pr/8ac39a59-0f01-4f2d-8a3b-41b7b6d01f21/e2db10c3498c7344aa6847721a8cb832/dotnet-runtime-3.0.0-preview7-27912-14-linux-x64.tar.gz"
+    else
+        DOTNET3_RUNTIME_URL=$2
+    fi
+    DOTNET3_RUNTIME_TAR=${DOTNET3_RUNTIME_URL##*/}
+
+    curl -fsSL -O "${DOTNET3_RUNTIME_URL}" &&
+    tar -zxf "${DOTNET3_RUNTIME_TAR}" -C /usr/share/dotnet/ ||
+        { echo "[ERROR] Cannot download and unpack .NET Runtime 3.0 preview from url '${DOTNET3_RUNTIME_URL}'." 1>&2; popd; return 30; }
+
+    popd
+    log_exec dotnet --list-sdks
+    log_exec dotnet --list-runtimes
 }
 
 function install_mono() {
