@@ -189,6 +189,7 @@ function install_browsers() {
     curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
     dpkg -i ${DEBNAME}
     apt-get -y -q install firefox
+    log_exec dpkg -l firefox google-chrome-stable
     #cleanup
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }
