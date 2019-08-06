@@ -59,7 +59,8 @@ function log_exec() {
     "$@" 2>&1 | tee -a $LOG_FILE
 }
 
-# replace_line file line regex globalflag
+# Usage:
+# replace_line <file> <line> <regex> <globalflag>
 function replace_line() {
     local FILE STRING REGEX GLOBAL REPLACED
     FILE=$1
@@ -83,7 +84,8 @@ function replace_line() {
     IFS=$OFS
 }
 
-# add_line file line
+# Usage:
+# add_line <file> <line>
 function add_line() {
     local FILE STRING FOUND
     FILE=$1
@@ -105,7 +107,8 @@ function add_line() {
     IFS=$OFS
 }
 
-# write_line file line regex globalflag
+# Usage:
+# write_line <file> <line> <regex> <globalflag>
 function write_line() {
     local FILE STRING NEW_TEXT
     FILE=$1
@@ -124,6 +127,7 @@ function write_line() {
     echo "${NEW_TEXT}" > "${FILE}"
 }
 
+# check_apt_locks waits for LOCK_TIMEOUT seconds for apt locks released
 function check_apt_locks() {
     local LOCK_TIMEOUT=60
     local START_TIME=$(date +%s)
