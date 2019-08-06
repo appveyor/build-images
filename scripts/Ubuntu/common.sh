@@ -865,7 +865,7 @@ function install_golangs() {
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
-    declare DOCKER_IMAGES=( "microsoft/aspnetcore" "debian" "ubuntu" "centos" "alpine" "busybox" )
+    declare DOCKER_IMAGES=( "microsoft/dotnet" "microsoft/aspnetcore" "debian" "ubuntu" "centos" "alpine" "busybox" )
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
         docker pull $IMAGE
     done
