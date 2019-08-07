@@ -47,7 +47,11 @@
             {
                "id":"sqlserver2017",
                "title":"SQL Server 2017 Developer Edition"
-            }
+            },
+            {
+               "id":"mysql75",
+               "title":"MySQL Server 7.5"
+            }            
          ]
       },
       {
