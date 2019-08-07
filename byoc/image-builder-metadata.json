@@ -1,157 +1,185 @@
 {
-	images: [
-		{
-			name: "Windows Server 2019 Minimal",
-			cloudTypes: ["Azure", "GCE", "AmazonEC2", "HyperV"],
-			operatingSystems: ["Windows"],
-			imageOperatingSystem: "Windows",
-			template: "ws2019.json",
-			installedFeatures: [
-				{
-					id: "git",
-					title: "Git 2.19.1"
-				},
-				{
-					id: "hg",
-					title: "Mercurial"
-				},
-				{
-					id: "powershell_core",
-					title: "PowerShell Core 6.2.0"
-				},
-				{
-					id: "7zip",
-					title: "7-Zip 18.05"
-				},
-				{
-					id: "chocolatey",
-					title: "Chocolatey"
-				},
-				{
-					id: "appveyor_build_agent",
-					title: "AppVeyor Build Agent"
-				}
-			],
-			optionalFeatures: [
-				{
-					id: "vs2019_build_tools",
-					title: "Visual Studio 2019 Build Tools"
-				},
-				{
-					id: "sqlserver2017",
-					title: "SQL Server 2017 Developer Edition"
-				}
-			]
-		},
-		{
-			name: "Ubuntu 18.04 Minimal",
-			cloudTypes: ["Azure", "GCE", "AmazonEC2", "HyperV"],
-			operatingSystems: ["Linux"],
-			imageOperatingSystem: "Linux",
-			template: "ubuntu1804.json",
-			installedFeatures: [
-				{
-					id: "git",
-					title: "Git 2.19.1"
-				},
-				{
-					id: "hg",
-					title: "Mercurial"
-				},
-				{
-					id: "powershell_core",
-					title: "PowerShell Core 6.2.0"
-				},
-				{
-					id: "appveyor_build_agent",
-					title: "AppVeyor Build Agent"
-				}
-			],
-			optionalFeatures: [
-				{
-					id: "mysql",
-					title: "MySQL Server"
-				},
-				{
-					id: "postgresql",
-					title: "PostgreSQL"
-				}
-			]
-		},
-		{
-			name: "Windows Nano Server 1809 Minimal",
-			cloudTypes: ["Docker"],
-			operatingSystems: ["Windows"],
-			imageOperatingSystem: "Windows",
-			template: "windows-nanoserver-build-image",
-			installedFeatures: [
-				{
-					id: "git",
-					title: "Git 2.19.1"
-				},
-				{
-					id: "hg",
-					title: "Mercurial"
-				},
-				{
-					id: "powershell_core",
-					title: "PowerShell Core 6.2.0"
-				},
-				{
-					id: "appveyor_build_agent",
-					title: "AppVeyor Build Agent"
-				}
-			]
-		},
-		{
-			name: "Windows Server Core 2019 Minimal",
-			cloudTypes: ["Docker"],
-			operatingSystems: ["Windows"],
-			imageOperatingSystem: "Windows",
-			template: "windows-servercore-build-image",
-			installedFeatures: [
-				{
-					id: "git",
-					title: "Git 2.19.1"
-				},
-				{
-					id: "hg",
-					title: "Mercurial"
-				},
-				{
-					id: "powershell_core",
-					title: "PowerShell Core 6.2.0"
-				},
-				{
-					id: "appveyor_build_agent",
-					title: "AppVeyor Build Agent"
-				}
-			]
-		},
-		{
-			name: "Ubuntu 18.04 Minimal",
-			cloudTypes: ["Docker"],
-			operatingSystems: ["Windows", "Linux", "MacOS"],
-			imageOperatingSystem: "Linux",
-			template: "linux-build-image",
-			installedFeatures: [
-				{
-					id: "git",
-					title: "Git 2.19.1"
-				},
-				{
-					id: "hg",
-					title: "Mercurial"
-				},
-				{
-					id: "powershell_core",
-					title: "PowerShell Core 6.2.0"
-				},
-				{
-					id: "appveyor_build_agent",
-					title: "AppVeyor Build Agent"
-				}
-			]
-		}
-	]
+   "images":[
+      {
+         "name":"Windows Server 2019 Minimal",
+         "cloudTypes":[
+            "Azure",
+            "GCE",
+            "AmazonEC2",
+            "HyperV"
+         ],
+         "operatingSystems":[
+            "Windows"
+         ],
+         "imageOperatingSystem":"Windows",
+         "template":"ws2019.json",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"7zip",
+               "title":"7-Zip 18.05"
+            },
+            {
+               "id":"chocolatey",
+               "title":"Chocolatey"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ],
+         "optionalFeatures":[
+            {
+               "id":"vs2019_build_tools",
+               "title":"Visual Studio 2019 Build Tools"
+            },
+            {
+               "id":"sqlserver2017",
+               "title":"SQL Server 2017 Developer Edition"
+            }
+         ]
+      },
+      {
+         "name":"Ubuntu 18.04 Minimal",
+         "cloudTypes":[
+            "Azure",
+            "GCE",
+            "AmazonEC2",
+            "HyperV"
+         ],
+         "operatingSystems":[
+            "Linux"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"ubuntu1804.json",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ],
+         "optionalFeatures":[
+            {
+               "id":"mysql",
+               "title":"MySQL Server"
+            },
+            {
+               "id":"postgresql",
+               "title":"PostgreSQL"
+            }
+         ]
+      },
+      {
+         "name":"Windows Nano Server 1809 Minimal",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows"
+         ],
+         "imageOperatingSystem":"Windows",
+         "template":"windows-nanoserver-build-image",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      },
+      {
+         "name":"Windows Server Core 2019 Minimal",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows"
+         ],
+         "imageOperatingSystem":"Windows",
+         "template":"windows-servercore-build-image",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      },
+      {
+         "name":"Ubuntu 18.04 Minimal",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows",
+            "Linux",
+            "MacOS"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"linux-build-image",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      }
+   ]
 }
