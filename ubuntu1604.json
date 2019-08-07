@@ -14,7 +14,7 @@
     "gce_project": "",
     "gce_source_image": "ubuntu-1604-xenial-v20190212",
     "gce_source_image_family": "ubuntu-1604-lts",
-    "iso_checksum_md5": "6a7f31eb125a0b2908cf2333d7777c82",
+    "iso_checksum_md5": "ac8a79a86a905ebdc3ef3f5dd16b7360",
     "azure_client_id": "",
     "azure_client_secret": "",
     "azure_location": "",

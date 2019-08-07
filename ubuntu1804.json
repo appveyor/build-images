@@ -17,7 +17,7 @@
     "gce_project": "",
     "gce_source_image": "ubuntu-1804-bionic-v20190212a",
     "gce_source_image_family": "ubuntu-1804-lts",
-    "iso_checksum_md5": "e8264fa4c417216f4304079bd94f895e",
+    "iso_checksum_md5": "34416ff83179728d54583bf3f18d42d2",
     "azure_client_id": "",
     "azure_client_secret": "",
     "azure_location": "",
