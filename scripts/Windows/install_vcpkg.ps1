@@ -1,6 +1,7 @@
 if (test-path C:\Tools\vcpkg) {
+  vcpkg version | findstr /psi "version"
   Push-Location C:\Tools\vcpkg
-  git pull
+  cmd /c git pull
   .\bootstrap-vcpkg.bat
   }
 else {
