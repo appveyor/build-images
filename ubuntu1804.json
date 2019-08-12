@@ -145,7 +145,11 @@
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout" : "1h",
       "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now",
-      "disk_size": 40960
+      "cpus": "1",
+      "memory": "2048",
+      "disk_size": 40960,
+      "enable_secure_boot": false,
+      "generation": 2
     },
     {
       "type": "hyperv-vmcx",
