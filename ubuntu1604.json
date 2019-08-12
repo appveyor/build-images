@@ -133,7 +133,7 @@
         " -- <wait>",
         "<enter><wait>"
       ],
-      "boot_wait": "10s",
+      "boot_wait": "20s",
       "http_directory": "http",
       "iso_urls": [
         "iso/ubuntu-16.04.6-server-amd64.iso",
