@@ -17,7 +17,7 @@
     "gce_project": "",
     "gce_source_image": "ubuntu-1804-bionic-v20190212a",
     "gce_source_image_family": "ubuntu-1804-lts",
-    "iso_checksum_md5": "34416ff83179728d54583bf3f18d42d2",
+    "iso_checksum_md5": "cb7cd5a0c94899a04a536441c8b6d2bf",
     "azure_client_id": "",
     "azure_client_secret": "",
     "azure_location": "",
@@ -135,8 +135,8 @@
       "boot_wait": "10s",
       "http_directory": "http",
       "iso_urls": [
-        "iso/ubuntu-18.04.2-server-amd64.iso",
-        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.2-server-amd64.iso"
+        "iso/ubuntu-18.04.3-server-amd64.iso",
+        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso"
       ],
 
       "iso_checksum": "{{user `iso_checksum_md5`}}",
@@ -238,8 +238,8 @@
       "headless": true,
       "http_directory": "http",
       "iso_urls": [
-        "iso/ubuntu-18.04.2-server-amd64.iso",
-        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.2-server-amd64.iso"
+        "iso/ubuntu-18.04.3-server-amd64.iso",
+        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso"
       ],
       "iso_checksum": "{{user `iso_checksum_md5`}}",
       "iso_checksum_type": "md5",
