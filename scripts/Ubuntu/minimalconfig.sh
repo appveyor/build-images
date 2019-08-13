@@ -83,16 +83,20 @@ init_logging
 # execute only required parts of deployment
 if [ "$#" -gt 0 ]; then
     while [[ "$#" -gt 0 ]]; do
-        case "$1" in
-            install_appveyoragent)  install_appveyoragent "${BUILD_AGENT_MODE}" || _abort $?; ;;
-            install_pythons)        install_pythons || _abort $?; ;;
-            add_user)               add_user || _abort $?; ;;
-            cleanup)                cleanup || _abort $?; ;;
-            *)                      echo "[ERROR] Unknown argument '$1'"; ;;
-        esac
+        if [ "$(type -t $1)x" == 'functionx' ]; then
+            if [ "$#" -gt 1 ] && [ "$(type -t $2)x" != 'functionx' ]; then
+                #execute function with argument
+                $1 $2
+            else
+                #execute function without argument
+                $1
+            fi
+        else
+            echo "[ERROR] Unknown argument '$1'";
+        fi
         shift
     done
-    cleanup         #cleanup should be executed each time.
+    cleanup         #cleanup should be executed each time we run this script
     exit 0
 fi
 
