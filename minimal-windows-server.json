@@ -174,6 +174,26 @@
           "delete_on_termination": true
         }
       ]
+    },
+    {
+      "type": "googlecompute",
+      "account_file": "{{user `gce_account_file`}}",
+      "project_id": "{{ user `gce_project` }}",
+      "zone": "{{ user `gce_zone` }}",
+      "source_image_family": "windows-2019",
+      "state_timeout" : "15m",
+      "machine_type": "{{ user `gce_machine_type` }}",
+      "communicator": "winrm",
+      "winrm_username": "packer_user",
+      "winrm_insecure": true,
+      "winrm_use_ssl": true,
+      "instance_name": "Windows-server-2019-{{uuid}}",
+      "image_name": "Windows-server-2019-{{timestamp}}",
+      "image_description": "{{ user `image_description` }}",
+      "disk_size": 200,
+      "metadata": {
+        "windows-startup-script-cmd": "winrm quickconfig -quiet & net user /add packer_user & net localgroup administrators packer_user /add & winrm set winrm/config/service/auth @{Basic=\"true\"}"
+      }
     }
   ],
   "post-processors": [
