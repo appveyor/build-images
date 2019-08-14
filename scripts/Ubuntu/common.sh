@@ -699,6 +699,11 @@ function install_dotnets() {
     log_version dotnet --list-runtimes
 }
 
+function prerequisites_dotnetv3_preview () {
+    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
+    echo "libicu"
+}
+
 function install_dotnetv3_preview() {
     local DOTNET3_SDK_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
@@ -710,7 +715,7 @@ function install_dotnetv3_preview() {
 
     # install Prerequisites
     local DOTNET3_PRE
-    DOTNET3_PRE="libicu60 openssl1.0"
+    DOTNET3_PRE=$(prerequisites_dotnetv3_preview)
     apt-get -y -q install $DOTNET3_PRE ||
         { echo "[ERROR] Cannot install prerequisites for .NET SDK 3.0 :  ." 1>&2; return 10; }
 

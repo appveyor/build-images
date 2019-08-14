@@ -179,6 +179,10 @@ function install_azurecli() {
     log_version az --version
 }
 
+function prerequisites_dotnetv3_preview () {
+    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
+    echo "libicu60 openssl1.0"
+}
 
 function install_browsers() {
     local DEBNAME=google-chrome-stable_current_amd64.deb
