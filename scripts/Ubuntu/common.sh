@@ -56,7 +56,14 @@ function log() {
 
 function log_exec() {
     log "$@";
-    "$@" 2>&1 | tee -a $LOG_FILE
+    "$@" 2>&1 | tee -a "${LOG_FILE}"
+}
+
+function log_version() {
+    if [ -n "${VERSIONS_FILE+x}" ]; then
+        echo "$@";
+        "$@" 2>&1 | tee -a "${VERSIONS_FILE}"
+    fi
 }
 
 # Usage:
@@ -274,7 +281,7 @@ function install_tools() {
             apt-cache policy make
             return 10;
         }
-    log_exec dpkg -l "${tools_array[@]}"
+    log_version dpkg -l "${tools_array[@]}"
 }
 
 # this exact packages required to communicate with HyperV
@@ -362,7 +369,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/${SERVICE_NAME} &&
     systemctl start ${SERVICE_NAME} &&
     systemctl status ${SERVICE_NAME} --no-pager ||
         { echo "[ERROR] Cannot configure systemd ${SERVICE_NAME}." 1>&2; popd; return 50; }
-    log_exec ${AGENT_DIR}/appveyor Version
+    log_version ${AGENT_DIR}/appveyor Version
     popd
 
 }
@@ -372,7 +379,7 @@ function install_nodejs() {
     apt-get -y -q install nodejs &&
     npm install -g pm2 ||
         { echo "[ERROR] Something went wrong."; return 100; }
-    log_exec dpkg -l nodejs
+    log_version dpkg -l nodejs
 }
 
 function install_nvm() {
@@ -409,8 +416,8 @@ function install_nvm_nodejs() {
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
-    log_exec nvm --version
-    log_exec nvm list
+    log_version nvm --version
+    log_version nvm list
     nvm use ${CURRENT_NODEJS}
 }
 
@@ -441,14 +448,14 @@ function make_git() {
 
     # cleanup
     popd && rm -rf ${TMP_DIR}
-    log_exec git --version
+    log_version git --version
 }
 
 function install_gitlfs() {
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash &&
     apt-get -y -q install git-lfs ||
         { echo "Failed to install git lfs." 1>&2; return 10; }
-    log_exec dpkg -l git-lfs
+    log_version dpkg -l git-lfs
 }
 
 function configure_gitlfs() {
@@ -475,7 +482,7 @@ function install_cvs() {
     #install subversion
     apt-get -y -q install subversion
 
-    log_exec dpkg -l git mercurial subversion
+    log_version dpkg -l git mercurial subversion
 }
 
 function configure_svn() {
@@ -499,7 +506,7 @@ function install_virtualenv() {
     pip install virtualenv ||
         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
 
-    log_exec virtualenv --version
+    log_version virtualenv --version
 }
 
 function install_pip() {
@@ -508,7 +515,7 @@ function install_pip() {
     python get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
-    log_exec pip --version
+    log_version pip --version
 
     #cleanup
     rm get-pip.py
@@ -558,7 +565,7 @@ function install_powershell() {
     configure_powershell
 
     # Start PowerShell
-    log_exec pwsh --version
+    log_version pwsh --version
 }
 
 function configure_powershell() {
@@ -681,8 +688,8 @@ function install_dotnets() {
 
     #pre-heat
     preheat_dotnet_sdks "${SDK_VERSIONS[@]}"
-    log_exec dotnet --list-sdks
-    log_exec dotnet --list-runtimes
+    log_version dotnet --list-sdks
+    log_version dotnet --list-runtimes
 }
 
 function install_dotnetv3_preview() {
@@ -722,8 +729,8 @@ function install_dotnetv3_preview() {
         { echo "[ERROR] Cannot download and unpack .NET Runtime 3.0 preview from url '${DOTNET3_RUNTIME_URL}'." 1>&2; popd; return 30; }
 
     popd
-    log_exec dotnet --list-sdks
-    log_exec dotnet --list-runtimes
+    log_version dotnet --list-sdks
+    log_version dotnet --list-runtimes
 }
 
 function install_mono() {
@@ -734,10 +741,10 @@ function install_mono() {
     apt-get -y -q install mono-complete mono-dbg referenceassemblies-pcl mono-xsp4 ||
         { echo "[ERROR] Cannot install Mono." 1>&2; return 20; }
 
-    log_exec mono --version
-    log_exec csc
-    log_exec xsp4 --version
-    log_exec mcs --version
+    log_version mono --version
+    log_version csc
+    log_version xsp4 --version
+    log_version mcs --version
 }
 
 function install_jdks_from_repository() {
@@ -854,8 +861,8 @@ function install_rubies() {
         rvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
-    log_exec rvm --version
-    log_exec rvm list
+    log_version rvm --version
+    log_version rvm list
 }
 
 function install_gvm(){
@@ -902,8 +909,8 @@ function install_golangs() {
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
     gvm use ${GO_VERSIONS[-1]} --default
-    log_exec gvm version
-    log_exec go version
+    log_version gvm version
+    log_version go version
 }
 
 function pull_dockerimages() {
@@ -913,8 +920,8 @@ function pull_dockerimages() {
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
         docker pull $IMAGE
     done
-    log_exec docker images
-    log_exec docker system df
+    log_version docker images
+    log_version docker system df
 }
 
 function install_docker() {
@@ -931,7 +938,7 @@ function install_docker() {
     pull_dockerimages
     systemctl disable docker
 
-    log_exec dpkg -l docker-ce
+    log_version dpkg -l docker-ce
 }
 
 function install_sqlserver() {
@@ -950,7 +957,7 @@ function install_sqlserver() {
     systemctl restart mssql-server
     systemctl is-active mssql-server ||
         { echo "[ERROR] mssql-server service failed to start." 1>&2; return 40; }
-    log_exec dpkg -l mssql-server
+    log_version dpkg -l mssql-server
 }
 
 function configure_sqlserver() {
@@ -1004,7 +1011,7 @@ function install_mysql() {
     mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e 'USE mysql; SELECT Host,User FROM `user`;' ||
         { echo "[ERROR] Cannot connect to MySQL locally." 1>&2; return 20;}
     systemctl disable mysql
-    log_exec dpkg -l mysql-server
+    log_version dpkg -l mysql-server
 }
 
 function install_postgresql() {
@@ -1016,7 +1023,7 @@ function install_postgresql() {
         { echo "[ERROR] Cannot install postgresql." 1>&2; return 20; }
     systemctl start postgresql
     systemctl disable postgresql
-    log_exec dpkg -l postgresql
+    log_version dpkg -l postgresql
 
     sudo -u postgres createuser ${USER_NAME}
     sudo -u postgres psql -c "alter user ${USER_NAME} with createdb" postgres
@@ -1046,7 +1053,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/mongodb.service &&
     systemctl enable mongodb &&
     systemctl disable mongodb ||
         { echo "[ERROR] Cannot configure mongodb." 1>&2; return 30; }
-    log_exec dpkg -l mongodb-org
+    log_version dpkg -l mongodb-org
 }
 
 function install_redis() {
@@ -1088,7 +1095,7 @@ Restart=always" > /etc/systemd/system/redis.service
     systemctl enable redis &&
     systemctl disable redis
     popd
-    log_exec redis-server --version
+    log_version redis-server --version
 }
 
 function install_rabbitmq() {
@@ -1105,7 +1112,7 @@ function install_rabbitmq() {
     systemctl enable rabbitmq-server &&
     systemctl disable rabbitmq-server ||
         { echo "[ERROR] Cannot configure rabbitmq." 1>&2; return 30; }
-    log_exec dpkg -l rabbitmq-server
+    log_version dpkg -l rabbitmq-server
 }
 
 function install_p7zip() {
@@ -1133,7 +1140,7 @@ function install_packer() {
     curl -fsSL -O https://releases.hashicorp.com/packer/${VERSION}/${ZIPNAME} &&
     unzip -q -o ${ZIPNAME} -d /usr/local/bin ||
         { echo "[ERROR] Cannot download and unzip packer." 1>&2; return 10; }
-    log_exec packer --version
+    log_version packer --version
     # cleanup
     [ -f "${ZIPNAME}" ] && rm -f "${ZIPNAME}" || true
 }
@@ -1145,13 +1152,13 @@ function install_yarn() {
     apt-get -y -qq update &&
     apt-get -y -q install --no-install-recommends yarn ||
         { echo "[ERROR] Cannot install yarn." 1>&2; return 20; }
-    log_exec yarn --version
+    log_version yarn --version
 }
 
 function install_awscli() {
     pip install awscli ||
         { echo "[ERROR] Cannot install awscli." 1>&2; return 10; }
-    log_exec aws --version
+    log_version aws --version
 }
 
 function install_localstack() {
@@ -1160,7 +1167,7 @@ function install_localstack() {
     # since version 0.8.8 localstack requires but do not have in dependencies amazon_kclpy
     pip install amazon_kclpy ||
         { echo "[ERROR] Cannot install amazon_kclpy which is required by localstack." 1>&2; return 20; }
-    log_exec localstack --version
+    log_version localstack --version
 }
 
 function install_gcloud() {
@@ -1181,7 +1188,7 @@ function install_azurecli() {
     apt-get -y -qq update &&
     apt-get -y -q install azure-cli ||
         { echo "[ERROR] Cannot instal azure-cli."; return 20; }
-    log_exec az --version
+    log_version az --version
 }
 
 function install_cmake() {
@@ -1205,7 +1212,7 @@ function install_cmake() {
     mv -f ./share/cmake-${VERSION%.*} /usr/share/ &&
     mv -f ./share/aclocal/* /usr/share/aclocal/||
         { echo "[ERROR] Cannot install cmake." 1>&2; popd; return 30; }
-    log_exec cmake --version
+    log_version cmake --version
     popd
 }
 
@@ -1267,7 +1274,7 @@ function install_curl() {
     make &&
     make install ||
         { echo "[ERROR] Cannot make curl." 1>&2; popd; return 30; }
-    log_exec curl --version
+    log_version curl --version
     popd
 }
 
@@ -1280,7 +1287,7 @@ function install_browsers() {
     curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
     dpkg -i ${DEBNAME}
     apt-get -y -q install firefox
-    log_exec dpkg -l firefox google-chrome-stable
+    log_version dpkg -l firefox google-chrome-stable
     #cleanup
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }
@@ -1318,7 +1325,7 @@ function install_virtualbox() {
 
     popd
 
-    log_exec vboxmanage --version
+    log_version vboxmanage --version
 }
 
 function install_clang() {
@@ -1334,7 +1341,7 @@ function install_clang() {
     update-alternatives --config clang
     update-alternatives --config clang++
 
-    log_exec clang --version
+    log_version clang --version
 }
 
 function install_octo() {
@@ -1352,7 +1359,7 @@ function install_octo() {
     tar zxf OctopusTools.tar.gz -C /opt/octopus ||
         { echo "[ERROR] Cannot unpack and copy OctopusTools." 1>&2; popd; return 20; }
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
-    log_exec /opt/octopus/Octo version
+    log_version /opt/octopus/Octo version
     # cleanup
     rm OctopusTools.tar.gz
     popd
