@@ -293,8 +293,8 @@ install_kubectl ||
     _abort $?
 install_cmake ||
     _abort $?
-# install_curl ||
-#     _abort $?
+install_curl ||
+    _abort $?
 install_browsers ||
     _abort $?
 update_nuget ||
