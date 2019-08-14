@@ -707,7 +707,7 @@ function prerequisites_dotnetv3_preview () {
 function install_dotnetv3_preview() {
     local DOTNET3_SDK_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOTNET3_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/c624c5d6-0e9c-4dd9-9506-6b197ef44dc8/ad61b332f3abcc7dec3a49434e4766e1/dotnet-sdk-3.0.100-preview7-012821-linux-x64.tar.gz"
+        DOTNET3_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/a0e368ac-7161-4bde-a139-1a3ef5a82bbe/439cdbb58950916d3718771c5d986c35/dotnet-sdk-3.0.100-preview8-013656-linux-x64.tar.gz"
     else
         DOTNET3_SDK_URL=$1
     fi
@@ -730,7 +730,7 @@ function install_dotnetv3_preview() {
     #install runtimes
     local DOTNET3_RUNTIME_URL
     if [[ -z "${2-}" || "${#2}" = "0" ]]; then
-        DOTNET3_RUNTIME_URL="https://download.visualstudio.microsoft.com/download/pr/8ac39a59-0f01-4f2d-8a3b-41b7b6d01f21/e2db10c3498c7344aa6847721a8cb832/dotnet-runtime-3.0.0-preview7-27912-14-linux-x64.tar.gz"
+        DOTNET3_RUNTIME_URL="https://download.visualstudio.microsoft.com/download/pr/3873ce54-438c-43bd-871b-0472e4d5462b/01353d2e8c4289bb344d935c4bf4de3e/dotnet-runtime-3.0.0-preview8-28405-07-linux-x64.tar.gz"
     else
         DOTNET3_RUNTIME_URL=$2
     fi
