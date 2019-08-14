@@ -1260,7 +1260,7 @@ function install_gcc() {
 function install_curl() {
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=7.65.1
+        VERSION=7.65.3
     else
         VERSION=$1
     fi
