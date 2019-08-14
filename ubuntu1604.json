@@ -123,6 +123,7 @@
         "netcfg/get_ipaddress={{ user `host_ip_addr` }} ",
         "netcfg/get_netmask={{ user `host_ip_mask` }} ",
         "netcfg/get_gateway={{ user `host_ip_gw` }} ",
+        "netcfg/get_nameservers=8.8.8.8 ",
         "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed16.cfg ",
         "debian-installer=en_US auto locale=en_US kbd-chooser/method=us ",
         "hostname={{.Name}} domain= ",
@@ -130,7 +131,8 @@
         "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA ",
         "keyboard-configuration/variant=USA console-setup/ask_detect=false <enter>",
         "initrd /install/hwe-initrd.gz<enter>",
-        "boot<enter>"      ],
+        "boot<enter>"
+      ],
       "boot_wait": "20s",
       "http_directory": "http",
       "iso_urls": [
