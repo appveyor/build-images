@@ -191,10 +191,7 @@ su -l ${USER_NAME} -c "
 su -l ${USER_NAME} -c "
         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
         USER_NAME=${USER_NAME}
-        $(declare -f init_logging)
-        init_logging
-        $(declare -f log)
-        $(declare -f log_exec)
+        $(declare -f log_version)
         $(declare -f install_nvm_nodejs)
         install_nvm_nodejs ${CURRENT_NODEJS}" ||
     _abort $?
@@ -231,10 +228,7 @@ su -l ${USER_NAME} -c "
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         source \"${HOME}/.gvm/scripts/gvm\"
-        $(declare -f init_logging)
-        init_logging
-        $(declare -f log)
-        $(declare -f log_exec)
+        $(declare -f log_version)
         $(declare -f install_golangs)
         install_golangs" ||
     _abort $?
@@ -263,10 +257,7 @@ su -l ${USER_NAME} -c "
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
-        $(declare -f init_logging)
-        init_logging
-        $(declare -f log)
-        $(declare -f log_exec)
+        $(declare -f log_version)
         $(declare -f install_rubies)
         install_rubies" ||
     _abort $?

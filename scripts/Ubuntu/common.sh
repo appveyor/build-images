@@ -31,11 +31,16 @@ function restore_bash_attributes() {
 }
 
 function init_logging() {
-    if [[ -z $LOG_FILE ]]; then
+    if [[ -z "${LOG_FILE}" ]]; then
         SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
         LOG_FILE=$HOME/${SCRIPT_NAME%.*}.log
     fi
-    touch $LOG_FILE
+    touch "${LOG_FILE}"
+    chmod a+w "${LOG_FILE}"
+    if [ -n "${VERSIONS_FILE+x}" ]; then
+        touch "${VERSIONS_FILE}"
+        chmod a+w "${VERSIONS_FILE}"
+    fi
 }
 
 function chown_logfile() {
@@ -61,8 +66,10 @@ function log_exec() {
 
 function log_version() {
     if [ -n "${VERSIONS_FILE+x}" ]; then
-        echo "$@";
-        "$@" 2>&1 | tee -a "${VERSIONS_FILE}"
+        {
+            echo "$@";
+            "$@" 2>&1
+        } | tee -a "${VERSIONS_FILE}"
     fi
 }
 
