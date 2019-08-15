@@ -2,9 +2,9 @@
 #shellcheck disable=SC2086,SC2015,SC2164
 DEBUG=false
 
-if [[ -z "$USER_NAME" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; fi
-if [[ -z "$USER_HOME" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/home/appveyor; fi
-if [[ -z "$DATEMARK" || "${#DATEMARK}" = "0" ]]; then DATEMARK=$(date +%Y%m%d%H%M%S); fi
+if [[ -z "${USER_NAME-}" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; fi
+if [[ -z "${USER_HOME-}" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/home/appveyor; fi
+if [[ -z "${DATEMARK-}" || "${#DATEMARK}" = "0" ]]; then DATEMARK=$(date +%Y%m%d%H%M%S); fi
 HOST_NAME=appveyor-vm
 AGENT_DIR=/opt/appveyor/build-agent
 WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -56,23 +56,12 @@ else
     echo "[WARNING] /etc/os-release not found - cant find VERSION_CODENAME. Will not install OS specific applications."
 fi
 
-function monitoring_host() {
-    echo
-    echo "-------------- Monitoring info ---------------"
-    df -h
-    ping 8.8.8.8 -c 4
-    echo "-------------- Monitoring info ---------------"
-    echo
-}
-
 function _abort() {
-    monitoring_host
     echo "Aborting." 1>&2
     exit "$1"
 }
 
 function _continue() {
-    monitoring_host
     echo "Continue installation..." 1>&2
 }
 
@@ -81,34 +70,12 @@ touch ${HOME}/pwd-${DATEMARK}.log
 
 init_logging
 
-# execute only required parts of deployment
-if [ "$#" -gt 0 ]; then
-    while [[ "$#" -gt 0 ]]; do
-        if [ "$(type -t $1)x" == 'functionx' ]; then
-            if [ "$#" -gt 1 ] && [ "$(type -t $2)x" != 'functionx' ]; then
-                #execute function with argument
-                $1 $2
-            else
-                #execute function without argument
-                $1
-            fi
-        else
-            echo "[ERROR] Unknown argument '$1'";
-        fi
-        shift
-    done
-    cleanup         #cleanup should be executed each time we run this script
-    exit 0
-fi
-
 configure_path
 
 configure_locale
 
 add_user ||
     _abort $?
-
-chown_logfile || _continue
 
 wait_cloudinit || _continue
 
@@ -136,6 +103,24 @@ su -l ${USER_NAME} -c "
         $(declare -f configure_svn)
         configure_svn" ||
     _abort $?
+
+# execute optional Features
+if [ "$#" -gt 0 ]; then
+    while [[ "$#" -gt 0 ]]; do
+        if [ "$(type -t $1)x" == 'functionx' ]; then
+            if [ "$#" -gt 1 ] && [ "$(type -t $2)x" != 'functionx' ]; then
+                #execute function with argument
+                $1 $2
+            else
+                #execute function without argument
+                $1
+            fi
+        else
+            echo "[ERROR] Unknown argument '$1'";
+        fi
+        shift
+    done
+fi
 
 add_ssh_known_hosts ||
     _continue $?
