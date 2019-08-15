@@ -8,7 +8,7 @@ if [[ -z "${DATEMARK-}" || "${#DATEMARK}" = "0" ]]; then DATEMARK=$(date +%Y%m%d
 HOST_NAME=appveyor-vm
 AGENT_DIR=/opt/appveyor/build-agent
 WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-LOG_FILE=$HOME/versions-$DATEMARK.log
+LOG_FILE=$HOME/$(basename $0)-$DATEMARK.log
 VERSIONS_FILE=$HOME/versions-$DATEMARK.log
 LOGGING=true
 SCRIPT_PID=$$
