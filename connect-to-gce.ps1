@@ -12,7 +12,7 @@
     AppVeyor URL. For hosted AppVeyor it is https://ci.appveyor.com. For Appveyor Server users it is URL of on-premise AppVeyor Server installation
 
 .PARAMETER skip_disclaimer
-    Skip warning related to GCE resources creation and potential charges. It is recommended to read the warning at least once, but it can come handy if you need to re-run the script.
+    Skip warning related to GCE resources creation and potential charges. It is recommended to read the warning at least once, but it can come in handy if you need to re-run the script.
 
 .PARAMETER use_current_gcloud_config
     Use current active Google cloud config, so script will use current Google account and create resources in the Google Cloud project set in the current config.
@@ -24,10 +24,10 @@
     Type of GCE machine, e.g. 'n1-standard-1'
 
 .PARAMETER gce_image_name
-    It may be that you run the script, and it creates a valid VM snapshot, but some AppVeyor settings are not set correctly (or you may just want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating a snapshot with Packer) and pass the existing snapshot to this parameter.
+    It may be that having run the script and created a valid VM snapshot, some AppVeyor settings are not set correctly (or you may just want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating a snapshot with Packer) and pass the existing snapshot to this parameter.
 
 .PARAMETER common_prefix
-    Script will prepend all created GCE resources and AppVeyor build environment name with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
+    Script will prepend all created GCE resources and AppVeyor build environment name with it. Due to storage account names restrictions, it must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
 
 .PARAMETER image_os
     Operating system of build VM image. Valid values: 'Windows', 'Linux'. Default value is 'Windows'.
@@ -336,7 +336,7 @@ try {
     }
     else {Write-host "TCP $($remoteaccessport) ($($remoteaccessname)) already allowed on firewall $($gce_firewall_name), network $($gce_network_name)" -ForegroundColor DarkGray}
     if (-not (GcloudFirewallAndRuleExtst -name $gce_firewall_name -port $remoteaccessport)) {
-        Write-Warning "Unable to allow TCP $($remoteaccessport). ($($remoteaccessname) assess to build VMs will not be available. Please update settings for firewall $($gce_firewall_name), network $($gce_network_name) in Google Cloud console if $($remoteaccessname) assess is needed."
+        Write-Warning "Unable to allow TCP $($remoteaccessport). ($($remoteaccessname) assess to build VMs will not be available. Please update settings for firewall $($gce_firewall_name), network $($gce_network_name) in Google Cloud console if $($remoteaccessname) access is needed."
     }
 
     Write-host "`nSelecting GCE machine type..." -ForegroundColor Cyan
@@ -414,7 +414,7 @@ try {
         $packer_gce_key = $packer_gce_key.Substring($packer_gce_key.LastIndexOf("/")+1, 40)
         Write-host "Using temporary service account key '$($packer_gce_key)', key file '$($gce_account_file)'" -ForegroundColor DarkGray
 
-        Write-host "`nTemporary allowing TCP $($gce_firewall_winrm__port) (WinRM) for Packer build..." -ForegroundColor Cyan
+        Write-host "`nTemporarily allowing TCP $($gce_firewall_winrm__port) (WinRM) for Packer build..." -ForegroundColor Cyan
         if (-not (GcloudFirewallAndRuleExtst -name $gce_firewall_winrm__name -port $gce_firewall_winrm__port)) {
             gcloud compute firewall-rules create $gce_firewall_winrm__name --allow tcp:$gce_firewall_winrm__port
             Write-host "Allowed TCP $($gce_firewall_winrm__port) (WinRM)" -ForegroundColor DarkGray
@@ -472,7 +472,7 @@ try {
     }
     else {
         Write-host "`nSkipping image creation with Packer..." -ForegroundColor Cyan
-        Write-host "Using exiting image '$($gce_image_name)'" -ForegroundColor DarkGray
+        Write-host "Using existing image '$($gce_image_name)'" -ForegroundColor DarkGray
     }
 
     # If either builc cache, artifact storage or cloud does no exist, issue and use new account certificate
