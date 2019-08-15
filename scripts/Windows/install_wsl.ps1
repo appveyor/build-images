@@ -28,7 +28,7 @@ Expand-Archive -Path "$env:TEMP\wsl-ubuntu-1604.zip" -DestinationPath "C:\WSL\Ub
 Remove-Item "$env:TEMP\wsl-ubuntu-1604.zip"
 
 
-$ubuntuExe = "C:\WSL\Ubuntu1604\ubuntu.exe"
+$ubuntuExe = "C:\WSL\Ubuntu1604\ubuntu1604.exe"
 $bsdtar = "C:\WSL\Ubuntu1604\rootfs\bsdtar"
 
 Start-Process $ubuntuExe
