@@ -5,7 +5,7 @@ while ($i -lt 30) {
   $i +=1  
   $installed = (Get-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online).State -eq 'Enabled'
   if ($installed) {
-    Write-warning "SL feature is installed"
+    Write-host "WSL feature is installed"
     break
   }
   Write-warning "Retrying in 10 seconds..."
@@ -35,7 +35,7 @@ Start-Process $ubuntuExe
 while($true) {
 	Start-Sleep -s 10
 	if (-not (Test-Path $bsdtar)) {
-		Get-Process "ubuntu" | Stop-Process
+		Get-Process "ubuntu1604" | Stop-Process
 		break
 	}
 }
