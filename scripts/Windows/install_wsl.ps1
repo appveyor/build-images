@@ -93,7 +93,7 @@ while($true) {
 # Testing WSL
 # ===========
 
-wslconfig /setdefault ubuntu
+wslconfig /setdefault ubuntu-16.04
 wsl lsb_release -a
 
 wslconfig /setdefault ubuntu-18.04
