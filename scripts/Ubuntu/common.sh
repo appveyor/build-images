@@ -12,14 +12,14 @@ if [ -f /etc/os-release ]; then
 else
     echo "[WARNING] /etc/os-release not found - cant find VERSION_CODENAME and VERSION_ID."
 fi
-if [[ -z "${LOGGING}" ]]; then LOGGING=true; fi
+if [[ -z "${LOGGING-}" ]]; then LOGGING=true; fi
 
 function save_bash_attributes() {
     BASH_ATTRIBUTES=$(set -o)
 }
 
 function restore_bash_attributes() {
-    if [[ -n "$BASH_ATTRIBUTES" && "${#BASH_ATTRIBUTES}" -gt "0" ]]; then
+    if [[ -n "${BASH_ATTRIBUTES-}" && "${#BASH_ATTRIBUTES}" -gt "0" ]]; then
         while read -r BUILT STATUS; do
             if [ "$STATUS" == "on" ]; then
                 set -o $BUILT
@@ -31,20 +31,20 @@ function restore_bash_attributes() {
 }
 
 function init_logging() {
-    if [[ -z "${LOG_FILE}" ]]; then
+    if [[ -z "${LOG_FILE-}" ]]; then
         SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
         LOG_FILE=$HOME/${SCRIPT_NAME%.*}.log
     fi
     touch "${LOG_FILE}"
     chmod a+w "${LOG_FILE}"
-    if [ -n "${VERSIONS_FILE+x}" ]; then
+    if [ -n "${VERSIONS_FILE-}" ]; then
         touch "${VERSIONS_FILE}"
         chmod a+w "${VERSIONS_FILE}"
     fi
 }
 
 function chown_logfile() {
-    if [[ -n "${USER_NAME}" && -n "${LOG_FILE}" ]]; then
+    if [[ -n "${USER_NAME-}" && -n "${LOG_FILE-}" ]]; then
         if id -u "${USER_NAME}"; then
             chown $USER_NAME:$USER_NAME $LOG_FILE
         else
@@ -65,7 +65,7 @@ function log_exec() {
 }
 
 function log_version() {
-    if [ -n "${VERSIONS_FILE+x}" ]; then
+    if [ -n "${VERSIONS_FILE-}" ]; then
         {
             echo "$@";
             "$@" 2>&1
@@ -194,7 +194,7 @@ function configure_network() {
 
     # remove host ip from /etc/hosts
     sed -i -e "/ $(hostname)/d" -e "/^${IP_ADDR%/*}/d" /etc/hosts
-    if [[ -n "${HOST_NAME}" ]]; then
+    if [[ -n "${HOST_NAME-}" ]]; then
         write_line "/etc/hosts" "127.0.1.1       $HOST_NAME" "127.0.1.1"
     else
         echo "[ERROR] Variable HOST_NAME not defined. Cannot configure network."
@@ -203,7 +203,7 @@ function configure_network() {
     log_exec cat /etc/hosts
 
     # rename host
-    if [[ -n "${HOST_NAME}" ]]; then
+    if [[ -n "${HOST_NAME-}" ]]; then
         echo "${HOST_NAME}" > /etc/hostname
     fi
 }
@@ -297,7 +297,7 @@ function install_KVP_packages(){
     # running kernel (which version returns uname -r) may differ from updated one
     KERNEL_VERSION=$(ls -tr /boot/initrd.img-* | tail -n1)
     KERNEL_VERSION=${KERNEL_VERSION#*-}
-    if [[ -n $KERNEL_VERSION ]]; then
+    if [[ -n "${KERNEL_VERSION-}" ]]; then
         declare tools_array
         tools_array+=( "linux-tools-${KERNEL_VERSION}" "linux-cloud-tools-${KERNEL_VERSION}" )
         apt-get -y -q install "${tools_array[@]}" --no-install-recommends  ||
@@ -309,12 +309,12 @@ function install_KVP_packages(){
 }
 
 function copy_appveyoragent() {
-    if [[ -z "$APPVEYOR_BUILD_AGENT_VERSION" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
+    if [[ -z "${APPVEYOR_BUILD_AGENT_VERSION-}" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
         APPVEYOR_BUILD_AGENT_VERSION=7.0.2329;
     fi
     AGENT_FILE=appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-x64.tar.gz
 
-    if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
+    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
 
     mkdir -p ${AGENT_DIR} &&
     #chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR} &&
@@ -338,15 +338,15 @@ function install_appveyoragent() {
     CONFIG_FILE=appsettings.json
     PROJECT_BUILDS_DIRECTORY="$USER_HOME"/projects
     SERVICE_NAME=appveyor-build-agent.service
-    if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
+    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
 
     copy_appveyoragent || return "$?"
 
-    if id -u ${USER_NAME}; then
-        chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR}
+    if id -u "${USER_NAME}"; then
+        chown -R ${USER_NAME}:${USER_NAME} "${AGENT_DIR}"
     fi
 
-    pushd -- ${AGENT_DIR} ||
+    pushd -- "${AGENT_DIR}" ||
         { echo "[ERROR] Cannot cd to ${AGENT_DIR} folder." 1>&2; return 10; }
 
     [ -f ${CONFIG_FILE} ] &&
@@ -576,12 +576,12 @@ function install_powershell() {
 }
 
 function configure_powershell() {
-    if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
-    if [[ -z "${USER_HOME}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
+    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
+    if [[ -z "${USER_HOME-}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
     local PROFILE_PATH=${USER_HOME}/.config/powershell
     local PROFILE_NAME=Microsoft.PowerShell_profile.ps1
     # configure PWSH profile
-    mkdir -p ${PROFILE_PATH} &&
+    mkdir -p "${PROFILE_PATH}" &&
     write_line "${PROFILE_PATH}/${PROFILE_NAME}" "Import-Module ${AGENT_DIR}/Appveyor.BuildAgent.PowerShell.dll" ||
         { echo "[ERROR] Cannot create and change PWSH profile ${PROFILE_PATH}/${PROFILE_NAME}." 1>&2; return 30; }
 
@@ -590,10 +590,10 @@ function configure_powershell() {
 
 # This module was deprecated
 function add_appveyor_module() {
-    if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
-    if [[ -z "${USER_HOME}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
+    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
+    if [[ -z "${USER_HOME-}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
     local MODULES_PATH=${USER_HOME}/.local/share/powershell/Modules/Appveyor/
-    mkdir -p ${MODULES_PATH} &&
+    mkdir -p "${MODULES_PATH}" &&
     for file in "Appveyor.BuildAgent.Api.dll" "Appveyor.BuildAgent.Models.dll" "Appveyor.BuildAgent.PowerShell.dll"; do
         cp "${AGENT_DIR}/${file}" "${MODULES_PATH}" ||
             { echo "[ERROR] Cannot copy '${AGENT_DIR}/${file}' to '${MODULES_PATH}'." 1>&2; return 30; }
@@ -614,7 +614,7 @@ PrivateData = @{
     }
 }
 }
-" > ${MODULES_PATH}/Appveyor.psd1
+" > "${MODULES_PATH}/Appveyor.psd1"
 }
 
 function dotnet_packages() {
@@ -974,16 +974,15 @@ function install_sqlserver() {
 
 function configure_sqlserver() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
         echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
         return 1
     fi
-    if [[ -z "${MSSQL_SA_PASSWORD}" ]]; then
+    if [[ -z "${MSSQL_SA_PASSWORD-}" ]]; then
         echo "MSSQL_SA_PASSWORD variable not set!" 1>&2
         return 2
     fi
     # Add SQL Server tools to the path by default:
-    local file
     write_line "${HOME}/.profile" 'add2path_suffix /opt/mssql-tools/bin'
     export PATH="$PATH:/opt/mssql-tools/bin"
     

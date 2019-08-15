@@ -31,7 +31,7 @@ network:
 
     # remove host ip from /etc/hosts
     sed -i -e "/ $(hostname)/d" -e "/^${IP_ADDR%/*}/d" /etc/hosts
-    if [[ -n "${HOST_NAME}" ]]; then
+    if [[ -n "${HOST_NAME-}" ]]; then
         write_line "/etc/hosts" "127.0.1.1       $HOST_NAME" "127.0.1.1"
     else
         echo "[ERROR] Variable HOST_NAME not defined. Cannot configure network."
@@ -40,7 +40,7 @@ network:
     log_exec cat /etc/hosts
 
     # rename host
-    if [[ -n "${HOST_NAME}" ]]; then
+    if [[ -n "${HOST_NAME-}" ]]; then
         hostnamectl set-hostname "${HOST_NAME}"
     fi
 }
