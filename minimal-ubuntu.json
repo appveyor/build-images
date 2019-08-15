@@ -48,8 +48,8 @@
     {
       "type": "shell",
       "inline": [
-        "if [ -f {{ user `install_home` }}/pwd-{{ user `datemark` }}.log ]; then rm {{ user `install_home` }}/pwd-{{ user `datemark` }}.log; fi",
-        "if [ -f {{ user `install_home` }}/.ssh/authorized_keys ]; then rm {{ user `install_home` }}/.ssh/authorized_keys; fi"
+        "if [ -f pwd-{{ user `datemark` }}.log ]; then rm pwd-{{ user `datemark` }}.log; fi",
+        "if [ -f .ssh/authorized_keys ]; then rm .ssh/authorized_keys; fi"
        ]
     }
   ],
