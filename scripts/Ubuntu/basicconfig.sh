@@ -85,6 +85,8 @@ touch ${HOME}/pwd-${DATEMARK}.log
 
 init_logging
 
+wait_cloudinit || _continue
+
 # execute only required parts of deployment
 if [ "$#" -gt 0 ]; then
     while [[ "$#" -gt 0 ]]; do
@@ -110,8 +112,6 @@ add_user ||
     _abort $?
 
 chown_logfile || _continue
-
-wait_cloudinit || _continue
 
 configure_apt ||
     _abort $?

@@ -226,10 +226,14 @@ function configure_locale() {
 
 # https://askubuntu.com/a/755969
 function wait_cloudinit () {
-    log "waiting 180 seconds for cloud-init to update /etc/apt/sources.list"
-    log_exec timeout 180 /bin/bash -c \
-        'until stat /var/lib/cloud/instance/boot-finished 2>/dev/null; do echo waiting ...; sleep 1; done'
-    log "Wait for cloud-init finished."
+    if [ -d /var/lib/cloud/inst2ances ]; then
+        log "waiting 180 seconds for cloud-init to update /etc/apt/sources.list"
+        log_exec timeout 180 /bin/bash -c \
+            'until stat /var/lib/cloud/instance/boot-finished 2>/dev/null; do echo waiting for cloud-initto finish ...; sleep 1; done'
+        log "Wait for cloud-init finished."
+    else
+        log "There is no cloud-init scripts."
+    fi
 }
 
 function configure_apt() {
