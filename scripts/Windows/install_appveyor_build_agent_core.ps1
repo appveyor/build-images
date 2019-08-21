@@ -1,4 +1,4 @@
-$AGENT_VERSION = '7.0.2353'
+$AGENT_VERSION = '7.0.2366'
 
 Write-Host "Installing AppVeyor Build Agent Core"
 Write-Host "===================================="
