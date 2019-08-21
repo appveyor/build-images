@@ -1048,7 +1048,7 @@ function install_postgresql() {
 
 function install_mongodb() {
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 &&
-    add-apt-repository "deb http://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/3.2 multiverse" ||
+    add-apt-repository "deb http://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/4.2 multiverse" ||
         { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install mongodb-org ||
