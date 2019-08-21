@@ -435,7 +435,7 @@ function install_nvm_nodejs() {
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        GIT_VERSION=2.22.0
+        GIT_VERSION=2.23.0
     else
         GIT_VERSION=$1
     fi
@@ -533,7 +533,7 @@ function install_pip() {
 }
 
 function install_pythons(){
-    declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0b2" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0b3" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
@@ -785,9 +785,9 @@ function install_jdks() {
         return $?
     install_jdk 12 https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 13 https://download.java.net/java/early_access/jdk13/31/GPL/openjdk-13-ea+31_linux-x64_bin.tar.gz ||
+    install_jdk 13 https://download.java.net/java/GA/jdk13/5b8a42f3905b406298b72d750b6919f6/33/GPL/openjdk-13_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 14 https://download.java.net/java/early_access/jdk14/7/GPL/openjdk-14-ea+7_linux-x64_bin.tar.gz ||
+    install_jdk 14 https://download.java.net/java/early_access/jdk14/10/GPL/openjdk-14-ea+10_linux-x64_bin.tar.gz ||
         return $?
 }
 
@@ -1147,7 +1147,7 @@ function install_p7zip() {
 function install_packer() {
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=1.4.2
+        VERSION=1.4.3
     else
         VERSION=$1
     fi
@@ -1209,7 +1209,7 @@ function install_azurecli() {
 function install_cmake() {
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.15.1
+        VERSION=3.15.2
     else
         VERSION=$1
     fi
