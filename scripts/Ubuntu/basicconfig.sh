@@ -132,8 +132,8 @@ if ! ${DEBUG}; then                          ### Disabled for faster debugging
 install_gcc ||
     _abort $?
 
-install_curl ||
-    _abort $?
+# install_curl ||
+#     _abort $?
 
 install_clang ||
     _abort $?
