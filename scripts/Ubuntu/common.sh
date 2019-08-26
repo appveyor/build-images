@@ -261,7 +261,7 @@ function install_tools() {
     tools_array=( "zip" "unzip" "wget" "curl" "time" "tree" "telnet" "dnsutils" "file" "ftp" "lftp" )
     tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
     # build tools
-    tools_array+=( "make" "binutils" "bison" "gcc" "tcl" )
+    tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" )
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" )
     # python packages
     tools_array+=( "python" "python-dev" "python3" )
@@ -1281,11 +1281,14 @@ function install_curl() {
     DIR_NAME=$(tar -ztf ${TAR_FILE} |cut -d'/' -f1|sort|uniq|head -n1)
     cd -- ${DIR_NAME} ||
         { echo "[ERROR] Cannot change directory to ${DIR_NAME}." 1>&2; popd; return 20; }
-#  apt-get remove libcurl4-gnutls-dev
-#  apt-get remove libcurl3-gnutls-dev
-#  apt-get remove libcurl3-gnutls
-#  apt-get remove libcurl3-gnutls:amd64
-    ./configure &&
+
+    # purge all installed curl packages
+    for p in $(dpkg --get-selections|grep -v deinstall|grep curl|cut -f1); do  apt-get purge -y $p; done
+
+    apt-get install -y libldap2-dev libssh2-1-dev libpsl-dev libidn2-dev libnghttp2-dev librtmp-dev ||
+        { echo "[ERROR] Cannot install additional libraries for curl." 1>&2; popd; return 20; }
+
+    ./configure --with-libssh2 &&
     make &&
     make install ||
         { echo "[ERROR] Cannot make curl." 1>&2; popd; return 30; }

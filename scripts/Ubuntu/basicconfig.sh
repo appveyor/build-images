@@ -132,6 +132,9 @@ if ! ${DEBUG}; then                          ### Disabled for faster debugging
 install_gcc ||
     _abort $?
 
+install_curl ||
+    _abort $?
+
 install_clang ||
     _abort $?
 
@@ -292,8 +295,6 @@ install_azurecli ||
 install_kubectl ||
     _abort $?
 install_cmake ||
-    _abort $?
-install_curl ||
     _abort $?
 install_browsers ||
     _abort $?
