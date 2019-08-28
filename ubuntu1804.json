@@ -82,7 +82,8 @@
       "type": "shell",
       "inline": [
         "if [ -f pwd-{{ user `datemark` }}.log ]; then rm pwd-{{ user `datemark` }}.log; fi",
-        "if [ -f .ssh/authorized_keys ]; then rm .ssh/authorized_keys; fi"
+        "if [ -f .ssh/authorized_keys ]; then rm .ssh/authorized_keys; fi",
+        "find . -maxdepth 1 -name 'script_*.sh-*.log' -delete"
        ]
     }
   ],
