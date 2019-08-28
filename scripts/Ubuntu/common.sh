@@ -1337,7 +1337,9 @@ function install_virtualbox() {
         { echo "[ERROR] Cannot download Virtualbox Extention pack." 1>&2; popd; return 30; }
     yes | VBoxManage extpack install --replace "${VBE_URL##*/}" ||
         { echo "[ERROR] Cannot install Virtualbox Extention pack." 1>&2; popd; return 40; }
-    
+    /sbin/vboxconfig
+        { echo "[ERROR] Cannot configure Virtualbox." 1>&2; popd; return 50; }
+
     #cleanup
     rm -f "${VBE_URL##*/}"
 
