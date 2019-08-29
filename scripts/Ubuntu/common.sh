@@ -1378,7 +1378,7 @@ function install_octo() {
     mkdir -p /opt/octopus &&
     tar zxf OctopusTools.tar.gz -C /opt/octopus ||
         { echo "[ERROR] Cannot unpack and copy OctopusTools." 1>&2; popd; return 20; }
-    write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
+    write_line "${HOME}/.profile" 'add2path /opt/octopus'
     log_version /opt/octopus/Octo version
     # cleanup
     rm OctopusTools.tar.gz
