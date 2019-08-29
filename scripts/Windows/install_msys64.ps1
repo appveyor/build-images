@@ -1,5 +1,8 @@
 ﻿Write-Host "Installing MSYS2..." -ForegroundColor Cyan
 
+Set-Content -Value "Write-Host 'Sleep then kill gpg-agent.exe'; sleep 300; Stop-Process -name gpg-agent -Force" -Path .\kill-gpg-agent.ps1
+Start-Process powershell.exe -ArgumentList .\kill-gpg-agent.ps1
+
 if(Test-path C:\msys64) {
     del C:\msys64 -Recurse -Force
 }
@@ -51,6 +54,8 @@ cmd /c assoc .sh=sh_auto_file
 Write-Host "Compacting C:\msys64..." -NoNewline
 compact /c /i /s:C:\msys64 | Out-Null
 Write-Host "OK" -ForegroundColor Green
+
+Remove-Item .\kill-gpg-agent.ps1 -Force -ErrorAction Ignore
 
 Write-Host "MSYS2 installed" -ForegroundColor Green
 
