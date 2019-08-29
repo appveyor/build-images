@@ -1417,6 +1417,16 @@ function configure_sshd() {
     write_line /etc/ssh/sshd_config 'PasswordAuthentication no' '^PasswordAuthentication '
 }
 
+function check_folders() {
+    if [ "$#" -gt 0 ]; then
+        while [[ "$#" -gt 0 ]]; do
+            # echo "$FUNCNAME $1"
+            du -hs $1 2>/dev/null | sort -h |tail
+            shift
+        done
+    fi
+}
+
 function cleanup() {
     # remove list of packages.
     # It frees up ~140Mb but it force users to execute `apt-get -y -qq update`
@@ -1437,4 +1447,11 @@ function cleanup() {
     # cleanup script guts
     find $HOME -maxdepth 1 -name "*.sh" -delete
     if [ -d "$HOME/distrib" ]; then rm -rf "$HOME/distrib"; fi
+
+    #log some data about image size
+    log_version df -h
+    log_version ls -ltra "${HOME}"
+    log_version check_folders ${HOME}/.*
+    log_version check_folders "/*" "/opt/*" "/var/*" "/var/lib/*" "/var/cache/*" "/usr/*" "/usr/lib/*" "/usr/share/*"
+
 }
