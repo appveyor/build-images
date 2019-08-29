@@ -6,3 +6,25 @@ cmd /c start /wait dism /Online /Enable-Feature /FeatureName:IIS-ASPNET45 /All
 
 Write-Host "WAS..."
 Install-WindowsFeature "Web-Server","Web-Http-Errors","Web-App-Dev","Web-Asp-Net","Web-Net-Ext","Web-ASP","Web-CGI","Web-ISAPI-Ext","Web-ISAPI-Filter","Web-Includes","Web-Basic-Auth","Web-Windows-Auth","Web-Mgmt-Compat","Web-Metabase","Web-WMI","Web-Lgcy-Scripting","Web-Lgcy-Mgmt-Console","NET-HTTP-Activation","NET-HTTP-Activation","NET-Non-HTTP-Activ","NET-WCF-HTTP-Activation45","NET-WCF-MSMQ-Activation45","NET-WCF-Pipe-Activation45","NET-WCF-TCP-Activation45"
+
+Write-Host "Disabling services..."
+Stop-Service IISADMIN
+Stop-Service NetMsmqActivator
+Stop-Service NetPipeActivator
+Stop-Service NetTcpActivator
+Stop-Service NetTcpPortSharing
+Stop-Service W3SVC
+Stop-Service WAS
+Stop-Service MSMQ
+
+Set-Service MSMQ -StartupType Manual
+Set-Service IISADMIN -StartupType Manual
+Set-Service NetMsmqActivator -StartupType Manual
+Set-Service NetPipeActivator -StartupType Manual
+Set-Service NetTcpActivator -StartupType Manual
+Set-Service NetTcpPortSharing -StartupType Manual
+Set-Service WAS -StartupType Manual
+Set-Service W3SVC -StartupType Manual
+
+
+Write-Host "IIS installed" -ForegroundColor Green
