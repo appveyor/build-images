@@ -106,8 +106,6 @@ fi
 
 configure_path
 
-configure_locale
-
 add_user ||
     _abort $?
 
@@ -115,6 +113,8 @@ chown_logfile || _continue
 
 configure_apt ||
     _abort $?
+
+configure_locale
 
 install_tools ||
     _abort $?

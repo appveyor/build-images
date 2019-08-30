@@ -222,6 +222,13 @@ function configure_uefi() {
 
 function configure_locale() {
     echo LANG=C.UTF-8 >/etc/default/locale
+    local lcl
+    for lcl in en_US en_GB en_CA fr_CA ru_RU ru_UA uk_UA zh_CN zh_HK zh_TW; do
+        sed -i '/^# '${lcl}'.UTF-8 UTF-8$/s/^# //' /etc/locale.gen
+    done
+    apt-get -y install language-pack-en language-pack-fr language-pack-uk \
+                       language-pack-ru language-pack-zh-hans language-pack-zh-hant
+    locale-gen
 }
 
 # https://askubuntu.com/a/755969
