@@ -1424,6 +1424,17 @@ function configure_sshd() {
     write_line /etc/ssh/sshd_config 'PasswordAuthentication no' '^PasswordAuthentication '
 }
 
+function configure_motd() {
+    chmod -x /etc/update-motd.d/*
+    echo '#!/bin/sh
+[ -r /etc/os-release ] && . /etc/os-release
+printf "Appveyor Worker\n"
+printf "OS %s (%s %s %s)\n" "$PRETTY_NAME" "$(uname -o)" "$(uname -r)" "$(uname -m)"
+' >/etc/update-motd.d/00-appveyor
+
+    chmod +x /etc/update-motd.d/00-appveyor
+}
+
 function check_folders() {
     if [ "$#" -gt 0 ]; then
         while [[ "$#" -gt 0 ]]; do
