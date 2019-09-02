@@ -1372,12 +1372,13 @@ function install_clang() {
 }
 
 function install_octo() {
-    local OCTO_URL
+    local OCTO_VERSION, OCTO_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        OCTO_URL="https://download.octopusdeploy.com/octopus-tools/6.2.3/OctopusTools.6.2.3.ubuntu.16.04-x64.tar.gz"
+        OCTO_VERSION=6.12.0
     else
-        OCTO_URL=$1
+        OCTO_VERSION=$1
     fi
+    OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.ubuntu.16.04-x64.tar.gz"
     local TMP_DIR=$(mktemp -d)
     pushd -- ${TMP_DIR}
     curl -fsSL "${OCTO_URL}" -o OctopusTools.tar.gz ||
