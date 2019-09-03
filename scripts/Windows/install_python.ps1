@@ -298,50 +298,52 @@ if($python36_x64) {
 UpdatePip 'C:\Python36'
 UpdatePip 'C:\Python36-x64'
 
-# Python 3.7.3
-$python37 = (GetUninstallString 'Python 3.7.3 (32-bit)')
+# Python 3.7.4
+$python37 = (GetUninstallString 'Python 3.7.4 (32-bit)')
 if($python37) {
-    Write-Host 'Python 3.7.3 already installed'
+    Write-Host 'Python 3.7.4 already installed'
 } else {
 
     UninstallPython "Python 3.7.0 (32-bit)"
     UninstallPython "Python 3.7.1 (32-bit)"
     UninstallPython "Python 3.7.2 (32-bit)"
+    UninstallPython "Python 3.7.3 (32-bit)"
 
-    # Python 3.7.3
-    Write-Host "Installing Python 3.7.3..." -ForegroundColor Cyan
+    # Python 3.7.4
+    Write-Host "Installing Python 3.7.4..." -ForegroundColor Cyan
     Write-Host "Downloading..."
-    $exePath = "$env:TEMP\python-3.7.3.exe"
-    (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe', $exePath)
+    $exePath = "$env:TEMP\python-3.7.4.exe"
+    (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.7.4/python-3.7.4.exe', $exePath)
     Write-Host "Installing..."
     cmd /c start /wait $exePath /quiet TargetDir=C:\Python37 Shortcuts=0 Include_launcher=0 InstallLauncherAllUsers=0
     del $exePath
-    Write-Host "Python 3.7.3 x86 installed"
+    Write-Host "Python 3.7.4 x86 installed"
 
     C:\Python37\python --version
 }
 
-$python37_x64 = (GetUninstallString 'Python 3.7.3 (64-bit)')
+$python37_x64 = (GetUninstallString 'Python 3.7.4 (64-bit)')
 if($python37_x64) {
-    Write-Host 'Python 3.7.3 x64 already installed'
+    Write-Host 'Python 3.7.4 x64 already installed'
 } else {
 
     UninstallPython "Python 3.7.0 (64-bit)"
     UninstallPython "Python 3.7.1 (64-bit)"
     UninstallPython "Python 3.7.2 (64-bit)"
+    UninstallPython "Python 3.7.3 (64-bit)"
 
-    # Python 3.7.3
-    Write-Host "Installing Python 3.7.3 x64..." -ForegroundColor Cyan
+    # Python 3.7.4
+    Write-Host "Installing Python 3.7.4 x64..." -ForegroundColor Cyan
     Write-Host "Downloading..."
-    $exePath = "$env:TEMP\python-3.7.3-amd64.exe"
-    (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.7.3/python-3.7.3-amd64.exe', $exePath)
+    $exePath = "$env:TEMP\python-3.7.4-amd64.exe"
+    (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.7.4/python-3.7.4-amd64.exe', $exePath)
     Write-Host "Installing..."
     cmd /c start /wait $exePath /quiet TargetDir=C:\Python37-x64 Shortcuts=0 Include_launcher=1 InstallLauncherAllUsers=1
     Start-sleep -s 10
     del $exePath
     C:\Python37-x64\python --version
 
-    Write-Host "Python 3.7.3 x64 installed"
+    Write-Host "Python 3.7.4 x64 installed"
 }
 
 

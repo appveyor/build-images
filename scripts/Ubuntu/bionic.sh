@@ -31,7 +31,7 @@ network:
 
     # remove host ip from /etc/hosts
     sed -i -e "/ $(hostname)/d" -e "/^${IP_ADDR%/*}/d" /etc/hosts
-    if [[ -n "${HOST_NAME}" ]]; then
+    if [[ -n "${HOST_NAME-}" ]]; then
         write_line "/etc/hosts" "127.0.1.1       $HOST_NAME" "127.0.1.1"
     else
         echo "[ERROR] Variable HOST_NAME not defined. Cannot configure network."
@@ -40,7 +40,7 @@ network:
     log_exec cat /etc/hosts
 
     # rename host
-    if [[ -n "${HOST_NAME}" ]]; then
+    if [[ -n "${HOST_NAME-}" ]]; then
         hostnamectl set-hostname "${HOST_NAME}"
     fi
 }
@@ -52,7 +52,7 @@ function install_pip() {
     python get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
-    log_exec pip --version
+    log_version pip --version
 
     #cleanup
     rm get-pip.py
@@ -84,7 +84,7 @@ function install_nodejs() {
     apt-get -y -q install nodejs npm &&
     npm install -g pm2 ||
         { echo "[ERROR] Something went wrong."; return 100; }
-    log_exec dpkg -l nodejs
+    log_version dpkg -l nodejs
 }
 
 function install_cvs() {
@@ -99,17 +99,23 @@ function install_cvs() {
     #install subversion
     apt-get -y -q install subversion
 
-    log_exec dpkg -l git mercurial subversion
+    log_version dpkg -l git mercurial subversion
+
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_svn)
+        configure_svn" ||
+            return $?
 }
 
 function install_mongodb() {
     apt install -yqq mongodb ||
         { echo "[ERROR] Cannot install mongodb." 1>&2; return 10; }
 
-    log_exec dpkg -l mongodb
+    log_version dpkg -l mongodb
 }
 
-function install_jdks() {
+function install_jdks_from_repository() {
     add-apt-repository -y ppa:openjdk-r/ppa
     apt-get -y -qq update && {
         apt-get -y -q install --no-install-recommends openjdk-8-jdk
@@ -132,7 +138,7 @@ function install_sqlserver() {
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     local DEB_NAME
-    DEB_NAME=mssql-server_14.0.3045.24-1_amd64.deb
+    DEB_NAME=mssql-server_14.0.3223.3-15_amd64.deb
 
     #download package
     curl -fsSL -O "https://packages.microsoft.com/ubuntu/16.04/mssql-server-2017/pool/main/m/mssql-server/${DEB_NAME}"
@@ -163,7 +169,7 @@ function install_sqlserver() {
         { echo "[ERROR] mssql-server service failed to start." 1>&2; popd; return 40; }
 
     popd
-    log_exec dpkg -l mssql-server
+    log_version dpkg -l mssql-server
 }
 
 function install_azurecli() {
@@ -176,9 +182,13 @@ function install_azurecli() {
     apt-get -y -qq update &&
     apt-get -y -q install azure-cli ||
         { echo "[ERROR] Cannot instal azure-cli."; return 20; }
-    log_exec az --version
+    log_version az --version
 }
 
+function prerequisites_dotnetv3_preview () {
+    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
+    echo "libicu60 openssl1.0"
+}
 
 function install_browsers() {
     local DEBNAME=google-chrome-stable_current_amd64.deb
@@ -189,6 +199,7 @@ function install_browsers() {
     curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
     dpkg -i ${DEBNAME}
     apt-get -y -q install firefox
+    log_version dpkg -l firefox google-chrome-stable
     #cleanup
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }

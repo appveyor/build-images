@@ -1,0 +1,333 @@
+{
+   "images":[
+      {
+         "name":"Windows Server 2019 Minimal",
+         "cloudTypes":[
+            "Azure",
+            "GCE",
+            "AmazonEC2",
+            "HyperV"
+         ],
+         "operatingSystems":[
+            "Windows"
+         ],
+         "imageOperatingSystem":"Windows",
+         "template":"ws2019.json",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"7zip",
+               "title":"7-Zip 18.05"
+            },
+            {
+               "id":"chocolatey",
+               "title":"Chocolatey"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ],
+         "optionalFeatures":[
+            {
+               "id":"vs2019_build_tools",
+               "title":"Visual Studio 2019 Build Tools"
+            },
+            {
+               "id":"sqlserver2017",
+               "title":"SQL Server 2017 Developer Edition"
+            },
+            {
+               "id":"mysql76",
+               "title":"MySQL Server 7.6"
+            }            
+         ]
+      },
+      {
+         "name":"Ubuntu 18.04 Minimal",
+         "cloudTypes":[
+            "Azure",
+            "GCE",
+            "AmazonEC2",
+            "HyperV"
+         ],
+         "operatingSystems":[
+            "Linux"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"minimal-ubuntu.json",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ],
+         "optionalFeatures":[
+            {
+               "id": "install_nodejs",
+               "title": "Node.js"
+            },
+            {
+               "id": "install_nvm",
+               "title": "NVM - Node Version Manager"
+            },
+            {
+               "id": "install_nvm_and_nodejs",
+               "title": "Node.js with NVM"
+            },
+            {
+               "id": "install_gitlfs",
+               "title": "Git LFS"
+            },
+            {
+               "id": "install_cvs",
+               "title": "CVS (Git, Mercurial, Subversion)"
+            },
+            {
+               "id": "install_virtualenv",
+               "title": "Virtualenv - isolated Python environments"
+            },
+            {
+               "id": "install_pip",
+               "title": "Pip - Python package-management system"
+            },
+            {
+               "id": "install_pythons",
+               "title": "Pythons"
+            },
+            {
+               "id": "install_powershell",
+               "title": "Powershell"
+            },
+            {
+               "id": "install_dotnets",
+               "title": ".NET Core SDKs"
+            },
+            {
+               "id": "install_dotnetv3_preview",
+               "title": ".NET Core 3.0 preview"
+            },
+            {
+               "id": "install_mono",
+               "title": "Mono framework"
+            },
+            {
+               "id": "install_jdks",
+               "title": "jdks"
+            },
+            {
+               "id": "install_rvm",
+               "title": "RVM - Ruby Version Manager"
+            },
+            {
+               "id": "install_rvm_and_rubies",
+               "title": "Ruby in RVM"
+            },
+            {
+               "id": "install_gvm",
+               "title": "GVM - Go Version Manager"
+            },
+            {
+               "id": "install_gvm_and_golangs",
+               "title": "Golangs in GVM"
+            },
+            {
+               "id": "install_docker",
+               "title": "Docker"
+            },
+            {
+               "id": "install_MSSQLServer",
+               "title": "MS SQL Server"
+            },
+            {
+               "id": "install_mysql",
+               "title": "MySQL"
+            },
+            {
+               "id": "install_postgresql",
+               "title": "PostgreSQL"
+            },
+            {
+               "id": "install_mongodb",
+               "title": "MongoDB"
+            },
+            {
+               "id": "install_redis",
+               "title": "Redis"
+            },
+            {
+               "id": "install_rabbitmq",
+               "title": "RabbitMQ"
+            },
+            {
+               "id": "install_p7zip",
+               "title": "p7zip"
+            },
+            {
+               "id": "install_packer",
+               "title": "Hashicorp Packer"
+            },
+            {
+               "id": "install_yarn",
+               "title": "Yarn package manager"
+            },
+            {
+               "id": "install_awscli",
+               "title": "AWS CLI"
+            },
+            {
+               "id": "install_localstack",
+               "title": "Localstack"
+            },
+            {
+               "id": "install_gcloud",
+               "title": "gcloud command-line tool"
+            },
+            {
+               "id": "install_azurecli",
+               "title": "Azure CLI"
+            },
+            {
+               "id": "install_cmake",
+               "title": "cmake"
+            },
+            {
+               "id": "install_kubectl",
+               "title": "kubectl"
+            },
+            {
+               "id": "install_gcc",
+               "title": "GCC"
+            },
+            {
+               "id": "install_browsers",
+               "title": "Browsers"
+            },
+            {
+               "id": "install_virtualbox",
+               "title": "Virtualbox"
+            },
+            {
+               "id": "install_clang",
+               "title": "clang"
+            },
+            {
+               "id": "install_octo",
+               "title": "OctopusTools"
+            }
+         ]
+      },
+      {
+         "name":"Windows Nano Server 1809 Minimal",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows"
+         ],
+         "imageOperatingSystem":"Windows",
+         "template":"windows-nanoserver-build-image",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      },
+      {
+         "name":"Windows Server Core 2019 Minimal",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows"
+         ],
+         "imageOperatingSystem":"Windows",
+         "template":"windows-servercore-build-image",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      },
+      {
+         "name":"Ubuntu 18.04 Minimal",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows",
+            "Linux",
+            "MacOS"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"linux-build-image",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      }
+   ]
+}

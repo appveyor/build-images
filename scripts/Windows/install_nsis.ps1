@@ -10,4 +10,7 @@ cmd /c start /wait $exePath /S
 del $exePath
 Write-Host "Installed" -ForegroundColor Green
 
+Remove-Item "$env:USERPROFILE\Desktop\NSIS.lnk" -Force -ErrorAction Ignore
+
 Add-Path 'C:\Program Files (x86)\NSIS'
+Add-SessionPath 'C:\Program Files (x86)\NSIS'

@@ -86,6 +86,7 @@ $WorkLoads = '--add Microsoft.VisualStudio.Workload.ManagedDesktop ' + `
 		'--add microsoft.visualstudio.component.teamoffice ' + `
 		'--add microsoft.visualstudio.component.winxp ' + `
 		'--add microsoft.visualstudio.component.vc.llvm.clang ' + `
+		'--add microsoft.visualstudio.component.vc.llvm.clangtoolset ' + `
 		'--add microsoft.visualstudio.component.vc.atlmfc ' + `
 		'--add microsoft.visualstudio.component.vc.tools.arm64 ' + `
 		'--add microsoft.visualstudio.component.vc.tools.arm ' + `
@@ -98,6 +99,18 @@ $WorkLoads = '--add Microsoft.VisualStudio.Workload.ManagedDesktop ' + `
 		'--add microsoft.visualstudio.component.vc.atl.arm ' + `
 		'--add microsoft.visualstudio.component.vc.atl.arm64 ' + `
 		'--add microsoft.visualstudio.component.vc.14.20.x86.x64 ' + `
+		'--add microsoft.visualstudio.component.vc.atlmfc.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.mfc.arm.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.mfc.arm64.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.mfc.arm ' + `
+		'--add microsoft.visualstudio.component.vc.mfc.arm64 ' + `
+		'--add microsoft.visualstudio.component.vc.14.21.arm ' + `
+		'--add microsoft.visualstudio.component.vc.14.21.arm64 ' + `
+		'--add microsoft.visualstudio.component.vc.14.21.x86.x64 ' + `
+		'--add microsoft.visualstudio.component.vc.14.21.arm.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.14.21.arm64.spectre ' + `
+		'--add microsoft.visualstudio.component.vc.14.21.x86.x64.spectre ' + `
+		'--add microsoft.visualstudio.component.portablelibrary ' + `
 		'--add component.android.sdk27 ' + `
 		'--add component.android.ndk.r16b '
 

@@ -216,7 +216,7 @@
         "communicator": "winrm",
         "winrm_use_ssl": "true",
         "winrm_insecure": "true",
-        "winrm_timeout": "30m",
+        "winrm_timeout": "50m",
         "winrm_username": "packer",
 
         "azure_tags": {

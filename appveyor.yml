@@ -31,6 +31,9 @@ environment:
       CLOUD: AWS
 
 init:
+- appveyor version
+- sh: echo $APPVEYOR_BUILD_WORKER_IMAGE
+- sh: echo $APPVEYOR_BUILD_WORKER_CLOUD
 - sh: |
     should_exit=false
     if [[ "$SKIP_TEMPLATE" =~ $TEMPLATE ]]; then
@@ -117,7 +120,8 @@ build_script:
       --azure-file-volume-mount-path /mnt/packer-logs \
       --environment-variables \
         "${CONTAINER_ENVS[@]}" \
-        appveyor_user=${appveyor_user} \
+        install_user=${install_user} \
+        install_password=${install_password} \
         build_agent_mode=${build_agent_mode} \
         APPVEYOR_BUILD_VERSION=${APPVEYOR_BUILD_VERSION} \
         builders=${builders} \

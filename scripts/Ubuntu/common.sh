@@ -2,6 +2,7 @@
 #shellcheck disable=SC2086,SC2015,SC2164
 
 # set variables
+declare BASH_ATTRIBUTES
 declare PACKAGES=( )
 declare SDK_VERSIONS=( )
 declare PROFILE_LINES=( )
@@ -11,18 +12,39 @@ if [ -f /etc/os-release ]; then
 else
     echo "[WARNING] /etc/os-release not found - cant find VERSION_CODENAME and VERSION_ID."
 fi
-if [[ -z "${LOGGING}" ]]; then LOGGING=true; fi
+if [[ -z "${LOGGING-}" ]]; then LOGGING=true; fi
+
+function save_bash_attributes() {
+    BASH_ATTRIBUTES=$(set -o)
+}
+
+function restore_bash_attributes() {
+    if [[ -n "${BASH_ATTRIBUTES-}" && "${#BASH_ATTRIBUTES}" -gt "0" ]]; then
+        while read -r BUILT STATUS; do
+            if [ "$STATUS" == "on" ]; then
+                set -o $BUILT
+            else
+                set +o $BUILT
+            fi
+        done <<< "$BASH_ATTRIBUTES"
+    fi
+}
 
 function init_logging() {
-    if [[ -z $LOG_FILE ]]; then
+    if [[ -z "${LOG_FILE-}" ]]; then
         SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
         LOG_FILE=$HOME/${SCRIPT_NAME%.*}.log
     fi
-    touch $LOG_FILE
+    touch "${LOG_FILE}"
+    chmod a+w "${LOG_FILE}"
+    if [ -n "${VERSIONS_FILE-}" ]; then
+        touch "${VERSIONS_FILE}"
+        chmod a+w "${VERSIONS_FILE}"
+    fi
 }
 
 function chown_logfile() {
-    if [[ -n "${USER_NAME}" && -n "${LOG_FILE}" ]]; then
+    if [[ -n "${USER_NAME-}" && -n "${LOG_FILE-}" ]]; then
         if id -u "${USER_NAME}"; then
             chown $USER_NAME:$USER_NAME $LOG_FILE
         else
@@ -39,10 +61,20 @@ function log() {
 
 function log_exec() {
     log "$@";
-    "$@" 2>&1 | tee -a $LOG_FILE
+    "$@" 2>&1 | tee -a "${LOG_FILE}"
 }
 
-# replace_line file line regex globalflag
+function log_version() {
+    if [ -n "${VERSIONS_FILE-}" ]; then
+        {
+            echo "$@";
+            "$@" 2>&1
+        } | tee -a "${VERSIONS_FILE}"
+    fi
+}
+
+# Usage:
+# replace_line <file> <line> <regex> <globalflag>
 function replace_line() {
     local FILE STRING REGEX GLOBAL REPLACED
     FILE=$1
@@ -66,7 +98,8 @@ function replace_line() {
     IFS=$OFS
 }
 
-# add_line file line
+# Usage:
+# add_line <file> <line>
 function add_line() {
     local FILE STRING FOUND
     FILE=$1
@@ -88,7 +121,8 @@ function add_line() {
     IFS=$OFS
 }
 
-# write_line file line regex globalflag
+# Usage:
+# write_line <file> <line> <regex> <globalflag>
 function write_line() {
     local FILE STRING NEW_TEXT
     FILE=$1
@@ -107,6 +141,7 @@ function write_line() {
     echo "${NEW_TEXT}" > "${FILE}"
 }
 
+# check_apt_locks waits for LOCK_TIMEOUT seconds for apt locks released
 function check_apt_locks() {
     local LOCK_TIMEOUT=60
     local START_TIME=$(date +%s)
@@ -122,23 +157,29 @@ function check_apt_locks() {
 }
 
 function add_user() {
-    PASSWD_LENGTH=${1:-32}
+    local USER_PASSWORD_LENGTH=${1:-32}
+    save_bash_attributes
+    set +o xtrace
+    #generate password if it was not set before
+    if [[ -z "${USER_PASSWORD-}" || "${#USER_PASSWORD}" = "0" ]]; then
+        USER_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${USER_PASSWORD_LENGTH};)
+    fi
     id -u ${USER_NAME} >/dev/null 2>&1 || \
         useradd ${USER_NAME} --shell /bin/bash --create-home --password ${USER_NAME}
     usermod -aG sudo ${USER_NAME}
 
     # Add Appveyor user to sudoers.d
     {
-    echo -e "${USER_NAME}\tALL=(ALL)\tNOPASSWD: ALL"
-    echo -e "Defaults:${USER_NAME}        !requiretty"
+        echo -e "${USER_NAME}\tALL=(ALL)\tNOPASSWD: ALL"
+        echo -e "Defaults:${USER_NAME}        !requiretty"
+        echo -e 'Defaults    env_keep += "DEBIAN_FRONTEND ACCEPT_EULA"'
     } > /etc/sudoers.d/${USER_NAME}
 
-    local PASSWD
-    PASSWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${PASSWD_LENGTH};)
-    echo -e "${PASSWD}\n${PASSWD}\n" | passwd "${USER_NAME}"
+    echo -e "${USER_PASSWORD}\n${USER_PASSWORD}\n" | passwd "${USER_NAME}"
     if "${LOGGING}"; then
-        echo "PASSWD=${PASSWD}" >${HOME}/pwd-$DATEMARK.log
+        echo "USER_PASSWORD=${USER_PASSWORD}" >${HOME}/pwd-$DATEMARK.log
     fi
+    restore_bash_attributes
     return 0
 }
 
@@ -153,7 +194,7 @@ function configure_network() {
 
     # remove host ip from /etc/hosts
     sed -i -e "/ $(hostname)/d" -e "/^${IP_ADDR%/*}/d" /etc/hosts
-    if [[ -n "${HOST_NAME}" ]]; then
+    if [[ -n "${HOST_NAME-}" ]]; then
         write_line "/etc/hosts" "127.0.1.1       $HOST_NAME" "127.0.1.1"
     else
         echo "[ERROR] Variable HOST_NAME not defined. Cannot configure network."
@@ -162,7 +203,7 @@ function configure_network() {
     log_exec cat /etc/hosts
 
     # rename host
-    if [[ -n "${HOST_NAME}" ]]; then
+    if [[ -n "${HOST_NAME-}" ]]; then
         echo "${HOST_NAME}" > /etc/hostname
     fi
 }
@@ -181,14 +222,25 @@ function configure_uefi() {
 
 function configure_locale() {
     echo LANG=C.UTF-8 >/etc/default/locale
+    local lcl
+    for lcl in en_US en_GB en_CA fr_CA ru_RU ru_UA uk_UA zh_CN zh_HK zh_TW; do
+        sed -i '/^# '${lcl}'.UTF-8 UTF-8$/s/^# //' /etc/locale.gen
+    done
+    apt-get -y install language-pack-en language-pack-fr language-pack-uk \
+                       language-pack-ru language-pack-zh-hans language-pack-zh-hant
+    locale-gen
 }
 
 # https://askubuntu.com/a/755969
 function wait_cloudinit () {
-    log "waiting 180 seconds for cloud-init to update /etc/apt/sources.list"
-    log_exec timeout 180 /bin/bash -c \
-        'until stat /var/lib/cloud/instance/boot-finished 2>/dev/null; do echo waiting ...; sleep 1; done'
-    log "Wait for cloud-init finished."
+    if [ -d /var/lib/cloud/instances ]; then
+        log "waiting 180 seconds for cloud-init to update /etc/apt/sources.list"
+        log_exec timeout 180 /bin/bash -c \
+            'until stat /var/lib/cloud/instance/boot-finished 2>/dev/null; do echo waiting for cloud-initto finish ...; sleep 1; done'
+        log "Wait for cloud-init finished."
+    else
+        log "There is no cloud-init scripts."
+    fi
 }
 
 function configure_apt() {
@@ -216,7 +268,7 @@ function install_tools() {
     tools_array=( "zip" "unzip" "wget" "curl" "time" "tree" "telnet" "dnsutils" "file" "ftp" "lftp" )
     tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
     # build tools
-    tools_array+=( "make" "binutils" "bison" "gcc" "tcl" )
+    tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" )
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" )
     # python packages
     tools_array+=( "python" "python-dev" "python3" )
@@ -247,7 +299,7 @@ function install_tools() {
             apt-cache policy make
             return 10;
         }
-    log_exec dpkg -l "${tools_array[@]}"
+    log_version dpkg -l "${tools_array[@]}"
 }
 
 # this exact packages required to communicate with HyperV
@@ -256,7 +308,7 @@ function install_KVP_packages(){
     # running kernel (which version returns uname -r) may differ from updated one
     KERNEL_VERSION=$(ls -tr /boot/initrd.img-* | tail -n1)
     KERNEL_VERSION=${KERNEL_VERSION#*-}
-    if [[ -n $KERNEL_VERSION ]]; then
+    if [[ -n "${KERNEL_VERSION-}" ]]; then
         declare tools_array
         tools_array+=( "linux-tools-${KERNEL_VERSION}" "linux-cloud-tools-${KERNEL_VERSION}" )
         apt-get -y -q install "${tools_array[@]}" --no-install-recommends  ||
@@ -268,9 +320,12 @@ function install_KVP_packages(){
 }
 
 function copy_appveyoragent() {
-    AGENT_FILE=appveyor-build-agent-linux-x64.tar.gz
+    if [[ -z "${APPVEYOR_BUILD_AGENT_VERSION-}" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
+        APPVEYOR_BUILD_AGENT_VERSION=7.0.2366;
+    fi
+    AGENT_FILE=appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-x64.tar.gz
 
-    if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
+    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
 
     mkdir -p ${AGENT_DIR} &&
     #chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR} &&
@@ -280,7 +335,7 @@ function copy_appveyoragent() {
     if [ -f "${HOME}/distrib/${AGENT_FILE}" ]; then
         cp "${HOME}/distrib/${AGENT_FILE}" ./
     else
-        curl -fsSL https://www.appveyor.com/downloads/appveyor-build-agent/7.0/linux/${AGENT_FILE} -o ${AGENT_FILE}
+        curl -fsSL https://appveyordownloads.blob.core.windows.net/appveyor/${APPVEYOR_BUILD_AGENT_VERSION}/${AGENT_FILE} -o ${AGENT_FILE}
     fi &&
     tar -zxf ${AGENT_FILE} ||
         { echo "[ERROR] Cannot download and untar ${AGENT_FILE}." 1>&2; popd; return 20; }
@@ -294,15 +349,15 @@ function install_appveyoragent() {
     CONFIG_FILE=appsettings.json
     PROJECT_BUILDS_DIRECTORY="$USER_HOME"/projects
     SERVICE_NAME=appveyor-build-agent.service
-    if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
+    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
 
-    copy_appveyoragent || return "$1"
+    copy_appveyoragent || return "$?"
 
-    if id -u ${USER_NAME}; then
-        chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR}
+    if id -u "${USER_NAME}"; then
+        chown -R ${USER_NAME}:${USER_NAME} "${AGENT_DIR}"
     fi
 
-    pushd -- ${AGENT_DIR} ||
+    pushd -- "${AGENT_DIR}" ||
         { echo "[ERROR] Cannot cd to ${AGENT_DIR} folder." 1>&2; return 10; }
 
     [ -f ${CONFIG_FILE} ] &&
@@ -332,95 +387,9 @@ WantedBy=multi-user.target" > /etc/systemd/system/${SERVICE_NAME} &&
     systemctl start ${SERVICE_NAME} &&
     systemctl status ${SERVICE_NAME} --no-pager ||
         { echo "[ERROR] Cannot configure systemd ${SERVICE_NAME}." 1>&2; popd; return 50; }
-    log_exec ${AGENT_DIR}/appveyor Version
+    log_version ${AGENT_DIR}/appveyor Version
     popd
 
-}
-
-function install_buildagent_docker() {
-    AGENT_FILE=appveyor-build-agent-linux-x64.tar.gz
-
-    if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
-
-    mkdir -p ${AGENT_DIR} &&
-    #chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR} &&
-    pushd -- ${AGENT_DIR} ||
-        { echo "[ERROR] Cannot create ${AGENT_DIR} folder." 1>&2; return 10; }
-
-    if [ -f "${HOME}/distrib/${AGENT_FILE}" ]; then
-        cp "${HOME}/distrib/${AGENT_FILE}" ./
-    else
-        curl -fsSL https://www.appveyor.com/downloads/appveyor-build-agent/7.0/linux/${AGENT_FILE} -o ${AGENT_FILE}
-    fi &&
-    tar -zxf ${AGENT_FILE} ||
-        { echo "[ERROR] Cannot download and untar ${AGENT_FILE}." 1>&2; popd; return 20; }
-
-    chmod +x ${AGENT_DIR}/appveyor ||
-        { echo "[ERROR] Cannot change mode for ${AGENT_DIR}/appveyor file." 1>&2; popd; return 30; }
-
-    popd
-
-}
-
-# install dotnet prior executing this function, otherwise systemd will be configured incorrectly.
-# This one is an old approach and was deprecated.
-function install_buildagent() {
-    AGENT_MODE=$1
-    AGENT_FILE=appveyor-build-agent-xplat.zip
-    CONFIG_FILE=appsettings.json
-    PROJECT_BUILDS_DIRECTORY="$USER_HOME"/projects
-    SERVICE_NAME=appveyor-build-agent.service
-
-    if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
-
-    mkdir -p ${AGENT_DIR} &&
-    chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR} &&
-    pushd -- ${AGENT_DIR} ||
-        { echo "[ERROR] Cannot create ${AGENT_DIR} folder." 1>&2; return 10; }
-
-    if [ -f "${HOME}/distrib/${AGENT_FILE}" ]; then
-        cp "${HOME}/distrib/${AGENT_FILE}" ./
-    else
-        curl -fsSL https://www.appveyor.com/downloads/build-agent-xplat/1.0.0/appveyor-build-agent-xplat.zip -o ${AGENT_FILE}
-    fi &&
-    unzip -q -o ${AGENT_FILE} ||
-        { echo "[ERROR] Cannot download and unzip ${AGENT_FILE}." 1>&2; popd; return 20; }
-
-    chmod +x ${AGENT_DIR}/appveyor ||
-        { echo "[ERROR] Cannot change mode for ${AGENT_DIR}/appveyor file." 1>&2; popd; return 30; }
-
-    [ -f ${CONFIG_FILE} ] &&
-        python -c "import json; import io;
-a=json.load(io.open('${CONFIG_FILE}', encoding='utf-8-sig'));
-a[u'Agent'][u'Mode']='${AGENT_MODE}';
-a[u'Agent'][u'ProjectBuildsDirectory']='${PROJECT_BUILDS_DIRECTORY}';
-json.dump(a,open('${CONFIG_FILE}','w'))" &&
-        cat ${CONFIG_FILE} ||
-        { echo "[ERROR] Cannot update config file '${CONFIG_FILE}'." 1>&2; popd; return 40; }
-
-    echo "[Unit]
-Description=Appveyor Build Agent
-
-[Service]
-WorkingDirectory=${AGENT_DIR}
-ExecStart=$(which dotnet) ${AGENT_DIR}/Appveyor.BuildAgent.Service.dll
-Restart=no
-SyslogIdentifier=appveyor-build-agent
-User=appveyor
-Environment=ASPNETCORE_ENVIRONMENT=Production
-Environment=TERM=xterm-256color
-
-[Install]
-WantedBy=multi-user.target" > /etc/systemd/system/${SERVICE_NAME} &&
-    systemctl enable ${SERVICE_NAME} &&
-    systemctl start ${SERVICE_NAME} &&
-    systemctl status ${SERVICE_NAME} --no-pager ||
-        { echo "[ERROR] Cannot configure systemd ${SERVICE_NAME}." 1>&2; popd; return 50; }
-    log_exec ${AGENT_DIR}/appveyor Version
-    popd
-
-    # This module was deprecated
-    # add_appveyor_module "${AGENT_DIR}"
 }
 
 function install_nodejs() {
@@ -428,7 +397,24 @@ function install_nodejs() {
     apt-get -y -q install nodejs &&
     npm install -g pm2 ||
         { echo "[ERROR] Something went wrong."; return 100; }
-    log_exec dpkg -l nodejs
+    log_version dpkg -l nodejs
+}
+
+function install_nvm_and_nodejs() {
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_nvm)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        install_nvm" &&
+    su -l ${USER_NAME} -c "
+        [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_nvm_nodejs)
+        install_nvm_nodejs ${CURRENT_NODEJS}" ||
+    return $?
 }
 
 function install_nvm() {
@@ -438,7 +424,7 @@ function install_nvm() {
         return 1
     fi
     #TODO have to figure out latest release version automatically
-    curl -fsSLo- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+    curl -fsSLo- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 
     write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
     write_line "${HOME}/.profile" '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'
@@ -446,7 +432,12 @@ function install_nvm() {
 }
 
 function install_nvm_nodejs() {
-    local CURRENT_NODEJS=$1
+    local CURRENT_NODEJS
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        CURRENT_NODEJS=8
+    else
+        CURRENT_NODEJS=$1
+    fi
     # this must be executed as appveyor user
     if [ "$(whoami)" != ${USER_NAME} ]; then
         echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
@@ -460,14 +451,19 @@ function install_nvm_nodejs() {
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
-    log_exec nvm --version
-    log_exec nvm list
+    log_version nvm --version
+    log_version nvm list
     nvm use ${CURRENT_NODEJS}
 }
 
 function make_git() {
-    GIT_VERSION=$1
-    if command -v git && [[ $(git --version) =~ ${GIT_VERSION} ]]; then
+    local GIT_VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        GIT_VERSION=2.23.0
+    else
+        GIT_VERSION=$1
+    fi
+    if command -v git && [[ $(git --version| cut -d' ' -f 3) =~ ${GIT_VERSION} ]]; then
         echo "[WARNING] git version ${GIT_VERSION} already installed.";
         return 0
     fi
@@ -487,14 +483,20 @@ function make_git() {
 
     # cleanup
     popd && rm -rf ${TMP_DIR}
-    log_exec git --version
+    log_version git --version
 }
 
 function install_gitlfs() {
+    command -v git || apt-get -y -q install git
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash &&
     apt-get -y -q install git-lfs ||
         { echo "Failed to install git lfs." 1>&2; return 10; }
-    log_exec dpkg -l git-lfs
+    log_version dpkg -l git-lfs
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_gitlfs)
+        configure_gitlfs"  ||
+            return $?
 }
 
 function configure_gitlfs() {
@@ -521,7 +523,12 @@ function install_cvs() {
     #install subversion
     apt-get -y -q install subversion
 
-    log_exec dpkg -l git mercurial subversion
+    log_version dpkg -l git mercurial subversion
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_svn)
+        configure_svn" ||
+            return $?
 }
 
 function configure_svn() {
@@ -542,10 +549,11 @@ password-stores =" > .subversion/config ||
 }
 
 function install_virtualenv() {
+    command -v pip || install_pip
     pip install virtualenv ||
         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
 
-    log_exec virtualenv --version
+    log_version virtualenv --version
 }
 
 function install_pip() {
@@ -554,14 +562,15 @@ function install_pip() {
     python get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
-    log_exec pip --version
+    log_version pip --version
 
     #cleanup
     rm get-pip.py
 }
 
 function install_pythons(){
-    declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.8.0a4" )
+    command -v virtualenv || install_virtualenv
+    declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0b3" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
@@ -604,16 +613,16 @@ function install_powershell() {
     configure_powershell
 
     # Start PowerShell
-    log_exec pwsh --version
+    log_version pwsh --version
 }
 
 function configure_powershell() {
-    if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
-    if [[ -z "${USER_HOME}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
+    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
+    if [[ -z "${USER_HOME-}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
     local PROFILE_PATH=${USER_HOME}/.config/powershell
     local PROFILE_NAME=Microsoft.PowerShell_profile.ps1
     # configure PWSH profile
-    mkdir -p ${PROFILE_PATH} &&
+    mkdir -p "${PROFILE_PATH}" &&
     write_line "${PROFILE_PATH}/${PROFILE_NAME}" "Import-Module ${AGENT_DIR}/Appveyor.BuildAgent.PowerShell.dll" ||
         { echo "[ERROR] Cannot create and change PWSH profile ${PROFILE_PATH}/${PROFILE_NAME}." 1>&2; return 30; }
 
@@ -622,10 +631,10 @@ function configure_powershell() {
 
 # This module was deprecated
 function add_appveyor_module() {
-    if [[ -z "${AGENT_DIR}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
-    if [[ -z "${USER_HOME}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
+    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
+    if [[ -z "${USER_HOME-}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
     local MODULES_PATH=${USER_HOME}/.local/share/powershell/Modules/Appveyor/
-    mkdir -p ${MODULES_PATH} &&
+    mkdir -p "${MODULES_PATH}" &&
     for file in "Appveyor.BuildAgent.Api.dll" "Appveyor.BuildAgent.Models.dll" "Appveyor.BuildAgent.PowerShell.dll"; do
         cp "${AGENT_DIR}/${file}" "${MODULES_PATH}" ||
             { echo "[ERROR] Cannot copy '${AGENT_DIR}/${file}' to '${MODULES_PATH}'." 1>&2; return 30; }
@@ -646,7 +655,7 @@ PrivateData = @{
     }
 }
 }
-" > ${MODULES_PATH}/Appveyor.psd1
+" > "${MODULES_PATH}/Appveyor.psd1"
 }
 
 function dotnet_packages() {
@@ -670,6 +679,7 @@ function global_json() {
 function preheat_dotnet_sdks() {
     declare SDK_VERSIONS=("$@")
     for i in "${SDK_VERSIONS[@]}"; do
+        echo "Preheating .NET SDK version $i"
         TMP_DIR=$(mktemp -d)
         pushd  ${TMP_DIR}
         global_json ${i} >global.json
@@ -726,6 +736,54 @@ function install_dotnets() {
 
     #pre-heat
     preheat_dotnet_sdks "${SDK_VERSIONS[@]}"
+    log_version dotnet --list-sdks
+    log_version dotnet --list-runtimes
+}
+
+function prerequisites_dotnetv3_preview () {
+    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
+    echo "libicu"
+}
+
+function install_dotnetv3_preview() {
+    local DOTNET3_SDK_URL
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        DOTNET3_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/a0e368ac-7161-4bde-a139-1a3ef5a82bbe/439cdbb58950916d3718771c5d986c35/dotnet-sdk-3.0.100-preview8-013656-linux-x64.tar.gz"
+    else
+        DOTNET3_SDK_URL=$1
+    fi
+    local DOTNET3_SDK_TAR=${DOTNET3_SDK_URL##*/}
+
+    # install Prerequisites
+    local DOTNET3_PRE
+    DOTNET3_PRE=$(prerequisites_dotnetv3_preview)
+    apt-get -y -q install $DOTNET3_PRE ||
+        { echo "[ERROR] Cannot install prerequisites for .NET SDK 3.0 :  ." 1>&2; return 10; }
+
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    curl -fsSL -O "${DOTNET3_SDK_URL}" &&
+    tar -zxf "${DOTNET3_SDK_TAR}" -C /usr/share/dotnet/ ||
+        { echo "[ERROR] Cannot download and unpack .NET SDK 3.0 preview from url '${DOTNET3_SDK_URL}'." 1>&2; popd; return 20; }
+
+    #install runtimes
+    local DOTNET3_RUNTIME_URL
+    if [[ -z "${2-}" || "${#2}" = "0" ]]; then
+        DOTNET3_RUNTIME_URL="https://download.visualstudio.microsoft.com/download/pr/3873ce54-438c-43bd-871b-0472e4d5462b/01353d2e8c4289bb344d935c4bf4de3e/dotnet-runtime-3.0.0-preview8-28405-07-linux-x64.tar.gz"
+    else
+        DOTNET3_RUNTIME_URL=$2
+    fi
+    DOTNET3_RUNTIME_TAR=${DOTNET3_RUNTIME_URL##*/}
+
+    curl -fsSL -O "${DOTNET3_RUNTIME_URL}" &&
+    tar -zxf "${DOTNET3_RUNTIME_TAR}" -C /usr/share/dotnet/ ||
+        { echo "[ERROR] Cannot download and unpack .NET Runtime 3.0 preview from url '${DOTNET3_RUNTIME_URL}'." 1>&2; popd; return 30; }
+
+    popd
+    log_version dotnet --list-sdks
+    log_version dotnet --list-runtimes
 }
 
 function install_mono() {
@@ -736,13 +794,13 @@ function install_mono() {
     apt-get -y -q install mono-complete mono-dbg referenceassemblies-pcl mono-xsp4 ||
         { echo "[ERROR] Cannot install Mono." 1>&2; return 20; }
 
-    log_exec mono --version
-    log_exec csc
-    log_exec xsp4 --version
-    log_exec mcs --version
+    log_version mono --version
+    log_version csc
+    log_version xsp4 --version
+    log_version mcs --version
 }
 
-function install_jdks() {
+function install_jdks_from_repository() {
     add-apt-repository -y ppa:openjdk-r/ppa
     apt-get -y -qq update && {
         apt-get -y -q install --no-install-recommends openjdk-7-jdk
@@ -751,6 +809,34 @@ function install_jdks() {
     } ||
         { echo "[ERROR] Cannot install JDKs." 1>&2; return 10; }
     update-java-alternatives --set java-1.8.0-openjdk-amd64
+}
+
+function install_jdks() {
+    install_jdks_from_repository || return $?
+
+    install_jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz ||
+        return $?
+    install_jdk 10 https://download.java.net/openjdk/jdk10/ri/openjdk-10+44_linux-x64_bin_ri.tar.gz ||
+        return $?
+    install_jdk 11 https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_linux-x64_bin.tar.gz ||
+        return $?
+    install_jdk 12 https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz ||
+        return $?
+    install_jdk 13 https://download.java.net/java/GA/jdk13/5b8a42f3905b406298b72d750b6919f6/33/GPL/openjdk-13_linux-x64_bin.tar.gz ||
+        return $?
+    install_jdk 14 https://download.java.net/java/early_access/jdk14/10/GPL/openjdk-14-ea+10_linux-x64_bin.tar.gz ||
+        return $?
+    OFS=$IFS
+    IFS=$'\n'
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_jdk)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
+            return $?
+    IFS=$OFS
 }
 
 function install_jdk() {
@@ -767,12 +853,12 @@ function install_jdk() {
 
     curl -fsSL -O "${JDK_URL}" &&
     tar zxf "${JDK_ARCHIVE}" ||
-        { echo "[ERROR] Cannot download and unpack JDK 10." 1>&2; popd; return 10; }
+        { echo "[ERROR] Cannot download and unpack JDK ${JDK_VERSION}." 1>&2; popd; return 10; }
     DIR_NAME=$(tar tf "${JDK_ARCHIVE}" |cut -d'/' -f1|sort|uniq|head -n1)
     mkdir -p ${JDK_PATH} &&
     cp -R "${DIR_NAME}"/* "${JDK_PATH}" &&
     ln -s -f "${JDK_PATH}" "${JDK_LINK}" ||
-        { echo "[ERROR] Cannot copy JDK 10 to /usr/lib/jvm." 1>&2; popd; return 20; }
+        { echo "[ERROR] Cannot copy JDK ${JDK_VERSION} to /usr/lib/jvm." 1>&2; popd; return 20; }
 
     PROFILE_LINES+=( "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}" )
 
@@ -798,6 +884,20 @@ function configure_jdk() {
     write_line "${HOME}/.profile" 'export JAVA_HOME=/usr/lib/jvm/java-9-openjdk-amd64'
     write_line "${HOME}/.profile" 'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8'
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
+}
+
+function install_rvm_and_rubies() {
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_rvm)
+        install_rvm" &&
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
+        $(declare -f log_version)
+        $(declare -f install_rubies)
+        install_rubies" ||
+            return $?
 }
 
 function install_rvm() {
@@ -839,8 +939,25 @@ function install_rubies() {
         rvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
-    log_exec rvm --version
-    log_exec rvm list
+    log_version rvm --version
+    log_version rvm list
+}
+
+function install_gvm_and_golangs() {
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_gvm)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        install_gvm" &&
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        source \"${HOME}/.gvm/scripts/gvm\"
+        $(declare -f log_version)
+        $(declare -f install_golangs)
+        install_golangs" ||
+            return $?
 }
 
 function install_gvm(){
@@ -881,25 +998,26 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.10" "go1.12.5" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.12" "go1.12.7" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
     gvm use ${GO_VERSIONS[-1]} --default
-    log_exec gvm version
-    log_exec go version
+    log_version gvm version
+    log_version go version
 }
 
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
-    declare DOCKER_IMAGES=( "microsoft/aspnetcore" "debian" "ubuntu" "centos" "alpine" "busybox" )
+    declare DOCKER_IMAGES=( "microsoft/dotnet" "microsoft/aspnetcore" "debian" "ubuntu" "centos" "alpine" "busybox" )
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
-        docker pull $IMAGE
+        docker pull "$IMAGE" ||
+            { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
     done
-    log_exec docker images
-    log_exec docker system df
+    log_version docker images
+    log_version docker system df
 }
 
 function install_docker() {
@@ -916,7 +1034,22 @@ function install_docker() {
     pull_dockerimages
     systemctl disable docker
 
-    log_exec dpkg -l docker-ce
+    log_version dpkg -l docker-ce
+}
+
+function install_MSSQLServer(){
+    if [[ -z "${MSSQL_SA_PASSWORD-}" || "${#MSSQL_SA_PASSWORD}" = "0" ]]; then MSSQL_SA_PASSWORD="Password12!"; fi
+    install_sqlserver &&
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+        $(declare -f configure_sqlserver)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        configure_sqlserver" &&
+    disable_sqlserver ||
+            return $?
 }
 
 function install_sqlserver() {
@@ -935,21 +1068,20 @@ function install_sqlserver() {
     systemctl restart mssql-server
     systemctl is-active mssql-server ||
         { echo "[ERROR] mssql-server service failed to start." 1>&2; return 40; }
-    log_exec dpkg -l mssql-server
+    log_version dpkg -l mssql-server
 }
 
 function configure_sqlserver() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
         echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
         return 1
     fi
-    if [[ -z "${MSSQL_SA_PASSWORD}" ]]; then
+    if [[ -z "${MSSQL_SA_PASSWORD-}" ]]; then
         echo "MSSQL_SA_PASSWORD variable not set!" 1>&2
         return 2
     fi
     # Add SQL Server tools to the path by default:
-    local file
     write_line "${HOME}/.profile" 'add2path_suffix /opt/mssql-tools/bin'
     export PATH="$PATH:/opt/mssql-tools/bin"
     
@@ -975,6 +1107,7 @@ function disable_sqlserver() {
 }
 
 function configure_apt_mysql() {
+    if [[ -z "${MYSQL_ROOT_PASSWORD-}" || "${#MYSQL_ROOT_PASSWORD}" = "0" ]]; then MYSQL_ROOT_PASSWORD="Password12!"; fi
     echo "mysql-server mysql-server/root_password password ${MYSQL_ROOT_PASSWORD}" | debconf-set-selections &&
     echo "mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PASSWORD}" | debconf-set-selections ||
         { echo "[ERROR] Cannot set apt's parameters for MySQL package." 1>&2; return 10;}
@@ -989,10 +1122,11 @@ function install_mysql() {
     mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e 'USE mysql; SELECT Host,User FROM `user`;' ||
         { echo "[ERROR] Cannot connect to MySQL locally." 1>&2; return 20;}
     systemctl disable mysql
-    log_exec dpkg -l mysql-server
+    log_version dpkg -l mysql-server
 }
 
 function install_postgresql() {
+    if [[ -z "${POSTGRES_ROOT_PASSWORD-}" || "${#POSTGRES_ROOT_PASSWORD}" = "0" ]]; then POSTGRES_ROOT_PASSWORD="Password12!"; fi
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
     add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ ${OS_CODENAME}-pgdg main" ||
         { echo "[ERROR] Cannot add postgresql repository to APT sources." 1>&2; return 10; }
@@ -1001,7 +1135,7 @@ function install_postgresql() {
         { echo "[ERROR] Cannot install postgresql." 1>&2; return 20; }
     systemctl start postgresql
     systemctl disable postgresql
-    log_exec dpkg -l postgresql
+    log_version dpkg -l postgresql
 
     sudo -u postgres createuser ${USER_NAME}
     sudo -u postgres psql -c "alter user ${USER_NAME} with createdb" postgres
@@ -1010,8 +1144,8 @@ function install_postgresql() {
 }
 
 function install_mongodb() {
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 &&
-    add-apt-repository "deb http://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/3.2 multiverse" ||
+    curl -fsSL https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add - &&
+    add-apt-repository "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/4.2 multiverse" ||
         { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install mongodb-org ||
@@ -1031,7 +1165,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/mongodb.service &&
     systemctl enable mongodb &&
     systemctl disable mongodb ||
         { echo "[ERROR] Cannot configure mongodb." 1>&2; return 30; }
-    log_exec dpkg -l mongodb-org
+    log_version dpkg -l mongodb-org
 }
 
 function install_redis() {
@@ -1073,7 +1207,7 @@ Restart=always" > /etc/systemd/system/redis.service
     systemctl enable redis &&
     systemctl disable redis
     popd
-    log_exec redis-server --version
+    log_version redis-server --version
 }
 
 function install_rabbitmq() {
@@ -1090,7 +1224,7 @@ function install_rabbitmq() {
     systemctl enable rabbitmq-server &&
     systemctl disable rabbitmq-server ||
         { echo "[ERROR] Cannot configure rabbitmq." 1>&2; return 30; }
-    log_exec dpkg -l rabbitmq-server
+    log_version dpkg -l rabbitmq-server
 }
 
 function install_p7zip() {
@@ -1108,12 +1242,17 @@ function install_p7zip() {
 }
 
 function install_packer() {
-    local VERSION=$1
+    local VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        VERSION=1.4.3
+    else
+        VERSION=$1
+    fi
     local ZIPNAME=packer_${VERSION}_linux_amd64.zip
     curl -fsSL -O https://releases.hashicorp.com/packer/${VERSION}/${ZIPNAME} &&
     unzip -q -o ${ZIPNAME} -d /usr/local/bin ||
         { echo "[ERROR] Cannot download and unzip packer." 1>&2; return 10; }
-    log_exec packer --version
+    log_version packer --version
     # cleanup
     [ -f "${ZIPNAME}" ] && rm -f "${ZIPNAME}" || true
 }
@@ -1125,13 +1264,13 @@ function install_yarn() {
     apt-get -y -qq update &&
     apt-get -y -q install --no-install-recommends yarn ||
         { echo "[ERROR] Cannot install yarn." 1>&2; return 20; }
-    log_exec yarn --version
+    log_version yarn --version
 }
 
 function install_awscli() {
     pip install awscli ||
         { echo "[ERROR] Cannot install awscli." 1>&2; return 10; }
-    log_exec aws --version
+    log_version aws --version
 }
 
 function install_localstack() {
@@ -1140,7 +1279,7 @@ function install_localstack() {
     # since version 0.8.8 localstack requires but do not have in dependencies amazon_kclpy
     pip install amazon_kclpy ||
         { echo "[ERROR] Cannot install amazon_kclpy which is required by localstack." 1>&2; return 20; }
-    log_exec localstack --version
+    log_version localstack --version
 }
 
 function install_gcloud() {
@@ -1161,11 +1300,16 @@ function install_azurecli() {
     apt-get -y -qq update &&
     apt-get -y -q install azure-cli ||
         { echo "[ERROR] Cannot instal azure-cli."; return 20; }
-    log_exec az --version
+    log_version az --version
 }
 
 function install_cmake() {
-    local VERSION=$1
+    local VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        VERSION=3.15.2
+    else
+        VERSION=$1
+    fi
     local TAR_FILE=cmake-${VERSION}-Linux-x86_64.tar.gz
     local TMP_DIR=$(mktemp -d)
     pushd -- ${TMP_DIR}
@@ -1180,7 +1324,7 @@ function install_cmake() {
     mv -f ./share/cmake-${VERSION%.*} /usr/share/ &&
     mv -f ./share/aclocal/* /usr/share/aclocal/||
         { echo "[ERROR] Cannot install cmake." 1>&2; popd; return 30; }
-    log_exec cmake --version
+    log_version cmake --version
     popd
 }
 
@@ -1219,7 +1363,12 @@ function install_gcc() {
 }
 
 function install_curl() {
-    local VERSION=$1
+    local VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        VERSION=7.65.3
+    else
+        VERSION=$1
+    fi
     local TAR_FILE=curl-${VERSION}.tar.gz
     local TMP_DIR=$(mktemp -d)
     pushd -- ${TMP_DIR}
@@ -1229,11 +1378,18 @@ function install_curl() {
     DIR_NAME=$(tar -ztf ${TAR_FILE} |cut -d'/' -f1|sort|uniq|head -n1)
     cd -- ${DIR_NAME} ||
         { echo "[ERROR] Cannot change directory to ${DIR_NAME}." 1>&2; popd; return 20; }
-    ./configure &&
+
+    # purge all installed curl packages
+    for p in $(dpkg --get-selections|grep -v deinstall|grep curl|cut -f1); do  apt-get purge -y $p; done
+
+    apt-get install -y libldap2-dev libssh2-1-dev libpsl-dev libidn2-dev libnghttp2-dev librtmp-dev ||
+        { echo "[ERROR] Cannot install additional libraries for curl." 1>&2; popd; return 20; }
+
+    ./configure --with-libssh2 &&
     make &&
     make install ||
         { echo "[ERROR] Cannot make curl." 1>&2; popd; return 30; }
-    log_exec curl --version
+    log_version curl --version
     popd
 }
 
@@ -1246,7 +1402,7 @@ function install_browsers() {
     curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
     dpkg -i ${DEBNAME}
     apt-get -y -q install firefox
-    log_exec dpkg -l firefox google-chrome-stable
+    log_version dpkg -l firefox google-chrome-stable
     #cleanup
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }
@@ -1255,8 +1411,14 @@ function install_browsers() {
 # https://download.virtualbox.org/virtualbox/6.0.6/virtualbox-6.0_6.0.6-130049~Ubuntu~bionic_amd64.deb
 # https://download.virtualbox.org/virtualbox/6.0.6/virtualbox-6.0_6.0.6-130049~Ubuntu~xenial_amd64.deb
 function install_virtualbox() {
-    local VB_VERSION=${1%.*}
-    local VBE_URL=https://download.virtualbox.org/virtualbox/${1}/Oracle_VM_VirtualBox_Extension_Pack-${1}.vbox-extpack
+    local VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        VERSION=6.0.10
+    else
+        VERSION=$1
+    fi
+    local VB_VERSION=${VERSION%.*}
+    local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
     echo "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" >/etc/apt/sources.list.d/virtualboxorg.list &&
     curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add - ||
@@ -1272,13 +1434,15 @@ function install_virtualbox() {
         { echo "[ERROR] Cannot download Virtualbox Extention pack." 1>&2; popd; return 30; }
     yes | VBoxManage extpack install --replace "${VBE_URL##*/}" ||
         { echo "[ERROR] Cannot install Virtualbox Extention pack." 1>&2; popd; return 40; }
-    
+    /sbin/vboxconfig
+        { echo "[ERROR] Cannot configure Virtualbox." 1>&2; popd; return 50; }
+
     #cleanup
     rm -f "${VBE_URL##*/}"
 
     popd
 
-    log_exec vboxmanage --version
+    log_version vboxmanage --version
 }
 
 function install_clang() {
@@ -1294,7 +1458,29 @@ function install_clang() {
     update-alternatives --config clang
     update-alternatives --config clang++
 
-    log_exec clang --version
+    log_version clang --version
+}
+
+function install_octo() {
+    local OCTO_VERSION, OCTO_URL
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        OCTO_VERSION=6.12.0
+    else
+        OCTO_VERSION=$1
+    fi
+    OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.ubuntu.16.04-x64.tar.gz"
+    local TMP_DIR=$(mktemp -d)
+    pushd -- ${TMP_DIR}
+    curl -fsSL "${OCTO_URL}" -o OctopusTools.tar.gz ||
+        { echo "[ERROR] Cannot download OctopusTools." 1>&2; popd; return 10; }
+    mkdir -p /opt/octopus &&
+    tar zxf OctopusTools.tar.gz -C /opt/octopus ||
+        { echo "[ERROR] Cannot unpack and copy OctopusTools." 1>&2; popd; return 20; }
+    write_line "${HOME}/.profile" 'add2path /opt/octopus'
+    log_version /opt/octopus/Octo version
+    # cleanup
+    rm OctopusTools.tar.gz
+    popd
 }
 
 function add_ssh_known_hosts() {
@@ -1329,6 +1515,27 @@ function configure_sshd() {
     write_line /etc/ssh/sshd_config 'PasswordAuthentication no' '^PasswordAuthentication '
 }
 
+function configure_motd() {
+    chmod -x /etc/update-motd.d/*
+    echo '#!/bin/sh
+[ -r /etc/os-release ] && . /etc/os-release
+printf "Appveyor Worker\n"
+printf "OS %s (%s %s %s)\n" "$PRETTY_NAME" "$(uname -o)" "$(uname -r)" "$(uname -m)"
+' >/etc/update-motd.d/00-appveyor
+
+    chmod +x /etc/update-motd.d/00-appveyor
+}
+
+function check_folders() {
+    if [ "$#" -gt 0 ]; then
+        while [[ "$#" -gt 0 ]]; do
+            # echo "$FUNCNAME $1"
+            du -hs $1 2>/dev/null | sort -h |tail
+            shift
+        done
+    fi
+}
+
 function cleanup() {
     # remove list of packages.
     # It frees up ~140Mb but it force users to execute `apt-get -y -qq update`
@@ -1336,6 +1543,10 @@ function cleanup() {
     #rm -rf /var/lib/apt/lists/*
 
     apt-get -y -q autoremove
+
+    # cleanup Systemd Journals
+    journalctl --rotate
+    journalctl --vacuum-time=1s
 
     # clean bash_history
     cat /dev/null > ${HOME}/.bash_history
@@ -1345,4 +1556,11 @@ function cleanup() {
     # cleanup script guts
     find $HOME -maxdepth 1 -name "*.sh" -delete
     if [ -d "$HOME/distrib" ]; then rm -rf "$HOME/distrib"; fi
+
+    #log some data about image size
+    log_version df -h
+    log_version ls -ltra "${HOME}"
+    log_version check_folders ${HOME}/.*
+    log_version check_folders "/*" "/opt/*" "/var/*" "/var/lib/*" "/var/cache/*" "/usr/*" "/usr/lib/*" "/usr/share/*"
+
 }

@@ -5,7 +5,7 @@ while ($i -lt 30) {
   $i +=1  
   $installed = (Get-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online).State -eq 'Enabled'
   if ($installed) {
-    Write-warning "SL feature is installed"
+    Write-host "WSL feature is installed"
     break
   }
   Write-warning "Retrying in 10 seconds..."
@@ -28,14 +28,14 @@ Expand-Archive -Path "$env:TEMP\wsl-ubuntu-1604.zip" -DestinationPath "C:\WSL\Ub
 Remove-Item "$env:TEMP\wsl-ubuntu-1604.zip"
 
 
-$ubuntuExe = "C:\WSL\Ubuntu1604\ubuntu.exe"
+$ubuntuExe = "C:\WSL\Ubuntu1604\ubuntu1604.exe"
 $bsdtar = "C:\WSL\Ubuntu1604\rootfs\bsdtar"
 
 Start-Process $ubuntuExe
 while($true) {
 	Start-Sleep -s 10
 	if (-not (Test-Path $bsdtar)) {
-		Get-Process "ubuntu" | Stop-Process
+		Get-Process "ubuntu1604" | Stop-Process
 		break
 	}
 }
@@ -93,7 +93,7 @@ while($true) {
 # Testing WSL
 # ===========
 
-wslconfig /setdefault ubuntu
+wslconfig /setdefault ubuntu-16.04
 wsl lsb_release -a
 
 wslconfig /setdefault ubuntu-18.04

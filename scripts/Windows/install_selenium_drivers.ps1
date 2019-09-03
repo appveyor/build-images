@@ -10,7 +10,7 @@ if(-not (Test-Path $destPath)) {
 }
 
 $zipPath = "$env:TEMP\chromedriver_win32.zip"
-(New-Object Net.WebClient).DownloadFile('http://chromedriver.storage.googleapis.com/2.45/chromedriver_win32.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('http://chromedriver.storage.googleapis.com/2.46/chromedriver_win32.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 del $zipPath
 
@@ -60,8 +60,8 @@ if(-not (Test-Path $destPath)) {
     New-Item $destPath -ItemType directory -Force | Out-Null
 }
 
-$zipPath = "$env:TEMP\IEDriverServer_Win32_3.141.5.zip"
-(New-Object Net.WebClient).DownloadFile('http://selenium-release.storage.googleapis.com/3.141/IEDriverServer_Win32_3.141.5.zip', $zipPath)
+$zipPath = "$env:TEMP\IEDriverServer_Win32_3.141.59.zip"
+(New-Object Net.WebClient).DownloadFile('http://selenium-release.storage.googleapis.com/3.141/IEDriverServer_Win32_3.141.59.zip', $zipPath)
 7z x $zipPath -o"$destPath" -aoa
 del $zipPath
 
