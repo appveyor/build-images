@@ -87,155 +87,155 @@
          ],
          "optionalFeatures":[
             {
-               "id": "nodejs",
+               "id": "install_nodejs",
                "title": "Node.js"
             },
             {
-               "id": "nvm",
+               "id": "install_nvm",
                "title": "NVM - Node Version Manager"
             },
             {
-               "id": "nvm_nodejs",
+               "id": "install_nvm_and_nodejs",
                "title": "Node.js with NVM"
             },
             {
-               "id": "gitlfs",
+               "id": "install_gitlfs",
                "title": "Git LFS"
             },
             {
-               "id": "cvs",
+               "id": "install_cvs",
                "title": "CVS (Git, Mercurial, Subversion)"
             },
             {
-               "id": "virtualenv",
+               "id": "install_virtualenv",
                "title": "Virtualenv - isolated Python environments"
             },
             {
-               "id": "pip",
+               "id": "install_pip",
                "title": "Pip - Python package-management system"
             },
             {
-               "id": "pythons",
+               "id": "install_pythons",
                "title": "Pythons"
             },
             {
-               "id": "powershell",
+               "id": "install_powershell",
                "title": "Powershell"
             },
             {
-               "id": "dotnets",
+               "id": "install_dotnets",
                "title": ".NET Core SDKs"
             },
             {
-               "id": "dotnetv3_preview",
+               "id": "install_dotnetv3_preview",
                "title": ".NET Core 3.0 preview"
             },
             {
-               "id": "mono",
+               "id": "install_mono",
                "title": "Mono framework"
             },
             {
-               "id": "jdks",
+               "id": "install_jdks",
                "title": "jdks"
             },
             {
-               "id": "rvm",
+               "id": "install_rvm",
                "title": "RVM - Ruby Version Manager"
             },
             {
-               "id": "rubies",
+               "id": "install_rvm_and_rubies",
                "title": "Ruby in RVM"
             },
             {
-               "id": "gvm",
+               "id": "install_gvm",
                "title": "GVM - Go Version Manager"
             },
             {
-               "id": "golangs",
-               "title": "Go in GVM"
+               "id": "install_gvm_and_golangs",
+               "title": "Golangs in GVM"
             },
             {
-               "id": "docker",
+               "id": "install_docker",
                "title": "Docker"
             },
             {
-               "id": "sqlserver",
+               "id": "install_MSSQLServer",
                "title": "MS SQL Server"
             },
             {
-               "id": "mysql",
+               "id": "install_mysql",
                "title": "MySQL"
             },
             {
-               "id": "postgresql",
+               "id": "install_postgresql",
                "title": "PostgreSQL"
             },
             {
-               "id": "mongodb",
+               "id": "install_mongodb",
                "title": "MongoDB"
             },
             {
-               "id": "redis",
+               "id": "install_redis",
                "title": "Redis"
             },
             {
-               "id": "rabbitmq",
+               "id": "install_rabbitmq",
                "title": "RabbitMQ"
             },
             {
-               "id": "p7zip",
+               "id": "install_p7zip",
                "title": "p7zip"
             },
             {
-               "id": "packer",
+               "id": "install_packer",
                "title": "Hashicorp Packer"
             },
             {
-               "id": "yarn",
+               "id": "install_yarn",
                "title": "Yarn package manager"
             },
             {
-               "id": "awscli",
+               "id": "install_awscli",
                "title": "AWS CLI"
             },
             {
-               "id": "localstack",
+               "id": "install_localstack",
                "title": "Localstack"
             },
             {
-               "id": "gcloud",
+               "id": "install_gcloud",
                "title": "gcloud command-line tool"
             },
             {
-               "id": "azurecli",
+               "id": "install_azurecli",
                "title": "Azure CLI"
             },
             {
-               "id": "cmake",
+               "id": "install_cmake",
                "title": "cmake"
             },
             {
-               "id": "kubectl",
+               "id": "install_kubectl",
                "title": "kubectl"
             },
             {
-               "id": "gcc",
+               "id": "install_gcc",
                "title": "GCC"
             },
             {
-               "id": "browsers",
+               "id": "install_browsers",
                "title": "Browsers"
             },
             {
-               "id": "virtualbox",
+               "id": "install_virtualbox",
                "title": "Virtualbox"
             },
             {
-               "id": "clang",
+               "id": "install_clang",
                "title": "clang"
             },
             {
-               "id": "octo",
+               "id": "install_octo",
                "title": "OctopusTools"
             }
          ]
