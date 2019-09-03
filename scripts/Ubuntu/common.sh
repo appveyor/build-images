@@ -400,6 +400,23 @@ function install_nodejs() {
     log_version dpkg -l nodejs
 }
 
+function install_nvm_and_nodejs() {
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_nvm)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        install_nvm" &&
+    su -l ${USER_NAME} -c "
+        [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_nvm_nodejs)
+        install_nvm_nodejs ${CURRENT_NODEJS}" ||
+    return $?
+}
+
 function install_nvm() {
     # this must be executed as appveyor user
     if [ "$(whoami)" != ${USER_NAME} ]; then
@@ -470,10 +487,16 @@ function make_git() {
 }
 
 function install_gitlfs() {
+    command -v git || apt-get -y -q install git
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash &&
     apt-get -y -q install git-lfs ||
         { echo "Failed to install git lfs." 1>&2; return 10; }
     log_version dpkg -l git-lfs
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_gitlfs)
+        configure_gitlfs"  ||
+            return $?
 }
 
 function configure_gitlfs() {
@@ -501,6 +524,11 @@ function install_cvs() {
     apt-get -y -q install subversion
 
     log_version dpkg -l git mercurial subversion
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_svn)
+        configure_svn" ||
+            return $?
 }
 
 function configure_svn() {
@@ -521,6 +549,7 @@ password-stores =" > .subversion/config ||
 }
 
 function install_virtualenv() {
+    command -v pip || install_pip
     pip install virtualenv ||
         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
 
@@ -540,6 +569,7 @@ function install_pip() {
 }
 
 function install_pythons(){
+    command -v virtualenv || install_virtualenv
     declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0b3" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%[abrcf]*}
@@ -796,6 +826,17 @@ function install_jdks() {
         return $?
     install_jdk 14 https://download.java.net/java/early_access/jdk14/10/GPL/openjdk-14-ea+10_linux-x64_bin.tar.gz ||
         return $?
+    OFS=$IFS
+    IFS=$'\n'
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_jdk)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
+            return $?
+    IFS=$OFS
 }
 
 function install_jdk() {
@@ -845,6 +886,20 @@ function configure_jdk() {
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
 }
 
+function install_rvm_and_rubies() {
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_rvm)
+        install_rvm" &&
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
+        $(declare -f log_version)
+        $(declare -f install_rubies)
+        install_rubies" ||
+            return $?
+}
+
 function install_rvm() {
     # this must be executed as appveyor user
     if [ "$(whoami)" != ${USER_NAME} ]; then
@@ -886,6 +941,23 @@ function install_rubies() {
     done
     log_version rvm --version
     log_version rvm list
+}
+
+function install_gvm_and_golangs() {
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_gvm)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        install_gvm" &&
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        source \"${HOME}/.gvm/scripts/gvm\"
+        $(declare -f log_version)
+        $(declare -f install_golangs)
+        install_golangs" ||
+            return $?
 }
 
 function install_gvm(){
@@ -941,7 +1013,8 @@ function pull_dockerimages() {
     local IMAGE
     declare DOCKER_IMAGES=( "microsoft/dotnet" "microsoft/aspnetcore" "debian" "ubuntu" "centos" "alpine" "busybox" )
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
-        docker pull $IMAGE
+        docker pull "$IMAGE" ||
+            { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
     done
     log_version docker images
     log_version docker system df
@@ -962,6 +1035,20 @@ function install_docker() {
     systemctl disable docker
 
     log_version dpkg -l docker-ce
+}
+
+function install_MSSQLServer(){
+    install_sqlserver &&
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+        $(declare -f configure_sqlserver)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        configure_sqlserver" &&
+    disable_sqlserver ||
+            return $?
 }
 
 function install_sqlserver() {

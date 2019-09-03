@@ -168,11 +168,6 @@ make_git ||
 
 install_gitlfs ||
     _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_gitlfs)
-        configure_gitlfs" ||
-    _abort $?
 
 su -l ${USER_NAME} -c "
         curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
