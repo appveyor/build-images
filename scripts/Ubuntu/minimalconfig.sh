@@ -6,6 +6,10 @@ if [[ -z "${USER_NAME-}" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; f
 if [[ -z "${USER_HOME-}" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/home/appveyor; fi
 if [[ -z "${DATEMARK-}" || "${#DATEMARK}" = "0" ]]; then DATEMARK=$(date +%Y%m%d%H%M%S); fi
 HOST_NAME=appveyor-vm
+MSSQL_SA_PASSWORD=Password12!
+MYSQL_ROOT_PASSWORD=Password12!
+POSTGRES_ROOT_PASSWORD=Password12!
+CURRENT_NODEJS=8
 AGENT_DIR=/opt/appveyor/build-agent
 WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 LOG_FILE=$HOME/$(basename $0)-$DATEMARK.log
