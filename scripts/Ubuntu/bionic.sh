@@ -138,7 +138,7 @@ function install_sqlserver() {
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     local DEB_NAME
-    DEB_NAME=mssql-server_14.0.3045.24-1_amd64.deb
+    DEB_NAME=mssql-server_14.0.3223.3-15_amd64.deb
 
     #download package
     curl -fsSL -O "https://packages.microsoft.com/ubuntu/16.04/mssql-server-2017/pool/main/m/mssql-server/${DEB_NAME}"
