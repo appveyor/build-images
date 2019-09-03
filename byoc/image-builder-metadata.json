@@ -87,12 +87,156 @@
          ],
          "optionalFeatures":[
             {
-               "id":"mysql",
-               "title":"MySQL Server"
+               "id": "nodejs",
+               "title": "Node.js"
             },
             {
-               "id":"postgresql",
-               "title":"PostgreSQL"
+               "id": "nvm",
+               "title": "NVM - Node Version Manager"
+            },
+            {
+               "id": "nvm_nodejs",
+               "title": "Node.js with NVM"
+            },
+            {
+               "id": "gitlfs",
+               "title": "Git LFS"
+            },
+            {
+               "id": "cvs",
+               "title": "CVS (Git, Mercurial, Subversion)"
+            },
+            {
+               "id": "virtualenv",
+               "title": "Virtualenv - isolated Python environments"
+            },
+            {
+               "id": "pip",
+               "title": "Pip - Python package-management system"
+            },
+            {
+               "id": "pythons",
+               "title": "Pythons"
+            },
+            {
+               "id": "powershell",
+               "title": "Powershell"
+            },
+            {
+               "id": "dotnets",
+               "title": ".NET Core SDKs"
+            },
+            {
+               "id": "dotnetv3_preview",
+               "title": ".NET Core 3.0 preview"
+            },
+            {
+               "id": "mono",
+               "title": "Mono framework"
+            },
+            {
+               "id": "jdks",
+               "title": "jdks"
+            },
+            {
+               "id": "rvm",
+               "title": "RVM - Ruby Version Manager"
+            },
+            {
+               "id": "rubies",
+               "title": "Ruby in RVM"
+            },
+            {
+               "id": "gvm",
+               "title": "GVM - Go Version Manager"
+            },
+            {
+               "id": "golangs",
+               "title": "Go in GVM"
+            },
+            {
+               "id": "docker",
+               "title": "Docker"
+            },
+            {
+               "id": "sqlserver",
+               "title": "MS SQL Server"
+            },
+            {
+               "id": "mysql",
+               "title": "MySQL"
+            },
+            {
+               "id": "postgresql",
+               "title": "PostgreSQL"
+            },
+            {
+               "id": "mongodb",
+               "title": "MongoDB"
+            },
+            {
+               "id": "redis",
+               "title": "Redis"
+            },
+            {
+               "id": "rabbitmq",
+               "title": "RabbitMQ"
+            },
+            {
+               "id": "p7zip",
+               "title": "p7zip"
+            },
+            {
+               "id": "packer",
+               "title": "Hashicorp Packer"
+            },
+            {
+               "id": "yarn",
+               "title": "Yarn package manager"
+            },
+            {
+               "id": "awscli",
+               "title": "AWS CLI"
+            },
+            {
+               "id": "localstack",
+               "title": "Localstack"
+            },
+            {
+               "id": "gcloud",
+               "title": "gcloud command-line tool"
+            },
+            {
+               "id": "azurecli",
+               "title": "Azure CLI"
+            },
+            {
+               "id": "cmake",
+               "title": "cmake"
+            },
+            {
+               "id": "kubectl",
+               "title": "kubectl"
+            },
+            {
+               "id": "gcc",
+               "title": "GCC"
+            },
+            {
+               "id": "browsers",
+               "title": "Browsers"
+            },
+            {
+               "id": "virtualbox",
+               "title": "Virtualbox"
+            },
+            {
+               "id": "clang",
+               "title": "clang"
+            },
+            {
+               "id": "octo",
+               "title": "OctopusTools"
             }
          ]
       },
