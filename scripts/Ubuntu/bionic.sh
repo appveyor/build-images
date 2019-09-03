@@ -100,6 +100,12 @@ function install_cvs() {
     apt-get -y -q install subversion
 
     log_version dpkg -l git mercurial subversion
+
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_svn)
+        configure_svn" ||
+            return $?
 }
 
 function install_mongodb() {
@@ -132,7 +138,7 @@ function install_sqlserver() {
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     local DEB_NAME
-    DEB_NAME=mssql-server_14.0.3045.24-1_amd64.deb
+    DEB_NAME=mssql-server_14.0.3223.3-15_amd64.deb
 
     #download package
     curl -fsSL -O "https://packages.microsoft.com/ubuntu/16.04/mssql-server-2017/pool/main/m/mssql-server/${DEB_NAME}"
