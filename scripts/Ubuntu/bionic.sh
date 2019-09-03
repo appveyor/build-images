@@ -100,6 +100,12 @@ function install_cvs() {
     apt-get -y -q install subversion
 
     log_version dpkg -l git mercurial subversion
+
+    su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_svn)
+        configure_svn" ||
+            return $?
 }
 
 function install_mongodb() {
