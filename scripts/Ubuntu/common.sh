@@ -1038,6 +1038,7 @@ function install_docker() {
 }
 
 function install_MSSQLServer(){
+    if [[ -z "${MSSQL_SA_PASSWORD-}" || "${#MSSQL_SA_PASSWORD}" = "0" ]]; then MSSQL_SA_PASSWORD="Password12!"; fi
     install_sqlserver &&
     su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
@@ -1106,6 +1107,7 @@ function disable_sqlserver() {
 }
 
 function configure_apt_mysql() {
+    if [[ -z "${MYSQL_ROOT_PASSWORD-}" || "${#MYSQL_ROOT_PASSWORD}" = "0" ]]; then MYSQL_ROOT_PASSWORD="Password12!"; fi
     echo "mysql-server mysql-server/root_password password ${MYSQL_ROOT_PASSWORD}" | debconf-set-selections &&
     echo "mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PASSWORD}" | debconf-set-selections ||
         { echo "[ERROR] Cannot set apt's parameters for MySQL package." 1>&2; return 10;}
@@ -1124,6 +1126,7 @@ function install_mysql() {
 }
 
 function install_postgresql() {
+    if [[ -z "${POSTGRES_ROOT_PASSWORD-}" || "${#POSTGRES_ROOT_PASSWORD}" = "0" ]]; then POSTGRES_ROOT_PASSWORD="Password12!"; fi
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
     add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ ${OS_CODENAME}-pgdg main" ||
         { echo "[ERROR] Cannot add postgresql repository to APT sources." 1>&2; return 10; }
