@@ -101,7 +101,7 @@ Function Connect-AppVeyorToAWS {
 
     function exitScript {
         if ($aws_profile -and (Get-AWSCredentials -ProfileName $aws_profile)) {Remove-AWSCredentialProfile -ProfileName $aws_profile -ErrorAction Ignore -force}
-        exit 1
+        #exit 1
     }
 
     $ErrorActionPreference = "Stop"

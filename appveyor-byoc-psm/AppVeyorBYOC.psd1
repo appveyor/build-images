@@ -4,7 +4,7 @@
     RootModule = 'AppVeyorBYOC.psm1'
     
     # Version number of this module.
-    ModuleVersion = '1.0.1'
+    ModuleVersion = '1.0.0'
     
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -19,10 +19,10 @@
     CompanyName = 'AppVeyor Systems Inc.'
     
     # Copyright statement for this module
-    Copyright = '(c) 2019 AppVeyor Systems Inc. All rights reserved.'
+    Copyright = 'Copyright (c) 2019 AppVeyor Systems Inc. All rights reserved.'
     
     # Description of the functionality provided by this module
-    Description = 'AppVeyor Bring-Your-Own-Cloud (BYOC) - PowerShell module to enable hosted AppVeyor CI account or on-premise AppVeyor Server installation running builds on a custom build cloud (Azure, AWS, GCE, Hyper-V, Docker) or computer directly (Windows, Linux, Mac).'
+    Description = 'AppVeyor Bring-Your-Own-Cloud/Computer (BYOC) - PowerShell module to enable hosted AppVeyor CI account or on-premise AppVeyor Server installation running builds on a custom build cloud (Azure, AWS, GCE, Hyper-V, Docker) or computer directly (Windows, Linux, Mac).'
     
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.0'

@@ -88,7 +88,7 @@ Function Connect-AppVeyorToGCE {
 
     function Exit-Script {
         #TODO cleanup if needed
-        exit 1
+        #exit 1
     }
 
     $ErrorActionPreference = "Stop"

@@ -33,7 +33,7 @@ Function Connect-AppVeyorToComputer {
 
     function exitScript {
         # some cleanup?
-        exit 1
+        #exit 1
     }
 
     $ErrorActionPreference = "Stop"
