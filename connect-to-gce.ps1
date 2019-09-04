@@ -200,7 +200,7 @@ $packer_template = if ($packer_template) {$packer_template} elseif ($image_os -e
 
 $packer_manifest = "packer-manifest.json"
 $install_user = "appveyor"
-$install_password = "ABC" + (New-Guid).ToString().SubString(0, 12).Replace("-", "") + "!"
+$install_password = (Get-Culture).TextInfo.ToTitleCase((New-Guid).ToString().SubString(0, 15).Replace("-", "")) + @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
 
 $gce_network_name = "$($common_prefix)-network"
 $gce_firewall_name = "$($common_prefix)-firewall"

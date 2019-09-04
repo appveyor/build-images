@@ -191,7 +191,7 @@ Function Connect-AppVeyorToAzure {
 
     $packer_manifest = "packer-manifest.json"
     $install_user = "appveyor"
-    $install_password = "ABC" + (New-Guid).ToString().SubString(0, 12).Replace("-", "") + "!"
+    $install_password = (Get-Culture).TextInfo.ToTitleCase((New-Guid).ToString().SubString(0, 15).Replace("-", "")) + @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
 
     #Login to Azure and select subscription
     Write-host "Selecting Azure user and subscription..." -ForegroundColor Cyan
