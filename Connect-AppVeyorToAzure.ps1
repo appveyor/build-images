@@ -1,7 +1,7 @@
 Function Connect-AppVeyorToAzure {
     <#
     .SYNOPSIS
-        Command to enable Azure builds. Works with both hosted AppVeyor and AppVeyor server.
+        Command to enable Azure builds. Works with both hosted AppVeyor and AppVeyor Server.
 
     .DESCRIPTION
         You can connect you AppVeyor account (on both hosted AppVeyor and on-premise AppVeyor Server) to your own Azure subscription for AppVeyor to instantiate build VMs in it. It has a lot of benefits like having ability to customize your build image, select desired VM size, set custom build timeout and many others. To simplify setup process for you, command provisions necessary Azure resources, runs Hashicorp Packer to create a basic build image (based on Windows Server 2019), and put all AppVeyor configuration together. After running this command, you should be able to start builds on Azure immediately (and optionally customize your Azure build environment later).

@@ -1,7 +1,7 @@
 Function Connect-AppVeyorToGCE {
     <#
     .SYNOPSIS
-        Command to enable GCE builds. Works with both hosted AppVeyor and AppVeyor server.
+        Command to enable GCE builds. Works with both hosted AppVeyor and AppVeyor Server.
 
     .DESCRIPTION
         You can connect your AppVeyor account (on both hosted AppVeyor and on-premise AppVeyor Server) to your own GCE account for AppVeyor to instantiate build VMs in it. There are several benefits like having the ability to customize your build image, select desired VM size, set custom build timeout and many others. To simplify the setup process for you, command provisions necessary GCE and GCS resources, runs Hashicorp Packer to create a basic build image, and puts all the AppVeyor configuration together. After running this command, you should be able to start builds on GCE immediately (and optionally customize your GCE build environment later).

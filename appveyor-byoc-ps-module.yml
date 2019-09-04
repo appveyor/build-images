@@ -8,7 +8,7 @@ build_script:
 - ps: Copy-Item -Path *.json -Destination AppVeyorBYOC
 
 # publish module
-- ps: (Get-Content .\AppVeyorBYOC\AppVeyorBYOC.psd1).replace("ModuleVersion = '1.0.1'", "ModuleVersion = '$env:APPVEYOR_BUILD_VERSION'") | Set-Content .\appveyor-byoc-psm\AppVeyorBYOC.psd1
+- ps: (Get-Content AppVeyorBYOC\AppVeyorBYOC.psd1).replace("ModuleVersion = '1.0.1'", "ModuleVersion = '$env:APPVEYOR_BUILD_VERSION'") | Set-Content appveyor-byoc-psm\AppVeyorBYOC.psd1
 - ps: Publish-Module -Path $env:APPVEYOR_BUILD_FOLDER\AppVeyorBYOC -NuGetApiKey $env:psg_api_key
 
 test: off
