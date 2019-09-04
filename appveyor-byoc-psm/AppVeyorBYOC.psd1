@@ -25,7 +25,7 @@
     Description = 'AppVeyor Bring-Your-Own-Cloud (BYOC) - PowerShell module to enable hosted AppVeyor CI account or on-premise AppVeyor Server installation running builds on a custom build cloud (Azure, AWS, GCE, Hyper-V, Docker) or computer directly (Windows, Linux, Mac).'
     
     # Minimum version of the Windows PowerShell engine required by this module
-    PowerShellVersion = '3.0'
+    PowerShellVersion = '5.0'
     
     # Name of the Windows PowerShell host required by this module
     # PowerShellHostName = ''
