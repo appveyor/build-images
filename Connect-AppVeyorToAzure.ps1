@@ -1,81 +1,81 @@
 <#
 .SYNOPSIS
-    Script to enable Azure builds. Works with both hosted AppVeyor and AppVeyor server.
+    Command to enable Azure builds. Works with both hosted AppVeyor and AppVeyor server.
 
 .DESCRIPTION
-    You can connect you AppVeyor account (on both hosted AppVeyor and on-premise AppVeyor Server) to your own Azure subscription for AppVeyor to instantiate build VMs in it. It has a lot of benefits like having ability to customize your build image, select desired VM size, set custom build timeout and many others. To simplify setup process for you, we created script which provisions necessary Azure resources, runs Hashicorp Packer to create a basic build image (based on Windows Server 2019), and put all AppVeyor configuration together. After running this script, you should be able to start builds on Azure immediately (and optionally customize your Azure build environment later).
+    You can connect you AppVeyor account (on both hosted AppVeyor and on-premise AppVeyor Server) to your own Azure subscription for AppVeyor to instantiate build VMs in it. It has a lot of benefits like having ability to customize your build image, select desired VM size, set custom build timeout and many others. To simplify setup process for you, command provisions necessary Azure resources, runs Hashicorp Packer to create a basic build image (based on Windows Server 2019), and put all AppVeyor configuration together. After running this command, you should be able to start builds on Azure immediately (and optionally customize your Azure build environment later).
 
-.PARAMETER appveyor_api_key
-    API key for specific account (not 'All accounts'). Hosted AppVeyor users can find it at https://ci.appveyor.com/api-keys. Appveyor Server users can find it at <appveyor_server_url>/api-keys.
-
-.PARAMETER appveyor_url
+.PARAMETER AppVeyorUrl
     AppVeyor URL. For hosted AppVeyor it is https://ci.appveyor.com. For Appveyor Server users it is URL of on-premise AppVeyor Server installation
 
-.PARAMETER use_current_azure_login
-    Use Azure user currently logged in PowerShell and its selected subscription. If this parameter is not set or no Azure user is already logged in PowerShell, script will ask to login to Azure and (if user has multiple subscriptions) select the subscription. It is not recommended to use this switch parameter for the first script run, and select Azure user and subscription carefully. But it can come handy if you need to re-run the script.
+.PARAMETER ApiToken
+    API key for specific account (not 'All accounts'). Hosted AppVeyor users can find it at https://ci.appveyor.com/api-keys. Appveyor Server users can find it at <appveyor_server_url>/api-keys.
 
-.PARAMETER skip_disclaimer
-    Skip warning related to Azure resources creation and potential Azure charges. It is recommended to read the warning at least once, but it can come handy if you need to re-run the script.
+.PARAMETER UseCurrentAzureLogin
+    Use Azure user currently logged in PowerShell and its selected subscription. If this parameter is not set or no Azure user is already logged in PowerShell, command will ask to login to Azure and (if user has multiple subscriptions) select the subscription. It is not recommended to use this switch parameter for the first command run, and select Azure user and subscription carefully. But it can come handy if you need to re-run the command.
 
-.PARAMETER azure_location
-    Azure location (or region) where you want script to create build worker image and all additional required resources. Also AppVeyor will create build VMs in this location. Use short notation (not display name) e.g. 'westus', not 'West US'.
-    
-.PARAMETER azure_vm_size
+.PARAMETER SkipDisclaimer
+    Skip warning related to Azure resources creation and potential Azure charges. It is recommended to read the warning at least once, but it can come handy if you need to re-run the command.
+
+.PARAMETER Location
+    Azure location (or region) where you want command to create build worker image and all additional required resources. Also AppVeyor will create build VMs in this location. Use short notation (not display name) e.g. 'westus', not 'West US'.
+
+.PARAMETER VmSize
     Size of Azure build VM. Use short notation (not display name) e.g. 'Standard_D2s_v3', not 'Standard D2s v3'.
 
-.PARAMETER vhd_full_path
-    It can happen that you run the script, and it created a valid VHD, but some AppVeyor settings were not set correctly (or just you want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating a VHD) and pass already created VHD path to this parameter.
+.PARAMETER VhdFullPath
+    It can happen that you run the command, and it created a valid VHD, but some AppVeyor settings were not set correctly (or just you want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating a VHD) and pass already created VHD path to this parameter.
 
-.PARAMETER common_prefix
-    Script will prepend all created Azure resources and AppVeyor build environment name with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
+.PARAMETER CommonPrefix
+    Command will prepend all created Azure resources and AppVeyor build environment name with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
 
-.PARAMETER image_description
+.PARAMETER ImageName
     Description to be passed to the Packer and name to be used for AppVeyor image. Default value is 'Windows Server 2019 on Azure'.
 
-.PARAMETER packer_template
-    If you are familiar with the Hashicorp Packer, you can replace template used by this script with another one. Default value is '.\minimal-windows-server.json'.
+.PARAMETER ImageTemplate
+    If you are familiar with the Hashicorp Packer, you can replace template used by this command with another one. Default value is '.\minimal-windows-server.json'.
 
     .EXAMPLE
-    .\connect-to-azure.ps1
-    Let script collect all required information
+    Connect-AppVeyorToAzure
+    Let command collect all required information
 
     .EXAMPLE
-    .\connect-to-azure.ps1 -appveyor_api_key XXXXXXXXXXXXXXXXXXXXX -appveyor_url "https://ci.appveyor.com" -azure_location westus -azure_vm_size Standard_D2s_v3 -skip_disclaimer -use_current_azure_login
-    Run script with all required parameters so script will ask now questions. It will create resources in Azure West US region will connect it to the hosted AppVeyor.
+    Connect-AppVeyorToAzure -ApiToken XXXXXXXXXXXXXXXXXXXXX -AppVeyorUrl "https://ci.appveyor.com" -Location westus -VmSize Standard_D2s_v3 -SkipDisclaimer -UseCurrentAzureLogin
+    Run command with all required parameters so command will ask now questions. It will create resources in Azure West US region will connect it to the hosted AppVeyor.
 #>
 
 [CmdletBinding()]
 param
 (
-  [Parameter(Mandatory=$true,HelpMessage="API key for specific account (not 'All accounts')`nHosted AppVeyor users can find it at https://ci.appveyor.com/api-keys`nAppveyor Server users can find it at <appveyor_server_url>/api-keys")]
-  [string]$appveyor_api_key,
-
   [Parameter(Mandatory=$true,HelpMessage="AppVeyor URL`nFor hosted AppVeyor it is https://ci.appveyor.com`nFor Appveyor Server users it is URL of on-premise AppVeyor Server installation")]
-  [string]$appveyor_url,
+  [string]$AppVeyorUrl,
+
+  [Parameter(Mandatory=$true,HelpMessage="API key for specific account (not 'All accounts')`nHosted AppVeyor users can find it at https://ci.appveyor.com/api-keys`nAppveyor Server users can find it at <appveyor_server_url>/api-keys")]
+  [string]$ApiToken,
 
   [Parameter(Mandatory=$false)]
-  [switch]$use_current_azure_login,
+  [switch]$UseCurrentAzureLogin,
 
   [Parameter(Mandatory=$false)]
-  [switch]$skip_disclaimer,
+  [switch]$SkipDisclaimer,
 
   [Parameter(Mandatory=$false)]
-  [string]$azure_location,
+  [string]$Location,
 
   [Parameter(Mandatory=$false)]
-  [string]$azure_vm_size,
+  [string]$VmSize,
   
   [Parameter(Mandatory=$false)]
-  [string]$vhd_full_path,
+  [string]$VhdFullPath,
 
   [Parameter(Mandatory=$false)]
-  [string]$common_prefix = "appveyor",
+  [string]$CommonPrefix = "appveyor",
 
   [Parameter(Mandatory=$false)]
-  [string]$image_description = "Windows Server 2019 on Azure",
+  [string]$ImageName = "Windows Server 2019 on Azure",
 
   [Parameter(Mandatory=$false)]
-  [string]$packer_template = ".\minimal-windows-server.json"
+  [string]$ImageTemplate = ".\minimal-windows-server.json"
 )
 
 $ErrorActionPreference = "Stop"
@@ -84,62 +84,62 @@ $StopWatch = New-Object System.Diagnostics.Stopwatch
 $StopWatch.Start()
 
 #Sanitize input
-$appveyor_url = $appveyor_url.TrimEnd("/")
+$AppVeyorUrl = $AppVeyorUrl.TrimEnd("/")
 
 #Validate input
-if ($appveyor_api_key -like "v2.*") {
-    Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($appveyor_url)/api-keys'"
+if ($ApiToken -like "v2.*") {
+    Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($AppVeyorUrl)/api-keys'"
     return
 }
 
 try {
-    $responce = Invoke-WebRequest -Uri $appveyor_url -ErrorAction SilentlyContinue
+    $responce = Invoke-WebRequest -Uri $AppVeyorUrl -ErrorAction SilentlyContinue
     if ($responce.StatusCode -ne 200) {
-        Write-warning "AppVeyor URL '$($appveyor_url)' respondd with code $($responce.StatusCode)"
+        Write-warning "AppVeyor URL '$($AppVeyorUrl)' respondd with code $($responce.StatusCode)"
         return
     }
 }
 catch {
-    Write-warning "Unable to connect to AppVeyor URL '$($appveyor_url)'. Error: $($error[0].Exception.Message)"
+    Write-warning "Unable to connect to AppVeyor URL '$($AppVeyorUrl)'. Error: $($error[0].Exception.Message)"
         return
 }
 
-if (-not (test-path $packer_template)) {
-    Write-Warning "Please provide correct relative path as the packer_template parameter"
+if (-not (test-path $ImageTemplate)) {
+    Write-Warning "Please provide correct relative path as the ImageTemplate parameter"
     return
 }
 
 if (-not (Get-Module -Name *Az.* -ListAvailable)) {
-    Write-Warning "This script depends on Az PowerShell Module. Please install it with 'Install-Module -Name Az -AllowClobber' command"
+    Write-Warning "This command depends on Az PowerShell Module. Please install it with 'Install-Module -Name Az -AllowClobber' command"
     return
 }
 
 if (Get-Module -Name *AzureRM.* -ListAvailable) {
-    Write-Warning "It is safer to uninstall AzureRM PowerShell module or use different computer to run this script. We noticed unpredictable behaviour when both Az and AzureRM modules are installed. Enter Ctrl-C to stop the script and run 'Uninstall-AzureRm' or do nothing to continue as is.`nWaiting 30 seconds..."
+    Write-Warning "It is safer to uninstall AzureRM PowerShell module or use different computer to run this command. We noticed unpredictable behaviour when both Az and AzureRM modules are installed. Enter Ctrl-C to stop the command and run 'Uninstall-AzureRm' or do nothing to continue as is.`nWaiting 30 seconds..."
     for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
     Write-Host ""
 }
 
 if (-not (Get-Command packer -ErrorAction Ignore)) {
-    Write-Warning "This script depends on Packer by HashiCorp. Please install it with 'choco install packer' command or from download page https://www.packer.io/downloads.html. If it is already installed, please ensure that PATH environment variable contains path to it."
+    Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' command or from download page https://www.packer.io/downloads.html. If it is already installed, please ensure that PATH environment variable contains path to it."
     return
 }
 
 $headers = @{
-  "Authorization" = "Bearer $appveyor_api_key"
+  "Authorization" = "Bearer $ApiToken"
   "Content-type" = "application/json"
 }
 try {
-    Invoke-RestMethod -Uri "$($appveyor_url)/api/projects" -Headers $headers -Method Get | Out-Null
+    Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/projects" -Headers $headers -Method Get | Out-Null
 }
 catch {
-    Write-warning "Unable to call AppVeyor REST API, please verify 'appveyor_api_key' and ensure '-appveyor_url' parameter is set if you are using on-premise AppVeyor Server."
+    Write-warning "Unable to call AppVeyor REST API, please verify 'ApiToken' and ensure '-AppVeyorUrl' parameter is set if you are using on-premise AppVeyor Server."
     return
 }
 
-if ($appveyor_url -eq "https://ci.appveyor.com") {
+if ($AppVeyorUrl -eq "https://ci.appveyor.com") {
       try {
-        Invoke-RestMethod -Uri "$($appveyor_url)/api/build-clouds" -Headers $headers -Method Get | Out-Null
+        Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get | Out-Null
     }
     catch {
         Write-warning "Please contact support@appveyor.com and request enabling of 'Private build clouds' feature."
@@ -148,8 +148,8 @@ if ($appveyor_url -eq "https://ci.appveyor.com") {
 }
 
 $regex =[regex] "^([A-Za-z0-9]+)$"
-if (-not $regex.Match($common_prefix).Success) {
-    Write-Warning "'common_prefix' can contain only letters and numbers"
+if (-not $regex.Match($CommonPrefix).Success) {
+    Write-Warning "'CommonPrefix' can contain only letters and numbers"
     return
 }
 
@@ -160,33 +160,33 @@ $maxtotallength = 24
 $mininfix = 5
 $maxpostfix = "artifact".Length
 $maxprefix = $maxtotallength - $maxpostfix - $mininfix
-if ($common_prefix.Length -ge  $maxprefix){
-     Write-warning "Length of 'common_prefix' must be under $($maxprefix)"
+if ($CommonPrefix.Length -ge  $maxprefix){
+     Write-warning "Length of 'CommonPrefix' must be under $($maxprefix)"
      return
 }
 
 #Make storage account names globally unique
 $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
 $utf8 = new-object -TypeName System.Text.UTF8Encoding
-$apikeyhash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($appveyor_api_key)))
+$apikeyhash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($ApiToken)))
 $infix = $apikeyhash.Replace("-", "").ToLower()
-$maxinfix = ($maxtotallength - $common_prefix.Length - $maxpostfix)
+$maxinfix = ($maxtotallength - $CommonPrefix.Length - $maxpostfix)
 if ($infix.Length -gt $maxinfix){$infix = $infix.Substring(0, $maxinfix)}
 
-$azure_storage_account = "$($common_prefix)$($infix)vm".ToLower()
-$azure_storage_account_cache = "$($common_prefix)$($infix)cache".ToLower()
-$azure_storage_account_artifacts = "$($common_prefix)$($infix)artifact".ToLower()
+$azure_storage_account = "$($CommonPrefix)$($infix)vm".ToLower()
+$azure_storage_account_cache = "$($CommonPrefix)$($infix)cache".ToLower()
+$azure_storage_account_artifacts = "$($CommonPrefix)$($infix)artifact".ToLower()
 
-$azure_storage_container = "$($common_prefix)-vms"
-$azure_cache_storage_name = "$($common_prefix)-azure-cache"
-$azure_artifact_storage_name = "$($common_prefix)-azure-artifacts"
+$azure_storage_container = "$($CommonPrefix)-vms"
+$azure_cache_storage_name = "$($CommonPrefix)-azure-cache"
+$azure_artifact_storage_name = "$($CommonPrefix)-azure-artifacts"
 
-$azure_service_principal_name = "$($common_prefix)-sp"
-$azure_resource_group_name = "$($common_prefix)-rg"
-$azure_vnet_name = "$($common_prefix)-vnet"
-$azure_subnet_name = "$($common_prefix)-subnet"
-$azure_nsg_name = "$($common_prefix)-nsg"
-$build_cloud_name = "$($common_prefix)-azure-build-environment"  
+$azure_service_principal_name = "$($CommonPrefix)-sp"
+$azure_resource_group_name = "$($CommonPrefix)-rg"
+$azure_vnet_name = "$($CommonPrefix)-vnet"
+$azure_subnet_name = "$($CommonPrefix)-subnet"
+$azure_nsg_name = "$($CommonPrefix)-nsg"
+$build_cloud_name = "$($CommonPrefix)-azure-build-environment"  
 
 $packer_manifest = "packer-manifest.json"
 $install_user = "appveyor"
@@ -198,9 +198,9 @@ $contenxt = Get-AzContext
 if (-not $contenxt) {
     Login-AzAccount | Out-Null
 }
-elseif (-not $use_current_azure_login) {
+elseif (-not $UseCurrentAzureLogin) {
     Write-host "You are currently logged in to Azure as $($contenxt.Account)"
-    Write-Warning "Add '-use_current_azure_login' switch parameter to use currently logged in Azure user and skip this dialog next time."
+    Write-Warning "Add '-UseCurrentAzureLogin' switch parameter to use currently logged in Azure user and skip this dialog next time."
     $relogin = Read-Host "Enter 1 if you want continue or 2 to re-login to Azure"
     if ($relogin -eq 1) {
         Write-host "Using Azure user '$($contenxt.Account)'" -ForegroundColor DarkGray
@@ -215,7 +215,7 @@ else {
     Write-host "Using Azure account '$($contenxt.Account)'" -ForegroundColor DarkGray
 }
 
-if ($context.Subscription -and $use_current_azure_login) {
+if ($context.Subscription -and $UseCurrentAzureLogin) {
     Write-host "Using subscription '$($contenxt.Subscription.Name)'" -ForegroundColor DarkGray
     $azure_subscription_id = $contenxt.Subscription.Id
     $azure_tenant_id = $contenxt.Subscription.TenantId
@@ -224,7 +224,7 @@ else {
     $subs = Get-AzSubscription
     $subs = $subs | ? {$_.State -eq "Enabled"}
     if (-not $subs -or $subs.Count -eq 0) {
-        Write-Warning "No Azure subscriptions enabled. Please login to the Azure portal and create or enable one."
+        Write-Warning "No Azure subscriptions enabled. Please login to the Azure portal and create or enable one. If this does not help, please run 'Logout-AzAccount' and try again."
         return
     }
     if ($subs.Count -gt 1) {
@@ -245,8 +245,8 @@ else {
     }
 }
 
-if (-not $skip_disclaimer) {
-     Write-Warning "`nThis script will create Azure resources such as storage accounts, containers, virtual networks and subnets in subscription '$((Get-AzContext).Subscription.Name)'. Also, it will run Hashicorp Packer which will create its own temporary Azure resources and leave VHD blob in the storage account created by this script for future use by AppVeyor build VMs. Please be aware of possible charges from Azure. `nIf subscription '$((Get-AzContext).Subscription.Name)' contains production resources, it is safer to create a separate subscription and run this script against it. Additionally, a separate subscription is better to distinguish Azure bills for CI machines from other Azure bills. `nPress Enter to continue or Ctrl-C to exit the script. Use '-skip_disclaimer' switch parameter to skip this message next time."
+if (-not $SkipDisclaimer) {
+     Write-Warning "`nThis command will create Azure resources such as storage accounts, containers, virtual networks and subnets in subscription '$((Get-AzContext).Subscription.Name)'. Also, it will run Hashicorp Packer which will create its own temporary Azure resources and leave VHD blob in the storage account created by this command for future use by AppVeyor build VMs. Please be aware of possible charges from Azure. `nIf subscription '$((Get-AzContext).Subscription.Name)' contains production resources, it is safer to create a separate subscription and run this command against it. Additionally, a separate subscription is better to distinguish Azure bills for CI machines from other Azure bills. `nPress Enter to continue or Ctrl-C to exit the command. Use '-SkipDisclaimer' switch parameter to skip this message next time."
      $disclaimer = Read-Host
 }
 
@@ -277,44 +277,44 @@ Write-host "Using Azure AD service principal '$($azure_service_principal_name)'"
 #Select location
 Write-host "`nSelecting location..." -ForegroundColor Cyan
 $locations = Get-AzLocation
-if ($azure_location) {
-    $azure_location_full = ($locations | ? {$_.Location -eq $azure_location}).DisplayName
+if ($Location) {
+    $Location_full = ($locations | ? {$_.Location -eq $Location}).DisplayName
 }
 else {
     for ($i = 1; $i -le $locations.Count; $i++) {"Select $i for $($locations[$i - 1].DisplayName)"}
-    Write-Warning "Add '-azure_location' parameter to skip this dialog next time."
+    Write-Warning "Add '-Location' parameter to skip this dialog next time."
     $location_number = Read-Host "Enter your selection"
     if (-not $location_number) {
         Write-Warning "No Azure location selected."
         return
     }
     $selected_location = $locations[$location_number - 1]
-    $azure_location = $selected_location.Location
-    $azure_location_full = $selected_location.DisplayName
+    $Location = $selected_location.Location
+    $Location_full = $selected_location.DisplayName
 }
-Write-host "Using location '$($azure_location_full)'" -ForegroundColor DarkGray
+Write-host "Using location '$($Location_full)'" -ForegroundColor DarkGray
 
 #Get or create resource group
 Write-host "`nGetting or creating Azure resource group..." -ForegroundColor Cyan
 $rg = Get-AzResourceGroup -Name $azure_resource_group_name -ErrorAction Ignore
 if (-not $rg) {
-    $rg = New-AzResourceGroup -Name $azure_resource_group_name -Location $azure_location
+    $rg = New-AzResourceGroup -Name $azure_resource_group_name -Location $Location
 }
-elseif ($rg.Location -ne $azure_location) {
-    Write-Warning "Resource group $($azure_resource_group_name) exists in location $($rg.Location) which is different from the location you chose ($($azure_location))"
-    $changelocation = Read-Host "Enter 1 to use $($rg.Location) location or 2 to delete resource group $($azure_resource_group_name) in $($rg.Location) and re-create it in $($azure_location)"
+elseif ($rg.Location -ne $Location) {
+    Write-Warning "Resource group $($azure_resource_group_name) exists in location $($rg.Location) which is different from the location you chose ($($Location))"
+    $changelocation = Read-Host "Enter 1 to use $($rg.Location) location or 2 to delete resource group $($azure_resource_group_name) in $($rg.Location) and re-create it in $($Location)"
     if ($changelocation -eq 1) {
-        $azure_location = $rg.Location
-        $azure_location_full = ($locations | ? {$_.Location -eq $rg.Location}).DisplayName
+        $Location = $rg.Location
+        $Location_full = ($locations | ? {$_.Location -eq $rg.Location}).DisplayName
     }
     elseif ($changelocation -eq 2) {
         $recreate = Read-Host "Please type '$($azure_resource_group_name)' if you are sure to delete the resource group $($azure_resource_group_name) with all nested resources"
         if ($recreate -eq $azure_resource_group_name){
             Remove-AzResourceGroup -Name $azure_resource_group_name -Force | Out-Null
-            $rg = New-AzResourceGroup -Name $azure_resource_group_name -Location $azure_location
+            $rg = New-AzResourceGroup -Name $azure_resource_group_name -Location $Location
         }
         else {
-            Write-Warning "Please consider whether you need to change a location or re-create a resource group and start over. ALternatively, you can use 'common_prefix' script parameter to form alternative resource group name."
+            Write-Warning "Please consider whether you need to change a location or re-create a resource group and start over. ALternatively, you can use 'CommonPrefix' parameter to form alternative resource group name."
             return
         }
     }
@@ -323,21 +323,21 @@ elseif ($rg.Location -ne $azure_location) {
         return
     }
  }
- Write-host "Using resource group '$($azure_resource_group_name)' in location '$($azure_location_full)'" -ForegroundColor DarkGray
+ Write-host "Using resource group '$($azure_resource_group_name)' in location '$($Location_full)'" -ForegroundColor DarkGray
 
 #Select VM size
 Write-host "`nSelecting VM size..." -ForegroundColor Cyan
-if (-not $azure_vm_size) {
-    $vmsizes = Get-AzVMSize -Location $azure_location
+if (-not $VmSize) {
+    $vmsizes = Get-AzVMSize -Location $Location
     Write-Warning "Please use VM size which supports Premium storage (at least DS-series!)"
     for ($i = 1; $i -le $vmsizes.Count; $i++) {"Select $i for $($vmsizes[$i - 1].Name)"}
     Write-Warning "Please use VM size which supports Premium storage (at least DS-series!)"
-    Write-Warning "Add '-azure_vm_size' parameter to skip this dialog next time."
+    Write-Warning "Add '-VmSize' parameter to skip this dialog next time."
     $location_number = Read-Host "Enter your selection"
     $selected_vmsize = $vmsizes[$location_number - 1]
-    $azure_vm_size = $selected_vmsize.Name
+    $VmSize = $selected_vmsize.Name
 }
-Write-host "Using VM size '$($azure_vm_size)'" -ForegroundColor DarkGray
+Write-host "Using VM size '$($VmSize)'" -ForegroundColor DarkGray
 
 #Get or create storage accounts
 Write-host "`nGetting or creating Azure storage accounts..." -ForegroundColor Cyan
@@ -347,7 +347,7 @@ if (-not $sa) {
     $sacreatecount = 0
     try {
         $sacreatecount++
-        $sa = New-AzStorageAccount -Name $azure_storage_account_name -ResourceGroupName $azure_resource_group_name -Location $azure_location -SkuName $sku_name  -Kind Storage
+        $sa = New-AzStorageAccount -Name $azure_storage_account_name -ResourceGroupName $azure_resource_group_name -Location $Location -SkuName $sku_name  -Kind Storage
     }
     catch {
         if ($sacreatecount -ge 3) {
@@ -367,7 +367,7 @@ Write-host "`nGetting or creating Azure virtual network..." -ForegroundColor Cya
 $vnet = Get-AzVirtualNetwork -Name $azure_vnet_name -ResourceGroupName $azure_resource_group_name -ErrorAction Ignore
 if (-not $vnet) {
     $subnet = New-AzVirtualNetworkSubnetConfig -Name $azure_subnet_name -AddressPrefix '10.0.0.0/24'
-    $vnet = New-AzVirtualNetwork -Name $azure_vnet_name -ResourceGroupName $azure_resource_group_name -Location $azure_location -AddressPrefix "10.0.0.0/24" -Subnet $subnet
+    $vnet = New-AzVirtualNetwork -Name $azure_vnet_name -ResourceGroupName $azure_resource_group_name -Location $Location -AddressPrefix "10.0.0.0/24" -Subnet $subnet
 }
 elseif (-not $vnet.Subnets -or $vnet.Subnets.Count -eq 0) {
     Write-Warning "Existing virtual network '$($azure_vnet_name)' does not have any subnet defined"
@@ -383,7 +383,7 @@ Write-host "Using virtual network '$($azure_vnet_name)' and subnet $($azure_subn
 Write-host "`nGetting or creating Azure network security group..." -ForegroundColor Cyan
 $nsg = Get-AzNetworkSecurityGroup -Name $azure_nsg_name -ResourceGroupName $azure_resource_group_name -ErrorAction Ignore
 if (-not $nsg) {
-    $nsg = New-AzNetworkSecurityGroup -Name $azure_nsg_name -ResourceGroupName $azure_resource_group_name -Location $azure_location
+    $nsg = New-AzNetworkSecurityGroup -Name $azure_nsg_name -ResourceGroupName $azure_resource_group_name -Location $Location
 }
 Write-host "Using virtual network '$($azure_nsg_name)'" -ForegroundColor DarkGray
 
@@ -395,9 +395,9 @@ if (-not ($nsg.SecurityRules | ? {$_.DestinationPortRange -eq {3389} -and $_.Dir
 else {Write-host "Inbound rule to allow TCP 3389 (RDP) already exist in network security group '$($azure_nsg_name)'" -ForegroundColor DarkGray}
 
 #Run Packer to create an image
-if (-not $vhd_full_path) {
+if (-not $VhdFullPath) {
     Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
-    Write-Warning "Add '-vhd_full_path' parameter with VHD URL value if you want to reuse existing VHD (which must be in '$($azure_storage_account)' storage account). Enter Ctrl-C to stop the script and restart with '-vhd_full_path' parameter or do nothing and let the script create a new VHD.`nWaiting 30 seconds..."
+    Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to reuse existing VHD (which must be in '$($azure_storage_account)' storage account). Enter Ctrl-C to stop the command and restart with '-VhdFullPath' parameter or do nothing and let the command create a new VHD.`nWaiting 30 seconds..."
     for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
     Write-Host "`n`nPacker progress:`n"
     $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
@@ -406,17 +406,17 @@ if (-not $vhd_full_path) {
     -var "azure_tenant_id=$azure_tenant_id" `
     -var "azure_client_id=$azure_client_id" `
     -var "azure_client_secret=$azure_client_secret" `
-    -var "azure_location=$azure_location" `
+    -var "azure_location=$Location" `
     -var "azure_resource_group_name=$azure_resource_group_name" `
     -var "azure_storage_account=$azure_storage_account" `
     -var "install_password=$install_password" `
     -var "install_user=$install_user" `
-    -var "azure_vm_size=$azure_vm_size" `
+    -var "azure_vm_size=$VmSize" `
     -var "build_agent_mode=Azure" `
-    -var "image_description=$image_description" `
+    -var "image_description=$ImageName" `
     -var "datemark=$date_mark" `
     -var "packer_manifest=$packer_manifest" `
-    $packer_template
+    $ImageTemplate
 
     #Get VHD path
     if (-not (test-path ".\$($packer_manifest)")) {
@@ -425,15 +425,15 @@ if (-not $vhd_full_path) {
     }
     Write-host "`nGetting VHD path..." -ForegroundColor Cyan
     $manifest = Get-Content -Path ".\$($packer_manifest)" | ConvertFrom-Json
-    $vhd_full_path = $manifest.builds[0].artifact_id
-    $vhd_path = $vhd_full_path.Replace("https://$($azure_storage_account).blob.core.windows.net/", "")
+    $VhdFullPath = $manifest.builds[0].artifact_id
+    $vhd_path = $VhdFullPath.Replace("https://$($azure_storage_account).blob.core.windows.net/", "")
     Remove-Item ".\$($packer_manifest)" -Force -ErrorAction Ignore
-    Write-host "Build image VHD created by Packer and available at '$($vhd_full_path)'" -ForegroundColor DarkGray
+    Write-host "Build image VHD created by Packer and available at '$($VhdFullPath)'" -ForegroundColor DarkGray
     Write-Host "Default build VM credentials: User: 'appveyor', Password: '$($install_password)'. Normally you do not need this password as it will be reset to a random string when the build starts. However you can use it if you need to create and update a VM from the Packer-created VHD manually"  -ForegroundColor DarkGray
 }
 else {
-    Write-host "Using VHD path '$($vhd_full_path)'" -ForegroundColor DarkGray
-    $vhd_path = $vhd_full_path.Replace("https://$($azure_storage_account).blob.core.windows.net/", "")
+    Write-host "Using VHD path '$($VhdFullPath)'" -ForegroundColor DarkGray
+    $vhd_path = $VhdFullPath.Replace("https://$($azure_storage_account).blob.core.windows.net/", "")
     $storagekey = (Get-AzStorageAccountKey -ResourceGroupName $azure_resource_group_name -Name $azure_storage_account)[0].Value
     $storagecontext =  New-AzStorageContext -StorageAccountName $azure_storage_account -StorageAccountKey $storagekey
     $storagecontainername = $vhd_path.Substring(0, $vhd_path.IndexOf("/"))
@@ -448,7 +448,7 @@ else {
 #Create or update build cache storage settings
 Write-host "`nCreating or updating build cache storage settings on AppVeyor..." -ForegroundColor Cyan
 $storagekeycache = (Get-AzStorageAccountKey -ResourceGroupName $azure_resource_group_name -Name $azure_storage_account_cache)[0].Value
-$buildcaches = Invoke-RestMethod -Uri "$($appveyor_url)/api/build-caches" -Headers $headers -Method Get
+$buildcaches = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-caches" -Headers $headers -Method Get
 $buildcache = $buildcaches | ? ({$_.name -eq $azure_cache_storage_name})[0]
 if (-not $buildcache) {
     $body = @{
@@ -460,24 +460,24 @@ if (-not $buildcache) {
         }
     }
     $jsonBody = $body | ConvertTo-Json -Depth 10
-    Invoke-RestMethod -Uri "$($appveyor_url)/api/build-caches" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
+    Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-caches" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
     Write-host "AppVeyor build cache storage '$($azure_cache_storage_name)' has been created." -ForegroundColor DarkGray
 }
 else {
-    $settings = Invoke-RestMethod -Uri "$($appveyor_url)/api/build-caches/$($buildcache.buildCacheId)" -Headers $headers -Method Get
+    $settings = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-caches/$($buildcache.buildCacheId)" -Headers $headers -Method Get
     $settings.name = $azure_cache_storage_name
     $settings.cacheType = "Azure"
     $settings.settings.accountName = $azure_storage_account_cache
     $settings.settings.accountAccessKey = $storagekeycache
     $jsonBody = $settings | ConvertTo-Json -Depth 10
-    Invoke-RestMethod -Uri "$($appveyor_url)/api/build-caches"-Headers $headers -Body $jsonBody -Method Put | Out-Null
+    Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-caches"-Headers $headers -Body $jsonBody -Method Put | Out-Null
     Write-host "AppVeyor build cache storage '$($azure_cache_storage_name)' has been updated." -ForegroundColor DarkGray
 }
 
 #Create or update artifacts storage settings
 Write-host "`nCreating or updating artifacts storage settings on AppVeyor..." -ForegroundColor Cyan
 $storagekeyartifacts = (Get-AzStorageAccountKey -ResourceGroupName $azure_resource_group_name -Name $azure_storage_account_artifacts)[0].Value
-$artifactstorages = Invoke-RestMethod -Uri "$($appveyor_url)/api/artifact-storages" -Headers $headers -Method Get
+$artifactstorages = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/artifact-storages" -Headers $headers -Method Get
 $artifactstorage = $artifactstorages | ? ({$_.name -eq $azure_artifact_storage_name})[0]
 if (-not $artifactstorage) {
     $body = @{
@@ -489,23 +489,23 @@ if (-not $artifactstorage) {
         }
     }
     $jsonBody = $body | ConvertTo-Json -Depth 10
-    Invoke-RestMethod -Uri "$($appveyor_url)/api/artifact-storages" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
+    Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/artifact-storages" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
     Write-host "AppVeyor artifacts storage '$($azure_artifact_storage_name)' has been created." -ForegroundColor DarkGray
 }
 else {
-    $settings = Invoke-RestMethod -Uri "$($appveyor_url)/api/artifact-storages/$($artifactstorage.artifactStorageId)" -Headers $headers -Method Get
+    $settings = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/artifact-storages/$($artifactstorage.artifactStorageId)" -Headers $headers -Method Get
     $settings.name = $azure_artifact_storage_name
     $settings.storageType = "Azure"
     $settings.settings.accountName = $azure_storage_account_artifacts
     $settings.settings.accountAccessKey = $storagekeyartifacts
     $jsonBody = $settings | ConvertTo-Json -Depth 10
-    Invoke-RestMethod -Uri "$($appveyor_url)/api/artifact-storages"-Headers $headers -Body $jsonBody -Method Put | Out-Null
+    Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/artifact-storages"-Headers $headers -Body $jsonBody -Method Put | Out-Null
     Write-host "AppVeyor artifacts storage '$($azure_artifact_storage_name)' has been updated." -ForegroundColor DarkGray
 }
 
 #Create or update cloud
 Write-host "`nCreating or updating build environment on AppVeyor..." -ForegroundColor Cyan
-$clouds = Invoke-RestMethod -Uri "$($appveyor_url)/api/build-clouds" -Headers $headers -Method Get
+$clouds = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get
 $cloud = $clouds | ? ({$_.name -eq $build_cloud_name})[0]
 if (-not $cloud) {
     $body = @{
@@ -527,8 +527,8 @@ if (-not $cloud) {
                     subscriptionId = $azure_subscription_id
                 }
                 vmConfiguration = @{
-                    location = $azure_location
-                    vmSize = $azure_vm_size
+                    location = $Location
+                    vmSize = $VmSize
                     diskStorageAccountName = $azure_storage_account
                     diskStorageContainer = $azure_storage_container
                     vmResourceGroup = $azure_resource_group_name
@@ -541,7 +541,7 @@ if (-not $cloud) {
                     securityGroupName = $azure_nsg_name
                     }
                 images = @(@{
-                        name = $image_description
+                        name = $ImageName
                         vhdPathOrImage = $vhd_path
                     })
             }
@@ -549,13 +549,13 @@ if (-not $cloud) {
     }
 
     $jsonBody = $body | ConvertTo-Json -Depth 10
-    Invoke-RestMethod -Uri "$($appveyor_url)/api/build-clouds" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
-    $clouds = Invoke-RestMethod -Uri "$($appveyor_url)/api/build-clouds" -Headers $headers -Method Get
+    Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
+    $clouds = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get
     $cloud = $clouds | ? ({$_.name -eq $build_cloud_name})[0]
     Write-host "AppVeyor build environment '$($build_cloud_name)' has been created." -ForegroundColor DarkGray
 }
 else {
-    $settings = Invoke-RestMethod -Uri "$($appveyor_url)/api/build-clouds/$($cloud.buildCloudId)" -Headers $headers -Method Get
+    $settings = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds/$($cloud.buildCloudId)" -Headers $headers -Method Get
     $settings.name = $build_cloud_name
     $settings.cloudType = "Azure"
     $settings.workersCapacity = 20
@@ -577,8 +577,8 @@ else {
     $settings.settings.cloudSettings.azureAccount.clientSecret = $azure_client_secret
     $settings.settings.cloudSettings.azureAccount.tenantId = $azure_tenant_id
     $settings.settings.cloudSettings.azureAccount.subscriptionId = $azure_subscription_id
-    $settings.settings.cloudSettings.vmConfiguration.location = $azure_location
-    $settings.settings.cloudSettings.vmConfiguration.vmSize = $azure_vm_size
+    $settings.settings.cloudSettings.vmConfiguration.location = $Location
+    $settings.settings.cloudSettings.vmConfiguration.vmSize = $VmSize
     $settings.settings.cloudSettings.vmConfiguration.diskStorageAccountName = $azure_storage_account
     $settings.settings.cloudSettings.vmConfiguration.diskStorageContainer = $azure_storage_container
     $settings.settings.cloudSettings.vmConfiguration.vmResourceGroup = $azure_resource_group_name
@@ -587,36 +587,36 @@ else {
     $settings.settings.cloudSettings.networking.virtualNetworkName = $azure_vnet_name
     $settings.settings.cloudSettings.networking.subnetName = $azure_subnet_name
     $settings.settings.cloudSettings.networking.securityGroupName = $azure_nsg_name
-    $settings.settings.cloudSettings.images[0].name = $image_description
+    $settings.settings.cloudSettings.images[0].name = $ImageName
     $settings.settings.cloudSettings.images[0].vhdPathOrImage = $vhd_path
 
     $jsonBody = $settings | ConvertTo-Json -Depth 10
-    Invoke-RestMethod -Uri "$($appveyor_url)/api/build-clouds"-Headers $headers -Body $jsonBody -Method Put | Out-Null
+    Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds"-Headers $headers -Body $jsonBody -Method Put | Out-Null
     Write-host "AppVeyor build environment '$($build_cloud_name)' has been updated." -ForegroundColor DarkGray
 }
 
 Write-host "`nEnsuring build worker image is available for AppVeyor projects..." -ForegroundColor Cyan
-$images = Invoke-RestMethod -Uri "$($appveyor_url)/api/build-worker-images" -Headers $headers -Method Get
-$image = $images | ? ({$_.name -eq $image_description})[0]
+$images = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Method Get
+$image = $images | ? ({$_.name -eq $ImageName})[0]
 if (-not $image) {
     $body = @{
-        name = $image_description
+        name = $ImageName
         buildCloudName = $build_cloud_name
         osType = "Windows"
     }
 
     $jsonBody = $body | ConvertTo-Json
-    Invoke-RestMethod -Uri "$($appveyor_url)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
-    Write-host "AppVeyor build worker image '$($image_description)' has been created." -ForegroundColor DarkGray
+    Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
+    Write-host "AppVeyor build worker image '$($ImageName)' has been created." -ForegroundColor DarkGray
 }
 else {
-    $image.name = $image_description
+    $image.name = $ImageName
     $image.buildCloudName = $build_cloud_name
     $image.osType = "Windows"
 
     $jsonBody = $image | ConvertTo-Json
-    Invoke-RestMethod -Uri "$($appveyor_url)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Put | Out-Null
-    Write-host "AppVeyor build worker image '$($image_description)' has been updated." -ForegroundColor DarkGray
+    Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Put | Out-Null
+    Write-host "AppVeyor build worker image '$($ImageName)' has been updated." -ForegroundColor DarkGray
 }
 
 $StopWatch.Stop()
@@ -625,7 +625,10 @@ Write-Host "`nCompleted in $completed."
 
 #Report results and next steps
 Write-host "`nNext steps:"  -ForegroundColor Cyan
-Write-host " - Optionally review build environment '$($build_cloud_name)' at '$($appveyor_url)/build-clouds/$($cloud.buildCloudId)'" -ForegroundColor DarkGray
+Write-host " - Optionally review build environment '$($build_cloud_name)' at '$($AppVeyorUrl)/build-clouds/$($cloud.buildCloudId)'" -ForegroundColor DarkGray
 Write-host " - To start building on Azure set " -ForegroundColor DarkGray -NoNewline
-Write-host "$($image_description) " -NoNewline 
-Write-host "build worker image in AppVeyor project settings or appveyor.yml." -ForegroundColor DarkGray
+Write-host "$($ImageName) " -NoNewline 
+Write-host "build worker image " -ForegroundColor DarkGray
+Write-host "and " -ForegroundColor DarkGray -NoNewline 
+Write-host "$($build_cloud_name) " -NoNewline 
+Write-host "build cloud in AppVeyor project settings or appveyor.yml." -NoNewline -ForegroundColor DarkGra
