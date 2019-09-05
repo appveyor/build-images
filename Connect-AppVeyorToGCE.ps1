@@ -203,8 +203,8 @@ Function Connect-AppVeyorToGCE {
     $install_user = "appveyor"
     $install_password = (Get-Culture).TextInfo.ToTitleCase((New-Guid).ToString().SubString(0, 15).Replace("-", "")) + @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
 
-    $gce_network_name = "$($CommonPrefix)-network"
-    $gce_firewall_name = "$($CommonPrefix)-firewall"
+    $gce_network_name = "$($CommonPrefix)-network"    
+    $gce_firewall_name = if ($ImageOs -eq "Windows") {"$($CommonPrefix)-rdp"} elseif ($ImageOs -eq "Linux") {"$($CommonPrefix)-ssh"}
     $gce_firewall_winrm__name = "$($CommonPrefix)-firewall-winrm"
     $gce_firewall_winrm__port = 5986
     $gce_service_account = "$($CommonPrefix)-sa"
@@ -337,7 +337,7 @@ Function Connect-AppVeyorToGCE {
         }
         else {Write-host "TCP $($remoteaccessport) ($($remoteaccessname)) already allowed on firewall $($gce_firewall_name), network $($gce_network_name)" -ForegroundColor DarkGray}
         if (-not (GcloudFirewallAndRuleExtst -name $gce_firewall_name -port $remoteaccessport)) {
-            Write-Warning "Unable to allow TCP $($remoteaccessport). ($($remoteaccessname) assess to build VMs will not be available. Please update settings for firewall $($gce_firewall_name), network $($gce_network_name) in Google Cloud console if $($remoteaccessname) access is needed."
+            Write-Warning "Unable to allow TCP $($remoteaccessport). ($($remoteaccessname) access to build VMs will not be available. Please update settings for firewall $($gce_firewall_name), network $($gce_network_name) in Google Cloud console if $($remoteaccessname) access is needed."
         }
 
         Write-host "`nSelecting GCE machine type..." -ForegroundColor Cyan
