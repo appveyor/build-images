@@ -86,9 +86,9 @@ Function Connect-AppVeyorToGCE {
       [string]$ImageTemplate
     )
 
-    function Exit-Script {
+    function ExitScript {
         #TODO cleanup if needed
-        #exit 1
+        break all
     }
 
     $ErrorActionPreference = "Stop"
@@ -102,37 +102,37 @@ Function Connect-AppVeyorToGCE {
     #Validate input
     if ($ApiToken -like "v2.*") {
         Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($AppVeyorUrl)/api-keys'"
-        Exit-Script
+        ExitScript
     }
 
     try {
         $responce = Invoke-WebRequest -Uri $AppVeyorUrl -ErrorAction SilentlyContinue
         if ($responce.StatusCode -ne 200) {
             Write-warning "AppVeyor URL '$($AppVeyorUrl)' responded with code $($responce.StatusCode)"
-            Exit-Script
+            ExitScript
         }
     }
     catch {
         Write-warning "Unable to connect to AppVeyor URL '$($AppVeyorUrl)'. Error: $($error[0].Exception.Message)"
-        Exit-Script
+        ExitScript
     }
 
     if (-not (Get-Command gcloud -ErrorAction Ignore)) {
         Write-Warning "This command depends on Google Cloud SDK. Use 'choco install gcloudsdk' on Windows, for Linux follow https://cloud.google.com/sdk/docs/quickstart-linux, for Mac: https://cloud.google.com/sdk/docs/quickstart-macos"
-        Exit-Script
+        ExitScript
     }
 
     #TODO remove if GoogleCloud does not appear to be needed (if al canbe done with gcloud)
     if (-not (Get-Module -Name GoogleCloud -ListAvailable)) {
         Write-Warning "This command depends on Google Cloud PowerShell module. Please install them with the following command: 'Install-Module -Name GoogleCloud -Force; Import-Module -Name GoogleCloud"
-        Exit-Script
+        ExitScript
     }
     #Import module anyway, to be sure.
     Import-Module -Name GoogleCloud
 
     if (-not (Get-Command packer -ErrorAction Ignore)) {
         Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' ('apt get packer' for Linux) command or follow https://www.packer.io/intro/getting-started/install.html. If it is already installed, please ensure that PATH environment variable contains path to it."
-        Exit-Script
+        ExitScript
     }
 
     $headers = @{
@@ -144,7 +144,7 @@ Function Connect-AppVeyorToGCE {
     }
     catch {
         Write-warning "Unable to call AppVeyor REST API, please verify 'ApiToken' and ensure '-AppVeyorUrl' parameter is set if you are using on-premise AppVeyor Server."
-        Exit-Script
+        ExitScript
     }
 
     if ($AppVeyorUrl -eq "https://ci.appveyor.com") {
@@ -153,20 +153,20 @@ Function Connect-AppVeyorToGCE {
         }
         catch {
             Write-warning "Please contact support@appveyor.com and request enabling of 'Private build clouds' feature."
-            Exit-Script
+            ExitScript
         }
     }
 
     $regex =[regex] "^([A-Za-z0-9]+)$"
     if (-not $regex.Match($CommonPrefix).Success) {
         Write-Warning "'CommonPrefix' can contain only letters and numbers"
-        Exit-Script
+        ExitScript
     }
 
     # restriction need to use in bucket name (https://cloud.google.com/storage/docs/naming)
     if (($CommonPrefix -like "goog*") -or ($CommonPrefix -like "*google*") -or ($CommonPrefix -like "*g00gle*")) {
         Write-Warning "'CommonPrefix' cannot begin with the 'goog' prefix and cannot contain 'google' or close misspellings, such as 'g00gle'"
-        Exit-Script
+        ExitScript
     }
 
     #"artifact" is longest name postfix. 
@@ -178,7 +178,7 @@ Function Connect-AppVeyorToGCE {
     $maxprefix = $maxtotallength - $maxpostfix - $mininfix
     if ($CommonPrefix.Length -ge  $maxprefix){
          Write-warning "Length of 'CommonPrefix' must be under $($maxprefix)"
-         Exit-Script
+         ExitScript
     }
 
     #Make GCS bucket names globally unique
@@ -246,7 +246,7 @@ Function Connect-AppVeyorToGCE {
                 }
                 else {
                     Write-Warning "Invalid input. Enter either 1 or 2."
-                    Exit-Script
+                    ExitScript
                 }
             }
             else {
@@ -267,7 +267,7 @@ Function Connect-AppVeyorToGCE {
         }
         if (-not (GcloudApiEnabled)) {
             Write-Warning "Cannot enable GCE API"
-            Exit-Script
+            ExitScript
         }
         Write-host "GCE API is enabled" -ForegroundColor DarkGray
 
@@ -283,7 +283,7 @@ Function Connect-AppVeyorToGCE {
                 }
                 elseif ($usedefaultzone -ne 2) {
                     Write-Warning "Invalid input. Enter either 1 or 2."
-                    Exit-Script
+                    ExitScript
                 }
             }
             if ((-not $activeconfig.properties.compute.zone) -or ($usedefaultzone -eq 2)) {
@@ -292,7 +292,7 @@ Function Connect-AppVeyorToGCE {
                 $zone_number = Read-Host "Enter your selection"
                 if (-not $zone_number) {
                     Write-Warning "No GCE zone selected."
-                    Exit-Script
+                    ExitScript
                 }
                 $selected_zone = $gcezones[$zone_number - 1]
                 $Zone = $selected_zone.Name
@@ -313,7 +313,7 @@ Function Connect-AppVeyorToGCE {
         }
         if (-not (GcloudNetworkExtst)) {
             Write-Warning "Unable to get or create GCE network $($gce_network_name)"
-            Exit-Script
+            ExitScript
         }
         Write-host "Using GCE network '$($gce_network_name)'" -ForegroundColor DarkGray
 
@@ -350,7 +350,7 @@ Function Connect-AppVeyorToGCE {
             $instance_number = Read-Host "Enter your selection"
             if (-not $instance_number) {
                 Write-Warning "No GCE machine type selected."
-                Exit-Script
+                ExitScript
             }
             #$selected_instance_type = $machinetypes[$instance_number - 1].name
             $VmSize = $machinetypes[$instance_number - 1].name
@@ -396,7 +396,7 @@ Function Connect-AppVeyorToGCE {
             sleep 5
             if (-not (GetGcloudSserviceAccount)) {
                 Write-Warning "Unable to get or create GCE service account '$($gce_service_account)'"
-                Exit-Script
+                ExitScript
             }
         }
         Write-host "Using GCE service account '$($gce_service_account)'" -ForegroundColor DarkGray
@@ -443,7 +443,7 @@ Function Connect-AppVeyorToGCE {
             #Get image path
             if (-not (test-path ".\$($packer_manifest)")) {
                 Write-Warning "Unable to find .\$($packer_manifest). Please ensure Packer job finsihed successfully."
-                Exit-Script
+                ExitScript
             }
             Write-host "`nGetting image name..." -ForegroundColor Cyan
             $manifest = Get-Content -Path ".\$($packer_manifest)" | ConvertFrom-Json
@@ -453,7 +453,7 @@ Function Connect-AppVeyorToGCE {
             Write-host "Build image created by Packer: '$($ImageId)'" -ForegroundColor DarkGray
             Write-Host "Default build VM credentials: User: 'appveyor', Password: '$($install_password)'. Normally you do not need this password as it will be reset to a random string when the build starts. However you can use it if you need to create and update a VM from the Packer-created VHD manually"  -ForegroundColor DarkGray
 
-            #TODO wrap and use with to cleanup in Exit-Script
+            #TODO wrap and use with to cleanup in ExitScript
             Write-host "`nDeleting temporary firewall $($gce_firewall_winrm__name)..." -ForegroundColor Cyan
             if (GcloudFirewallAndRuleExtst -name $gce_firewall_winrm__name -port $gce_firewall_winrm__port) {
                 gcloud compute firewall-rules delete $gce_firewall_winrm__name --quiet
@@ -491,7 +491,7 @@ Function Connect-AppVeyorToGCE {
             $gce_account_certificate_base64 = [System.Convert]::ToBase64String($bytes)        
             if (-not $gce_account_certificate_base64) {
                 Write-Warning "Unable to create service account certificate."
-                Exit-Script
+                ExitScript
             }
             Write-host "Service account certificate has been created." -ForegroundColor DarkGray
             Write-host "`nDeleting temporary service account certificate file '$($gce_account_certificate_file)'..." -ForegroundColor Cyan
@@ -672,7 +672,7 @@ Function Connect-AppVeyorToGCE {
 
     catch {
         Write-Warning "Command exited with error: $($_.Exception)"
-        Exit-Script
+        ExitScript
     }
 }
 

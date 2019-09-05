@@ -187,8 +187,8 @@
       "winrm_username": "packer_user",
       "winrm_insecure": true,
       "winrm_use_ssl": true,
-      "instance_name": "Windows-server-2019-{{uuid}}",
-      "image_name": "Windows-server-2019-{{timestamp}}",
+      "instance_name": "windows-server-2019-{{uuid}}",
+      "image_name": "windows-server-2019-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
       "disk_size": 200,
       "metadata": {

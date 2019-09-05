@@ -50,9 +50,9 @@ Function Connect-AppVeyorToHyperV {
       [string]$ImageTemplate
     )
 
-    function exitScript {
+    function ExitScript {
         # some cleanup?
-        #exit 1
+        break all
     }
 
     $ErrorActionPreference = "Stop"
@@ -66,19 +66,19 @@ Function Connect-AppVeyorToHyperV {
     #Validate input
     if ($ApiToken -like "v2.*") {
         Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($AppVeyorUrl)/api-keys'"
-        exitScript
+        ExitScript
     }
 
     try {
         $responce = Invoke-WebRequest -Uri $AppVeyorUrl -ErrorAction SilentlyContinue
         if ($responce.StatusCode -ne 200) {
             Write-warning "AppVeyor URL '$($AppVeyorUrl)' responded with code $($responce.StatusCode)"
-            exitScript
+            ExitScript
         }
     }
     catch {
         Write-warning "Unable to connect to AppVeyor URL '$($AppVeyorUrl)'. Error: $($error[0].Exception.Message)"
-        exitScript
+        ExitScript
     }
 
     $headers = @{
@@ -90,7 +90,7 @@ Function Connect-AppVeyorToHyperV {
     }
     catch {
         Write-warning "Unable to call AppVeyor REST API, please verify 'ApiToken' and ensure '-AppVeyorUrl' parameter is set if you are using on-premise AppVeyor Server."
-        exitScript
+        ExitScript
     }
 
     if ($AppVeyorUrl -eq "https://ci.appveyor.com") {
@@ -99,7 +99,7 @@ Function Connect-AppVeyorToHyperV {
         }
         catch {
             Write-warning "Please contact support@appveyor.com and request enabling of 'Private build clouds' feature."
-            exitScript
+            ExitScript
         }
     }
 
@@ -110,7 +110,7 @@ Function Connect-AppVeyorToHyperV {
 
     catch {
         Write-Warning "Command exited with error: $($_.Exception)"
-        exitScript
+        ExitScript
     }
 }
 

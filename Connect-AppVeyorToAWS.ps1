@@ -99,9 +99,9 @@ Function Connect-AppVeyorToAWS {
       [string]$ImageTemplate
     )
 
-    function exitScript {
+    function ExitScript {
         if ($aws_profile -and (Get-AWSCredentials -ProfileName $aws_profile)) {Remove-AWSCredentialProfile -ProfileName $aws_profile -ErrorAction Ignore -force}
-        #exit 1
+        break all
     }
 
     $ErrorActionPreference = "Stop"
@@ -115,29 +115,29 @@ Function Connect-AppVeyorToAWS {
     #Validate input
     if ($ApiToken -like "v2.*") {
         Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($AppVeyorUrl)/api-keys'"
-        exitScript
+        ExitScript
     }
 
     try {
         $responce = Invoke-WebRequest -Uri $AppVeyorUrl -ErrorAction SilentlyContinue
         if ($responce.StatusCode -ne 200) {
             Write-warning "AppVeyor URL '$($AppVeyorUrl)' responded with code $($responce.StatusCode)"
-            exitScript
+            ExitScript
         }
     }
     catch {
         Write-warning "Unable to connect to AppVeyor URL '$($AppVeyorUrl)'. Error: $($error[0].Exception.Message)"
-        exitScript
+        ExitScript
     }
 
     if (-not (Get-Module -Name *AWSPowerShell* -ListAvailable)) {
         Write-Warning "This command depends on AWS Tools for PowerShell. Please install them with the following command: 'Install-Module -Name AWSPowerShell -Force; Get-Command -Module AWSPowerShell | Out-Null'"
-        exitScript
+        ExitScript
     }
 
     if (-not (Get-Command packer -ErrorAction Ignore)) {
         Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' ('apt get packer' for Linux) command or follow https://www.packer.io/intro/getting-started/install.html. If it is already installed, please ensure that PATH environment variable contains path to it."
-        exitScript
+        ExitScript
     }
 
     $headers = @{
@@ -149,7 +149,7 @@ Function Connect-AppVeyorToAWS {
     }
     catch {
         Write-warning "Unable to call AppVeyor REST API, please verify 'ApiToken' and ensure '-AppVeyorUrl' parameter is set if you are using on-premise AppVeyor Server."
-        exitScript
+        ExitScript
     }
 
     if ($AppVeyorUrl -eq "https://ci.appveyor.com") {
@@ -158,14 +158,14 @@ Function Connect-AppVeyorToAWS {
         }
         catch {
             Write-warning "Please contact support@appveyor.com and request enabling of 'Private build clouds' feature."
-            exitScript
+            ExitScript
         }
     }
 
     $regex =[regex] "^([A-Za-z0-9]+)$"
     if (-not $regex.Match($CommonPrefix).Success) {
         Write-Warning "'CommonPrefix' can contain only letters and numbers"
-        exitScript
+        ExitScript
     }
 
     #"artifact" is longest name postfix. 
@@ -177,7 +177,7 @@ Function Connect-AppVeyorToAWS {
     $maxprefix = $maxtotallength - $maxpostfix - $mininfix
     if ($CommonPrefix.Length -ge  $maxprefix){
          Write-warning "Length of 'CommonPrefix' must be under $($maxprefix)"
-         exitScript
+         ExitScript
     }
 
     #Make S3 names globally unique
@@ -237,7 +237,7 @@ Function Connect-AppVeyorToAWS {
             $region_number = Read-Host "Enter your selection"
             if (-not $region_number) {
                 Write-Warning "No AWS region selected."
-                exitScript
+                ExitScript
             }
             $selected_region = $regions[$region_number - 1]
             $Region = $selected_region.Region
@@ -439,7 +439,7 @@ Function Connect-AppVeyorToAWS {
             $instance_number = Read-Host "Enter your selection"
             if (-not $instance_number) {
                 Write-Warning "No EC2 instance type selected."
-                exitScript
+                ExitScript
             }
             $selected_instance_type = $instancetypes[$instance_number - 1]
             $InstanceSize = $selected_instance_type
@@ -451,13 +451,13 @@ Function Connect-AppVeyorToAWS {
             $availabilityzones = Get-EC2AvailabilityZone -Region $Region | ? {$_.State -eq "available"} | Sort-Object -Property ZoneName -ErrorAction Ignore
             if (-not $availabilityzones -or $availabilityzones.Count -lt 1) {
                 Write-Warning "Unable to find EC2 availability zone with 'available' state."
-                exitScript
+                ExitScript
             }
             $availabilityzone = $availabilityzones[0]
             $subnet = Get-EC2Subnet -Region $Region | ? {$_.AvailabilityZone -eq $AvailabilityZone.ZoneName -and $_.State -eq "available" -and $_.DefaultForAz -eq $true}
             if (-not $subnet) {
                 Write-Warning "Unable to find default available subnet in the availability zone $($AvailabilityZone.ZoneName). Please use 'SubnetId' parameter to specify a subnet"
-                exitScript
+                ExitScript
             }
             $SubnetId = $subnet.SubnetId
         }
@@ -512,7 +512,7 @@ S3 bucket $($aws_s3_bucket_cache) id in '$($bucketregion)' region, while build e
 `n- Use another prefix to name AWS objects (use 'CommonPrefix' paremeter).
 `n- Delete $($aws_s3_bucket_cache) bucket.
 "@
-                exitScript
+                ExitScript
             }
         }
         Write-host "Using S3 bucket '$($aws_s3_bucket_cache)' for cache storage" -ForegroundColor DarkGray
@@ -533,7 +533,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
 `n- Use another prefix to name AWS objects (use 'CommonPrefix' paremeter).
 `n- Delete $($aws_s3_bucket_artifacts) bucket.
 "@
-                exitScript
+                ExitScript
             }
         }
         Write-host "Using S3 bucket '$($aws_s3_bucket_artifacts)' for artifacts storage" -ForegroundColor DarkGray
@@ -563,7 +563,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             #Get VHD path
             if (-not (test-path ".\$($packer_manifest)")) {
                 Write-Warning "Unable to find .\$($packer_manifest). Please ensure Packer job finsihed successfully."
-                exitScript
+                ExitScript
             }
             Write-host "`nGetting AMI ID..." -ForegroundColor Cyan
             $manifest = Get-Content -Path ".\$($packer_manifest)" | ConvertFrom-Json
@@ -765,7 +765,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
 
     catch {
         Write-Warning "Command exited with error: $($_.Exception)"
-        exitScript
+        ExitScript
     }
 }
 
