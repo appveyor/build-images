@@ -192,9 +192,9 @@ Function Connect-AppVeyorToAzure {
 
     $build_cloud_name = "$($ImageOs)-Azure-build-environment"
     $ImageName = if ($ImageName) {$ImageName} else {"$($ImageOs) on Azure"}
-    $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"./minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"./minimal-ubuntu.json"}
+    $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
 
-    $packer_manifest = "packer-manifest.json"
+    $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = (Get-Culture).TextInfo.ToTitleCase((New-Guid).ToString().SubString(0, 15).Replace("-", "")) + @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
 
@@ -409,6 +409,7 @@ Function Connect-AppVeyorToAzure {
         Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
         Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to reuse existing VHD (which must be in '$($azure_storage_account)' storage account). Enter Ctrl-C to stop the command and restart with '-VhdFullPath' parameter or do nothing and let the command create a new VHD.`nWaiting 30 seconds..."
         for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
+        Remove-Item $packer_manifest -Force -ErrorAction Ignore
         Write-Host "`n`nPacker progress:`n"
         $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
         & packer build '--only=azure-arm' `
@@ -429,15 +430,15 @@ Function Connect-AppVeyorToAzure {
         $ImageTemplate
 
         #Get VHD path
-        if (-not (test-path ".\$($packer_manifest)")) {
-            Write-Warning "Unable to find .\$($packer_manifest). Please ensure Packer job finsihed successfully."
+        if (-not (test-path $packer_manifest)) {
+            Write-Warning "Unable to find $packer_manifest. Please ensure Packer job finsihed successfully."
             return
         }
         Write-host "`nGetting VHD path..." -ForegroundColor Cyan
-        $manifest = Get-Content -Path ".\$($packer_manifest)" | ConvertFrom-Json
+        $manifest = Get-Content -Path $packer_manifest | ConvertFrom-Json
         $VhdFullPath = $manifest.builds[0].artifact_id
         $vhd_path = $VhdFullPath.Replace("https://$($azure_storage_account).blob.core.windows.net/", "")
-        Remove-Item ".\$($packer_manifest)" -Force -ErrorAction Ignore
+        Remove-Item $packer_manifest -Force -ErrorAction Ignore
         Write-host "Build image VHD created by Packer and available at '$($VhdFullPath)'" -ForegroundColor DarkGray
         Write-Host "Default build VM credentials: User: 'appveyor', Password: '$($install_password)'. Normally you do not need this password as it will be reset to a random string when the build starts. However you can use it if you need to create and update a VM from the Packer-created VHD manually"  -ForegroundColor DarkGray
     }
