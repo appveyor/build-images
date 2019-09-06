@@ -34,9 +34,9 @@ Function Connect-AppVeyorToComputer {
     $APPVEYOR_HOST_AGENT_MSI_URL = "https://www.appveyor.com/downloads/appveyor/appveyor-host-agent.msi"
     $APPVEYOR_HOST_AGENT_DEB_URL = "https://www.appveyor.com/downloads/appveyor/appveyor-host-agent.deb"
 
-    function exitScript {
+    function ExitScript {
         # some cleanup?
-        #exit 1
+        break all
     }
 
     $ErrorActionPreference = "Stop"
@@ -50,19 +50,19 @@ Function Connect-AppVeyorToComputer {
     #Validate input
     if ($ApiToken -like "v2.*") {
         Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$AppVeyorUrl/api-keys'"
-        exitScript
+        ExitScript
     }
 
     try {
         $responce = Invoke-WebRequest -Uri $AppVeyorUrl -ErrorAction SilentlyContinue
         if ($responce.StatusCode -ne 200) {
             Write-warning "AppVeyor URL '$AppVeyorUrl' responded with code $($responce.StatusCode)"
-            exitScript
+            ExitScript
         }
     }
     catch {
         Write-warning "Unable to connect to AppVeyor URL '$AppVeyorUrl'. Error: $($error[0].Exception.Message)"
-        exitScript
+        ExitScript
     }
 
     $headers = @{
@@ -74,7 +74,7 @@ Function Connect-AppVeyorToComputer {
     }
     catch {
         Write-warning "Unable to call AppVeyor REST API, please verify 'ApiToken' and ensure '-AppVeyorUrl' parameter is set if you are using on-premise AppVeyor Server."
-        exitScript
+        ExitScript
     }
 
     if ($AppVeyorUrl -eq "https://ci.appveyor.com") {
@@ -83,7 +83,7 @@ Function Connect-AppVeyorToComputer {
         }
         catch {
             Write-warning "Please contact support@appveyor.com and request enabling of 'Private build clouds' feature."
-            exitScript
+            ExitScript
         }
     }
 
@@ -226,7 +226,7 @@ Function Connect-AppVeyorToComputer {
     }
     catch {
         Write-Error $_
-        exitScript
+        ExitScript
     }
 }
 

@@ -30,11 +30,14 @@ Function Connect-AppVeyorToAzure {
     .PARAMETER CommonPrefix
         Command will prepend all created Azure resources and AppVeyor build environment name with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
 
+    .PARAMETER ImageOs
+        Operating system of build VM image. Valid values: 'Windows', 'Linux'. Default value is 'Windows'.
+
     .PARAMETER ImageName
-        Description to be passed to the Packer and name to be used for AppVeyor image. Default value is 'Windows Server 2019 on Azure'.
+        Description to be passed to the Packer and name to be used for AppVeyor image. Default value generated is based on the value of 'ImageOs' parameter.
 
     .PARAMETER ImageTemplate
-        If you are familiar with the Hashicorp Packer, you can replace template used by this command with another one. Default value is '.\minimal-windows-server.json'.
+        If you are familiar with the Hashicorp Packer, you can replace template used by this command with another one.  Default value generated is based on the value of 'ImageOs' parameter.
 
         .EXAMPLE
         Connect-AppVeyorToAzure
@@ -73,10 +76,14 @@ Function Connect-AppVeyorToAzure {
       [string]$CommonPrefix = "appveyor",
 
       [Parameter(Mandatory=$false)]
-      [string]$ImageName = "Windows Server 2019 on Azure",
+      [ValidateSet('Windows','Linux')]
+      [string]$ImageOs = "Windows",
 
       [Parameter(Mandatory=$false)]
-      [string]$ImageTemplate = ".\minimal-windows-server.json"
+      [string]$ImageName,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImageTemplate
     )
 
     $ErrorActionPreference = "Stop"
@@ -103,11 +110,6 @@ Function Connect-AppVeyorToAzure {
     catch {
         Write-warning "Unable to connect to AppVeyor URL '$($AppVeyorUrl)'. Error: $($error[0].Exception.Message)"
             return
-    }
-
-    if (-not (test-path $ImageTemplate)) {
-        Write-Warning "Please provide correct relative path as the ImageTemplate parameter"
-        return
     }
 
     if (-not (Get-Module -Name *Az.* -ListAvailable)) {
@@ -187,7 +189,10 @@ Function Connect-AppVeyorToAzure {
     $azure_vnet_name = "$($CommonPrefix)-vnet"
     $azure_subnet_name = "$($CommonPrefix)-subnet"
     $azure_nsg_name = "$($CommonPrefix)-nsg"
-    $build_cloud_name = "$($CommonPrefix)-azure-build-environment"  
+
+    $build_cloud_name = "$($ImageOs)-Azure-build-environment"
+    $ImageName = if ($ImageName) {$ImageName} else {"$($ImageOs) on Azure"}
+    $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"./minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"./minimal-ubuntu.json"}
 
     $packer_manifest = "packer-manifest.json"
     $install_user = "appveyor"
@@ -330,9 +335,9 @@ Function Connect-AppVeyorToAzure {
     Write-host "`nSelecting VM size..." -ForegroundColor Cyan
     if (-not $VmSize) {
         $vmsizes = Get-AzVMSize -Location $Location
-        Write-Warning "Please use VM size which supports Premium storage (at least DS-series!)"
-        for ($i = 1; $i -le $vmsizes.Count; $i++) {"Select $i for $($vmsizes[$i - 1].Name)"}
-        Write-Warning "Please use VM size which supports Premium storage (at least DS-series!)"
+        for ($i = 1; $i -le $vmsizes.Count; $i++) {"Select $i for $($vmsizes[$i - 1].Name) ($($vmsizes[$i - 1].NumberOfCores) Cores, $($vmsizes[$i - 1].MemoryInMB) Mb)"}
+        if ($ImageOs -eq "Windows") {Write-Warning "Please use VM size which supports Premium storage (at least DS-series!)"}
+        if ($ImageOs -eq "Linux") {Write-Warning "Please use VM size which supports Premium storage (at least DS-series!)"}
         Write-Warning "Add '-VmSize' parameter to skip this dialog next time."
         $location_number = Read-Host "Enter your selection"
         $selected_vmsize = $vmsizes[$location_number - 1]
@@ -388,12 +393,16 @@ Function Connect-AppVeyorToAzure {
     }
     Write-host "Using virtual network '$($azure_nsg_name)'" -ForegroundColor DarkGray
 
-    Write-host "`nAllowing RDP access to build VMs..." -ForegroundColor Cyan
-    if (-not ($nsg.SecurityRules | ? {$_.DestinationPortRange -eq {3389} -and $_.Direction -eq "Inbound" -and $_.Access -eq "Allow"})) {
-        $nsg | Add-AzNetworkSecurityRuleConfig -Name rdp-in -Description "Allow RDP" -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix Internet -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389 | Set-AzNetworkSecurityGroup | Out-Null
-        Write-host "Created inbound rule to allow TCP 3389 (RDP)" -ForegroundColor DarkGray
+    $remoteaccessport = if ($ImageOs -eq "Windows") {3389} elseif ($ImageOs -eq "Linux") {22}
+    $remoteaccessname = if ($ImageOs -eq "Windows") {"RDP"} elseif ($ImageOs -eq "Linux") {"SSH"}
+    $remoteaccessrulepriority = if ($ImageOs -eq "Windows") {100} elseif ($ImageOs -eq "Linux") {101}
+    $remoteaccesrulesname = "$($remoteaccessname)-in"
+    Write-host "`nAllowing $($remoteaccessname) access to build VMs..." -ForegroundColor Cyan
+    if (-not ($nsg.SecurityRules | ? {$_.DestinationPortRange -eq $remoteaccessport -and $_.Direction -eq "Inbound" -and $_.Access -eq "Allow"})) {
+        $nsg | Add-AzNetworkSecurityRuleConfig -Name $remoteaccesrulesname -Description "Allow $($remoteaccessname)" -Access Allow -Protocol Tcp -Direction Inbound -Priority $remoteaccessrulepriority -SourceAddressPrefix Internet -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange $remoteaccessport | Set-AzNetworkSecurityGroup | Out-Null
+        Write-host "Created inbound rule to allow TCP $($remoteaccessport) ($($remoteaccessname))" -ForegroundColor DarkGray
     }
-    else {Write-host "Inbound rule to allow TCP 3389 (RDP) already exist in network security group '$($azure_nsg_name)'" -ForegroundColor DarkGray}
+    else {Write-host "Inbound rule to allow TCP $($remoteaccessport) ($($remoteaccessname)) already exist in network security group '$($azure_nsg_name)'" -ForegroundColor DarkGray}
 
     #Run Packer to create an image
     if (-not $VhdFullPath) {
@@ -599,11 +608,12 @@ Function Connect-AppVeyorToAzure {
     Write-host "`nEnsuring build worker image is available for AppVeyor projects..." -ForegroundColor Cyan
     $images = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Method Get
     $image = $images | ? ({$_.name -eq $ImageName})[0]
+    $osType = if ($ImageOs -eq "Windows") {"Windows"} elseif ($ImageOs -eq "Linux") {"Ubuntu"}
     if (-not $image) {
         $body = @{
             name = $ImageName
             buildCloudName = $build_cloud_name
-            osType = "Windows"
+            osType = "$osType"
         }
 
         $jsonBody = $body | ConvertTo-Json
@@ -613,7 +623,7 @@ Function Connect-AppVeyorToAzure {
     else {
         $image.name = $ImageName
         $image.buildCloudName = $build_cloud_name
-        $image.osType = "Windows"
+        $image.osType = "$osType"
 
         $jsonBody = $image | ConvertTo-Json
         Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Put | Out-Null
