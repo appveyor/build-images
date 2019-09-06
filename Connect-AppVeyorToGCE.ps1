@@ -343,9 +343,9 @@ Function Connect-AppVeyorToGCE {
         Write-host "`nSelecting GCE machine type..." -ForegroundColor Cyan
         if (-not $VmSize) {
             $machinetypes = Get-GceMachineType -Zone $Zone
-            if ($ImageOs -eq "Windows") {Write-Warning "Minimum recommended is 'n1-standard-1'"}
             for ($i = 1; $i -le $machinetypes.Count; $i++) {"Select $i for $($machinetypes[$i - 1].name)    $($machinetypes[$i - 1].description)"}
-            if ($ImageOs -eq "Windows") {Write-Warning "Minimum recommended is 'n1-standard-1'"}
+            if ($ImageOs -eq "Windows") {Write-Warning "Minimum recommended is 'n1-standard-2'"}
+            if ($ImageOs -eq "Linux") {Write-Warning "Minimum recommended is 'n1-standard-1'"}
             Write-Warning "Add '-VmSize' parameter to skip this dialog next time."
             $instance_number = Read-Host "Enter your selection"
             if (-not $instance_number) {

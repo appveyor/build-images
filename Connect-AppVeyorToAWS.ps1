@@ -41,10 +41,10 @@ Function Connect-AppVeyorToAWS {
         Operating system of build VM image. Valid values: 'Windows', 'Linux'. Default value is 'Windows'.
 
     .PARAMETER ImageName
-        Description to be passed to Packer and name to be used for AppVeyor image.  Default value generated is based on the value of 'ImageOs' parameter.
+        Description to be passed to Packer and name to be used for AppVeyor image. Default value generated is based on the value of 'ImageOs' parameter.
 
     .PARAMETER ImageTemplate
-        If you are familiar with Hashicorp Packer, you can replace template used by this command with another one.  Default value generated is based on the value of 'ImageOs' parameter.
+        If you are familiar with Hashicorp Packer, you can replace template used by this command with another one. Default value generated is based on the value of 'ImageOs' parameter.
 
         .EXAMPLE
         Connect-AppVeyorToAWS
@@ -432,9 +432,9 @@ Function Connect-AppVeyorToAWS {
         Write-host "`nSelecting EC2 instance type..." -ForegroundColor Cyan
         if (-not $InstanceSize) {
             #Unable to get a list (https://github.com/aws/aws-cli/issues/1279) so people need to enter.
-            if ($ImageOs -eq "Windows") {Write-Warning "Minimum recommended is 'm4.large'"}
             for ($i = 1; $i -le $instancetypes.Count; $i++) {"Select $i for $($instancetypes[$i - 1])"}
             if ($ImageOs -eq "Windows") {Write-Warning "Minimum recommended is 'm4.large'"}
+            if ($ImageOs -eq "Linux") {Write-Warning "Minimum recommended is 't3.medium'"}
             Write-Warning "Add '-InstanceSize' parameter to skip this dialog next time."
             $instance_number = Read-Host "Enter your selection"
             if (-not $instance_number) {
