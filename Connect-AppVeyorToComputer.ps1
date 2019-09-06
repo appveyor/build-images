@@ -182,7 +182,7 @@ Function Connect-AppVeyorToComputer {
 
             # Linux
             # =======
-            
+
             if (-not (Test-Path '/opt/appveyor/host-agent')) {
 
                 $debPath = "/tmp/appveyor-host-agent.deb"
@@ -219,7 +219,7 @@ Function Connect-AppVeyorToComputer {
             }
 
             Write-Host "Installing Host Agent..." -ForegroundColor Gray
-            sudo bash -c "HOMEBREW_APPVEYOR_URL=$AppVeyorUrl HOMEBREW_HOST_AUTH_TKN=$hostAuthorizationToken brew install appveyor/brew/appveyor-host-agent"
+            bash -c "HOMEBREW_APPVEYOR_URL=$AppVeyorUrl HOMEBREW_HOST_AUTH_TKN=$hostAuthorizationToken brew install appveyor/brew/appveyor-host-agent"
 
             Write-Host "Starting up Host Agent service..."
             brew services start appveyor-host-agent
