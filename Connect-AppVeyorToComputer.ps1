@@ -201,7 +201,7 @@ Function Connect-AppVeyorToComputer {
                 } else {
                     Write-Host "Something went wrong and Host Agent was not installed" -ForegroundColor Red
                     throw "Error installing Host Agent"
-                } 
+                }
 
             } else {
                 Write-Host "Host Agent is already installed"
@@ -223,6 +223,14 @@ Function Connect-AppVeyorToComputer {
 
             Write-Host "Starting up Host Agent service..."
             brew services start appveyor-host-agent
+
+            $hostAgentProcess = Get-Process "appveyor-host-a" -ErrorAction SilentlyContinue
+            if ($hostAgentProcess) {
+                Write-Host "Host Agent has been installed"
+            } else {
+                Write-Host "Something went wrong and Host Agent was not installed" -ForegroundColor Red
+                throw "Error installing Host Agent"
+            }              
 
             Write-Host "Host Agent has been installed"
 
