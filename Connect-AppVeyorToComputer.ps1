@@ -89,7 +89,7 @@ Function Connect-AppVeyorToComputer {
 
     try {
         
-        Write-Host "Configuring 'Process' build cloud into AppVeyor" -ForegroundColor Cyan
+        Write-Host "Configuring 'Process' build cloud in AppVeyor" -ForegroundColor Cyan
 
         $hostName = $env:COMPUTERNAME # Windows
         $imageName = "Windows"
@@ -181,6 +181,8 @@ Function Connect-AppVeyorToComputer {
         if ($isLinux) {
 
             # Linux
+            # =======
+            
             if (-not (Test-Path '/opt/appveyor/host-agent')) {
 
                 $debPath = "/tmp/appveyor-host-agent.deb"
@@ -208,13 +210,27 @@ Function Connect-AppVeyorToComputer {
         } elseif ($isMacOS) {
 
             # macOS
-            $hostName = (hostname)
-            $imageName = "macOS"
-            $osType = "MacOS"
+            # =======
+
+            # make sure Homebrew is installed and available in the path
+            if (-not (Get-Command brew -ErrorAction Ignore)) {
+                Write-Warning "This command depends on Homebrew package manager. Please install it from https://brew.sh and re-run the command."
+                return
+            }
+
+            Write-Host "Installing Host Agent..." -ForegroundColor Gray
+            sudo bash -c "HOMEBREW_APPVEYOR_URL=$AppVeyorUrl HOMEBREW_HOST_AUTH_TKN=$hostAuthorizationToken brew install appveyor/brew/appveyor-host-agent"
+
+            Write-Host "Starting up Host Agent service..."
+            brew services start appveyor-host-agent
+
+            Write-Host "Host Agent has been installed"
 
         } else {
 
             # Windows
+            # =======
+
             $hostAgentService = Get-Service "Appveyor.HostAgent" -ErrorAction SilentlyContinue
             if (!$hostAgentService) {
 
