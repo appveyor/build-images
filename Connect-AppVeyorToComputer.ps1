@@ -181,15 +181,29 @@ Function Connect-AppVeyorToComputer {
         if ($isLinux) {
 
             # Linux
-            $hostName = (hostname)
-            $imageName = "Linux"
-            $osType = "Linux"
+            if (-not (Test-Path '/opt/appveyor/host-agent')) {
+
+                $debPath = "/tmp/appveyor-host-agent.deb"
+
+                Write-Host "Downloading appveyor-host-agent.deb..." -ForegroundColor Gray
+                (New-Object Net.WebClient).DownloadFile($APPVEYOR_HOST_AGENT_DEB_URL, $debPath)
+
+                Write-Host "Installing Host Agent..." -ForegroundColor Gray
+                sudo bash -c "APPVEYOR_URL=$AppVeyorUrl HOST_AUTH_TOKEN=$hostAuthorizationToken dpkg -i $debPath"
+
+                Remove-Item $debPath
+
+            } else {
+                Write-Host "Host Agent is already installed"
+            }
+
         } elseif ($isMacOS) {
 
             # macOS
             $hostName = (hostname)
             $imageName = "macOS"
             $osType = "MacOS"
+
         } else {
 
             # Windows
