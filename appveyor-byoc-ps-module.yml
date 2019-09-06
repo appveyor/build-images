@@ -5,6 +5,7 @@ build_script:
 - ps: Copy-Item -Path appveyor-byoc-psm\* -Destination AppVeyorBYOC
 - ps: New-Item AppVeyorBYOC\scripts -Type Directory | Out-Null
 - ps: Copy-Item -Path scripts\* -Destination AppVeyorBYOC\scripts -Recurse
+- ps: Copy-Item -Path AppVeyorBYOC-Common.ps1 -Destination AppVeyorBYOC
 - ps: Copy-Item -Path Connect-*.ps1 -Destination AppVeyorBYOC
 - ps: Copy-Item -Path *.json -Destination AppVeyorBYOC
 
