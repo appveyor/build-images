@@ -212,25 +212,30 @@ Function Connect-AppVeyorToComputer {
             # macOS
             # =======
 
-            # make sure Homebrew is installed and available in the path
-            if (-not (Get-Command brew -ErrorAction Ignore)) {
-                Write-Warning "This command depends on Homebrew package manager. Please install it from https://brew.sh and re-run the command."
-                return
-            }
-
-            Write-Host "Installing Host Agent..." -ForegroundColor Gray
-            bash -c "HOMEBREW_APPVEYOR_URL=$AppVeyorUrl HOMEBREW_HOST_AUTH_TKN=$hostAuthorizationToken brew install appveyor/brew/appveyor-host-agent"
-
-            Write-Host "Starting up Host Agent service..."
-            brew services start appveyor-host-agent
-
             $hostAgentProcess = Get-Process "appveyor-host-a" -ErrorAction SilentlyContinue
-            if ($hostAgentProcess) {
-                Write-Host "Host Agent has been installed"
+            if (-not $hostAgentProcess) {
+                # make sure Homebrew is installed and available in the path
+                if (-not (Get-Command brew -ErrorAction Ignore)) {
+                    Write-Warning "This command depends on Homebrew package manager. Please install it from https://brew.sh and re-run the command."
+                    return
+                }
+
+                Write-Host "Installing Host Agent..." -ForegroundColor Gray
+                bash -c "HOMEBREW_APPVEYOR_URL=$AppVeyorUrl HOMEBREW_HOST_AUTH_TKN=$hostAuthorizationToken brew install appveyor/brew/appveyor-host-agent"
+
+                Write-Host "Starting up Host Agent service..."
+                brew services start appveyor-host-agent
+
+                $hostAgentProcess = Get-Process "appveyor-host-a" -ErrorAction SilentlyContinue
+                if ($hostAgentProcess) {
+                    Write-Host "Host Agent has been installed"
+                } else {
+                    Write-Host "Something went wrong and Host Agent was not installed" -ForegroundColor Red
+                    throw "Error installing Host Agent"
+                }    
             } else {
-                Write-Host "Something went wrong and Host Agent was not installed" -ForegroundColor Red
-                throw "Error installing Host Agent"
-            }              
+                Write-Host "Host Agent is already installed"
+            }          
 
             Write-Host "Host Agent has been installed"
 
@@ -240,7 +245,7 @@ Function Connect-AppVeyorToComputer {
             # =======
 
             $hostAgentService = Get-Service "Appveyor.HostAgent" -ErrorAction SilentlyContinue
-            if (!$hostAgentService) {
+            if (-not $hostAgentService) {
 
                 if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
                     throw "The script should be run in elevated mode to install Host Agent. Run PowerShell in elevated mode (Run as Administrator) and re-run original 'Connect-AppVeyorToComputer' command."
