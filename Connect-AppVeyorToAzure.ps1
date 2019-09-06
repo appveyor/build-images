@@ -41,11 +41,11 @@ Function Connect-AppVeyorToAzure {
 
         .EXAMPLE
         Connect-AppVeyorToAzure
-        Let command collect all required information
+        Let command collect all required information.
 
         .EXAMPLE
         Connect-AppVeyorToAzure -ApiToken XXXXXXXXXXXXXXXXXXXXX -AppVeyorUrl "https://ci.appveyor.com" -Location westus -VmSize Standard_D2s_v3 -SkipDisclaimer -UseCurrentAzureLogin
-        Run command with all required parameters so command will ask now questions. It will create resources in Azure West US region will connect it to the hosted AppVeyor.
+        Run command with all required parameters, and command will ask no questions. It will create resources in Azure West US region and connect them to the hosted AppVeyor.
     #>
 
     [CmdletBinding()]
