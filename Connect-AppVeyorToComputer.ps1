@@ -193,6 +193,14 @@ Function Connect-AppVeyorToComputer {
 
                 Remove-Item $debPath
 
+                $hostAgentPid = (pidof appveyor-host-agent)
+                if ($hostAgentPid) {
+                    Write-Host "Host Agent has been installed"
+                } else {
+                    Write-Host "Something went wrong and Host Agent was not installed" -ForegroundColor Red
+                    throw "Error installing Host Agent"
+                } 
+
             } else {
                 Write-Host "Host Agent is already installed"
             }
