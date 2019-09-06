@@ -200,9 +200,9 @@ Function Connect-AppVeyorToAWS {
 
     $build_cloud_name = "$($ImageOs)-AWS-build-environment"
     $ImageName = if ($ImageName) {$ImageName} else {"$($ImageOs) on AWS"}
-    $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"./minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"./minimal-ubuntu.json"}
+    $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
 
-    $packer_manifest = "packer-manifest.json"
+    $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = (Get-Culture).TextInfo.ToTitleCase((New-Guid).ToString().SubString(0, 15).Replace("-", "")) + @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
 
@@ -543,7 +543,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             Write-host "`nRunning Packer to create a basic build VM AMI..." -ForegroundColor Cyan
             Write-Warning "Add '-AmiId' parameter with if you want to reuse existing AMI (which must be in '$($aws_region_full)' region). Enter Ctrl-C to stop the command and restart with '-AmiId' parameter or do nothing and let the command create a new AMI.`nWaiting 30 seconds..."
             for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
-            Remove-Item ".\$($packer_manifest)" -Force -ErrorAction Ignore
+            Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
             & packer build '--only=amazon-ebs' `
@@ -561,14 +561,14 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
 
 
             #Get VHD path
-            if (-not (test-path ".\$($packer_manifest)")) {
-                Write-Warning "Unable to find .\$($packer_manifest). Please ensure Packer job finsihed successfully."
+            if (-not (test-path $packer_manifest)) {
+                Write-Warning "Unable to find $packer_manifest. Please ensure Packer job finsihed successfully."
                 ExitScript
             }
             Write-host "`nGetting AMI ID..." -ForegroundColor Cyan
-            $manifest = Get-Content -Path ".\$($packer_manifest)" | ConvertFrom-Json
+            $manifest = Get-Content -Path $packer_manifest | ConvertFrom-Json
             $AmiId = $manifest.builds[0].artifact_id.TrimStart("$($Region)").TrimStart(":")        
-            Remove-Item ".\$($packer_manifest)" -Force -ErrorAction Ignore
+            Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-host "Build image AMI created by Packer. AMI ID: '$($AmiId)'" -ForegroundColor DarkGray
             Write-Host "Default build VM credentials: User: 'appveyor', Password: '$($install_password)'. Normally you do not need this password as it will be reset to a random string when the build starts. However you can use it if you need to create and update a VM from the Packer-created VHD manually"  -ForegroundColor DarkGray
         }

@@ -197,9 +197,9 @@ Function Connect-AppVeyorToGCE {
 
     $build_cloud_name = "$($ImageOs)-GCE-build-environment"
     $ImageName = if ($ImageName) {$ImageName} else {"$($ImageOs) on GCE"}
-    $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"./minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"./minimal-ubuntu.json"}
+    $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
 
-    $packer_manifest = "packer-manifest.json"
+    $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = (Get-Culture).TextInfo.ToTitleCase((New-Guid).ToString().SubString(0, 15).Replace("-", "")) + @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
 
@@ -424,7 +424,7 @@ Function Connect-AppVeyorToGCE {
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
             Write-Warning "Add '-ImageId' parameter with if you want to reuse existing image. Enter Ctrl-C to stop the command and restart with '-ImageId' parameter or do nothing and let the command create a new image.`nWaiting 30 seconds..."
             for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
-            Remove-Item ".\$($packer_manifest)" -Force -ErrorAction Ignore
+            Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
             & packer build '--only=googlecompute' `
@@ -441,15 +441,14 @@ Function Connect-AppVeyorToGCE {
             $ImageTemplate
 
             #Get image path
-            if (-not (test-path ".\$($packer_manifest)")) {
-                Write-Warning "Unable to find .\$($packer_manifest). Please ensure Packer job finsihed successfully."
+            if (-not (test-path $packer_manifest)) {
+                Write-Warning "Unable to find $packer_manifest. Please ensure Packer job finsihed successfully."
                 ExitScript
             }
             Write-host "`nGetting image name..." -ForegroundColor Cyan
-            $manifest = Get-Content -Path ".\$($packer_manifest)" | ConvertFrom-Json
+            $manifest = Get-Content -Path $packer_manifest | ConvertFrom-Json
             $ImageId = $manifest.builds[0].artifact_id
-            #TODO uncomment
-            #Remove-Item ".\$($packer_manifest)" -Force -ErrorAction Ignore
+            Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-host "Build image created by Packer: '$($ImageId)'" -ForegroundColor DarkGray
             Write-Host "Default build VM credentials: User: 'appveyor', Password: '$($install_password)'. Normally you do not need this password as it will be reset to a random string when the build starts. However you can use it if you need to create and update a VM from the Packer-created VHD manually"  -ForegroundColor DarkGray
 
