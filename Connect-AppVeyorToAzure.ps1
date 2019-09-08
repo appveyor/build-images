@@ -176,7 +176,8 @@ Function Connect-AppVeyorToAzure {
     $maxinfix = ($maxtotallength - $CommonPrefix.Length - $maxpostfix)
     if ($infix.Length -gt $maxinfix){$infix = $infix.Substring(0, $maxinfix)}
 
-    $azure_storage_account = "$($CommonPrefix)$($infix)vm".ToLower()
+    $azure_storage_account_premium = "$($CommonPrefix)$($infix)prem".ToLower()
+    $azure_storage_account_standard = "$($CommonPrefix)$($infix)std".ToLower()
     $azure_storage_account_cache = "$($CommonPrefix)$($infix)cache".ToLower()
     $azure_storage_account_artifacts = "$($CommonPrefix)$($infix)artifact".ToLower()
 
@@ -364,7 +365,130 @@ Function Connect-AppVeyorToAzure {
     }
     Write-host "Using storage account '$($azure_storage_account_name)' (SKU: $($sku_name))" -ForegroundColor DarkGray
     }
-    CreateStorageAccount -azure_storage_account_name $azure_storage_account -sku_name Premium_LRS
+
+    # Select storage account supported by VM size
+    $nonPremiumSizes = @(
+            "Standard_D2_v3",
+            "Standard_D4_v3",
+            "Standard_D8_v3",
+            "Standard_D16_v3",
+            "Standard_D32_v3",
+            "Standard_D48_v3",
+            "Standard_D64_v3",
+
+            "Standard_D2a_v3",
+            "Standard_D4a_v3",
+            "Standard_D8a_v3",
+            "Standard_D16a_v3",
+            "Standard_D32a_v3",
+            "Standard_D48a_v3",
+            "Standard_D64a_v3",
+
+            "Standard_D1_v2",
+            "Standard_D2_v2",
+            "Standard_D3_v2",
+            "Standard_D4_v2",
+            "Standard_D5_v2",
+
+            "Standard_A1_v2",
+            "Standard_A2_v2",
+            "Standard_A4_v2",
+            "Standard_A8_v2",
+            "Standard_A2m_v2",
+            "Standard_A4m_v2",
+            "Standard_A8m_v2",
+
+            "Standard_E2_v3",
+            "Standard_E4_v3",
+            "Standard_E8_v3",
+            "Standard_E16_v3",
+            "Standard_E20_v3",
+            "Standard_E32_v3",
+            "Standard_E48_v3",
+            "Standard_E64_v3",
+            "Standard_E64i_v3",
+
+            "Standard_E2a_v3",
+            "Standard_E4a_v3",
+            "Standard_E8a_v3",
+            "Standard_E16a_v3",
+            "Standard_E32a_v3",
+            "Standard_E48a_v3",
+            "Standard_E64a_v3",
+
+            "Standard_D11_v2",
+            "Standard_D12_v2",
+            "Standard_D13_v2",
+            "Standard_D14_v2",
+            "Standard_D15_v2",
+
+            "Standard_NC6",
+            "Standard_NC12",
+            "Standard_NC24",
+            "Standard_NC24r",
+
+            "Standard_NV6",
+            "Standard_NV12",
+            "Standard_NV24",
+
+            "Standard_H8",
+            "Standard_H16",
+            "Standard_H8m",
+            "Standard_H16m",
+            "Standard_H16r",
+            "Standard_H16mr",
+
+            "Standard_F1",
+            "Standard_F2",
+            "Standard_F4",
+            "Standard_F8",
+            "Standard_F16",
+
+            "A0\Basic_A0",
+            "A1\Basic_A1",
+            "A2\Basic_A2",
+            "A3\Basic_A3",
+            "A4\Basic_A4",
+
+            "Standard_A0",
+            "Standard_A1",
+            "Standard_A2",
+            "Standard_A3",
+            "Standard_A4",
+            "Standard_A5",
+            "Standard_A6",
+            "Standard_A7",
+
+            "Standard_A8",
+            "Standard_A9",
+            "Standard_A10",
+            "Standard_A11",
+
+            "Standard_D1",
+            "Standard_D2",
+            "Standard_D3",
+            "Standard_D4",
+
+            "Standard_D11",
+            "Standard_D12",
+            "Standard_D13",
+            "Standard_D14",
+
+            "Standard_G1",
+            "Standard_G2",
+            "Standard_G3",
+            "Standard_G4",
+            "Standard_G5"
+            )
+
+    $azure_storage_account = $azure_storage_account_premium
+    $sku_name = "Premium_LRS"
+    if ($nonPremiumSizes | ? {$_ -eq $VmSize}) {
+        #VM size does not support Premium storage
+        $azure_storage_account = $azure_storage_account_standard
+        $sku_name = "Standard_LRS"
+    }
+    CreateStorageAccount -azure_storage_account_name $azure_storage_account -sku_name $sku_name
     CreateStorageAccount -azure_storage_account_name $azure_storage_account_cache -sku_name Standard_LRS
     CreateStorageAccount -azure_storage_account_name $azure_storage_account_artifacts -sku_name Standard_LRS
 
