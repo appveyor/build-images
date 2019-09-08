@@ -112,23 +112,8 @@ Function Connect-AppVeyorToAWS {
     #Sanitize input
     $AppVeyorUrl = $AppVeyorUrl.TrimEnd("/")
 
-    #Validate input
-    if ($ApiToken -like "v2.*") {
-        Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($AppVeyorUrl)/api-keys'"
-        ExitScript
-    }
-
-    try {
-        $responce = Invoke-WebRequest -Uri $AppVeyorUrl -ErrorAction SilentlyContinue
-        if ($responce.StatusCode -ne 200) {
-            Write-warning "AppVeyor URL '$($AppVeyorUrl)' responded with code $($responce.StatusCode)"
-            ExitScript
-        }
-    }
-    catch {
-        Write-warning "Unable to connect to AppVeyor URL '$($AppVeyorUrl)'. Error: $($error[0].Exception.Message)"
-        ExitScript
-    }
+    #Validate AppVeyor API access
+    ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
     if (-not (Get-Module -Name *AWSPowerShell* -ListAvailable)) {
         Write-Warning "This command depends on AWS Tools for PowerShell. Please install them with the following command: 'Install-Module -Name AWSPowerShell -Force; Get-Command -Module AWSPowerShell | Out-Null'"
@@ -138,28 +123,6 @@ Function Connect-AppVeyorToAWS {
     if (-not (Get-Command packer -ErrorAction Ignore)) {
         Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' ('apt get packer' for Linux) command or follow https://www.packer.io/intro/getting-started/install.html. If it is already installed, please ensure that PATH environment variable contains path to it."
         ExitScript
-    }
-
-    $headers = @{
-      "Authorization" = "Bearer $ApiToken"
-      "Content-type" = "application/json"
-    }
-    try {
-        Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/projects" -Headers $headers -Method Get | Out-Null
-    }
-    catch {
-        Write-warning "Unable to call AppVeyor REST API, please verify 'ApiToken' and ensure '-AppVeyorUrl' parameter is set if you are using on-premise AppVeyor Server."
-        ExitScript
-    }
-
-    if ($AppVeyorUrl -eq "https://ci.appveyor.com") {
-          try {
-            Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get | Out-Null
-        }
-        catch {
-            Write-warning "Please contact support@appveyor.com and request enabling of 'Private build clouds' feature."
-            ExitScript
-        }
     }
 
     $regex =[regex] "^([A-Za-z0-9]+)$"

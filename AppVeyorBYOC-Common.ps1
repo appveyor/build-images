@@ -96,3 +96,44 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
         }
     }
 }
+
+function ValidateAppVeyorApiAccess($appVeyorUrl, $apiToken){
+    if ($apiToken -like "v2.*") {
+        Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$appVeyorUrl/api-keys'"
+        ExitScript
+    }
+
+    try {
+        $responce = Invoke-WebRequest -Uri $appVeyorUrl -ErrorAction SilentlyContinue
+        if ($responce.StatusCode -ne 200) {
+            Write-warning "AppVeyor URL '$appVeyorUrl' responded with code $($responce.StatusCode)"
+            ExitScript
+        }
+    }
+    catch {
+        Write-warning "Unable to connect to AppVeyor URL '$appVeyorUrl'. Error: $($error[0].Exception.Message)"
+        ExitScript
+    }
+
+    $headers = @{
+      "Authorization" = "Bearer $apiToken"
+      "Content-type" = "application/json"
+    }
+    try {
+        Invoke-RestMethod -Uri "$appVeyorUrl/api/projects" -Headers $headers -Method Get | Out-Null
+    }
+    catch {
+        Write-warning "Unable to call AppVeyor REST API, please verify 'ApiToken' and ensure '-AppVeyorUrl' parameter is set if you are using on-premise AppVeyor Server."
+        ExitScript
+    }
+
+    if ($appVeyorUrl -eq "https://ci.appveyor.com") {
+          try {
+            Invoke-RestMethod -Uri "$appVeyorUrl/api/build-clouds" -Headers $headers -Method Get | Out-Null
+        }
+        catch {
+            Write-warning "Please contact support@appveyor.com and request enabling of 'BYOC' feature."
+            ExitScript
+        }
+    }
+}
