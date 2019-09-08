@@ -338,7 +338,7 @@ Function Connect-AppVeyorToAzure {
         $vmsizes = Get-AzVMSize -Location $Location
         for ($i = 1; $i -le $vmsizes.Count; $i++) {"Select $i for $($vmsizes[$i - 1].Name) ($($vmsizes[$i - 1].NumberOfCores) Cores, $($vmsizes[$i - 1].MemoryInMB) Mb)"}
         if ($ImageOs -eq "Windows") {Write-Warning "Please use VM size which supports Premium storage (at least DS-series!)"}
-        if ($ImageOs -eq "Linux") {Write-Warning "Please use VM size which supports Premium storage (at least DS-series!)"}
+        if ($ImageOs -eq "Linux") {Write-Warning "Minimum recommended is 'Standard_D2_v3'"}
         Write-Warning "Add '-VmSize' parameter to skip this dialog next time."
         $location_number = Read-Host "Enter your selection"
         $selected_vmsize = $vmsizes[$location_number - 1]
