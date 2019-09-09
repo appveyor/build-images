@@ -160,7 +160,7 @@
             },
             {
                "id": "install_MSSQLServer",
-               "title": "MS SQL Server"
+               "title": "MS SQL Server (requires VM with 3G RAM)"
             },
             {
                "id": "install_mysql",
