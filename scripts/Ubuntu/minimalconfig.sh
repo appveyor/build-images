@@ -109,9 +109,25 @@ su -l ${USER_NAME} -c "
     _abort $?
 
 # execute optional Features
+if [[ -n "${OPT_FEATURES-}" && "${#OPT_FEATURES}" -gt "0" ]]; then
+    echo "[DEBUG] There is OPT_FEATURES variable defined: $OPT_FEATURES"
+    FEATURES=$(echo $OPT_FEATURES | tr "," "\n")
+    while read -r FEATURE; do
+        WORD1=$(IFS=" " ; set -- $FEATURE ; echo $1)
+        if [ "$(type -t $WORD1)x" == 'functionx' ]; then
+            echo "[DEBUG] executing '$FEATURE'..."
+            $FEATURE
+        else
+            echo "[WARNING] $WORD1 not a function, skipping"
+        fi
+    done <<< "$FEATURES"
+fi
+# Deploy Parts of config
 if [ "$#" -gt 0 ]; then
+    echo "[DEBUG] $0 script have arguments: $*"
     while [[ "$#" -gt 0 ]]; do
         if [ "$(type -t $1)x" == 'functionx' ]; then
+            echo "[DEBUG] argument recognized as a function to call: $1"
             if [ "$#" -gt 1 ] && [ "$(type -t $2)x" != 'functionx' ]; then
                 #execute function with argument
                 $1 $2
