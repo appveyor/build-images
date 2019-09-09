@@ -137,6 +137,7 @@ function ValidateAppVeyorApiAccess($appVeyorUrl, $apiToken){
             ExitScript
         }
     }
+    return $headers
 }
 
 function ValidateDependencies ($cloudType) {

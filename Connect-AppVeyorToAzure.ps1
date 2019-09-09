@@ -100,7 +100,7 @@ Function Connect-AppVeyorToAzure {
     $AppVeyorUrl = $AppVeyorUrl.TrimEnd("/")
 
     #Validate AppVeyor API access
-    ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
+    $headers = ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
     #Ensure required tools installed
     ValidateDependencies -cloudType Azure

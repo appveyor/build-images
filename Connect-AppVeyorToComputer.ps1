@@ -45,7 +45,7 @@ Function Connect-AppVeyorToComputer {
     $AppVeyorUrl = $AppVeyorUrl.TrimEnd("/")
 
     #Validate AppVeyor API access
-    ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
+    $headers = ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
     try {
         
