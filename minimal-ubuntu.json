@@ -17,7 +17,8 @@
         "USER_PASSWORD={{ user `install_password` }}",
         "USER_HOME={{ user `install_home` }}",
         "APPVEYOR_BUILD_AGENT_VERSION={{user `APPVEYOR_BUILD_AGENT_VERSION` }}",
-        "DATEMARK={{ user `datemark` }}"
+        "DATEMARK={{ user `datemark` }}",
+        "OPT_FEATURES={{ user `opt_features` }}"
       ],
       "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eu '{{.Path}}' {{user `deploy_parts`}}",
       "scripts": [
