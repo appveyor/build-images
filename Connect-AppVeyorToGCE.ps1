@@ -102,23 +102,8 @@ Function Connect-AppVeyorToGCE {
     #Validate AppVeyor API access
     ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
-    if (-not (Get-Command gcloud -ErrorAction Ignore)) {
-        Write-Warning "This command depends on Google Cloud SDK. Use 'choco install gcloudsdk' on Windows, for Linux follow https://cloud.google.com/sdk/docs/quickstart-linux, for Mac: https://cloud.google.com/sdk/docs/quickstart-macos"
-        ExitScript
-    }
-
-    #TODO remove if GoogleCloud does not appear to be needed (if al canbe done with gcloud)
-    if (-not (Get-Module -Name GoogleCloud -ListAvailable)) {
-        Write-Warning "This command depends on Google Cloud PowerShell module. Please install them with the following command: 'Install-Module -Name GoogleCloud -Force; Import-Module -Name GoogleCloud"
-        ExitScript
-    }
-    #Import module anyway, to be sure.
-    Import-Module -Name GoogleCloud
-
-    if (-not (Get-Command packer -ErrorAction Ignore)) {
-        Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' ('apt get packer' for Linux) command or follow https://www.packer.io/intro/getting-started/install.html. If it is already installed, please ensure that PATH environment variable contains path to it."
-        ExitScript
-    }
+    #Ensure required tools installed
+    ValidateDependencies -cloudType GCE
 
     $regex =[regex] "^([A-Za-z0-9]+)$"
     if (-not $regex.Match($CommonPrefix).Success) {

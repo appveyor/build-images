@@ -115,15 +115,8 @@ Function Connect-AppVeyorToAWS {
     #Validate AppVeyor API access
     ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
-    if (-not (Get-Module -Name *AWSPowerShell* -ListAvailable)) {
-        Write-Warning "This command depends on AWS Tools for PowerShell. Please install them with the following command: 'Install-Module -Name AWSPowerShell -Force; Get-Command -Module AWSPowerShell | Out-Null'"
-        ExitScript
-    }
-
-    if (-not (Get-Command packer -ErrorAction Ignore)) {
-        Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' ('apt get packer' for Linux) command or follow https://www.packer.io/intro/getting-started/install.html. If it is already installed, please ensure that PATH environment variable contains path to it."
-        ExitScript
-    }
+    #Ensure required tools installed
+    ValidateDependencies -cloudType AWS
 
     $regex =[regex] "^([A-Za-z0-9]+)$"
     if (-not $regex.Match($CommonPrefix).Success) {

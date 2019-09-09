@@ -102,21 +102,8 @@ Function Connect-AppVeyorToAzure {
     #Validate AppVeyor API access
     ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
-    if (-not (Get-Module -Name *Az.* -ListAvailable)) {
-        Write-Warning "This command depends on Az PowerShell Module. Please install it with 'Install-Module -Name Az -AllowClobber' command"
-        ExitScript
-    }
-
-    if (Get-Module -Name *AzureRM.* -ListAvailable) {
-        Write-Warning "It is safer to uninstall AzureRM PowerShell module or use different computer to run this command. We noticed unpredictable behaviour when both Az and AzureRM modules are installed. Enter Ctrl-C to stop the command and run 'Uninstall-AzureRm' or do nothing to continue as is.`nWaiting 30 seconds..."
-        for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
-        Write-Host ""
-    }
-
-    if (-not (Get-Command packer -ErrorAction Ignore)) {
-        Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' command or from download page https://www.packer.io/downloads.html. If it is already installed, please ensure that PATH environment variable contains path to it."
-        ExitScript
-    }
+    #Ensure required tools installed
+    ValidateDependencies -cloudType Azure
 
     $regex =[regex] "^([A-Za-z0-9]+)$"
     if (-not $regex.Match($CommonPrefix).Success) {
@@ -168,7 +155,7 @@ Function Connect-AppVeyorToAzure {
     $install_password = (Get-Culture).TextInfo.ToTitleCase((New-Guid).ToString().SubString(0, 15).Replace("-", "")) + @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
 
     #Login to Azure and select subscription
-    Write-host "Selecting Azure user and subscription..." -ForegroundColor Cyan
+    Write-host "`nSelecting Azure user and subscription..." -ForegroundColor Cyan
     $contenxt = Get-AzContext
     if (-not $contenxt) {
         Login-AzAccount | Out-Null

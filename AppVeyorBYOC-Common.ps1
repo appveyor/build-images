@@ -98,6 +98,7 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
 }
 
 function ValidateAppVeyorApiAccess($appVeyorUrl, $apiToken){
+    Write-host "`nChecking AppVeyor API access..."  -ForegroundColor Cyan
     if ($apiToken -like "v2.*") {
         Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$appVeyorUrl/api-keys'"
         ExitScript
@@ -136,4 +137,48 @@ function ValidateAppVeyorApiAccess($appVeyorUrl, $apiToken){
             ExitScript
         }
     }
+}
+
+function ValidateDependencies ($cloudType) {
+    Write-host "`nChecking if required tools are installed..."  -ForegroundColor Cyan
+    if ($cloudType -eq "Azure") {
+        if (-not (Get-Module -Name *Az.* -ListAvailable)) {
+            Write-Warning "This command depends on Az PowerShell Module. Please install it with 'Install-Module -Name Az -AllowClobber' command"
+            ExitScript
+        }
+
+        if (Get-Module -Name *AzureRM.* -ListAvailable) {
+            Write-Warning "It is safer to uninstall AzureRM PowerShell module or use different computer to run this command. We noticed unpredictable behaviour when both Az and AzureRM modules are installed. Enter Ctrl-C to stop the command and run 'Uninstall-AzureRm' or do nothing to continue as is.`nWaiting 30 seconds..."
+            for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
+            Write-Host ""
+        }
+    }
+
+    if ($cloudType -eq "GCE") {
+        if (-not (Get-Command gcloud -ErrorAction Ignore)) {
+            Write-Warning "This command depends on Google Cloud SDK. Use 'choco install gcloudsdk' on Windows, for Linux follow https://cloud.google.com/sdk/docs/quickstart-linux, for Mac: https://cloud.google.com/sdk/docs/quickstart-macos"
+            ExitScript
+        }
+
+        #TODO remove if GoogleCloud does not appear to be needed (if al canbe done with gcloud)
+        if (-not (Get-Module -Name GoogleCloud -ListAvailable)) {
+            Write-Warning "This command depends on Google Cloud PowerShell module. Please install them with the following command: 'Install-Module -Name GoogleCloud -Force; Import-Module -Name GoogleCloud"
+            ExitScript
+        }
+        #Import module anyway, to be sure.
+        Import-Module -Name GoogleCloud
+    }
+
+    if ($cloudType -eq "AWS") {
+        if (-not (Get-Module -Name *AWSPowerShell* -ListAvailable)) {
+            Write-Warning "This command depends on AWS Tools for PowerShell. Please install them with the following command: 'Install-Module -Name AWSPowerShell -Force; Get-Command -Module AWSPowerShell | Out-Null'"
+            ExitScript
+        }
+    }
+
+    if (-not (Get-Command packer -ErrorAction Ignore)) {
+        Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' command or from download page https://www.packer.io/downloads.html. If it is already installed, please ensure that PATH environment variable contains path to it."
+        ExitScript
+    }
+
 }
