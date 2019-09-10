@@ -241,35 +241,6 @@
          ]
       },
       {
-         "name":"Windows Nano Server 1809 Minimal",
-         "cloudTypes":[
-            "Docker"
-         ],
-         "operatingSystems":[
-            "Windows"
-         ],
-         "imageOperatingSystem":"Windows",
-         "template":"windows-nanoserver-build-image",
-         "installedFeatures":[
-            {
-               "id":"git",
-               "title":"Git 2.19.1"
-            },
-            {
-               "id":"hg",
-               "title":"Mercurial"
-            },
-            {
-               "id":"powershell_core",
-               "title":"PowerShell Core 6.2.0"
-            },
-            {
-               "id":"appveyor_build_agent",
-               "title":"AppVeyor Build Agent"
-            }
-         ]
-      },
-      {
          "name":"Windows Server Core 2019 Minimal",
          "cloudTypes":[
             "Docker"
@@ -278,16 +249,53 @@
             "Windows"
          ],
          "imageOperatingSystem":"Windows",
-         "template":"windows-servercore-build-image",
+         "template":"appveyor/build-image:minimal-windowsservercore-ltsc2019",
          "installedFeatures":[
             {
                "id":"git",
-               "title":"Git 2.19.1"
+               "title":"Git 2.23.0"
             },
             {
                "id":"hg",
-               "title":"Mercurial"
+               "title":"Mercurial 5.1.1"
             },
+            {
+               "id":"svn",
+               "title":"Subversion 1.8.17"
+            },              
+            {
+               "id":"7zip",
+               "title":"7-Zip 19.0"
+            },            
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.2"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      },
+      {
+         "name":"Windows Nano Server 1809 Minimal",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows"
+         ],
+         "imageOperatingSystem":"Windows",
+         "template":"appveyor/build-image:minimal-nanoserver-1809",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.21.0"
+            },
+            {
+               "id":"7zip",
+               "title":"7-Zip 18.05"
+            }, 
             {
                "id":"powershell_core",
                "title":"PowerShell Core 6.2.0"
@@ -297,7 +305,7 @@
                "title":"AppVeyor Build Agent"
             }
          ]
-      },
+      },      
       {
          "name":"Ubuntu 18.04 Minimal",
          "cloudTypes":[
@@ -309,19 +317,23 @@
             "MacOS"
          ],
          "imageOperatingSystem":"Linux",
-         "template":"linux-build-image",
+         "template":"appveyor/build-image:minimal-ubuntu-18.04",
          "installedFeatures":[
             {
                "id":"git",
-               "title":"Git 2.19.1"
+               "title":"Git (latest)"
             },
             {
                "id":"hg",
-               "title":"Mercurial"
+               "title":"Mercurial (latest)"
             },
             {
+               "id":"svn",
+               "title":"Subversion (latest)"
+            },            
+            {
                "id":"powershell_core",
-               "title":"PowerShell Core 6.2.0"
+               "title":"PowerShell Core 6.2.2"
             },
             {
                "id":"appveyor_build_agent",

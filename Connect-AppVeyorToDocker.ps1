@@ -82,6 +82,12 @@ Function Connect-AppVeyorToDocker {
         
         Write-Host "Configuring 'Docker' build cloud in AppVeyor" -ForegroundColor Cyan
 
+        # make sure Docker is installed and available in the path
+        if (-not (Get-Command docker -ErrorAction Ignore)) {
+            Write-Warning "Looks like Docker is not installed. Please install Docker and re-run the command."
+            return
+        }
+
         $hostName = $env:COMPUTERNAME # Windows
 
         if ($isLinux) {
