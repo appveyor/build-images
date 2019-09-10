@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
 # This script checks that all variables are set and starts packer.
 # this script should execute in an container.
@@ -18,20 +18,26 @@ readonly APPVEYOR_BUILD_VARS="APPVEYOR_BUILD_VERSION APPVEYOR_BUILD_NUMBER APPVE
 PACKER_PARAMS=( )
 
 function check_env_vars() {
-    for v in "$@"; do
-        # echo "$v"
-        # echo "\$$v $(eval echo \$$v)"
-        [ -z ${!v+x} ] && { echo "Error: Please define $v variable."; return 10; }
-    done
+    local v
+    if [ "$#" -gt 0 ]; then
+        for v in "$@"; do
+            # echo "$v"
+            # echo "\$$v $(eval echo \$$v)"
+            [ -z ${!v+x} ] && { echo "Error: Please define $v variable."; return 10; }
+        done
+    fi
     return 0
 }
 
 function make_params() {
-    for v in "$@"; do
-        if [[ -n "${!v}" ]]; then
-            PACKER_PARAMS+=( "-var"  "${v}=${!v}" )
-        fi
-    done
+    local v
+    if [ "$#" -gt 0 ]; then
+        for v in "$@"; do
+            if [[ -n "${!v-}" ]]; then
+                PACKER_PARAMS+=( "-var"  "${v}=${!v}" )
+            fi
+        done
+    fi
 }
 
 # check that all required variables are set
@@ -75,18 +81,22 @@ if check_env_vars ${APPVEYOR_BUILD_VARS}; then
     PACKER_PARAMS+=( "-var" "image_description=${DESCR}" )
 fi
 
-if [[ -n "${DEPLOY_PARTS}" ]]; then
+if [[ -n "${DEPLOY_PARTS-}" ]]; then
     PACKER_PARAMS+=( "-var" "deploy_parts=${DEPLOY_PARTS}" )
     echo "DEPLOY_PARTS set to ${DEPLOY_PARTS}"
 fi
 
-if [[ -n "${GCE_IMAGE_NAME}" ]]; then
+if [[ -n "${GCE_IMAGE_NAME-}" ]]; then
     echo "gce_source_image set to ${GCE_IMAGE_NAME}"
     PACKER_PARAMS+=( "-var" "gce_source_image=${GCE_IMAGE_NAME}" )
 fi
+if [[ -n "${build_agent_mode-}" ]]; then
+    echo "gce_source_image set to ${build_agent_mode}"
+    PACKER_PARAMS+=( "-var" "build_agent_mode=${build_agent_mode}" )
+fi
 
 # check template exists
-if [[ -z "${TEMPLATE}" ]]; then
+if [[ -z "${TEMPLATE-}" ]]; then
     echo "[ERROR] TEMPLATE variable not set."
     exit 10
 fi
@@ -96,7 +106,7 @@ if [ ! -f "${TEMPLATE}.json" ]; then
 fi
 
 # set packer log file
-if [[ -n "${APPVEYOR_BUILD_VERSION}" ]]; then
+if [[ -n "${APPVEYOR_BUILD_VERSION-}" ]]; then
     PACKER_LOG=packer-${APPVEYOR_BUILD_VERSION}-${builders}-${TEMPLATE}-${DATEMARK}.log
 else
     PACKER_LOG=packer-${builders}-${TEMPLATE}-${DATEMARK}.log
@@ -114,7 +124,6 @@ PACKER_LOG_PATH=${APPVEYOR_LOGS_PATH} PACKER_LOG=1 CHECKPOINT_DISABLE=1 ${PACKER
         --only=${builders} \
         -var "install_user=${install_user}" \
         -var "install_password=${install_password}" \
-        -var "build_agent_mode=${build_agent_mode}" \
         "${PACKER_PARAMS[@]}" \
         ${TEMPLATE}.json
 
@@ -136,9 +145,9 @@ if [ -d /mnt/packer-logs ]; then
 fi
 
 # slack notification
-if [[ -n "${slackhook_url}" ]]; then
+if [[ -n "${slackhook_url-}" ]]; then
     curl -X POST -H 'Content-type: application/json' \
-    --data "{'text':'Image Build finished:\\n${TEMPLATE}\\n${DESCR}\\n${PACKER_LOG}\\nversions-${DATEMARK}.log\\npwd-${DATEMARK}.log'}" \
+    --data "{'text':'Image Build finished:\\n${TEMPLATE}\\n${DESCR-}\\n${PACKER_LOG}\\nversions-${DATEMARK}.log\\npwd-${DATEMARK}.log'}" \
     "${slackhook_url}"
 else
     echo 'Cannot notify Slack: $slackhook_url not set'
