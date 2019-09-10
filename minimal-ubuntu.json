@@ -13,7 +13,7 @@
     },
     {
       "type": "file",
-      "source": "scripts/Ubuntu/",
+      "source": "{{ template_dir }}/scripts/Ubuntu/",
       "destination": "./"
     },
     {
@@ -27,7 +27,7 @@
       ],
       "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",
       "scripts": [
-        "scripts/Ubuntu/minimalconfig.sh"
+        "{{ template_dir }}/scripts/Ubuntu/minimalconfig.sh"
       ]
     },
     {
