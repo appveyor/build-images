@@ -80,14 +80,6 @@ Function Connect-AppVeyorToDocker {
 
     try {
         
-        Write-Host "Configuring 'Docker' build cloud in AppVeyor" -ForegroundColor Cyan
-
-        # make sure Docker is installed and available in the path
-        if (-not (Get-Command docker -ErrorAction Ignore)) {
-            Write-Warning "Looks like Docker is not installed. Please install Docker and re-run the command."
-            return
-        }
-
         $hostName = $env:COMPUTERNAME # Windows
 
         if ($isLinux) {
@@ -97,6 +89,32 @@ Function Connect-AppVeyorToDocker {
             # macOS
             $hostName = (hostname)
         }
+
+        # make sure Docker is installed and available in the path
+        Write-Host "`nEnsure Docker engine is installed and available in PATH" -ForegroundColor Cyan
+        if (-not (Get-Command docker -ErrorAction Ignore)) {
+            Write-Warning "Looks like Docker is not installed. Please install Docker and re-run the command."
+            return
+        } else {
+            Write-Host "Docker is installed"
+        }
+
+        $isWindowsOs = (-not $isLinux -and -not $isMacOS)
+
+        # ensure Docker experimental mode is enabled or Docker is in Linux mode if Linux image on Windows is selected
+        if ($isWindowsOs -and $ImageOs -eq 'Linux') {
+            Write-Host "`nChecking if Docker engine is in experimental or Linux mode to run Linux images on Windows" -ForegroundColor Cyan
+
+            $dockerVersion = (docker version -f "{{json .}}") | ConvertFrom-Json
+            if ($dockerVersion.Server.Os -ne 'linux' -and -not $dockerVersion.Server.Experimental) {
+                Write-Warning "To configure Linux-based image on Windows platform the Docker should be either in experimental mode (with LCOW enabled) or switched into Linux mode (if it's Docker CE)."
+                return
+            } else {
+                Write-Host "Docker engine is configured to run Linux images"
+            }
+        }        
+
+        Write-Host "`nConfiguring 'Docker' build cloud in AppVeyor" -ForegroundColor Cyan
 
         $build_cloud_name = "$hostName Docker"
         $hostAuthorizationToken = [Guid]::NewGuid().ToString('N')
