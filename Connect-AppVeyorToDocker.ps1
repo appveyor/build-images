@@ -63,45 +63,8 @@ Function Connect-AppVeyorToDocker {
     #Sanitize input
     $AppVeyorUrl = $AppVeyorUrl.TrimEnd("/")
 
-    #Validate input
-    if ($ApiToken -like "v2.*") {
-        Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($AppVeyorUrl)/api-keys'"
-        ExitScript
-    }
-
-    try {
-        $responce = Invoke-WebRequest -Uri $AppVeyorUrl -ErrorAction SilentlyContinue
-        if ($responce.StatusCode -ne 200) {
-            Write-warning "AppVeyor URL '$($AppVeyorUrl)' responded with code $($responce.StatusCode)"
-            ExitScript
-        }
-    }
-    catch {
-        Write-warning "Unable to connect to AppVeyor URL '$($AppVeyorUrl)'. Error: $($error[0].Exception.Message)"
-        ExitScript
-    }
-
-    $headers = @{
-      "Authorization" = "Bearer $ApiToken"
-      "Content-type" = "application/json"
-    }
-    try {
-        Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/projects" -Headers $headers -Method Get | Out-Null
-    }
-    catch {
-        Write-warning "Unable to call AppVeyor REST API, please verify 'ApiToken' and ensure '-AppVeyorUrl' parameter is set if you are using on-premise AppVeyor Server."
-        ExitScript
-    }
-
-    if ($AppVeyorUrl -eq "https://ci.appveyor.com") {
-          try {
-            Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get | Out-Null
-        }
-        catch {
-            Write-warning "Please contact support@appveyor.com and request enabling of 'Private build clouds' feature."
-            ExitScript
-        }
-    }
+    #Validate AppVeyor API access
+    $headers = ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
     try {
         

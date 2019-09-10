@@ -99,63 +99,11 @@ Function Connect-AppVeyorToGCE {
     #Sanitize input
     $AppVeyorUrl = $AppVeyorUrl.TrimEnd("/")
 
-    #Validate input
-    if ($ApiToken -like "v2.*") {
-        Write-Warning "Please select the API Key for specific account (not 'All Accounts') at '$($AppVeyorUrl)/api-keys'"
-        ExitScript
-    }
+    #Validate AppVeyor API access
+    $headers = ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
-    try {
-        $responce = Invoke-WebRequest -Uri $AppVeyorUrl -ErrorAction SilentlyContinue
-        if ($responce.StatusCode -ne 200) {
-            Write-warning "AppVeyor URL '$($AppVeyorUrl)' responded with code $($responce.StatusCode)"
-            ExitScript
-        }
-    }
-    catch {
-        Write-warning "Unable to connect to AppVeyor URL '$($AppVeyorUrl)'. Error: $($error[0].Exception.Message)"
-        ExitScript
-    }
-
-    if (-not (Get-Command gcloud -ErrorAction Ignore)) {
-        Write-Warning "This command depends on Google Cloud SDK. Use 'choco install gcloudsdk' on Windows, for Linux follow https://cloud.google.com/sdk/docs/quickstart-linux, for Mac: https://cloud.google.com/sdk/docs/quickstart-macos"
-        ExitScript
-    }
-
-    #TODO remove if GoogleCloud does not appear to be needed (if al canbe done with gcloud)
-    if (-not (Get-Module -Name GoogleCloud -ListAvailable)) {
-        Write-Warning "This command depends on Google Cloud PowerShell module. Please install them with the following command: 'Install-Module -Name GoogleCloud -Force; Import-Module -Name GoogleCloud"
-        ExitScript
-    }
-    #Import module anyway, to be sure.
-    Import-Module -Name GoogleCloud
-
-    if (-not (Get-Command packer -ErrorAction Ignore)) {
-        Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' ('apt get packer' for Linux) command or follow https://www.packer.io/intro/getting-started/install.html. If it is already installed, please ensure that PATH environment variable contains path to it."
-        ExitScript
-    }
-
-    $headers = @{
-      "Authorization" = "Bearer $ApiToken"
-      "Content-type" = "application/json"
-    }
-    try {
-        Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/projects" -Headers $headers -Method Get | Out-Null
-    }
-    catch {
-        Write-warning "Unable to call AppVeyor REST API, please verify 'ApiToken' and ensure '-AppVeyorUrl' parameter is set if you are using on-premise AppVeyor Server."
-        ExitScript
-    }
-
-    if ($AppVeyorUrl -eq "https://ci.appveyor.com") {
-          try {
-            Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get | Out-Null
-        }
-        catch {
-            Write-warning "Please contact support@appveyor.com and request enabling of 'Private build clouds' feature."
-            ExitScript
-        }
-    }
+    #Ensure required tools installed
+    ValidateDependencies -cloudType GCE
 
     $regex =[regex] "^([A-Za-z0-9]+)$"
     if (-not $regex.Match($CommonPrefix).Success) {
