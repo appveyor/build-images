@@ -91,14 +91,12 @@ Function Connect-AppVeyorToComputer {
                 hostAuthorizationToken = $hostAuthorizationToken
                 workersCapacity = 20
                 settings = @{
-                    artifactStorageName = $azure_artifact_storage_name
-                    buildCacheName = $azure_cache_storage_name
                     failureStrategy = @{
                         jobStartTimeoutSeconds = 60
                         provisioningAttempts = 2
                     }
                     cloudSettings = @{
-                        general =@{
+                        general = @{
                         }
                     }
                 }
@@ -120,7 +118,7 @@ Function Connect-AppVeyorToComputer {
             }
         }
 
-        Write-host "`nProvisioning build worker image is available for AppVeyor projects" -ForegroundColor Cyan
+        Write-host "`nEnsure build worker image is available for AppVeyor projects" -ForegroundColor Cyan
         $images = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-worker-images" -Headers $headers -Method Get
         $image = $images | Where-Object ({$_.name -eq $ImageName})[0]
         if (-not $image) {

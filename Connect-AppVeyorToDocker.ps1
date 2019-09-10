@@ -21,6 +21,12 @@ Function Connect-AppVeyorToDocker {
     .PARAMETER ImageTemplate
         Docker image name.
 
+    .PARAMETER ImageFeatures
+        Optional comma-separated list of image products/tools/libraries that should be installed on top of the base image.
+
+    .PARAMETER ImageCustomScriptsUrl
+        Optional URL to a repository or gist with custom scripts that should be run during image building.
+
         .EXAMPLE
         Connect-AppVeyorToDocker
         Let command collect all required information
@@ -47,7 +53,13 @@ Function Connect-AppVeyorToDocker {
       [string]$ImageName,
 
       [Parameter(Mandatory=$true)]
-      [string]$ImageTemplate
+      [string]$ImageTemplate,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImageFeatures,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImageCustomScriptsUrl      
     )
 
     function ExitScript {
@@ -68,15 +80,100 @@ Function Connect-AppVeyorToDocker {
 
     try {
         
-        Write-Host "Connecting to Docker...done!"
-    }
+        Write-Host "Configuring 'Docker' build cloud in AppVeyor" -ForegroundColor Cyan
 
+        $hostName = $env:COMPUTERNAME # Windows
+
+        if ($isLinux) {
+            # Linux
+            $hostName = (hostname)
+        } elseif ($isMacOS) {
+            # macOS
+            $hostName = (hostname)
+        }
+
+        $build_cloud_name = "$hostName Docker"
+        $hostAuthorizationToken = [Guid]::NewGuid().ToString('N')
+
+        $clouds = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-clouds" -Headers $headers -Method Get
+        $cloud = $clouds | Where-Object ({$_.name -eq $build_cloud_name})[0]
+        if (-not $cloud) {
+
+            # check if there is a cloud already with the name "$build_cloud_name" and grab $hostAuthorizationToken from there
+            $docker_build_cloud_name = "$build_cloud_name"
+            $processCloud = $clouds | Where-Object ({$_.name -eq $docker_build_cloud_name})[0]
+
+            if ($processCloud -and $processCloud.CloudType -eq 'Process') {
+                Write-Host "There is an existing 'Process' cloud for that computer. Reading Host Agent authorization token from Process cloud." -ForegroundColor DarkGray
+                $settings = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-clouds/$($processCloud.buildCloudId)" -Headers $headers -Method Get
+                $hostAuthorizationToken = $settings.hostAuthorizationToken  
+            }
+
+            # Add new build cloud
+            $body = @{
+                cloudType = "Docker"
+                name = $build_cloud_name
+                hostAuthorizationToken = $hostAuthorizationToken
+                workersCapacity = 20
+                settings = @{
+                    failureStrategy = @{
+                        jobStartTimeoutSeconds = 60
+                        provisioningAttempts = 2
+                    }
+                    cloudSettings = @{
+                        general = @{
+                        }
+                        networking = @{
+                        }                        
+                        images = @(@{
+                            name = $ImageName
+                            dockerImageName = $ImageTemplate
+                        })                        
+                    }
+                }
+            }
+    
+            $jsonBody = $body | ConvertTo-Json -Depth 10
+            Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-clouds" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
+            $clouds = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-clouds" -Headers $headers -Method Get
+            $cloud = $clouds | Where-Object ({$_.name -eq $build_cloud_name})[0]
+            Write-Host "A new AppVeyor build cloud '$build_cloud_name' has been added."
+        } else {
+            Write-Host "AppVeyor cloud '$build_cloud_name' already exists." -ForegroundColor DarkGray
+            if ($cloud.CloudType -eq 'Docker') {
+                Write-Host "Reading Host Agent authorization token from the existing cloud."
+                $settings = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-clouds/$($cloud.buildCloudId)" -Headers $headers -Method Get
+                $hostAuthorizationToken = $settings.hostAuthorizationToken
+            } else {
+                throw "Existing build cloud '$build_cloud_name' is not of 'Process' type."
+            }
+        }
+
+        Write-host "`nEnsure build worker image is available for AppVeyor projects" -ForegroundColor Cyan
+        $images = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-worker-images" -Headers $headers -Method Get
+        $image = $images | Where-Object ({$_.name -eq $ImageName})[0]
+        if (-not $image) {
+            $body = @{
+                name = $imageName
+                osType = $ImageOs
+            }
+    
+            $jsonBody = $body | ConvertTo-Json
+            Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
+            Write-host "AppVeyor build worker image '$ImageName' has been created."
+        } else {
+            Write-host "AppVeyor build worker image '$ImageName' already exists." -ForegroundColor DarkGray
+        }
+    
+        # Install Host Agent
+        InstallAppVeyorHostAgent $AppVeyorUrl $hostAuthorizationToken
+
+        $StopWatch.Stop()
+        $completed = "{0:hh}:{0:mm}:{0:ss}" -f $StopWatch.elapsed
+        Write-Host "`nCompleted in $completed."
+    }
     catch {
-        Write-Warning "Command exited with error: $($_.Exception)"
+        Write-Error $_
         ExitScript
     }
 }
-
-
-
-
