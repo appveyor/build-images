@@ -83,7 +83,10 @@ Function Connect-AppVeyorToAzure {
       [string]$ImageName,
 
       [Parameter(Mandatory=$false)]
-      [string]$ImageTemplate
+      [string]$ImageTemplate,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImageFeatures
     )
 
     function ExitScript {
@@ -149,6 +152,7 @@ Function Connect-AppVeyorToAzure {
     $build_cloud_name = "$($ImageOs)-Azure-build-environment"
     $ImageName = if ($ImageName) {$ImageName} else {"$($ImageOs) on Azure"}
     $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
+    $ImageTemplate = ParseImageFeatures $ImageFeatures $ImageTemplate
 
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"

@@ -11,3 +11,4 @@ appveyor-tools/
 packer-manifest.*
 *.pem
 output-hyperv-iso/
+minimal-windows-server-custom.json

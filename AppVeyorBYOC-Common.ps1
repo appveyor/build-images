@@ -187,5 +187,47 @@ function ValidateDependencies ($cloudType) {
         Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' command or from download page https://www.packer.io/downloads.html. If it is already installed, please ensure that PATH environment variable contains path to it."
         ExitScript
     }
-
 }
+
+function ParseImageFeatures ($imageFeatures, $imageTemplate) {
+    if(-not $imageFeatures) {
+        return $imageTemplate
+    }
+    elseif(($imageFeatures.Contains(' ') -and -not $imageFeatures.Contains(',')) -or $imageFeatures.Contains(';')) {
+        Write-Warning "'ImageFeatures' should be comma-separate list or single value"
+        ExitScript
+    }
+
+    $imageFeatures = ($imageFeatures.Split(',') | % { $_.Trim() })
+
+    $scripts = @()
+    $imageFeatures | % {
+        $scriptName1 = "install_$_.ps1"
+        $scriptName2 = "$_.ps1"
+        if (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName1") {
+            $scripts += "{{ template_dir }}/scripts/Windows/$scriptName1"
+            }
+        elseif (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName2") {
+            $scripts += "{{ template_dir }}/scripts/Windows/$scriptName2"
+            }
+        else {
+            Write-Warning "Unable to find $scriptName1 or $scriptName2 in $PSScriptRoot/scripts/Windows"
+            ExitScript        
+        }         
+    }
+
+    $packer_file = Get-Content $imageTemplate | ConvertFrom-Json
+
+    $before_reboot = @{
+        'type'='powershell'
+        'scripts'=$scripts
+        'elevated_user'='{{user `install_user`}}'
+        'elevated_password'='{{user `install_password`}}'
+    }
+    $packer_file.provisioners += $before_reboot
+
+    $ImageTemplateCustom = $ImageTemplate.Replace((Get-Item $ImageTemplate).Basename, "$((Get-Item $ImageTemplate).Basename)-custom")
+    $packer_file | ConvertTo-Json -Depth 20 | Set-Content -Path $ImageTemplateCustom
+    return $ImageTemplateCustom
+}
+
