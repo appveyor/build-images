@@ -189,8 +189,8 @@ function ValidateDependencies ($cloudType) {
     }
 }
 
-function ParseImageFeatures ($imageFeatures, $imageTemplate) {
-    if(-not $imageFeatures) {
+function ParseImageFeatures ($imageFeatures, $imageTemplate, $imageOs) {
+    if(-not $imageFeatures -or $imageOs -eq "Linux") {
         return $imageTemplate
     }
     elseif(($imageFeatures.Contains(' ') -and -not $imageFeatures.Contains(',')) -or $imageFeatures.Contains(';')) {
@@ -226,8 +226,8 @@ function ParseImageFeatures ($imageFeatures, $imageTemplate) {
     }
     $packer_file.provisioners += $before_reboot
 
-    $ImageTemplateCustom = $ImageTemplate.Replace((Get-Item $ImageTemplate).Basename, "$((Get-Item $ImageTemplate).Basename)-custom")
-    $packer_file | ConvertTo-Json -Depth 20 | Set-Content -Path $ImageTemplateCustom
-    return $ImageTemplateCustom
+    $imageTemplateCustom = $ImageTemplate.Replace((Get-Item $imageTemplate).Basename, "$((Get-Item $ImageTemplate).Basename)-custom")
+    $packer_file | ConvertTo-Json -Depth 20 | Set-Content -Path $imageTemplateCustom
+    return $imageTemplateCustom
 }
 
