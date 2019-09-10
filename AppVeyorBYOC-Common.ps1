@@ -3,12 +3,14 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
     $APPVEYOR_HOST_AGENT_MSI_URL = "https://www.appveyor.com/downloads/appveyor/appveyor-host-agent.msi"
     $APPVEYOR_HOST_AGENT_DEB_URL = "https://www.appveyor.com/downloads/appveyor/appveyor-host-agent.deb"    
 
-    Write-Host "Installing AppVeyor Host Agent"
+    Write-Host "`nInstalling AppVeyor Host Agent" -ForegroundColor Cyan
 
     if ($isLinux) {
 
         # Linux
         # =======
+
+        Write-Host "OS: Linux" -ForegroundColor Gray
 
         if (-not (Test-Path '/opt/appveyor/host-agent')) {
 
@@ -31,13 +33,15 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
             }
 
         } else {
-            Write-Host "Host Agent is already installed"
+            Write-Host "Host Agent is already installed" -ForegroundColor DarkGray
         }
 
     } elseif ($isMacOS) {
 
         # macOS
         # =======
+
+        Write-Host "OS: macOS" -ForegroundColor Gray
 
         $hostAgentProcess = Get-Process "appveyor-host-a" -ErrorAction SilentlyContinue
         if (-not $hostAgentProcess) {
@@ -61,13 +65,15 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
                 throw "Error installing Host Agent"
             }    
         } else {
-            Write-Host "Host Agent is already installed"
+            Write-Host "Host Agent is already installed" -ForegroundColor DarkGray
         }
 
     } else {
 
         # Windows
         # =======
+
+        Write-Host "OS: Windows" -ForegroundColor Gray
 
         $hostAgentService = Get-Service "Appveyor.HostAgent" -ErrorAction SilentlyContinue
         if (-not $hostAgentService) {
@@ -92,7 +98,7 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
                 throw "Error installing Host Agent"
             }                
         } else {
-            Write-Host "Host Agent is already installed"
+            Write-Host "Host Agent is already installed" -ForegroundColor DarkGray
         }
     }
 }
