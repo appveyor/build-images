@@ -197,7 +197,8 @@ function ParseImageFeatures ($imageFeatures, $imageTemplate, $imageOs) {
     if(-not $imageFeatures) {
         return $imageTemplate
     }
-    elseif(($imageFeatures.Contains(' ') -and -not $imageFeatures.Contains(',')) -or $imageFeatures.Contains(';')) {
+    $imageFeatures = $imageFeatures.Trim()
+    if(($imageFeatures.Contains(' ') -and -not $imageFeatures.Contains(',')) -or $imageFeatures.Contains(';')) {
         Write-Warning "'ImageFeatures' should be comma-separate list or single value"
         ExitScript
     }

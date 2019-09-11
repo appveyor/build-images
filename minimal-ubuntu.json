@@ -2,12 +2,6 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "{{ template_dir }}/distrib",
-      "destination": "./",
-      "generated": "true"
-    },
-    {
-      "type": "file",
       "source": "{{ template_dir }}/scripts/Ubuntu/custom-scripts",
       "destination": "./custom-scripts"
     },
