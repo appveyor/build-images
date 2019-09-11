@@ -161,7 +161,7 @@
       "winrm_username": "Administrator",
       "winrm_use_ssl": true,
       "winrm_insecure": true,
-      "user_data_file":"./scripts/Windows/ec2-userdata.ps1",
+      "user_data_file":"{{ template_dir }}/scripts/Windows/ec2-userdata.ps1",
 
       "ami_name": "Appveyor Worker Windows Server 2016 {{uuid}}",
       "ami_description": "{{user `image_description`}}",

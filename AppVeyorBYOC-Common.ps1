@@ -178,7 +178,11 @@ function ValidateDependencies ($cloudType) {
 
     if ($cloudType -eq "AWS") {
         if (-not (Get-Module -Name *AWSPowerShell* -ListAvailable)) {
-            Write-Warning "This command depends on AWS Tools for PowerShell. Please install them with the following command: 'Install-Module -Name AWSPowerShell -Force; Get-Command -Module AWSPowerShell | Out-Null'"
+            Write-Warning "This command depends on AWS Tools for PowerShell. Please install them with the following command: 'Install-Module -Name AWSPowerShell -Force; Import-Module -Name AWSPowerShell'"
+            ExitScript
+        }
+        if (-not (Get-Command Get-AWSCredentials -ErrorAction Ignore)) {
+            Write-Warning "Unable to get Get-AWSCredentials cpmmand. Please ensure latest 'AWSPowerShell' module is installed and imported"
             ExitScript
         }
     }
