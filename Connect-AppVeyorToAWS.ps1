@@ -157,6 +157,7 @@ Function Connect-AppVeyorToAWS {
     $build_cloud_name = "$($ImageOs)-AWS-build-environment"
     $ImageName = if ($ImageName) {$ImageName} else {"$($ImageOs) on AWS"}
     $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
+    $ImageTemplate = ParseImageFeatures $ImageFeatures $ImageTemplate $ImageOs
 
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"

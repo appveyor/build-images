@@ -190,41 +190,72 @@ function ValidateDependencies ($cloudType) {
 }
 
 function ParseImageFeatures ($imageFeatures, $imageTemplate, $imageOs) {
-    if(-not $imageFeatures -or $imageOs -eq "Linux") {
+    if(-not $imageFeatures) {
         return $imageTemplate
     }
     elseif(($imageFeatures.Contains(' ') -and -not $imageFeatures.Contains(',')) -or $imageFeatures.Contains(';')) {
         Write-Warning "'ImageFeatures' should be comma-separate list or single value"
         ExitScript
     }
+    if($imageOs -eq "Linux") {
+        return $imageTemplate
+    }
 
     $imageFeatures = ($imageFeatures.Split(',') | % { $_.Trim() })
 
-    $scripts = @()
+    $before_reboot_scripts = @()
     $imageFeatures | % {
         $scriptName1 = "install_$_.ps1"
         $scriptName2 = "$_.ps1"
         if (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName1") {
-            $scripts += "{{ template_dir }}/scripts/Windows/$scriptName1"
+            $before_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName1"
             }
         elseif (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName2") {
-            $scripts += "{{ template_dir }}/scripts/Windows/$scriptName2"
+            $before_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName2"
             }
         else {
             Write-Warning "Unable to find $scriptName1 or $scriptName2 in $PSScriptRoot/scripts/Windows"
-            ExitScript        
-        }         
+            ExitScript
+        }
+    }
+
+    $after_reboot_scripts = @()
+    $imageFeatures | % {
+        $scriptName1 = "install_$($_)_after_reboot.ps1"
+        $scriptName2 = "$($_)_after_reboot.ps1"
+        if (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName1") {
+            $after_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName1"
+            }
+        elseif (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName2") {
+            $after_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName2"
+            }
     }
 
     $packer_file = Get-Content $imageTemplate | ConvertFrom-Json
 
     $before_reboot = @{
-        'type'='powershell'
-        'scripts'=$scripts
-        'elevated_user'='{{user `install_user`}}'
-        'elevated_password'='{{user `install_password`}}'
+        'type' = 'powershell'
+        'scripts' = $before_reboot_scripts
+        'elevated_user' = '{{user `install_user`}}'
+        'elevated_password' = '{{user `install_password`}}'
     }
     $packer_file.provisioners += $before_reboot
+
+    if ($after_reboot_scripts.Count -gt 0) {
+        $reboot = @{
+            'type' = 'windows-restart'
+            'restart_timeout' = '30m'
+        }
+        $packer_file.provisioners += $reboot
+
+        $after_reboot = @{
+            'type' = 'powershell'
+            'scripts' = $after_reboot_scripts
+            'elevated_user' = '{{user `install_user`}}'
+            'elevated_password' = '{{user `install_password`}}'
+        }
+        $packer_file.provisioners +=$after_reboot
+    }
 
     $imageTemplateCustom = $ImageTemplate.Replace((Get-Item $imageTemplate).Basename, "$((Get-Item $ImageTemplate).Basename)-custom")
     $packer_file | ConvertTo-Json -Depth 20 | Set-Content -Path $imageTemplateCustom
