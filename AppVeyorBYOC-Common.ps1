@@ -182,7 +182,7 @@ function ValidateDependencies ($cloudType) {
             ExitScript
         }
         if (-not (Get-Command Get-AWSCredentials -ErrorAction Ignore)) {
-            Write-Warning "Unable to get Get-AWSCredentials cpmmand. Please ensure latest 'AWSPowerShell' module is installed and imported"
+            Write-Warning "Unable to get 'Get-AWSCredentials' command. Please ensure latest 'AWSPowerShell' module is installed and imported"
             ExitScript
         }
     }
