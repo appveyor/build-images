@@ -286,12 +286,11 @@ function install_tools() {
 
     # next packages required by KVP to communicate with HyperV
     if [ "${BUILD_AGENT_MODE}" = "HyperV" ]; then
-#        tools_array+=( "linux-virtual-lts-${OS_CODENAME}" "linux-tools-virtual-lts-${OS_CODENAME}" "linux-cloud-tools-virtual-lts-${OS_CODENAME}" )
         tools_array+=( "linux-tools-generic" "linux-cloud-tools-generic" )
     fi
-    sleep 5
-    APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
-    apt-get -y ${APT_GET_OPTIONS} install "${tools_array[@]}" --no-install-recommends ||
+
+    #APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
+    apt-get -y ${APT_GET_OPTIONS-} install "${tools_array[@]}" --no-install-recommends ||
         { 
             echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2;
             apt-cache policy gcc 
