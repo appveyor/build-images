@@ -325,7 +325,10 @@ function copy_appveyoragent() {
     fi
     AGENT_FILE=appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-x64.tar.gz
 
-    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
+    if [[ -z "${AGENT_DIR-}" ]]; then
+        echo "[WARNING] AGENT_DIR variable is not set. Setting it to AGENT_DIR=/opt/appveyor/build-agent" 1>&2;
+        AGENT_DIR=/opt/appveyor/build-agent
+    fi
 
     mkdir -p ${AGENT_DIR} &&
     #chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR} &&
@@ -345,7 +348,7 @@ function copy_appveyoragent() {
 }
 
 function install_appveyoragent() {
-    AGENT_MODE=$1
+    AGENT_MODE=${1-}
     CONFIG_FILE=appsettings.json
     PROJECT_BUILDS_DIRECTORY="$USER_HOME"/projects
     SERVICE_NAME=appveyor-build-agent.service
@@ -360,7 +363,7 @@ function install_appveyoragent() {
     pushd -- "${AGENT_DIR}" ||
         { echo "[ERROR] Cannot cd to ${AGENT_DIR} folder." 1>&2; return 10; }
 
-    [ -f ${CONFIG_FILE} ] &&
+    [ -f ${CONFIG_FILE} ] && [ "${#AGENT_MODE}" -gt 0 ] &&
         python -c "import json; import io;
 a=json.load(io.open('${CONFIG_FILE}', encoding='utf-8-sig'));
 a[u'AppVeyor'][u'Mode']='${AGENT_MODE}';

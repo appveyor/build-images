@@ -23,7 +23,7 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
-case  ${PACKER_BUILDER_TYPE} in
+case  ${PACKER_BUILDER_TYPE-} in
     googlecompute )
         BUILD_AGENT_MODE=GCE;;
     hyperv* )
@@ -33,7 +33,7 @@ case  ${PACKER_BUILDER_TYPE} in
     amazon-* )
         BUILD_AGENT_MODE=AmazonEC2;;
     * )
-        BUILD_AGENT_MODE=GCE;;
+        BUILD_AGENT_MODE='';;
 esac
 
 # search for scripts we source
