@@ -23,6 +23,13 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
+# Check for execution in docker container
+if grep -Eq '/(lxc|docker)/[[:xdigit:]]{64}' /proc/1/cgroup; then
+    IS_DOCKER=true
+else
+    IS_DOCKER=false
+fi
+
 case  ${PACKER_BUILDER_TYPE-} in
     googlecompute )
         BUILD_AGENT_MODE=GCE;;
@@ -76,10 +83,12 @@ init_logging
 
 configure_path
 
-add_user ||
-    _abort $?
+if ! $IS_DOCKER; then
+    add_user ||
+        _abort $?
 
-wait_cloudinit || _continue
+    wait_cloudinit || _continue
+fi
 
 configure_apt ||
     _abort $?
@@ -94,8 +103,13 @@ if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
         _abort $?
 fi
 
-install_appveyoragent "${BUILD_AGENT_MODE}" ||
-    _abort $?
+if $IS_DOCKER; then
+    copy_appveyoragent ||
+        _abort $?
+else
+    install_appveyoragent "${BUILD_AGENT_MODE}" ||
+        _abort $?
+fi
 
 install_powershell ||
     _abort $?
