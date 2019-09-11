@@ -116,11 +116,13 @@ install_powershell ||
 
 install_cvs ||
     _abort $?
+if ! $IS_DOCKER; then
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f configure_svn)
         configure_svn" ||
     _abort $?
+fi
 
 # execute optional Features
 if [ "$#" -gt 0 ]; then
