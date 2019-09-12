@@ -149,8 +149,7 @@ Function Connect-AppVeyorToGCE {
     $gcs_cache_storage_name = "$($CommonPrefix)-gcs-cache"
     $gcs_artifact_storage_name = "$($CommonPrefix)-gcs-artifacts"
 
-    $build_cloud_name = "$($ImageOs)-GCE-build-environment"
-    $ImageName = if ($ImageName) {$ImageName} else {"$($ImageOs) on GCE"}
+    $ImageName = if ($ImageName) {$ImageName} else {$ImageOs}
     $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
     $ImageTemplate = ParseImageFeatures $ImageFeatures $ImageTemplate $ImageOs
 
@@ -513,6 +512,8 @@ Function Connect-AppVeyorToGCE {
 
         #Create or update cloud
         Write-host "`nCreating or updating build environment on AppVeyor..." -ForegroundColor Cyan
+        $build_cloud_name = "GCE $Zone $VmSize"
+        $image_size = if ($ImageOs -eq "Windows") {200} elseif ($ImageOs -eq "Linux") {40}
         if (-not $cloud) {
             $body = @{
                 name = $build_cloud_name
@@ -542,7 +543,7 @@ Function Connect-AppVeyorToGCE {
                         images = @(@{
                                 name = $ImageName
                                 snapshotOrImage = $ImageId
-                                sizeGB = 200
+                                sizeGB = $image_size
                             })
                     }
                 }
@@ -580,9 +581,19 @@ Function Connect-AppVeyorToGCE {
             $settings.settings.cloudSettings.vmConfiguration.sizeName = $VmSize
             $settings.settings.cloudSettings.networking.assignExternalIP = $true
             $settings.settings.cloudSettings.networking.networkName = $gce_network_name
-            $settings.settings.cloudSettings.images[0].name = $ImageName
-            $settings.settings.cloudSettings.images[0].snapshotOrImage = $ImageId
-            $settings.settings.cloudSettings.images[0].sizeGB = 200
+            if ($settings.settings.cloudSettings.images | ? {$_.name -eq $ImageName}) {
+                ($settings.settings.cloudSettings.images | ? {$_.name -eq $ImageName}).snapshotOrImage = $ImageId
+            }
+            else {
+                $new_image = @{
+                    'name' = $ImageName
+                    'snapshotOrImage' = $ImageId
+                    'sizeGB' = $image_size
+                }
+                $new_image = $new_image | ConvertTo-Json | ConvertFrom-Json
+                $settings.settings.cloudSettings.images += $new_image
+            }
+
             $jsonBody = $settings | ConvertTo-Json -Depth 10
             Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds"-Headers $headers -Body $jsonBody -Method Put | Out-Null
             Write-host "AppVeyor build environment '$($build_cloud_name)' has been updated." -ForegroundColor DarkGray

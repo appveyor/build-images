@@ -152,8 +152,7 @@ Function Connect-AppVeyorToAzure {
     $azure_subnet_name = "$($CommonPrefix)-subnet"
     $azure_nsg_name = "$($CommonPrefix)-nsg"
 
-    $build_cloud_name = "$($ImageOs)-Azure-build-environment"
-    $ImageName = if ($ImageName) {$ImageName} else {"$($ImageOs) on Azure"}
+    $ImageName = if ($ImageName) {$ImageName} else {$ImageOs}
     $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
     $ImageTemplate = ParseImageFeatures $ImageFeatures $ImageTemplate $ImageOs
 
@@ -603,6 +602,7 @@ Function Connect-AppVeyorToAzure {
 
         #Create or update cloud
         Write-host "`nCreating or updating build environment on AppVeyor..." -ForegroundColor Cyan
+        $build_cloud_name = "Azure $Location $VmSize"
         $clouds = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get
         $cloud = $clouds | ? ({$_.name -eq $build_cloud_name})[0]
         if (-not $cloud) {
@@ -685,8 +685,17 @@ Function Connect-AppVeyorToAzure {
             $settings.settings.cloudSettings.networking.virtualNetworkName = $azure_vnet_name
             $settings.settings.cloudSettings.networking.subnetName = $azure_subnet_name
             $settings.settings.cloudSettings.networking.securityGroupName = $azure_nsg_name
-            $settings.settings.cloudSettings.images[0].name = $ImageName
-            $settings.settings.cloudSettings.images[0].vhdPathOrImage = $vhd_path
+            if ($settings.settings.cloudSettings.images | ? {$_.name -eq $ImageName}) {
+                ($settings.settings.cloudSettings.images | ? {$_.name -eq $ImageName}).vhdPathOrImage = $vhd_path
+            }
+            else {
+                $new_image = @{
+                    'name' = $ImageName
+                    'vhdPathOrImage' = $vhd_path
+                }
+                $new_image = $new_image | ConvertTo-Json | ConvertFrom-Json
+                $settings.settings.cloudSettings.images += $new_image
+            }
 
             $jsonBody = $settings | ConvertTo-Json -Depth 10
             Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds"-Headers $headers -Body $jsonBody -Method Put | Out-Null

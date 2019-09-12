@@ -160,8 +160,7 @@ Function Connect-AppVeyorToAWS {
     $aws_kp_path = if (-not $IsWindows) {Join-Path -Path $home -ChildPath "$aws_kp_name.pem"} else {Join-Path -Path $env:userprofile -ChildPath "$aws_kp_name.pem"}
     $aws_profile = "$($CommonPrefix)-temp"
 
-    $build_cloud_name = "$($ImageOs)-AWS-build-environment"
-    $ImageName = if ($ImageName) {$ImageName} else {"$($ImageOs) on AWS"}
+    $ImageName = if ($ImageName) {$ImageName} else {$ImageOs}
     $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
     $ImageTemplate = ParseImageFeatures $ImageFeatures $ImageTemplate $ImageOs
 
@@ -607,6 +606,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
 
         #Create or update cloud
         Write-host "`nCreating or updating build environment on AppVeyor..." -ForegroundColor Cyan
+        $build_cloud_name = "AWS $Region $InstanceSize"
         $clouds = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get
         $cloud = $clouds | ? ({$_.name -eq $build_cloud_name})[0]
         if (-not $cloud) {
@@ -677,8 +677,18 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             $settings.settings.cloudSettings.vmConfiguration.keyPairName = $aws_kp_name
             $settings.settings.cloudSettings.networking.assignPublicIPAddress = $true
             $settings.settings.cloudSettings.networking.subnetId = $SubnetId
-            $settings.settings.cloudSettings.images[0].name = $ImageName
-            $settings.settings.cloudSettings.images[0].imageId = $AmiId
+            if ($settings.settings.cloudSettings.images | ? {$_.name -eq $ImageName}) {
+                ($settings.settings.cloudSettings.images | ? {$_.name -eq $ImageName}).imageId = $AmiId
+            }
+            else {
+                $new_image = @{
+                    'name' = $ImageName
+                    'imageId' = $AmiId
+                }
+                $new_image = $new_image | ConvertTo-Json | ConvertFrom-Json
+                $settings.settings.cloudSettings.images += $new_image
+            }
+
             $jsonBody = $settings | ConvertTo-Json -Depth 10
             Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds"-Headers $headers -Body $jsonBody -Method Put | Out-Null
             Write-host "AppVeyor build environment '$($build_cloud_name)' has been updated." -ForegroundColor DarkGray

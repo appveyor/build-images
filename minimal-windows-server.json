@@ -6,10 +6,6 @@
       "destination": "C:/"
     },
     {
-        "type": "windows-restart",
-        "restart_timeout": "30m"
-    },
-    {
         "type": "powershell",
         "scripts": [
             "{{ template_dir }}/scripts/Windows/create_appveyor_user.ps1"
@@ -153,7 +149,7 @@
       "winrm_insecure": true,
       "user_data_file":"{{ template_dir }}/scripts/Windows/ec2-userdata.ps1",
 
-      "ami_name": "Appveyor Worker Windows Server 2016 {{uuid}}",
+      "ami_name": "Appveyor Worker Windows Server 2019 {{uuid}}",
       "ami_description": "{{user `image_description`}}",
       "launch_block_device_mappings": [
         {
