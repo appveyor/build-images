@@ -267,3 +267,20 @@ function ParseImageFeatures ($imageFeatures, $imageTemplate, $imageOs) {
     return $imageTemplateCustom
 }
 
+function SetBuildWorkerImage ($headers, $ImageName, $ImageOs) {
+    Write-host "`nEnsure build worker image is available for AppVeyor projects" -ForegroundColor Cyan
+    $images = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-worker-images" -Headers $headers -Method Get
+    $image = $images | Where-Object ({$_.name -eq $ImageName})[0]
+    if (-not $image) {
+        $body = @{
+            name = $imageName
+            osType = $ImageOs
+        }
+
+        $jsonBody = $body | ConvertTo-Json
+        Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-worker-images" -Headers $headers -Body $jsonBody -Method Post | Out-Null
+        Write-host "AppVeyor build worker image '$ImageName' has been created." -ForegroundColor DarkGray
+    } else {
+        Write-host "AppVeyor build worker image '$ImageName' already exists." -ForegroundColor DarkGray
+    }
+}

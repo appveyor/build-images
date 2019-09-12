@@ -503,8 +503,8 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
         #Run Packer to create an AMI
         if (-not $AmiId) {
             Write-host "`nRunning Packer to create a basic build VM AMI..." -ForegroundColor Cyan
-            Write-Warning "Add '-AmiId' parameter with if you want to reuse existing AMI (which must be in '$($aws_region_full)' region). Enter Ctrl-C to stop the command and restart with '-AmiId' parameter or do nothing and let the command create a new AMI.`nWaiting 30 seconds..."
-            for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
+            Write-Warning "Add '-AmiId' parameter with if you want to reuse existing AMI (which must be in '$($aws_region_full)' region). Enter Ctrl-C to stop the command and restart with '-AmiId' parameter or do nothing and let the command create a new AMI.`nWaiting 10 seconds..."
+            for ($i = 10; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
@@ -693,31 +693,8 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds"-Headers $headers -Body $jsonBody -Method Put | Out-Null
             Write-host "AppVeyor build environment '$($build_cloud_name)' has been updated." -ForegroundColor DarkGray
         }
-        
-        Write-host "`nEnsuring build worker image is available for AppVeyor projects..." -ForegroundColor Cyan
-        $images = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Method Get
-        $image = $images | ? ({$_.name -eq $ImageName})[0]
-        $osType = if ($ImageOs -eq "Windows") {"Windows"} elseif ($ImageOs -eq "Linux") {"Ubuntu"}
-        if (-not $image) {
-            $body = @{
-                name = $ImageName
-                buildCloudName = $build_cloud_name
-                osType = $osType
-            }
 
-            $jsonBody = $body | ConvertTo-Json
-            Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
-            Write-host "AppVeyor build worker image '$($ImageName)' has been created." -ForegroundColor DarkGray
-        }
-        else {
-            $image.name = $ImageName
-            $image.buildCloudName = $build_cloud_name
-            $image.osType = $osType
-
-            $jsonBody = $image | ConvertTo-Json
-            Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Put | Out-Null
-            Write-host "AppVeyor build worker image '$($ImageName)' has been updated." -ForegroundColor DarkGray
-        }
+        SetBuildWorkerImage $headers $ImageName $ImageOs
 
         $StopWatch.Stop()
         $completed = "{0:hh}:{0:mm}:{0:ss}" -f $StopWatch.elapsed

@@ -492,8 +492,8 @@ Function Connect-AppVeyorToAzure {
         #Run Packer to create an image
         if (-not $VhdFullPath) {
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
-            Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to reuse existing VHD (which must be in '$($azure_storage_account)' storage account). Enter Ctrl-C to stop the command and restart with '-VhdFullPath' parameter or do nothing and let the command create a new VHD.`nWaiting 30 seconds..."
-            for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
+            Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to reuse existing VHD (which must be in '$($azure_storage_account)' storage account). Enter Ctrl-C to stop the command and restart with '-VhdFullPath' parameter or do nothing and let the command create a new VHD.`nWaiting 10 seconds..."
+            for ($i = 10; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
@@ -702,30 +702,7 @@ Function Connect-AppVeyorToAzure {
             Write-host "AppVeyor build environment '$($build_cloud_name)' has been updated." -ForegroundColor DarkGray
         }
 
-        Write-host "`nEnsuring build worker image is available for AppVeyor projects..." -ForegroundColor Cyan
-        $images = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Method Get
-        $image = $images | ? ({$_.name -eq $ImageName})[0]
-        $osType = if ($ImageOs -eq "Windows") {"Windows"} elseif ($ImageOs -eq "Linux") {"Ubuntu"}
-        if (-not $image) {
-            $body = @{
-                name = $ImageName
-                buildCloudName = $build_cloud_name
-                osType = "$osType"
-            }
-
-            $jsonBody = $body | ConvertTo-Json
-            Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
-            Write-host "AppVeyor build worker image '$($ImageName)' has been created." -ForegroundColor DarkGray
-        }
-        else {
-            $image.name = $ImageName
-            $image.buildCloudName = $build_cloud_name
-            $image.osType = "$osType"
-
-            $jsonBody = $image | ConvertTo-Json
-            Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Put | Out-Null
-            Write-host "AppVeyor build worker image '$($ImageName)' has been updated." -ForegroundColor DarkGray
-        }
+        SetBuildWorkerImage $headers $ImageName $ImageOs
 
         $StopWatch.Stop()
         $completed = "{0:hh}:{0:mm}:{0:ss}" -f $StopWatch.elapsed
