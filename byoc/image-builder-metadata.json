@@ -19,8 +19,16 @@
                "title":"Git 2.19.1"
             },
             {
-               "id":"hg",
-               "title":"Mercurial"
+               "id":"git_lfs",
+               "title":"Git LFS 2.6.1"
+            },
+            {
+               "id":"mercurial",
+               "title":"Mercurial 4.1.1"
+            },
+            {
+               "id":"subversion",
+               "title":"Subversion 1.8.17"
             },
             {
                "id":"powershell_core",
@@ -35,23 +43,39 @@
                "title":"Chocolatey"
             },
             {
+               "id":"nuget",
+               "title":"NuGet"
+            },
+            {
+               "id":"pstools",
+               "title":"PsTools"
+            },
+            {
                "id":"appveyor_build_agent",
                "title":"AppVeyor Build Agent"
             }
          ],
          "optionalFeatures":[
             {
-               "id":"vs2019_build_tools",
-               "title":"Visual Studio 2019 Build Tools"
+               "id":"test_agent_build_tools_2019",
+               "title":"Visual Studio 2019 Test Agent and Build Tools"
             },
             {
-               "id":"sqlserver2017",
+               "id":"dotnet_devpack",
+               "title":".NET Framework Developer Packs (4.5.2 - 4.8)"
+            },
+            {
+               "id":"dotnet_sdk",
+               "title":"NET Core SDKs (1.1.14 - 2.2.301)"
+            },
+            {
+               "id":"sql_server_2017",
                "title":"SQL Server 2017 Developer Edition"
             },
             {
-               "id":"mysql76",
-               "title":"MySQL Server 7.6"
-            }            
+               "id":"nodejs_latest",
+               "title":"Node.js"
+            }
          ]
       },
       {

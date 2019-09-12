@@ -46,12 +46,15 @@ Function Connect-AppVeyorToAWS {
     .PARAMETER ImageTemplate
         If you are familiar with Hashicorp Packer, you can replace template used by this command with another one. Default value generated is based on the value of 'ImageOs' parameter.
 
+    .PARAMETER ImageFeatures
+        Comma-separated list of feature IDs to be installed on the image. Available IDs can be found at https://github.com/appveyor/build-images/blob/master/byoc/image-builder-metadata.json under 'installedFeatures'.
+
         .EXAMPLE
         Connect-AppVeyorToAWS
         Let command collect all required information
 
         .EXAMPLE
-        Connect-AppVeyorToAWS -ApiToken XXXXXXXXXXXXXXXXXXXXX -AppVeyorUrl "https://ci.appveyor.com" -AccessKeyId XXXXXXXXXXXXXXXXXXXX -SecretAccessKey XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -SkipDisclaimer -Region us-east-1 -InstanceSize m4.large -aws_subnet subnet-xxxxxxxx
+        Connect-AppVeyorToAWS -AppVeyorUrl "https://ci.appveyor.com" -ApiToken XXXXXXXXXXXXXXXXXXXXX -AccessKeyId XXXXXXXXXXXXXXXXXXXX -SecretAccessKey XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -SkipDisclaimer -Region us-east-1 -InstanceSize m4.large -aws_subnet subnet-xxxxxxxx
         Run command with all required parameters so command will ask no questions. It will create resources in AWS US East (Virginia) region and will connect it to hosted AppVeyor.
     #>
 
@@ -96,7 +99,10 @@ Function Connect-AppVeyorToAWS {
       [string]$ImageName,
 
       [Parameter(Mandatory=$false)]
-      [string]$ImageTemplate
+      [string]$ImageTemplate,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImageFeatures
     )
 
     function ExitScript {
@@ -514,6 +520,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             -var "image_description=$ImageName" `
             -var "datemark=$date_mark" `
             -var "packer_manifest=$packer_manifest" `
+            -var "OPT_FEATURES=$ImageFeatures" `
             $ImageTemplate
 
 

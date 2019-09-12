@@ -68,16 +68,6 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_test_agent_build_tools_2019.ps1",
-            "{{ template_dir }}/scripts/Windows/install_dotnet_devpack.ps1",
-            "{{ template_dir }}/scripts/Windows/install_dotnet_sdk.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}"
-    },
-    {
-        "type": "powershell",
-        "scripts":[
             "{{ template_dir }}/scripts/Windows/install_appveyor_build_agent_core.ps1",
             "{{ template_dir }}/scripts/Windows/enable_autologon.ps1"
         ],
@@ -149,7 +139,7 @@
       "source_ami_filter": {
         "filters": {
         "virtualization-type": "hvm",
-        "name": "Windows_Server-2016-English-Full-Base*",
+        "name": "Windows_Server-2019-English-Full-Base*",
         "root-device-type": "ebs"
         },
         "owners": ["801119661308"],

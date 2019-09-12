@@ -39,12 +39,15 @@ Function Connect-AppVeyorToAzure {
     .PARAMETER ImageTemplate
         If you are familiar with the Hashicorp Packer, you can replace template used by this command with another one.  Default value generated is based on the value of 'ImageOs' parameter.
 
+    .PARAMETER ImageFeatures
+        Comma-separated list of feature IDs to be installed on the image. Available IDs can be found at https://github.com/appveyor/build-images/blob/master/byoc/image-builder-metadata.json under 'installedFeatures'.
+
         .EXAMPLE
         Connect-AppVeyorToAzure
         Let command collect all required information.
 
         .EXAMPLE
-        Connect-AppVeyorToAzure -ApiToken XXXXXXXXXXXXXXXXXXXXX -AppVeyorUrl "https://ci.appveyor.com" -Location westus -VmSize Standard_D2s_v3 -SkipDisclaimer -UseCurrentAzureLogin
+        Connect-AppVeyorToAzure -AppVeyorUrl "https://ci.appveyor.com" -ApiToken XXXXXXXXXXXXXXXXXXXXX -Location westus -VmSize Standard_D2s_v3 -SkipDisclaimer -UseCurrentAzureLogin
         Run command with all required parameters, and command will ask no questions. It will create resources in Azure West US region and connect them to the hosted AppVeyor.
     #>
 
@@ -510,6 +513,7 @@ Function Connect-AppVeyorToAzure {
             -var "image_description=$ImageName" `
             -var "datemark=$date_mark" `
             -var "packer_manifest=$packer_manifest" `
+            -var "OPT_FEATURES=$ImageFeatures" `
             $ImageTemplate
 
             #Get VHD path
@@ -610,7 +614,7 @@ Function Connect-AppVeyorToAzure {
                     artifactStorageName = $azure_artifact_storage_name
                     buildCacheName = $azure_cache_storage_name
                     failureStrategy = @{
-                        jobStartTimeoutSeconds = 180
+                        jobStartTimeoutSeconds = 300
                         provisioningAttempts = 3
                     }
                     cloudSettings = @{
@@ -665,7 +669,7 @@ Function Connect-AppVeyorToAzure {
             else {
                 $settings.settings.buildCacheName = $azure_cache_storage_name 
             }
-            $settings.settings.failureStrategy.jobStartTimeoutSeconds = 180
+            $settings.settings.failureStrategy.jobStartTimeoutSeconds = 300
             $settings.settings.failureStrategy.provisioningAttempts = 3
             $settings.settings.cloudSettings.azureAccount.clientId = $azure_client_id
             $settings.settings.cloudSettings.azureAccount.clientSecret = $azure_client_secret

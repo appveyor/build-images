@@ -39,12 +39,15 @@ Function Connect-AppVeyorToGCE {
     .PARAMETER ImageTemplate
         If you are familiar with Hashicorp Packer, you can replace template used by this command with another one.  Default value generated is based on the value of 'ImageOs' parameter.
 
+    .PARAMETER ImageFeatures
+        Comma-separated list of feature IDs to be installed on the image. Available IDs can be found at https://github.com/appveyor/build-images/blob/master/byoc/image-builder-metadata.json under 'installedFeatures'.
+
         .EXAMPLE
         Connect-AppVeyorToGCE
         Let command collect all required information
 
         .EXAMPLE
-        Connect-AppVeyorToGCE -ApiToken XXXXXXXXXXXXXXXXXXXXX -AppVeyorUrl https://ci.appveyor.com -SkipDisclaimer -Zone us-east1-b -VmSize n1-standard-1
+        Connect-AppVeyorToGCE -AppVeyorUrl https://ci.appveyor.com -ApiToken XXXXXXXXXXXXXXXXXXXXX -SkipDisclaimer -Zone us-east1-b -VmSize n1-standard-1
         Command will create resources us-east1-b zone, and will connect it to hosted AppVeyor. Machine type n1-standard-1 will be used for both Packer and AppVeyor builds.
     #>
 
@@ -83,7 +86,10 @@ Function Connect-AppVeyorToGCE {
       [string]$ImageName,
 
       [Parameter(Mandatory=$false)]
-      [string]$ImageTemplate
+      [string]$ImageTemplate,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImageFeatures
     )
 
     function ExitScript {
@@ -387,6 +393,7 @@ Function Connect-AppVeyorToGCE {
             -var "image_description=$ImageName" `
             -var "datemark=$date_mark" `
             -var "packer_manifest=$packer_manifest" `
+            -var "OPT_FEATURES=$ImageFeatures" `
             $ImageTemplate
 
             #Get image path
