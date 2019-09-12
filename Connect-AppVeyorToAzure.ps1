@@ -492,7 +492,7 @@ Function Connect-AppVeyorToAzure {
         #Run Packer to create an image
         if (-not $VhdFullPath) {
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
-            Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to skip Packert build and reuse existing VHD. It must be in '$($azure_storage_account)' storage account."
+            Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to skip Packer build and reuse existing VHD. It must be in '$($azure_storage_account)' storage account."
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
