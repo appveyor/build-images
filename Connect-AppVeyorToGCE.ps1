@@ -376,8 +376,7 @@ Function Connect-AppVeyorToGCE {
             }
 
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
-            Write-Warning "Add '-ImageId' parameter with if you want to reuse existing image. Enter Ctrl-C to stop the command and restart with '-ImageId' parameter or do nothing and let the command create a new image.`nWaiting 10 seconds..."
-            for ($i = 10; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
+            Write-Warning "Add '-ImageId' parameter with if you want to to skip Packert build and reuse existing image."
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"

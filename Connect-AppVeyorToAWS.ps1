@@ -503,8 +503,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
         #Run Packer to create an AMI
         if (-not $AmiId) {
             Write-host "`nRunning Packer to create a basic build VM AMI..." -ForegroundColor Cyan
-            Write-Warning "Add '-AmiId' parameter with if you want to reuse existing AMI (which must be in '$($aws_region_full)' region). Enter Ctrl-C to stop the command and restart with '-AmiId' parameter or do nothing and let the command create a new AMI.`nWaiting 10 seconds..."
-            for ($i = 10; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
+            Write-Warning "Add '-AmiId' parameter with if you want to to skip Packert build and and reuse existing AMI. It must be in '$($aws_region_full)' region)."
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
