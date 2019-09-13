@@ -75,6 +75,26 @@
             {
                "id":"nodejs_latest",
                "title":"Node.js"
+            },
+            {
+               "id":"vs2017",
+               "title":"Visual Studio Community 2017 version 15.9.14"
+            },
+            {
+               "id":"vs2019",
+               "title":"Visual Studio Community 2019 version 16.2.3"
+            },
+            {
+               "id":"xunit_20",
+               "title":"xUnit 2.0.0 RTM"
+            },
+            {
+               "id":"nunit",
+               "title":"NUnit 2.6.4"
+            },
+            {
+               "id":"nunit3",
+               "title":"NUnit 3.9.0"
             }
          ]
       },
