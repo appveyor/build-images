@@ -78,11 +78,11 @@
             },
             {
                "id":"vs2017",
-               "title":"Visual Studio Community 2017 version 15.9.14"
+               "title":"Visual Studio Community 2017"
             },
             {
                "id":"vs2019",
-               "title":"Visual Studio Community 2019 version 16.2.3"
+               "title":"Visual Studio Community 2019"
             },
             {
                "id":"xunit_20",
