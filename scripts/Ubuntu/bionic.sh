@@ -100,12 +100,15 @@ function install_cvs() {
     apt-get -y -q install subversion
 
     log_version dpkg -l git mercurial subversion
-
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_svn)
-        configure_svn" ||
-            return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_svn)
+            configure_svn" ||
+                return $?
+    else
+        echo "[WARNING] User ${USER_NAME} not found. Skipping configure_svn"
+    fi
 }
 
 function install_mongodb() {

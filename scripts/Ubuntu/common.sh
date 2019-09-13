@@ -257,8 +257,12 @@ function configure_apt() {
     # Disable daily apt unattended updates.
     write_line /etc/apt/apt.conf.d/10periodic 'APT::Periodic::Enable "0";' 'APT::Periodic::Enable '
     # configure appveyor env variables for future apt-get upgrades
-    write_line "$USER_HOME/.profile" 'export DEBIAN_FRONTEND=noninteractive'
-    write_line "$USER_HOME/.profile" 'export ACCEPT_EULA=Y'
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "$USER_HOME/.profile" 'export DEBIAN_FRONTEND=noninteractive'
+        write_line "$USER_HOME/.profile" 'export ACCEPT_EULA=Y'
+    else
+        echo "[WARNING] User ${USER_NAME} not found. User's profile will not be configured."
+    fi
     return 0
 }
 
@@ -403,31 +407,34 @@ function install_nodejs() {
 }
 
 function install_nvm_and_nodejs() {
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_nvm)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        install_nvm" &&
-    su -l ${USER_NAME} -c "
-        [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_nvm_nodejs)
-        install_nvm_nodejs ${CURRENT_NODEJS}" ||
-    return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_nvm)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            install_nvm" &&
+        su -l ${USER_NAME} -c "
+            [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+            USER_NAME=${USER_NAME}
+            $(declare -f log_version)
+            $(declare -f install_nvm_nodejs)
+            install_nvm_nodejs ${CURRENT_NODEJS}" ||
+        return $?
+    else
+        echo "[WARNING] User ${USER_NAME} not found. Cannot install NVM and Nodejs"
+    fi
 }
 
 function install_nvm() {
     # this must be executed as appveyor user
     if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+        echo "This script must be run as ${USER_NAME} user. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     #TODO have to figure out latest release version automatically
     curl -fsSLo- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-
     write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
     write_line "${HOME}/.profile" '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'
     write_line "${HOME}/.profile" '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'
@@ -494,11 +501,15 @@ function install_gitlfs() {
     apt-get -y -q install git-lfs ||
         { echo "Failed to install git lfs." 1>&2; return 10; }
     log_version dpkg -l git-lfs
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_gitlfs)
-        configure_gitlfs"  ||
-            return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_gitlfs)
+            configure_gitlfs"  ||
+                return $?
+    else
+        echo "[WARNING] User ${USER_NAME} not found. Skipping configure_gitlfs"
+    fi
 }
 
 function configure_gitlfs() {
@@ -526,11 +537,15 @@ function install_cvs() {
     apt-get -y -q install subversion
 
     log_version dpkg -l git mercurial subversion
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_svn)
-        configure_svn" ||
-            return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_svn)
+            configure_svn" ||
+                return $?
+    else
+        echo "[WARNING] User ${USER_NAME} not found. Skipping configure_svn"
+    fi
 }
 
 function configure_svn() {
@@ -730,8 +745,12 @@ function install_dotnets() {
         { echo "[ERROR] Cannot install dotnet packages ${PACKAGES[*]}." 1>&2; return 20; }
 
     #set env
-    write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
-    write_line "$USER_HOME/.profile" "export DOTNET_PRINT_TELEMETRY_MESSAGE=false" 'DOTNET_PRINT_TELEMETRY_MESSAGE='
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
+        write_line "$USER_HOME/.profile" "export DOTNET_PRINT_TELEMETRY_MESSAGE=false" 'DOTNET_PRINT_TELEMETRY_MESSAGE='
+    else
+        echo "[WARNING] User ${USER_NAME} not found. User's profile will not be configured."
+    fi
 
     #cleanup
     if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
@@ -828,17 +847,21 @@ function install_jdks() {
         return $?
     install_jdk 14 https://download.java.net/java/early_access/jdk14/10/GPL/openjdk-14-ea+10_linux-x64_bin.tar.gz ||
         return $?
-    OFS=$IFS
-    IFS=$'\n'
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_jdk)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
-            return $?
-    IFS=$OFS
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        OFS=$IFS
+        IFS=$'\n'
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_jdk)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            configure_jdk" <<< "${PROFILE_LINES[*]}" ||
+                return $?
+        IFS=$OFS
+    else
+        echo "[WARNING] User ${USER_NAME} not found. Skipping configure_jdk"
+    fi
 }
 
 function install_jdk() {
@@ -889,17 +912,21 @@ function configure_jdk() {
 }
 
 function install_rvm_and_rubies() {
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_rvm)
-        install_rvm" &&
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
-        $(declare -f log_version)
-        $(declare -f install_rubies)
-        install_rubies" ||
-            return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_rvm)
+            install_rvm" &&
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
+            $(declare -f log_version)
+            $(declare -f install_rubies)
+            install_rubies" ||
+                return $?
+    else
+        echo "[WARNING] User ${USER_NAME} not found. Cannot install RVM and rubies"
+    fi
 }
 
 function install_rvm() {
@@ -946,20 +973,24 @@ function install_rubies() {
 }
 
 function install_gvm_and_golangs() {
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_gvm)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        install_gvm" &&
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        source \"${HOME}/.gvm/scripts/gvm\"
-        $(declare -f log_version)
-        $(declare -f install_golangs)
-        install_golangs" ||
-            return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_gvm)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            install_gvm" &&
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            source \"${HOME}/.gvm/scripts/gvm\"
+            $(declare -f log_version)
+            $(declare -f install_golangs)
+            install_golangs" ||
+                return $?
+    else
+        echo "[WARNING] User ${USER_NAME} not found. Cannot install GVM and Go Langs"
+    fi
 }
 
 function install_gvm(){
@@ -982,10 +1013,7 @@ function install_gvm(){
     fi
     # gvm-installer do not fix .profile for non-interactive shell
     [[ -s "${HOME}/.gvm/scripts/gvm" ]] && (
-        local file
-        for file in "${HOME}/.profile"; do
-            write_line "${file}" '[[ -s "/home/appveyor/.gvm/scripts/gvm" ]] && source "/home/appveyor/.gvm/scripts/gvm"'
-        done
+            write_line "${HOME}/.profile" '[[ -s "/home/appveyor/.gvm/scripts/gvm" ]] && source "/home/appveyor/.gvm/scripts/gvm"'
     ) || true
 }
 
@@ -1041,15 +1069,19 @@ function install_docker() {
 
 function install_MSSQLServer(){
     if [[ -z "${MSSQL_SA_PASSWORD-}" || "${#MSSQL_SA_PASSWORD}" = "0" ]]; then MSSQL_SA_PASSWORD="Password12!"; fi
-    install_sqlserver &&
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
-        $(declare -f configure_sqlserver)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_sqlserver" &&
+    install_sqlserver
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+            $(declare -f configure_sqlserver)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            configure_sqlserver"
+    else
+        echo "[WARNING] User ${USER_NAME} not found. Cannot installconfigure MS SQL Server"
+    fi
     disable_sqlserver ||
             return $?
 }
@@ -1478,7 +1510,11 @@ function install_octo() {
     mkdir -p /opt/octopus &&
     tar zxf OctopusTools.tar.gz -C /opt/octopus ||
         { echo "[ERROR] Cannot unpack and copy OctopusTools." 1>&2; popd; return 20; }
-    write_line "${HOME}/.profile" 'add2path /opt/octopus'
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "${HOME}/.profile" 'add2path /opt/octopus'
+    else
+        echo "[WARNING] User ${USER_NAME} not found. User's profile will not be configured."
+    fi
     log_version /opt/octopus/Octo version
     # cleanup
     rm OctopusTools.tar.gz
