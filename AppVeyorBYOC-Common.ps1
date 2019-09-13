@@ -284,3 +284,17 @@ function SetBuildWorkerImage ($headers, $ImageName, $ImageOs) {
         Write-host "AppVeyor build worker image '$ImageName' already exists." -ForegroundColor DarkGray
     }
 }
+
+function CreatePassword {
+    $upper = (65..90) | Get-Random | % {[char]$_}
+    $lower = (97..122) | Get-Random | % {[char]$_}
+    $symbol = @('!', '@', '#', '$', '%', '^', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
+    $base = (New-Guid).ToString().SubString(0, 17).Replace("-", "").ToCharArray()
+    $bound1 = [int]($base.Length/3)
+    $bound2 = [int]($base.Length/3)*2
+    $bound3 = $base.Length - 1
+    $base[(Get-Random -Minimum 0 -Maximum $bound1)] = $upper
+    $base[(Get-Random -Minimum $bound1 -Maximum $bound2)] = $lower
+    $base[(Get-Random -Minimum $bound2 -Maximum $bound3)] = $symbol
+    return -join $base
+}

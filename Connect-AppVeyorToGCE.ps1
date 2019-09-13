@@ -155,7 +155,7 @@ Function Connect-AppVeyorToGCE {
 
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
-    $install_password = (Get-Culture).TextInfo.ToTitleCase((New-Guid).ToString().SubString(0, 15).Replace("-", "")) + @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
+    $install_password = CreatePassword
 
     $gce_network_name = "$($CommonPrefix)-network"    
     $gce_firewall_name = if ($ImageOs -eq "Windows") {"$($CommonPrefix)-rdp"} elseif ($ImageOs -eq "Linux") {"$($CommonPrefix)-ssh"}
