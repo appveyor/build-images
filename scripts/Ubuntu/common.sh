@@ -146,13 +146,20 @@ function check_apt_locks() {
     local LOCK_TIMEOUT=60
     local START_TIME=$(date +%s)
     local END_TIME=$(( START_TIME + LOCK_TIMEOUT ))
+    if ! command -v lsof >/dev/null; then
+        echo "[WARNING] lsof command not found. Are we in docker container?"
+        echo "[WARNING] Skipping check_apt_locks"
+        return 1
+    fi
     while [ "$(date +%s)" -lt "$END_TIME" ]; do
-        if lsof /var/lib/apt/lists/lock; then
+        if fuser /var/lib/apt/lists/lock; then
             sleep 1
         else
+            #apt succcessfully unlocked
             return 0
         fi
     done
+
     return 1
 }
 
