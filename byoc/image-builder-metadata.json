@@ -95,6 +95,26 @@
             {
                "id":"nunit3",
                "title":"NUnit 3.9.0"
+            },
+            {
+               "id":"vstest_console_logger",
+               "title":"AppVeyor VSTest.Console logger"
+            },
+            {
+               "id":"ruby",
+               "title":"Ruby with DevKit (1.9.3 -  2.6.3)"
+            },
+            {
+               "id":"miniconda",
+               "title":"Miniconda"
+            },
+            {
+               "id":"python",
+               "title":"Python (2.6.6 - 3.7.4)"
+            },
+            {
+               "id":"openssl",
+               "title":"OpenSSL (1.0.2 - 1.1.1)"
             }
          ]
       },
