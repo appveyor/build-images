@@ -13,7 +13,7 @@ function CreateUser {
 
 CreateUser
 $count = 0; 
-while (-not (Get-LocalUser -Name $env:appveyor_user -ErrorAction Ignore) -and $count -lt 5) {
+while (-not (Get-LocalUser -Name $env:appveyor_user -ErrorAction Ignore) -and $count -lt 3) {
     CreateUser
     sleep 1; 
     $count++

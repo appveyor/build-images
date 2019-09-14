@@ -145,8 +145,6 @@ Function Connect-AppVeyorToAzure {
     $azure_storage_container = "$($CommonPrefix)-vms"
     $azure_cache_storage_name = "$($CommonPrefix)-azure-cache"
     $azure_artifact_storage_name = "$($CommonPrefix)-azure-artifacts"
-
-    $azure_service_principal_name = "$($CommonPrefix)-sp"
     $azure_resource_group_name = "$($CommonPrefix)-rg"
     $azure_vnet_name = "$($CommonPrefix)-vnet"
     $azure_subnet_name = "$($CommonPrefix)-subnet"
@@ -218,30 +216,6 @@ Function Connect-AppVeyorToAzure {
          $disclaimer = Read-Host
     }
     try {
-        #Get or create service principal
-        Write-host "`nGetting or creating Azure AD service principal..." -ForegroundColor Cyan
-        $sp = Get-AzADServicePrincipal -DisplayName $azure_service_principal_name
-        $app = Get-AzADApplication -DisplayName $azure_service_principal_name
-        if (-not $sp -and $app) {
-            Write-Warning "Service principal '$($azure_service_principal_name)' does not exist, but Azure AD application with the same name already exists." 
-            "`nPlease either delete that Azure Ad Application or use another service principal name."
-            ExitScript
-        }
-        if (-not $sp) {
-            $sp = New-AzADServicePrincipal -DisplayName $azure_service_principal_name -Role Contributor
-            $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($sp.Secret)
-            $azure_client_secret = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-        }
-        # reset password if service principal already exists 
-        else {
-            Remove-AzADSpCredential -DisplayName $sp.DisplayName -Force
-            $newCredential = New-AzADSpCredential -ObjectId $sp.Id -EndDate (get-date).AddYears(10)
-            $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($newCredential.Secret)
-            $azure_client_secret = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-        }
-        $azure_client_id = $sp.ApplicationId
-        Write-host "Using Azure AD service principal '$($azure_service_principal_name)'" -ForegroundColor DarkGray
-
         #Select location
         Write-host "`nSelecting location..." -ForegroundColor Cyan
         $locations = Get-AzLocation
@@ -491,6 +465,8 @@ Function Connect-AppVeyorToAzure {
 
         #Run Packer to create an image
         if (-not $VhdFullPath) {
+            $packer_service_principal_name = "$($CommonPrefix)-packer-sp"
+            $packer_azure_client = CreateServicePrincipal $packer_service_principal_name
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
             Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to skip Packer build and reuse existing VHD. It must be in '$($azure_storage_account)' storage account."
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
@@ -499,8 +475,8 @@ Function Connect-AppVeyorToAzure {
             & packer build '--only=azure-arm' `
             -var "azure_subscription_id=$azure_subscription_id" `
             -var "azure_tenant_id=$azure_tenant_id" `
-            -var "azure_client_id=$azure_client_id" `
-            -var "azure_client_secret=$azure_client_secret" `
+            -var "azure_client_id=$($packer_azure_client.azure_client_id)" `
+            -var "azure_client_secret=$($packer_azure_client.azure_client_secret)" `
             -var "azure_location=$Location" `
             -var "azure_resource_group_name=$azure_resource_group_name" `
             -var "azure_storage_account=$azure_storage_account" `
@@ -513,6 +489,7 @@ Function Connect-AppVeyorToAzure {
             -var "packer_manifest=$packer_manifest" `
             -var "OPT_FEATURES=$ImageFeatures" `
             $ImageTemplate
+            DeleteServicePrincipal $packer_azure_client.service_principal_name
 
             #Get VHD path
             if (-not (test-path $packer_manifest)) {
@@ -523,7 +500,7 @@ Function Connect-AppVeyorToAzure {
             $manifest = Get-Content -Path $packer_manifest | ConvertFrom-Json
             $VhdFullPath = $manifest.builds[0].artifact_id
             $vhd_path = $VhdFullPath.Replace("https://$($azure_storage_account).blob.core.windows.net/", "")
-            Remove-Item $packer_manifest -Force -ErrorAction Ignore
+            Remove-Item $packer_manifest -Force -ErrorAction Ignore            
             Write-host "Build image VHD created by Packer and available at '$($VhdFullPath)'" -ForegroundColor DarkGray
             Write-Host "Default build VM credentials: User: 'appveyor', Password: '$($install_password)'. Normally you do not need this password as it will be reset to a random string when the build starts. However you can use it if you need to create and update a VM from the Packer-created VHD manually"  -ForegroundColor DarkGray
         }
@@ -600,11 +577,13 @@ Function Connect-AppVeyorToAzure {
         }
 
         #Create or update cloud
-        Write-host "`nCreating or updating build environment on AppVeyor..." -ForegroundColor Cyan
         $build_cloud_name = "Azure $Location $VmSize"
+        $cloud_service_principal_name = $build_cloud_name.Replace(" ", "-").Trim() + "-sp"
         $clouds = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get
         $cloud = $clouds | ? ({$_.name -eq $build_cloud_name})[0]
         if (-not $cloud) {
+            $cloud_azure_client = CreateServicePrincipal $cloud_service_principal_name
+            Write-host "`nCreating build environment on AppVeyor..." -ForegroundColor Cyan
             $body = @{
                 name = $build_cloud_name
                 cloudType = "Azure"
@@ -618,8 +597,8 @@ Function Connect-AppVeyorToAzure {
                     }
                     cloudSettings = @{
                         azureAccount =@{
-                            clientId = $azure_client_id
-                            clientSecret = $azure_client_secret
+                            clientId = $($cloud_azure_client.azure_client_id)
+                            clientSecret = $($cloud_azure_client.azure_client_secret)
                             tenantId = $azure_tenant_id
                             subscriptionId = $azure_subscription_id
                         }
@@ -652,6 +631,7 @@ Function Connect-AppVeyorToAzure {
             Write-host "AppVeyor build environment '$($build_cloud_name)' has been created." -ForegroundColor DarkGray
         }
         else {
+            Write-host "`nUpdating build environment on AppVeyor..." -ForegroundColor Cyan
             $settings = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds/$($cloud.buildCloudId)" -Headers $headers -Method Get
             $settings.name = $build_cloud_name
             $settings.cloudType = "Azure"
@@ -670,8 +650,6 @@ Function Connect-AppVeyorToAzure {
             }
             $settings.settings.failureStrategy.jobStartTimeoutSeconds = 300
             $settings.settings.failureStrategy.provisioningAttempts = 3
-            $settings.settings.cloudSettings.azureAccount.clientId = $azure_client_id
-            $settings.settings.cloudSettings.azureAccount.clientSecret = $azure_client_secret
             $settings.settings.cloudSettings.azureAccount.tenantId = $azure_tenant_id
             $settings.settings.cloudSettings.azureAccount.subscriptionId = $azure_subscription_id
             $settings.settings.cloudSettings.vmConfiguration.location = $Location
