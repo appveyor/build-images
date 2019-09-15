@@ -212,7 +212,37 @@ Function Connect-AppVeyorToDocker {
         docker pull $ImageTemplate
 
         # tag image
-        docker tag $ImageTemplate $dockerImageName
+        if ($ImageFeatures -or $ImageCustomScript) {
+            # build new image
+            Write-Host "`nBuilding a new Docker image with custom features and/or script" -ForegroundColor Cyan
+            $tmp = $env:TEMP
+            if ($isMacOS -or $isLinux) {
+                $tmp = "/tmp"
+            }
+
+            # create temp dir for Dockerfile
+            $dockerTempPath = Join-Path -Path $tmp -ChildPath ([Guid]::NewGuid().ToString('N'))
+            $dockerTempPath
+            New-Item $dockerTempPath -Type Directory | Out-Null
+            $dockerfilePath = Join-Path -Path $dockerTempPath -ChildPath 'Dockerfile'
+            
+            if ($ImageOs -eq 'Linux') {
+                $customScriptPath = Join-Path -Path $dockerTempPath -ChildPath 'script.sh'
+                $decodedScript = [Text.Encoding]::UTF8.GetString(([Convert]::FromBase64String($ImageCustomScript)))
+                [IO.File]::WriteAllText($customScriptPath, $decodedScript.Replace("`r`n", "`n"))
+                [IO.File]::WriteAllText($dockerfilePath, "FROM $ImageTemplate
+COPY ./script.sh .
+RUN chmod +x ./script.sh && ./script.sh".Replace("`r`n", "`n"))
+            }
+
+            docker build -t $dockerImageName -f $dockerfilePath $dockerTempPath
+
+            Remove-Item $dockerTempPath -Force -Recurse
+
+        } else {
+            # just tag existing one
+            docker tag $ImageTemplate $dockerImageName
+        }
 
         Write-host "`nEnsure build worker image is available for AppVeyor projects" -ForegroundColor Cyan
         $images = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-worker-images" -Headers $headers -Method Get
