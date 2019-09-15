@@ -41,7 +41,7 @@ network:
 
     # rename host
     if [[ -n "${HOST_NAME-}" ]]; then
-        hostnamectl set-hostname "${HOST_NAME}"
+        echo "${HOST_NAME}" > /etc/hostname
     fi
 }
 
