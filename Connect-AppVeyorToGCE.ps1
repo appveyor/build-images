@@ -155,7 +155,7 @@ Function Connect-AppVeyorToGCE {
 
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
-    $install_password = (Get-Culture).TextInfo.ToTitleCase((New-Guid).ToString().SubString(0, 15).Replace("-", "")) + @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
+    $install_password = CreatePassword
 
     $gce_network_name = "$($CommonPrefix)-network"    
     $gce_firewall_name = if ($ImageOs -eq "Windows") {"$($CommonPrefix)-rdp"} elseif ($ImageOs -eq "Linux") {"$($CommonPrefix)-ssh"}
@@ -376,8 +376,7 @@ Function Connect-AppVeyorToGCE {
             }
 
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
-            Write-Warning "Add '-ImageId' parameter with if you want to reuse existing image. Enter Ctrl-C to stop the command and restart with '-ImageId' parameter or do nothing and let the command create a new image.`nWaiting 30 seconds..."
-            for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
+            Write-Warning "Add '-ImageId' parameter with if you want to to skip Packer build and reuse existing image."
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
@@ -599,27 +598,7 @@ Function Connect-AppVeyorToGCE {
             Write-host "AppVeyor build environment '$($build_cloud_name)' has been updated." -ForegroundColor DarkGray
         }
 
-        Write-host "`nEnsuring build worker image is available for AppVeyor projects..." -ForegroundColor Cyan
-        $images = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Method Get
-        $image = $images | ? ({$_.name -eq $ImageName})[0]
-        $osType = if ($ImageOs -eq "Windows") {"Windows"} elseif ($ImageOs -eq "Linux") {"Ubuntu"}
-        if (-not $image) {
-            $body = @{
-                name = $ImageName
-                osType = $osType
-            }
-
-            $jsonBody = $body | ConvertTo-Json
-            Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Post | Out-Null
-            Write-host "AppVeyor build worker image '$($ImageName)' has been created." -ForegroundColor DarkGray
-        }
-        else {
-            $image.name = $ImageName
-            $image.osType = $osType
-            $jsonBody = $image | ConvertTo-Json
-            Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-worker-images" -Headers $headers -Body $jsonBody  -Method Put | Out-Null
-            Write-host "AppVeyor build worker image '$($ImageName)' has been updated." -ForegroundColor DarkGray
-        }
+        SetBuildWorkerImage $headers $ImageName $ImageOs
 
         $StopWatch.Stop()
         $completed = "{0:hh}:{0:mm}:{0:ss}" -f $StopWatch.elapsed

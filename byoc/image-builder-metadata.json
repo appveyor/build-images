@@ -75,6 +75,70 @@
             {
                "id":"nodejs_latest",
                "title":"Node.js"
+            },
+            {
+               "id":"vs2017",
+               "title":"Visual Studio Community 2017"
+            },
+            {
+               "id":"vs2019",
+               "title":"Visual Studio Community 2019"
+            },
+            {
+               "id":"xunit_20",
+               "title":"xUnit 2.0.0 RTM"
+            },
+            {
+               "id":"nunit",
+               "title":"NUnit 2.6.4"
+            },
+            {
+               "id":"nunit3",
+               "title":"NUnit 3.9.0"
+            },
+            {
+               "id":"vstest_console_logger",
+               "title":"AppVeyor VSTest.Console logger"
+            },
+            {
+               "id":"ruby",
+               "title":"Ruby with DevKit (1.9.3 -  2.6.3)"
+            },
+            {
+               "id":"miniconda",
+               "title":"Miniconda"
+            },
+            {
+               "id":"python",
+               "title":"Python (2.6.6 - 3.7.4)"
+            },
+            {
+               "id":"openssl",
+               "title":"OpenSSL (1.0.2 - 1.1.1)"
+            },
+            {
+               "id":"cmake",
+               "title":"CMake 3.15.1"
+            },
+            {
+               "id":"postgres96",
+               "title":"PostgreSQL 9.6 "
+            },
+            {
+               "id":"postgres10",
+               "title":"PostgreSQL 10.6 "
+            },
+            {
+               "id":"postgres11",
+               "title":"PostgreSQL 11.1"
+            },
+            {
+               "id":"aws_cli",
+               "title":"AWS CLI (latest)"
+            },
+            {
+               "id":"azure_cli",
+               "title":"Microsoft Azure (latest)"
             }
          ]
       },

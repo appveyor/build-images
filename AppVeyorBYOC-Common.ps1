@@ -271,3 +271,89 @@ function ParseImageFeatures ($imageFeatures, $imageTemplate, $imageOs) {
     return $imageTemplateCustom
 }
 
+function SetBuildWorkerImage ($headers, $ImageName, $ImageOs) {
+    Write-host "`nEnsure build worker image is available for AppVeyor projects" -ForegroundColor Cyan
+    $images = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-worker-images" -Headers $headers -Method Get
+    $image = $images | Where-Object ({$_.name -eq $ImageName})[0]
+    if (-not $image) {
+        $body = @{
+            name = $imageName
+            osType = $ImageOs
+        }
+
+        $jsonBody = $body | ConvertTo-Json
+        Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-worker-images" -Headers $headers -Body $jsonBody -Method Post | Out-Null
+        Write-host "AppVeyor build worker image '$ImageName' has been created." -ForegroundColor DarkGray
+    } else {
+        Write-host "AppVeyor build worker image '$ImageName' already exists." -ForegroundColor DarkGray
+    }
+}
+
+function CreatePassword {
+    $upper = (65..90) | Get-Random | % {[char]$_}
+    $lower = (97..122) | Get-Random | % {[char]$_}
+    $symbol = @('!', '@', '#', '$', '%', '^', '*', '(', ')', '_', '+', '=')[(Get-Random -Maximum 12)]
+    $base = (New-Guid).ToString().SubString(0, 17).Replace("-", "").ToCharArray()
+    $bound1 = [int]($base.Length/3)
+    $bound2 = [int]($base.Length/3)*2
+    $bound3 = $base.Length - 1
+    $base[(Get-Random -Minimum 0 -Maximum $bound1)] = $upper
+    $base[(Get-Random -Minimum $bound1 -Maximum $bound2)] = $lower
+    $base[(Get-Random -Minimum $bound2 -Maximum $bound3)] = $symbol
+    return -join $base
+}
+
+function DeleteServicePrincipal ($service_principal_name) {
+    if (-not $service_principal_name) {
+        return
+    }
+    if (Get-AzADServicePrincipal -DisplayName $service_principal_name) {
+        Write-host "`nDeleting Azure AD service principal '$service_principal_name'..." -ForegroundColor Cyan
+        Remove-AzADServicePrincipal -DisplayName $service_principal_name -Force -ErrorAction Ignore
+        Remove-AzADApplication -DisplayName  $service_principal_name -Force -ErrorAction Ignore
+    }
+}
+
+function CreateServicePrincipal ($service_principal_name) {
+    $sp = Get-AzADServicePrincipal -DisplayName $service_principal_name
+    $app = Get-AzADApplication -DisplayName $service_principal_name
+    if (-not $sp -and $app) {
+        Write-Warning "`nService principal '$($service_principal_name)' does not exist, but Azure AD application with the same name already exists." 
+        "`nPlease either delete that Azure Ad Application or use another service principal name."
+        ExitScript
+    }
+    if (-not $sp) {
+        Write-host "`nCreating Azure AD service principal $service_principal_name..." -ForegroundColor Cyan
+        $sp = New-AzADServicePrincipal -DisplayName $service_principal_name -Role Contributor
+        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($sp.Secret)
+        $azure_client_secret = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+
+        $count = 0;
+        while (-not ((Get-AzADServicePrincipal -DisplayName $service_principal_name) -and (Get-AzADApplication -DisplayName $service_principal_name)) -and $count -lt 60){
+            sleep 1
+            Write-Host "." -NoNewline
+            $count++
+        }
+        if (-not ((Get-AzADServicePrincipal -DisplayName $service_principal_name) -and (Get-AzADApplication -DisplayName $service_principal_name))) {
+            Write-Warning "`nUnable to create service principal '$($service_principal_name)'."
+            ExitScript
+        }
+    }
+    else {
+        # Create new if service principal already exists.
+        # Used to reset password before, but there are two issues here
+           # - password reset seems takes time to "propagate"
+           # - it can be disruptive behavior
+        $new_service_principal_name = "$service_principal_name-$((New-Guid).ToString().SubString(0, 8))"
+        Write-Warning "`nAzure AD service principal and application with the name '$service_principal_name' already exist, creating new one with name '$new_service_principal_name'. Consider deleting '$service_principal_name' service principal and application if they are not being used with any other service."
+        CreateServicePrincipal $new_service_principal_name
+        return
+    }
+    $azure_client_id = $sp.ApplicationId
+    Write-host "Using Azure AD service principal '$($service_principal_name)'" -ForegroundColor DarkGray
+    return @{
+                "service_principal_name" = $service_principal_name
+                "azure_client_id" = $azure_client_id
+                "azure_client_secret" = $azure_client_secret
+            }
+}
