@@ -268,7 +268,7 @@ function configure_apt() {
         write_line "$USER_HOME/.profile" 'export DEBIAN_FRONTEND=noninteractive'
         write_line "$USER_HOME/.profile" 'export ACCEPT_EULA=Y'
     else
-        echo "[WARNING] User ${USER_NAME} not found. User's profile will not be configured."
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
     fi
     return 0
 }
@@ -430,7 +430,7 @@ function install_nvm_and_nodejs() {
             install_nvm_nodejs ${CURRENT_NODEJS}" ||
         return $?
     else
-        echo "[WARNING] User ${USER_NAME} not found. Cannot install NVM and Nodejs"
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install NVM and Nodejs"
     fi
 }
 
@@ -515,7 +515,7 @@ function install_gitlfs() {
             configure_gitlfs"  ||
                 return $?
     else
-        echo "[WARNING] User ${USER_NAME} not found. Skipping configure_gitlfs"
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_gitlfs"
     fi
 }
 
@@ -551,7 +551,7 @@ function install_cvs() {
             configure_svn" ||
                 return $?
     else
-        echo "[WARNING] User ${USER_NAME} not found. Skipping configure_svn"
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_svn"
     fi
 }
 
@@ -756,7 +756,7 @@ function install_dotnets() {
         write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
         write_line "$USER_HOME/.profile" "export DOTNET_PRINT_TELEMETRY_MESSAGE=false" 'DOTNET_PRINT_TELEMETRY_MESSAGE='
     else
-        echo "[WARNING] User ${USER_NAME} not found. User's profile will not be configured."
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
     fi
 
     #cleanup
@@ -867,7 +867,7 @@ function install_jdks() {
                 return $?
         IFS=$OFS
     else
-        echo "[WARNING] User ${USER_NAME} not found. Skipping configure_jdk"
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_jdk"
     fi
 }
 
@@ -932,7 +932,7 @@ function install_rvm_and_rubies() {
             install_rubies" ||
                 return $?
     else
-        echo "[WARNING] User ${USER_NAME} not found. Cannot install RVM and rubies"
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install RVM and rubies"
     fi
 }
 
@@ -996,7 +996,7 @@ function install_gvm_and_golangs() {
             install_golangs" ||
                 return $?
     else
-        echo "[WARNING] User ${USER_NAME} not found. Cannot install GVM and Go Langs"
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install GVM and Go Langs"
     fi
 }
 
@@ -1087,7 +1087,7 @@ function install_MSSQLServer(){
             $(declare -f replace_line)
             configure_sqlserver"
     else
-        echo "[WARNING] User ${USER_NAME} not found. Cannot installconfigure MS SQL Server"
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot installconfigure MS SQL Server"
     fi
     disable_sqlserver ||
             return $?
@@ -1520,7 +1520,7 @@ function install_octo() {
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         write_line "${HOME}/.profile" 'add2path /opt/octopus'
     else
-        echo "[WARNING] User ${USER_NAME} not found. User's profile will not be configured."
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
     fi
     log_version /opt/octopus/Octo version
     # cleanup

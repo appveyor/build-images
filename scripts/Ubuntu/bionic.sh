@@ -107,7 +107,7 @@ function install_cvs() {
             configure_svn" ||
                 return $?
     else
-        echo "[WARNING] User ${USER_NAME} not found. Skipping configure_svn"
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_svn"
     fi
 }
 
