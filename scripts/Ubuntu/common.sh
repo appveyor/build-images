@@ -1599,9 +1599,9 @@ function cleanup() {
         journalctl --vacuum-time=1s
     fi
     # clean bash_history
-    [-f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
+    [ -f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        cat /dev/null > ${USER_HOME}/.bash_history
+        [ -f ${USER_HOME}/.bash_history ] && cat /dev/null > ${USER_HOME}/.bash_history
         chown ${USER_NAME}:${USER_NAME} -R ${USER_HOME}
     fi
 
