@@ -144,11 +144,12 @@ fi
 
 add_ssh_known_hosts ||
     _continue $?
-configure_sshd ||
-    _abort $?
-configure_uefi ||
-    _abort $?
-configure_network ||
-    _abort $?
-
+if ! $IS_DOCKER; then
+    configure_sshd ||
+        _abort $?
+    configure_uefi ||
+        _abort $?
+    configure_network ||
+        _abort $?
+fi
 cleanup
