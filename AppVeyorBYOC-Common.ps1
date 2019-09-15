@@ -1,3 +1,7 @@
+function CreateSlug($str) {
+    return (($str.ToLower() -replace "[^a-z0-9-]", "-") -replace "-+", "-")
+}
+
 function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
 
     $APPVEYOR_HOST_AGENT_MSI_URL = "https://www.appveyor.com/downloads/appveyor/appveyor-host-agent.msi"

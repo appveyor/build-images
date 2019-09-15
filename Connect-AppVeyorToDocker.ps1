@@ -119,7 +119,7 @@ Function Connect-AppVeyorToDocker {
         $build_cloud_name = "$hostName Docker"
         $hostAuthorizationToken = [Guid]::NewGuid().ToString('N')
 
-        $dockerImageTag = "appveyor-byoc-$ImageName"
+        $dockerImageTag = CreateSlug "appveyor-byoc-$ImageName"
 
         # base image name
         $baseImageName = $ImageTemplate
@@ -227,12 +227,23 @@ Function Connect-AppVeyorToDocker {
             $dockerfilePath = Join-Path -Path $dockerTempPath -ChildPath 'Dockerfile'
             
             if ($ImageOs -eq 'Linux') {
+
+                # build Linux image
                 $customScriptPath = Join-Path -Path $dockerTempPath -ChildPath 'script.sh'
                 $decodedScript = [Text.Encoding]::UTF8.GetString(([Convert]::FromBase64String($ImageCustomScript)))
                 [IO.File]::WriteAllText($customScriptPath, $decodedScript.Replace("`r`n", "`n"))
                 [IO.File]::WriteAllText($dockerfilePath, "FROM $ImageTemplate
 COPY ./script.sh .
 RUN chmod +x ./script.sh && ./script.sh".Replace("`r`n", "`n"))
+            } else {
+
+                # build Windows image
+                $customScriptPath = Join-Path -Path $dockerTempPath -ChildPath 'script.ps1'
+                $decodedScript = [Text.Encoding]::UTF8.GetString(([Convert]::FromBase64String($ImageCustomScript)))
+                [IO.File]::WriteAllText($customScriptPath, "`$ErrorActionPreference = `"Stop`"`n$decodedScript")
+                [IO.File]::WriteAllText($dockerfilePath, "FROM $ImageTemplate
+COPY script.ps1 .
+RUN pwsh -noni -ep unrestricted .\script.ps1")
             }
 
             docker build -t $dockerImageName -f $dockerfilePath $dockerTempPath
