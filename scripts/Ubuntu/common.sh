@@ -152,7 +152,7 @@ function check_apt_locks() {
         return 1
     fi
     while [ "$(date +%s)" -lt "$END_TIME" ]; do
-        if fuser /var/lib/apt/lists/lock; then
+        if lsof /var/lib/apt/lists/lock; then
             sleep 1
         else
             #apt succcessfully unlocked
