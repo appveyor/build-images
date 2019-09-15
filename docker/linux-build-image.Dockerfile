@@ -5,8 +5,6 @@ ENV APPVEYOR_BUILD_AGENT_VERSION=7.0.2366
 
 COPY ./scripts/Ubuntu ./scripts
 
-RUN apt-get update && apt-get install -y curl git mercurial subversion
-
-RUN ./scripts/dockerconfig.sh
+RUN ./scripts/minimalconfig.sh
 
 ENTRYPOINT [ "/opt/appveyor/build-agent/appveyor-build-agent" ]
