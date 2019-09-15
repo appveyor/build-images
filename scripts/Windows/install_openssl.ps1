@@ -1,6 +1,6 @@
-﻿$110Letter = "k"
-$111Letter = "c"
-$102Letter = "s"
+﻿$110Letter = "L"
+$111Letter = "d"
+$102Letter = "t"
 
 function GetUninstallString($productName) {
     $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")

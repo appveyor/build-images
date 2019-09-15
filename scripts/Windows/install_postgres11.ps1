@@ -1,4 +1,7 @@
-﻿Write-Host "Installing PostgreSQL 11.1..." -ForegroundColor Cyan
+﻿Write-Host "Pre-installing vcredist2015 (PostgreSQL 10.6 instalation has issues when doing it)..." -ForegroundColor Cyan
+choco install vcredist2015
+
+Write-Host "Installing PostgreSQL 11.1..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
 # http://www.enterprisedb.com/products-services-training/pgdownload#windows

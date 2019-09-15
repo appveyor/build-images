@@ -345,7 +345,8 @@ function CreateServicePrincipal ($service_principal_name) {
            # - password reset seems takes time to "propagate"
            # - it can be disruptive behavior
         $new_service_principal_name = "$service_principal_name-$((New-Guid).ToString().SubString(0, 8))"
-        Write-Warning "`nAzure AD service principal and application with the name '$service_principal_name' already exist, creating new one with name '$new_service_principal_name'. Consider deleting '$service_principal_name' service principal and application if they are not being used with any other service."
+        Write-Warning "Azure AD service principal and application with the name '$service_principal_name' already exist, creating '$new_service_principal_name'."
+        Write-Warning "Consider deleting '$service_principal_name' service principal and application if they are not being used with any other service."
         CreateServicePrincipal $new_service_principal_name
         return
     }

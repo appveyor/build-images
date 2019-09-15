@@ -465,37 +465,52 @@ Function Connect-AppVeyorToAzure {
 
         #Run Packer to create an image
         if (-not $VhdFullPath) {
+            Write-Host "`nCreating temporary Azure AD service principal for Packer..." -ForegroundColor Cyan
             $packer_service_principal_name = "$($CommonPrefix)-packer-sp"
             $packer_azure_client = CreateServicePrincipal $packer_service_principal_name
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
             Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to skip Packer build and reuse existing VHD. It must be in '$($azure_storage_account)' storage account."
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
-            Write-Host "`n`nPacker progress:`n"
-            $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
-            & packer build '--only=azure-arm' `
-            -var "azure_subscription_id=$azure_subscription_id" `
-            -var "azure_tenant_id=$azure_tenant_id" `
-            -var "azure_client_id=$($packer_azure_client.azure_client_id)" `
-            -var "azure_client_secret=$($packer_azure_client.azure_client_secret)" `
-            -var "azure_location=$Location" `
-            -var "azure_resource_group_name=$azure_resource_group_name" `
-            -var "azure_storage_account=$azure_storage_account" `
-            -var "install_password=$install_password" `
-            -var "install_user=$install_user" `
-            -var "azure_vm_size=$VmSize" `
-            -var "build_agent_mode=Azure" `
-            -var "image_description=$ImageName" `
-            -var "datemark=$date_mark" `
-            -var "packer_manifest=$packer_manifest" `
-            -var "OPT_FEATURES=$ImageFeatures" `
-            $ImageTemplate
-            DeleteServicePrincipal $packer_azure_client.service_principal_name
+            function RunPacker {
+                $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
+                & packer build '--only=azure-arm' `
+                -var "azure_subscription_id=$azure_subscription_id" `
+                -var "azure_tenant_id=$azure_tenant_id" `
+                -var "azure_client_id=$($packer_azure_client.azure_client_id)" `
+                -var "azure_client_secret=$($packer_azure_client.azure_client_secret)" `
+                -var "azure_location=$Location" `
+                -var "azure_resource_group_name=$azure_resource_group_name" `
+                -var "azure_storage_account=$azure_storage_account" `
+                -var "install_password=$install_password" `
+                -var "install_user=$install_user" `
+                -var "azure_vm_size=$VmSize" `
+                -var "build_agent_mode=Azure" `
+                -var "image_description=$ImageName" `
+                -var "datemark=$date_mark" `
+                -var "packer_manifest=$packer_manifest" `
+                -var "OPT_FEATURES=$ImageFeatures" `
+                $ImageTemplate
+            }
+
+            $count = 1
+            do {
+                if ($count -gt 1) {
+                    Write-host "Waiting 30 seconds before next retry..."
+                    (1..30) | % {Write-Host "." -NoNewline; sleep 1}
+                }
+                Write-Host "`n`nPacker progress:`n"
+                $start = Get-Date
+                RunPacker
+                $count++ } while (-not (test-path $packer_manifest) -and $count -le 3 -and ((Get-Date) - $start).TotalMinutes -lt 5)
 
             #Get VHD path
             if (-not (test-path $packer_manifest)) {
                 Write-Warning "Unable to find $packer_manifest. Please ensure Packer job finsihed successfully."
+                DeleteServicePrincipal $packer_azure_client.service_principal_name
                 ExitScript
             }
+            DeleteServicePrincipal $packer_azure_client.service_principal_name
+
             Write-host "`nGetting VHD path..." -ForegroundColor Cyan
             $manifest = Get-Content -Path $packer_manifest | ConvertFrom-Json
             $VhdFullPath = $manifest.builds[0].artifact_id
