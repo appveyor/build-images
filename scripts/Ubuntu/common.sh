@@ -1067,7 +1067,9 @@ function install_docker() {
     systemctl start docker &&
     systemctl is-active docker ||
         { echo "[ERROR] Docker service failed to start." 1>&2; return 30; }
-    usermod -aG docker ${USER_NAME}
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        usermod -aG docker ${USER_NAME}
+    fi
     pull_dockerimages
     systemctl disable docker
 
@@ -1467,7 +1469,9 @@ function install_virtualbox() {
     apt-get -y -qq update &&
     apt-get -y -q install virtualbox-${VB_VERSION} ||
         { echo "[ERROR] Cannot install virtualbox-${VB_VERSION}." 1>&2; return 20; }
-    usermod -aG vboxusers "${USER_NAME}"
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        usermod -aG vboxusers "${USER_NAME}"
+    fi
 
     TMP_DIR=$(mktemp -d)
     pushd -- ${TMP_DIR}
@@ -1595,9 +1599,11 @@ function cleanup() {
         journalctl --vacuum-time=1s
     fi
     # clean bash_history
-    cat /dev/null > ${HOME}/.bash_history
-    cat /dev/null > ${USER_HOME}/.bash_history
-    chown ${USER_NAME}:${USER_NAME} -R ${USER_HOME}
+    [-f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        cat /dev/null > ${USER_HOME}/.bash_history
+        chown ${USER_NAME}:${USER_NAME} -R ${USER_HOME}
+    fi
 
     # cleanup script guts
     find $HOME -maxdepth 1 -name "*.sh" -delete
