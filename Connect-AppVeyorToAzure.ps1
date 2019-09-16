@@ -164,7 +164,7 @@ Function Connect-AppVeyorToAzure {
     $azure_nsg_name = "$($CommonPrefix)-nsg"
 
     $ImageName = if ($ImageName) {$ImageName} else {$ImageOs}
-    $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
+    $ImageTemplate = if ($ImageTemplate) {"$PSScriptRoot/$ImageTemplate"} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
