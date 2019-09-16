@@ -19,7 +19,7 @@
         "APPVEYOR_BUILD_AGENT_VERSION={{user `APPVEYOR_BUILD_AGENT_VERSION` }}",
         "DATEMARK={{ user `datemark` }}"
       ],
-      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",
+      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eu '{{.Path}}' {{user `deploy_parts`}}",
       "scripts": [
         "{{ template_dir }}/scripts/Ubuntu/minimalconfig.sh"
       ]
