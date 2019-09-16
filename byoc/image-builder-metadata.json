@@ -139,6 +139,30 @@
             {
                "id":"azure_cli",
                "title":"Microsoft Azure (latest)"
+            },
+            {
+               "id":"erlang",
+               "title":"Erlang OTP runtime 20.2"
+            },
+            {
+               "id":"mongo",
+               "title":"MongoDB 4.0.1"
+            },
+            {
+               "id":"wdk_1809",
+               "title":"WDK 1809 (10.0.17763.0)"
+            },
+            {
+               "id":"winsdk_1809",
+               "title":"Microsoft Windows SDK 1809 (10.0.17763.0)"
+            },
+            {
+               "id":"wdk_1903",
+               "title":"WDK  1903 (10.0.18362.1)"
+            },
+            {
+               "id":"winsdk_1903",
+               "title":"Microsoft Windows SDK 1903 (10.0.18362.1)"
             }
          ]
       },
