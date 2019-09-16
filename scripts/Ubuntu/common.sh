@@ -372,15 +372,18 @@ function install_appveyoragent() {
 
     pushd -- "${AGENT_DIR}" ||
         { echo "[ERROR] Cannot cd to ${AGENT_DIR} folder." 1>&2; return 10; }
-
-    [ -f ${CONFIG_FILE} ] && [ "${#AGENT_MODE}" -gt 0 ] &&
-        python -c "import json; import io;
+    if [ "${#AGENT_MODE}" -gt 0 ]; then
+        [ -f ${CONFIG_FILE} ] &&
+            python -c "import json; import io;
 a=json.load(io.open('${CONFIG_FILE}', encoding='utf-8-sig'));
 a[u'AppVeyor'][u'Mode']='${AGENT_MODE}';
 a[u'AppVeyor'][u'ProjectBuildsDirectory']='${PROJECT_BUILDS_DIRECTORY}';
 json.dump(a,open('${CONFIG_FILE}','w'))" &&
-        cat ${CONFIG_FILE} ||
-        { echo "[ERROR] Cannot update config file '${CONFIG_FILE}'." 1>&2; popd; return 40; }
+            cat ${CONFIG_FILE} ||
+            { echo "[ERROR] Cannot update config file '${CONFIG_FILE}'." 1>&2; popd; return 40; }
+    else
+        echo "[WARNING] AGENT_MODE variable not set"
+    fi
 
     echo "[Unit]
 Description=Appveyor Build Agent

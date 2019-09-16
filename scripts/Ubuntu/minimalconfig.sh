@@ -40,7 +40,9 @@ case  ${PACKER_BUILDER_TYPE-} in
     amazon-* )
         BUILD_AGENT_MODE=AmazonEC2;;
     * )
-        BUILD_AGENT_MODE='';;
+        BUILD_AGENT_MODE=''
+        echo "[WARNING] Unknown packer builder '${PACKER_BUILDER_TYPE-}'. BUILD_AGENT_MODE variable not set." 1>&2
+        ;;
 esac
 
 # search for scripts we source
