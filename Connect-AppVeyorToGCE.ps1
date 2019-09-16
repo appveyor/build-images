@@ -162,7 +162,7 @@ Function Connect-AppVeyorToGCE {
     $gcs_artifact_storage_name = "$($CommonPrefix)-gcs-artifacts"
 
     $ImageName = if ($ImageName) {$ImageName} else {$ImageOs}
-    $ImageTemplate = if ($ImageTemplate) {"$PSScriptRoot/$ImageTemplate"} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
+    $ImageTemplate = GetImageTemplatePath $imageTemplate
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"

@@ -115,7 +115,7 @@ function ValidateAppVeyorApiAccess($appVeyorUrl, $apiToken){
     }
 
     try {
-        $responce = Invoke-WebRequest -Uri $appVeyorUrl -ErrorAction SilentlyContinue
+        $responce = Invoke-WebRequest -Uri $appVeyorUrl -UseBasicParsing -ErrorAction SilentlyContinue
         if ($responce.StatusCode -ne 200) {
             Write-warning "AppVeyor URL '$appVeyorUrl' responded with code $($responce.StatusCode)"
             ExitScript
@@ -406,3 +406,23 @@ function CreateServicePrincipal ($service_principal_name) {
                 "azure_client_secret" = $azure_client_secret
             }
 }
+
+function GetImageTemplatePath ($imageTemplate) {
+    if ($imageTemplate) {
+        if (Test-Path "$PSScriptRoot/$ImageTemplate") {
+            return "$PSScriptRoot/$ImageTemplate"
+        }
+        elseif (Test-Path "$ImageTemplate") {
+            return $ImageTemplate
+        }
+        Write-Warning "`nUnable to find Packer image template '$ImageTemplate'."
+        ExitScript
+    }
+    elseif ($ImageOs -eq "Windows") {
+        return "$PSScriptRoot/minimal-windows-server.json"
+    }
+    elseif ($ImageOs -eq "Linux") {
+        return "$PSScriptRoot/minimal-ubuntu.json"
+    }
+}
+
