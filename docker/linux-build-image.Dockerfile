@@ -5,6 +5,6 @@ ENV APPVEYOR_BUILD_AGENT_VERSION=7.0.2366
 
 COPY ./scripts/Ubuntu ./scripts
 
-RUN ./scripts/minimalconfig.sh
+RUN ./scripts/dockerconfig.sh
 
 ENTRYPOINT [ "/opt/appveyor/build-agent/appveyor-build-agent" ]
