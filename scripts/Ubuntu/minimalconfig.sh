@@ -24,10 +24,12 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Check for execution in docker container
-if grep -Eq '/(lxc|docker)/[[:xdigit:]]{64}' /proc/1/cgroup; then
-    IS_DOCKER=true
-else
-    IS_DOCKER=false
+if [[ -z "${IS_DOCKER-}" || "${#IS_DOCKER}" = "0" ]]; then
+    if grep -Eq '/(lxc|docker)/[[:xdigit:]]{64}' /proc/1/cgroup; then
+        IS_DOCKER=true
+    else
+        IS_DOCKER=false
+    fi
 fi
 
 case  ${PACKER_BUILDER_TYPE-} in
