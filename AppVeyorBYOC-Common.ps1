@@ -197,8 +197,8 @@ function ValidateDependencies ($cloudType) {
     }
 }
 
-function ParseImageFeatures ($imageFeatures, $imageTemplate, $imageOs) {
-    if(-not $imageFeatures) {
+function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $ImageCustomScript, $ImageCustomScriptAfterReboot, $imageOs) {
+    if(-not ($imageFeatures -or $ImageCustomScript -or $ImageCustomScriptAfterReboot)) {
         return $imageTemplate
     }
     $imageFeatures = $imageFeatures.Trim()
@@ -206,64 +206,112 @@ function ParseImageFeatures ($imageFeatures, $imageTemplate, $imageOs) {
         Write-Warning "'ImageFeatures' should be comma-separate list or single value"
         ExitScript
     }
-    if($imageOs -eq "Linux") {
+    if($imageOs -eq "Linux" -and -not $ImageCustomScript) {
         return $imageTemplate
-    }
-
-    $imageFeatures = ($imageFeatures.Split(',') | % { $_.Trim() })
-
-    $before_reboot_scripts = @()
-    $imageFeatures | % {
-        $scriptName1 = "install_$_.ps1"
-        $scriptName2 = "$_.ps1"
-        if (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName1") {
-            $before_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName1"
-            }
-        elseif (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName2") {
-            $before_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName2"
-            }
-        else {
-            Write-Warning "Unable to find $scriptName1 or $scriptName2 in $PSScriptRoot/scripts/Windows"
-            ExitScript
-        }
-    }
-
-    $after_reboot_scripts = @()
-    $imageFeatures | % {
-        $scriptName1 = "install_$($_)_after_reboot.ps1"
-        $scriptName2 = "$($_)_after_reboot.ps1"
-        if (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName1") {
-            $after_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName1"
-            }
-        elseif (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName2") {
-            $after_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName2"
-            }
     }
 
     $packer_file = Get-Content $imageTemplate | ConvertFrom-Json
 
-    $before_reboot = @{
-        'type' = 'powershell'
-        'scripts' = $before_reboot_scripts
-        'elevated_user' = '{{user `install_user`}}'
-        'elevated_password' = '{{user `install_password`}}'
-    }
-    $packer_file.provisioners += $before_reboot
+    if ($imageFeatures -and $imageOs -eq "Windows") {
+        $imageFeatures = ($imageFeatures.Split(',') | % { $_.Trim() })
 
-    if ($after_reboot_scripts.Count -gt 0) {
+        $before_reboot_script = @()
+        $imageFeatures | % {
+            $scriptName1 = "install_$_.ps1"
+            $scriptName2 = "$_.ps1"
+            if (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName1") {
+                $before_reboot_script += "{{ template_dir }}/scripts/Windows/$scriptName1"
+                }
+            elseif (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName2") {
+                $before_reboot_script += "{{ template_dir }}/scripts/Windows/$scriptName2"
+                }
+            else {
+                Write-Warning "Unable to find $scriptName1 or $scriptName2 in $PSScriptRoot/scripts/Windows"
+                ExitScript
+            }
+        }
+
+        $after_reboot_scripts = @()
+        $imageFeatures | % {
+            $scriptName1 = "install_$($_)_after_reboot.ps1"
+            $scriptName2 = "$($_)_after_reboot.ps1"
+            if (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName1") {
+                $after_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName1"
+                }
+            elseif (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName2") {
+                $after_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName2"
+                }
+        }
+
+        $before_reboot = @{
+            'type' = 'powershell'
+            'scripts' = $before_reboot_script
+            'elevated_user' = '{{user `install_user`}}'
+            'elevated_password' = '{{user `install_password`}}'
+        }
+        $packer_file.provisioners += $before_reboot
+
+        if ($after_reboot_scripts.Count -gt 0) {
+            $reboot = @{
+                'type' = 'windows-restart'
+                'restart_timeout' = '30m'
+            }
+            $packer_file.provisioners += $reboot
+
+            $after_reboot = @{
+                'type' = 'powershell'
+                'scripts' = $after_reboot_scripts
+                'elevated_user' = '{{user `install_user`}}'
+                'elevated_password' = '{{user `install_password`}}'
+            }
+            $packer_file.provisioners +=$after_reboot
+        }
+    }
+
+    if($ImageCustomScript) {
+        $ImageCustomScript = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($ImageCustomScript))
+        if ($imageOs -eq "Windows") {
+            $customScriptFile = "$(New-Guid).ps1"
+            $ImageCustomScript | Set-Content -Path "$PSScriptRoot/scripts/Windows/custom-scripts/$customScriptFile"
+
+            $custom_before_reboot_script = @()
+            $custom_before_reboot_script += "{{ template_dir }}/scripts/Windows/custom-scripts/$customScriptFile"
+
+            $custom_before_reboot = @{
+                'type' = 'powershell'
+                'scripts' = $custom_before_reboot_script
+                'elevated_user' = '{{user `install_user`}}'
+                'elevated_password' = '{{user `install_password`}}'
+            }
+            $packer_file.provisioners += $custom_before_reboot
+        }
+        elseif ($imageOs -eq "Linux") {
+            $customScriptFile = "$(New-Guid).sh"
+            $ImageCustomScript | Set-Content -Path "$PSScriptRoot/scripts/Ubuntu/custom-scripts/$customScriptFile"
+            return $imageTemplate
+        }
+    }
+
+    if($ImageCustomScriptAfterReboot -and $imageOs -eq "Windows") {
         $reboot = @{
             'type' = 'windows-restart'
             'restart_timeout' = '30m'
         }
         $packer_file.provisioners += $reboot
 
-        $after_reboot = @{
+        $customScriptFileAfterReboot = "$(New-Guid).ps1"
+        $ImageCustomScriptAfterReboot | Set-Content -Path "$PSScriptRoot/scripts/Windows/custom-scripts/$customScriptFileAfterReboot"
+
+        $custom_after_reboot_scripts = @()
+        $custom_after_reboot_scripts += "{{ template_dir }}/scripts/Windows/custom-scripts/$customScriptFileAfterReboot"
+
+        $custom_after_reboot = @{
             'type' = 'powershell'
-            'scripts' = $after_reboot_scripts
+            'scripts' = $custom_after_reboot_scripts
             'elevated_user' = '{{user `install_user`}}'
             'elevated_password' = '{{user `install_password`}}'
         }
-        $packer_file.provisioners +=$after_reboot
+        $packer_file.provisioners += $custom_after_reboot
     }
 
     $imageTemplateCustom = $ImageTemplate.Replace((Get-Item $imageTemplate).Basename, "$((Get-Item $ImageTemplate).Basename)-custom")

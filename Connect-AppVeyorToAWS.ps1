@@ -49,6 +49,12 @@ Function Connect-AppVeyorToAWS {
     .PARAMETER ImageFeatures
         Comma-separated list of feature IDs to be installed on the image. Available IDs can be found at https://github.com/appveyor/build-images/blob/master/byoc/image-builder-metadata.json under 'installedFeatures'.
 
+    .PARAMETER ImageCustomScript
+        Base-64 encoded text of custom sript to execute during image creation. It should not contain reboot instructions.
+
+    .PARAMETER ImageCustomScriptAfterReboot
+        Base-64 encoded text of custom sript to execute during image creation, after reboot. It is usefull for cases when custom software being installed with 'ImageCustomScript' required some additional action after computer restarted.
+
         .EXAMPLE
         Connect-AppVeyorToAWS
         Let command collect all required information
@@ -102,7 +108,13 @@ Function Connect-AppVeyorToAWS {
       [string]$ImageTemplate,
 
       [Parameter(Mandatory=$false)]
-      [string]$ImageFeatures
+      [string]$ImageFeatures,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImageCustomScript,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImageCustomScriptAfterReboot
     )
 
     function ExitScript {
@@ -162,7 +174,7 @@ Function Connect-AppVeyorToAWS {
 
     $ImageName = if ($ImageName) {$ImageName} else {$ImageOs}
     $ImageTemplate = if ($ImageTemplate) {$ImageTemplate} elseif ($ImageOs -eq "Windows") {"$PSScriptRoot/minimal-windows-server.json"} elseif ($ImageOs -eq "Linux") {"$PSScriptRoot/minimal-ubuntu.json"}
-    $ImageTemplate = ParseImageFeatures $ImageFeatures $ImageTemplate $ImageOs
+    $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"

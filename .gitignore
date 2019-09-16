@@ -12,3 +12,5 @@ packer-manifest.*
 *.pem
 output-hyperv-iso/
 minimal-windows-server-custom.json
+scripts/Windows/custom-scripts/*.ps1
+scripts/Ubuntu/custom-scripts/*.sh

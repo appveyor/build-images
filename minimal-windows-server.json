@@ -1,11 +1,6 @@
 {
   "provisioners": [
     {
-      "type": "file",
-      "source": "{{ template_dir }}/scripts/Windows/custom-scripts",
-      "destination": "C:/"
-    },
-    {
         "type": "powershell",
         "scripts": [
             "{{ template_dir }}/scripts/Windows/create_appveyor_user.ps1"
@@ -71,14 +66,6 @@
             "appveyor_user={{user `install_user`}}",
             "appveyor_password={{user `install_password`}}",
             "build_agent_mode={{user `build_agent_mode`}}"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}"
-    },
-    {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/run_custom_scripts.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
