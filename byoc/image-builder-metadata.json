@@ -378,7 +378,11 @@
             {
                "id":"7zip",
                "title":"7-Zip 19.0"
-            },            
+            },
+            {
+               "id":"chocolatey",
+               "title":"Chocolatey"
+            },             
             {
                "id":"powershell_core",
                "title":"PowerShell Core 6.2.2"
@@ -452,6 +456,41 @@
                "title":"AppVeyor Build Agent"
             }
          ]
-      }
+      },
+      {
+         "name":"Ubuntu 18.04 Full",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows",
+            "Linux",
+            "MacOS"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"mcr.microsoft.com/powershell:ubuntu-18.04",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git (latest)"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial (latest)"
+            },
+            {
+               "id":"svn",
+               "title":"Subversion (latest)"
+            },            
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.2"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      }      
    ]
 }
