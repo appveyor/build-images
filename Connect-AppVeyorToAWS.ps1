@@ -176,6 +176,7 @@ Function Connect-AppVeyorToAWS {
     $ImageTemplate = GetImageTemplatePath $imageTemplate
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
+    $packerPath = GetPackerPath
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = CreatePassword
@@ -519,7 +520,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
-            & packer build '--only=amazon-ebs' `
+            & $packerPath build '--only=amazon-ebs' `
             -var "aws_access_key=$AccessKeyId" `
             -var "aws_secret_key=$SecretAccessKey" `
             -var "aws_region=$Region" `

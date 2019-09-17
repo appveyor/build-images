@@ -167,6 +167,7 @@ Function Connect-AppVeyorToAzure {
     $ImageTemplate = GetImageTemplatePath $imageTemplate
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
+    $packerPath = GetPackerPath
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = CreatePassword
@@ -486,7 +487,7 @@ Function Connect-AppVeyorToAzure {
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
             function RunPacker {
                 $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
-                & packer build '--only=azure-arm' `
+                & $packerPath build '--only=azure-arm' `
                 -var "azure_subscription_id=$azure_subscription_id" `
                 -var "azure_tenant_id=$azure_tenant_id" `
                 -var "azure_client_id=$($packer_azure_client.azure_client_id)" `

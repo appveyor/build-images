@@ -165,6 +165,7 @@ Function Connect-AppVeyorToGCE {
     $ImageTemplate = GetImageTemplatePath $imageTemplate
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
+    $packerPath = GetPackerPath
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = CreatePassword
@@ -392,7 +393,7 @@ Function Connect-AppVeyorToGCE {
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
-            & packer build '--only=googlecompute' `
+            & $packerPath build '--only=googlecompute' `
             -var "gce_account_file=$gce_account_file" `
             -var "gce_project=$($activeconfig.properties.core.project)" `
             -var "gce_zone=$Zone" `

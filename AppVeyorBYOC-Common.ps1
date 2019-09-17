@@ -2,6 +2,15 @@ function CreateSlug($str) {
     return (($str.ToLower() -replace "[^a-z0-9-]", "-") -replace "-+", "-")
 }
 
+function CreateTempFolder {
+    if ($isMacOS -or $isLinux) {
+        return (New-TemporaryFile | %{ rm $_; mkdir $_; chmod 700 $_ ; (Resolve-Path $_).Path})
+    }
+    else {
+        return (New-TemporaryFile | % { rm $_; mkdir $_}).FullName
+    }
+}
+
 function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
 
     $APPVEYOR_HOST_AGENT_MSI_URL = "https://www.appveyor.com/downloads/appveyor/appveyor-host-agent.msi"
@@ -151,8 +160,8 @@ function ValidateAppVeyorApiAccess($appVeyorUrl, $apiToken){
 }
 
 function ValidateDependencies ($cloudType) {
-    Write-host "`nChecking if required tools are installed..."  -ForegroundColor Cyan
     if ($cloudType -eq "Azure") {
+        Write-host "`nChecking if Az PowerShell Module is installed..."  -ForegroundColor Cyan
         if (-not (Get-Module -Name *Az.* -ListAvailable)) {
             Write-Warning "This command depends on Az PowerShell Module. Please install it with 'Install-Module -Name Az -AllowClobber' command"
             ExitScript
@@ -166,6 +175,7 @@ function ValidateDependencies ($cloudType) {
     }
 
     if ($cloudType -eq "GCE") {
+        Write-host "`nChecking if Google Cloud SDK is installed..."  -ForegroundColor Cyan
         if (-not (Get-Command gcloud -ErrorAction Ignore)) {
             Write-Warning "This command depends on Google Cloud SDK. Use 'choco install gcloudsdk' on Windows, for Linux follow https://cloud.google.com/sdk/docs/quickstart-linux, for Mac: https://cloud.google.com/sdk/docs/quickstart-macos"
             ExitScript
@@ -181,6 +191,7 @@ function ValidateDependencies ($cloudType) {
     }
 
     if ($cloudType -eq "AWS") {
+        Write-host "`nChecking if AWS Tools for PowerShell are installed..."  -ForegroundColor Cyan
         if (-not (Get-Module -Name *AWSPowerShell* -ListAvailable)) {
             Write-Warning "This command depends on AWS Tools for PowerShell. Please install them with the following command: 'Install-Module -Name AWSPowerShell -Force; Import-Module -Name AWSPowerShell'"
             ExitScript
@@ -190,10 +201,27 @@ function ValidateDependencies ($cloudType) {
             ExitScript
         }
     }
+}
 
-    if (-not (Get-Command packer -ErrorAction Ignore)) {
-        Write-Warning "This command depends on Packer by HashiCorp. Please install it with 'choco install packer' command or from download page https://www.packer.io/downloads.html. If it is already installed, please ensure that PATH environment variable contains path to it."
-        ExitScript
+function GetPackerPath {
+    $packerVersion = "1.4.3"
+    Write-host "`nChecking if Hashicorp Packer version $packerVersion is installed..."  -ForegroundColor Cyan
+    if ((Get-Command packer -ErrorAction Ignore) -and (packer --version) -eq $packerVersion) {
+        Write-Host "Packer version $packerVersion found" -ForegroundColor DarkGray
+        return "packer"
+    }
+    else {
+        $packerFolder = CreateTempFolder
+        $zipPath = Join-Path $packerFolder "packer_$($packerVersion)_windows_amd64.zip"
+        Write-Host "Downloading Packer version $packerVersion to $packerFolder" -ForegroundColor DarkGray
+        $currentSecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol
+        $zipFile = if ($isLinux) {"packer_$($packerVersion)_linux_386.zip"} elseif ($isMacOS) {"packer_$($packerVersion)_darwin_386.zip"} else {"packer_$($packerVersion)_windows_386.zip"} 
+        [System.Net.ServicePointManager]::SecurityProtocol = "Tls12"
+        (New-Object Net.WebClient).DownloadFile("https://releases.hashicorp.com/packer/$packerVersion/$zipFile", $zipPath)
+        [System.Net.ServicePointManager]::SecurityProtocol = $currentSecurityProtocol
+        Expand-Archive -LiteralPath $zipPath -DestinationPath $packerFolder
+        Remove-Item $zipPath -force -ErrorAction Ignore
+        return (Join-Path $packerFolder "packer")
     }
 }
 
