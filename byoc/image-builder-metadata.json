@@ -203,10 +203,6 @@
                "title": "Node.js"
             },
             {
-               "id": "install_nvm",
-               "title": "NVM - Node Version Manager"
-            },
-            {
                "id": "install_nvm_and_nodejs",
                "title": "Node.js with NVM"
             },
@@ -251,16 +247,8 @@
                "title": "jdks"
             },
             {
-               "id": "install_rvm",
-               "title": "RVM - Ruby Version Manager"
-            },
-            {
                "id": "install_rvm_and_rubies",
                "title": "Ruby in RVM"
-            },
-            {
-               "id": "install_gvm",
-               "title": "GVM - Go Version Manager"
             },
             {
                "id": "install_gvm_and_golangs",
