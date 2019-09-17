@@ -14,3 +14,4 @@ output-hyperv-iso/
 minimal-windows-server-custom.json
 scripts/Windows/custom-scripts/*.ps1
 scripts/Ubuntu/custom-scripts/*.sh
+minimal-ubuntu-custom.json
