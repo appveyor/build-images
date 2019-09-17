@@ -144,9 +144,9 @@ function ValidateAppVeyorApiAccess($appVeyorUrl, $apiToken){
     }
 
     try {
-        $responce = Invoke-WebRequest -Uri $appVeyorUrl -UseBasicParsing -ErrorAction SilentlyContinue
-        if ($responce.StatusCode -ne 200) {
-            Write-warning "AppVeyor URL '$appVeyorUrl' responded with code $($responce.StatusCode)"
+        $response = Invoke-WebRequest -Uri $appVeyorUrl -UseBasicParsing -ErrorAction SilentlyContinue
+        if ($response.StatusCode -ne 200) {
+            Write-warning "AppVeyor URL '$appVeyorUrl' responded with code $($response.StatusCode)"
             ExitScript
         }
     }

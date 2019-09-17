@@ -165,7 +165,6 @@ Function Connect-AppVeyorToGCE {
     $ImageTemplate = GetImageTemplatePath $imageTemplate
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
-    $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = CreatePassword
 
@@ -371,7 +370,7 @@ Function Connect-AppVeyorToGCE {
         #Run Packer to create an image
         if (-not $ImageId) {
             $packerPath = GetPackerPath
-
+            $packerManifest = "$(CreateTempFolder)/packer-manifest.json"
             Write-host "`nCreating temporary service account key for Packer..." -ForegroundColor Cyan
             #TODO check is number of keys already used
             $packer_gce_key = $null
@@ -390,7 +389,7 @@ Function Connect-AppVeyorToGCE {
 
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
             Write-Warning "Add '-ImageId' parameter with if you want to to skip Packer build and reuse existing image."
-            Remove-Item $packer_manifest -Force -ErrorAction Ignore
+            Remove-Item $packerManifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
             & $packerPath build '--only=googlecompute' `
@@ -408,14 +407,14 @@ Function Connect-AppVeyorToGCE {
             $ImageTemplate
 
             #Get image path
-            if (-not (test-path $packer_manifest)) {
-                Write-Warning "Unable to find $packer_manifest. Please ensure Packer job finsihed successfully."
+            if (-not (test-path $packerManifest)) {
+                Write-Warning "Packer build failed."
                 ExitScript
             }
             Write-host "`nGetting image name..." -ForegroundColor Cyan
-            $manifest = Get-Content -Path $packer_manifest | ConvertFrom-Json
+            $manifest = Get-Content -Path $packerManifest | ConvertFrom-Json
             $ImageId = $manifest.builds[0].artifact_id
-            Remove-Item $packer_manifest -Force -ErrorAction Ignore
+            Remove-Item $packerManifest -Force -ErrorAction Ignore
             Write-host "Build image created by Packer: '$($ImageId)'" -ForegroundColor DarkGray
             Write-Host "Default build VM credentials: User: 'appveyor', Password: '$($install_password)'. Normally you do not need this password as it will be reset to a random string when the build starts. However you can use it if you need to create and update a VM from the Packer-created VHD manually"  -ForegroundColor DarkGray
 
