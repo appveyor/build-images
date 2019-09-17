@@ -169,7 +169,7 @@ function ValidateDependencies ($cloudType) {
         Write-host "`nChecking if Az PowerShell Module is installed..."  -ForegroundColor Cyan
         if (-not (Get-Module -Name *Az.* -ListAvailable)) {
             Write-Warning "Az PowerShell Module is not installed."
-            $installAzPs = Write-Host "Enter 1 to install it or any other key to stop command execution and install it manually."
+            $installAzPs = Read-Host "Enter 1 to install it or any other key to stop command execution and install it manually."
             if ($installAzPs -eq 1) {
                 Install-Module -Name Az -Scope CurrentUser -AllowClobber
             }
