@@ -76,6 +76,7 @@
       "image_name": "packer-ubuntu1804-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
       "disk_size": 40,
+      "disk_type": "pd-ssd",
       "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"]
     },
     {
