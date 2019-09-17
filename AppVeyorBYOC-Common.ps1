@@ -168,14 +168,15 @@ function ValidateDependencies ($cloudType) {
     if ($cloudType -eq "Azure") {
         Write-host "`nChecking if Az PowerShell Module is installed..."  -ForegroundColor Cyan
         if (-not (Get-Module -Name *Az.* -ListAvailable)) {
-            Write-Warning "This command depends on Az PowerShell Module. Please install it with 'Install-Module -Name Az -AllowClobber' command"
-            ExitScript
-        }
-
-        if (Get-Module -Name *AzureRM.* -ListAvailable) {
-            Write-Warning "It is safer to uninstall AzureRM PowerShell module or use different computer to run this command. We noticed unpredictable behaviour when both Az and AzureRM modules are installed. Enter Ctrl-C to stop the command and run 'Uninstall-AzureRm' or do nothing to continue as is.`nWaiting 30 seconds..."
-            for ($i = 30; $i -ge 0; $i--) {sleep 1; Write-Host "." -NoNewline}
-            Write-Host ""
+            Write-Warning "Az PowerShell Module is not installed."
+            $installAzPs = Write-Host "Enter 1 to install it or any other key to stop command execution and install it manually."
+            if ($installAzPs -eq 1) {
+                Install-Module -Name Az -Scope CurrentUser -AllowClobber
+            }
+            else {
+                Write-Warning "Please install Az PowerShell Module with 'Install-Module -Name Az -Scope CurrentUser -AllowClobber' and re-run the command."
+                ExitScript
+            }
         }
     }
 

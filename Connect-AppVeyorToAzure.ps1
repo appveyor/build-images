@@ -234,6 +234,11 @@ Function Connect-AppVeyorToAzure {
         $locations = Get-AzLocation
         if ($Location) {
             $Location_full = ($locations | ? {$_.Location -eq $Location}).DisplayName
+            if (-not $Location_full) {
+                # Full name passed
+                $Location = ($locations | ? {$_.DisplayName -eq $Location}).Location
+                $Location_full = ($locations | ? {$_.Location -eq $Location}).DisplayName
+            }
         }
         else {
             for ($i = 1; $i -le $locations.Count; $i++) {"Select $i for $($locations[$i - 1].DisplayName)"}
@@ -256,8 +261,9 @@ Function Connect-AppVeyorToAzure {
             $rg = New-AzResourceGroup -Name $azure_resource_group_name -Location $Location
         }
         elseif ($rg.Location -ne $Location) {
-            Write-Warning "Resource group $($azure_resource_group_name) exists in location $($rg.Location) which is different from the location you chose ($($Location))"
-            $changelocation = Read-Host "Enter 1 to use $($rg.Location) location or 2 to delete resource group $($azure_resource_group_name) in $($rg.Location) and re-create it in $($Location)"
+            $current_location = ($locations | ? {$_.Location -eq $rg.Location}).DisplayName
+            Write-Warning "Resource group $($azure_resource_group_name) exists in location '$current_location' which is different from the location you chose ('$Location_full')"
+            $changelocation = Read-Host "Enter 1 to use '$current_location' or 2 to delete resource group $($azure_resource_group_name) from '$current_location' and re-create it in '$Location_full'"
             if ($changelocation -eq 1) {
                 $Location = $rg.Location
                 $Location_full = ($locations | ? {$_.Location -eq $rg.Location}).DisplayName
@@ -606,7 +612,7 @@ Function Connect-AppVeyorToAzure {
         }
 
         #Create or update cloud
-        $build_cloud_name = "Azure $Location $VmSize"
+        $build_cloud_name = "Azure $Location_full $VmSize"
         $cloud_service_principal_name = $build_cloud_name.Replace(" ", "-").Trim() + "-sp"
         $clouds = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get
         $cloud = $clouds | ? ({$_.name -eq $build_cloud_name})[0]
@@ -632,7 +638,7 @@ Function Connect-AppVeyorToAzure {
                             subscriptionId = $azure_subscription_id
                         }
                         vmConfiguration = @{
-                            location = $Location
+                            location = $Location_full
                             vmSize = $VmSize
                             diskStorageAccountName = $azure_storage_account
                             diskStorageContainer = $azure_storage_container
