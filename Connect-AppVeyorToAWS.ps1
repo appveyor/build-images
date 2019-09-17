@@ -517,7 +517,6 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             $packerManifest = "$(CreateTempFolder)/packer-manifest.json"
             Write-host "`nRunning Packer to create a basic build VM AMI..." -ForegroundColor Cyan
             Write-Warning "Add '-AmiId' parameter with if you want to to skip Packer build and and reuse existing AMI. It must be in '$($aws_region_full)' region)."
-            Remove-Item $packerManifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
             & $packerPath build '--only=amazon-ebs' `
@@ -530,7 +529,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             -var "build_agent_mode=AmazonEC2" `
             -var "image_description=$ImageName" `
             -var "datemark=$date_mark" `
-            -var "packer_manifest=$packer_manifest" `
+            -var "packer_manifest=$packerManifest" `
             -var "OPT_FEATURES=$ImageFeatures" `
             $ImageTemplate
 

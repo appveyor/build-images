@@ -369,8 +369,8 @@ function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $Im
         $packer_file.provisioners += $custom_after_reboot
     }
 
-    #$imageTemplateCustom = Join-Path $(CreateTempFolder) $(Split-Path $ImageTemplate -Leaf)
-    $imageTemplateCustom = $ImageTemplate.Replace((Get-Item $imageTemplate).Basename, "$((Get-Item $ImageTemplate).Basename)-custom")
+    $imageTemplateCustom = Join-Path $(CreateTempFolder) $(Split-Path $ImageTemplate -Leaf)
+    Copy-Item -Path "$PSScriptRoot\scripts" -Destination $(Split-Path $imageTemplateCustom -Parent) -recurse -Force
     $packer_file | ConvertTo-Json -Depth 20 | Set-Content -Path $imageTemplateCustom
     return $imageTemplateCustom
 }

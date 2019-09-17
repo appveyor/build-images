@@ -389,7 +389,6 @@ Function Connect-AppVeyorToGCE {
 
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
             Write-Warning "Add '-ImageId' parameter with if you want to to skip Packer build and reuse existing image."
-            Remove-Item $packerManifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
             & $packerPath build '--only=googlecompute' `
@@ -402,7 +401,7 @@ Function Connect-AppVeyorToGCE {
             -var "build_agent_mode=GCE" `
             -var "image_description=$ImageName" `
             -var "datemark=$date_mark" `
-            -var "packer_manifest=$packer_manifest" `
+            -var "packer_manifest=$packerManifest" `
             -var "OPT_FEATURES=$ImageFeatures" `
             $ImageTemplate
 
