@@ -1,3 +1,18 @@
+function PrintSummary($buildTarget, $AppVeyorUrl, $buildCloudId, $build_cloud_name, $imageName) {
+    Write-host "`nNext steps:"  -ForegroundColor Cyan
+    Write-host " - Optionally review build environment $build_cloud_name at $AppVeyorUrl/build-clouds/$buildCloudId" -ForegroundColor DarkGray
+    Write-host " - To start building on $buildTarget select " -ForegroundColor DarkGray -NoNewline
+    Write-host "$imageName " -NoNewline
+    Write-host "build worker image " -ForegroundColor DarkGray -NoNewline 
+    Write-host "and " -ForegroundColor DarkGray -NoNewline 
+    Write-host "$build_cloud_name " -NoNewline
+    Write-host "build cloud on AppVeyor project settings or in " -NoNewline -ForegroundColor DarkGray
+    Write-host "appveyor.yml" -NoNewline
+    Write-host ":"
+    Write-host "`nbuild_cloud: $build_cloud_name" -ForegroundColor Gray
+    Write-host "image: $imageName" -ForegroundColor Gray
+    Write-Host "`n"
+}
 function CreateSlug($str) {
     return (($str.ToLower() -replace "[^a-z0-9-]", "-") -replace "-+", "-")
 }
