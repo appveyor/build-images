@@ -12,7 +12,7 @@
             "Windows"
          ],
          "imageOperatingSystem":"Windows",
-         "template":"ws2019.json",
+         "template":"minimal-windows-server.json",
          "installedFeatures":[
             {
                "id":"git",
