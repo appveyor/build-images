@@ -720,7 +720,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
         Write-host "build worker image " -ForegroundColor DarkGray -NoNewline 
         Write-host "and " -ForegroundColor DarkGray -NoNewline 
         Write-host "$($build_cloud_name) " -NoNewline 
-        Write-host "build cloud in AppVeyor project settings or appveyor.yml." -NoNewline -ForegroundColor DarkGra
+        Write-host "build cloud in AppVeyor project settings or appveyor.yml." -ForegroundColor DarkGra
         if (Test-Path $aws_kp_path) {
             Write-Host " - Please do not forget to move $($aws_kp_path) to a secure location." -ForegroundColor DarkGray
         }

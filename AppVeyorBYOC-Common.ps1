@@ -64,11 +64,16 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
                 return
             }
 
-            Write-Host "Installing Host Agent..." -ForegroundColor Gray
-            bash -c "HOMEBREW_APPVEYOR_URL=$appVeyorUrl HOMEBREW_HOST_AUTH_TKN=$hostAuthorizationToken brew install appveyor/brew/appveyor-host-agent"
+            if (brew list appveyor-host-agent >/dev/null) {
+                Write-Host "Installing Host Agent..." -ForegroundColor Gray
+                bash -c "HOMEBREW_APPVEYOR_URL=$appVeyorUrl HOMEBREW_HOST_AUTH_TKN=$hostAuthorizationToken brew install appveyor/brew/appveyor-host-agent"
+            } else{
+                Write-Host "Host Agent already installed:" -ForegroundColor Gray
+                brew list --versions appveyor-host-agent
+            }
 
             Write-Host "Starting up Host Agent service..."
-            brew services start appveyor-host-agent
+            brew services restart appveyor-host-agent
 
             $hostAgentProcess = Get-Process "appveyor-host-a" -ErrorAction SilentlyContinue
             if ($hostAgentProcess) {
