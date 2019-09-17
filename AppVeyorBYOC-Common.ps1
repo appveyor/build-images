@@ -222,6 +222,9 @@ function GetPackerPath {
         Expand-Archive -LiteralPath $zipPath -DestinationPath $packerFolder
         Remove-Item $zipPath -force -ErrorAction Ignore
         $packerPath = Join-Path $packerFolder "packer"
+        if ($isMacOS -or $isLinux) {
+            chmod 700 $packerPath
+        }
         Write-Host "Using $packerPath" -ForegroundColor DarkGray
         return $packerPath
     }
