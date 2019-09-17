@@ -222,7 +222,6 @@ Function Connect-AppVeyorToDocker {
 
             # create temp dir for Dockerfile
             $dockerTempPath = Join-Path -Path $tmp -ChildPath ([Guid]::NewGuid().ToString('N'))
-            $dockerTempPath
             New-Item $dockerTempPath -Type Directory | Out-Null
             $dockerfilePath = Join-Path -Path $dockerTempPath -ChildPath 'Dockerfile'
             
@@ -252,6 +251,7 @@ RUN pwsh -noni -ep unrestricted .\script.ps1")
 
         } else {
             # just tag existing one
+            Write-host "No custom image has been built - just tagging '$ImageTemplate' image as '$dockerImageName'" -ForegroundColor DarkGray
             docker tag $ImageTemplate $dockerImageName
         }
 
@@ -276,7 +276,10 @@ RUN pwsh -noni -ep unrestricted .\script.ps1")
 
         $StopWatch.Stop()
         $completed = "{0:hh}:{0:mm}:{0:ss}" -f $StopWatch.elapsed
-        Write-Host "`nCompleted in $completed."
+        Write-Host "`nThe script successfully completed in $completed." -ForegroundColor Green
+
+        #Report results and next steps
+        PrintSummary 'Docker' $AppVeyorUrl $cloud.buildCloudId $build_cloud_name $imageName
     }
     catch {
         Write-Error $_
