@@ -390,18 +390,7 @@ function CreatePassword {
     return -join $base
 }
 
-function DeleteServicePrincipal ($service_principal_name) {
-    if (-not $service_principal_name) {
-        return
-    }
-    if (Get-AzADServicePrincipal -DisplayName $service_principal_name) {
-        Write-host "`nDeleting Azure AD service principal '$service_principal_name'..." -ForegroundColor Cyan
-        Remove-AzADServicePrincipal -DisplayName $service_principal_name -Force -ErrorAction Ignore
-        Remove-AzADApplication -DisplayName  $service_principal_name -Force -ErrorAction Ignore
-    }
-}
-
-function CreateServicePrincipal ($service_principal_name) {
+function GetOrCreateServicePrincipal ($service_principal_name, $build_cloud_name, $headers) {
     $sp = Get-AzADServicePrincipal -DisplayName $service_principal_name
     $app = Get-AzADApplication -DisplayName $service_principal_name
     if (-not $sp -and $app) {
@@ -410,40 +399,33 @@ function CreateServicePrincipal ($service_principal_name) {
         ExitScript
     }
     if (-not $sp) {
-        Write-host "`nCreating Azure AD service principal $service_principal_name..." -ForegroundColor Cyan
         $sp = New-AzADServicePrincipal -DisplayName $service_principal_name -Role Contributor
         $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($sp.Secret)
         $azure_client_secret = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-
-        $count = 0;
-        while (-not ((Get-AzADServicePrincipal -DisplayName $service_principal_name) -and (Get-AzADApplication -DisplayName $service_principal_name)) -and $count -lt 60){
-            sleep 1
-            Write-Host "." -NoNewline
-            $count++
-        }
-        if (-not ((Get-AzADServicePrincipal -DisplayName $service_principal_name) -and (Get-AzADApplication -DisplayName $service_principal_name))) {
-            Write-Warning "`nUnable to create service principal '$($service_principal_name)'."
-            ExitScript
-        }
+        $azure_client_id = $sp.ApplicationId
     }
     else {
-        # Create new if service principal already exists.
-        # Used to reset password before, but there are two issues here
-           # - password reset seems takes time to "propagate"
-           # - it can be disruptive behavior
-        $new_service_principal_name = "$service_principal_name-$((New-Guid).ToString().SubString(0, 8))"
-        Write-Warning "Azure AD service principal and application with the name '$service_principal_name' already exist, creating '$new_service_principal_name'."
-        Write-Warning "Consider deleting '$service_principal_name' service principal and application if they are not being used with any other service."
-        CreateServicePrincipal $new_service_principal_name
-        return
+        $clouds = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get
+        $cloud = $clouds | ? ({$_.name -eq $build_cloud_name})[0]
+        if ($cloud) {
+            $settings = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds/$($cloud.buildCloudId)" -Headers $headers -Method Get
+            $azure_client_id = $settings.settings.cloudSettings.azureAccount.clientId
+            $azure_client_secret = $settings.settings.cloudSettings.azureAccount.clientSecret
+            $service_principal_name = (Get-AzADServicePrincipal -ApplicationId $azure_client_id).DisplayName
+        }
+        else {
+            $new_service_principal_name = "$service_principal_name-$((New-Guid).ToString().SubString(0, 8))"
+            Write-Warning "Azure AD service principal and application with the name '$service_principal_name' already exist, creating '$new_service_principal_name'."
+            Write-Warning "Consider deleting '$service_principal_name' service principal and application if they are not being used with any other service."
+            GetOrCreateServicePrincipal $new_service_principal_name
+            return
+        }
     }
-    $azure_client_id = $sp.ApplicationId
     Write-host "Using Azure AD service principal '$($service_principal_name)'" -ForegroundColor DarkGray
     return @{
-                "service_principal_name" = $service_principal_name
-                "azure_client_id" = $azure_client_id
-                "azure_client_secret" = $azure_client_secret
-            }
+        "azure_client_id" = $azure_client_id
+        "azure_client_secret" = $azure_client_secret
+    }
 }
 
 function GetImageTemplatePath ($imageTemplate) {

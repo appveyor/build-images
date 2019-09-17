@@ -286,6 +286,11 @@ Function Connect-AppVeyorToAzure {
          }
          Write-host "Using resource group '$($azure_resource_group_name)' in location '$($Location_full)'" -ForegroundColor DarkGray
 
+        Write-host "`nGetting or creating Azure AD service principal $service_principal_name..." -ForegroundColor Cyan
+        $build_cloud_name = "Azure $Location_full $VmSize"
+        $service_principal_name = CreateSlug($build_cloud_name) + "-sp"
+        $azure_client = GetOrCreateServicePrincipal $service_principal_name $build_cloud_name $headers
+
         #Select VM size
         Write-host "`nSelecting VM size..." -ForegroundColor Cyan
         if (-not $VmSize) {
@@ -485,9 +490,6 @@ Function Connect-AppVeyorToAzure {
         #Run Packer to create an image
         if (-not $VhdFullPath) {
             $packerPath = GetPackerPath
-            Write-Host "`nCreating temporary Azure AD service principal for Packer..." -ForegroundColor Cyan
-            $packer_service_principal_name = "$($CommonPrefix)-packer-sp"
-            $packer_azure_client = CreateServicePrincipal $packer_service_principal_name
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
             Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to skip Packer build and reuse existing VHD. It must be in '$($azure_storage_account)' storage account."
             Remove-Item $packer_manifest -Force -ErrorAction Ignore
@@ -496,8 +498,8 @@ Function Connect-AppVeyorToAzure {
                 & $packerPath build '--only=azure-arm' `
                 -var "azure_subscription_id=$azure_subscription_id" `
                 -var "azure_tenant_id=$azure_tenant_id" `
-                -var "azure_client_id=$($packer_azure_client.azure_client_id)" `
-                -var "azure_client_secret=$($packer_azure_client.azure_client_secret)" `
+                -var "azure_client_id=$($azure_client.azure_client_id)" `
+                -var "azure_client_secret=$($azure_client.azure_client_secret)" `
                 -var "azure_location=$Location" `
                 -var "azure_resource_group_name=$azure_resource_group_name" `
                 -var "azure_storage_account=$azure_storage_account" `
@@ -525,11 +527,9 @@ Function Connect-AppVeyorToAzure {
 
             #Get VHD path
             if (-not (test-path $packer_manifest)) {
-                Write-Warning "Unable to find $packer_manifest. Please ensure Packer job finsihed successfully."
-                DeleteServicePrincipal $packer_azure_client.service_principal_name
+                Write-Warning "Unable to find $packer_manifest. Please ensure Packer job finsihed successfully."                
                 ExitScript
             }
-            DeleteServicePrincipal $packer_azure_client.service_principal_name
 
             Write-host "`nGetting VHD path..." -ForegroundColor Cyan
             $manifest = Get-Content -Path $packer_manifest | ConvertFrom-Json
@@ -612,12 +612,9 @@ Function Connect-AppVeyorToAzure {
         }
 
         #Create or update cloud
-        $build_cloud_name = "Azure $Location_full $VmSize"
-        $cloud_service_principal_name = $build_cloud_name.Replace(" ", "-").Trim() + "-sp"
         $clouds = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get
         $cloud = $clouds | ? ({$_.name -eq $build_cloud_name})[0]
         if (-not $cloud) {
-            $cloud_azure_client = CreateServicePrincipal $cloud_service_principal_name
             Write-host "`nCreating build environment on AppVeyor..." -ForegroundColor Cyan
             $body = @{
                 name = $build_cloud_name
@@ -632,8 +629,8 @@ Function Connect-AppVeyorToAzure {
                     }
                     cloudSettings = @{
                         azureAccount =@{
-                            clientId = $($cloud_azure_client.azure_client_id)
-                            clientSecret = $($cloud_azure_client.azure_client_secret)
+                            clientId = $($azure_client.azure_client_id)
+                            clientSecret = $($azure_client.azure_client_secret)
                             tenantId = $azure_tenant_id
                             subscriptionId = $azure_subscription_id
                         }
