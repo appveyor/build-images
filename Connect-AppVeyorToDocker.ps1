@@ -128,7 +128,7 @@ Function Connect-AppVeyorToDocker {
             $baseImageName = $ImageTemplate.Substring(0, $idx)
         }
 
-        $dockerImageName = "$baseImageName`:$dockerImageTag"
+        $dockerImageName = "$dockerImageTag"
 
         $clouds = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-clouds" -Headers $headers -Method Get
         $cloud = $clouds | Where-Object ({$_.name -eq $build_cloud_name})[0]
@@ -224,26 +224,52 @@ Function Connect-AppVeyorToDocker {
             $dockerTempPath = Join-Path -Path $tmp -ChildPath ([Guid]::NewGuid().ToString('N'))
             New-Item $dockerTempPath -Type Directory | Out-Null
             $dockerfilePath = Join-Path -Path $dockerTempPath -ChildPath 'Dockerfile'
+
+            $dockerfile = @()
+            $dockerfile += "FROM $ImageTemplate"
             
             if ($ImageOs -eq 'Linux') {
 
                 # build Linux image
-                $customScriptPath = Join-Path -Path $dockerTempPath -ChildPath 'script.sh'
-                $decodedScript = [Text.Encoding]::UTF8.GetString(([Convert]::FromBase64String($ImageCustomScript)))
-                [IO.File]::WriteAllText($customScriptPath, $decodedScript.Replace("`r`n", "`n"))
-                [IO.File]::WriteAllText($dockerfilePath, "FROM $ImageTemplate
-COPY ./script.sh .
-RUN chmod +x ./script.sh && ./script.sh".Replace("`r`n", "`n"))
+                if (-not $ImageTemplate.StartsWith('appveyor/build-image')) {
+                    # full image
+                    $scriptsPath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath 'scripts') -ChildPath 'Ubuntu'
+                    $destPath = Join-Path -Path (Join-Path -Path $dockerTempPath -ChildPath 'scripts') -ChildPath 'Ubuntu'
+
+                    Copy-Item $scriptsPath $destPath -Recurse
+
+                    if ($ImageFeatures) {
+                        $dockerfile += "ENV OPT_FEATURES=$ImageFeatures"
+                    }
+                    $dockerfile += "ENV IS_DOCKER=true"
+                    $dockerfile += "COPY ./scripts/Ubuntu ./scripts"
+                    $dockerfile += "RUN ./scripts/minimalconfig.sh"
+                }
+
+                if ($ImageCustomScript) {
+                    $customScriptPath = Join-Path -Path $dockerTempPath -ChildPath 'script.sh'
+                    $decodedScript = [Text.Encoding]::UTF8.GetString(([Convert]::FromBase64String($ImageCustomScript)))
+                    [IO.File]::WriteAllText($customScriptPath, $decodedScript.Replace("`r`n", "`n"))
+                    $dockerfile += "COPY ./script.sh ."
+                    $dockerfile += "RUN chmod +x ./script.sh && ./script.sh"
+                }
+
+                $dockerfile += "ENTRYPOINT [ `"/opt/appveyor/build-agent/appveyor-build-agent`" ]"
+
             } else {
 
                 # build Windows image
-                $customScriptPath = Join-Path -Path $dockerTempPath -ChildPath 'script.ps1'
-                $decodedScript = [Text.Encoding]::UTF8.GetString(([Convert]::FromBase64String($ImageCustomScript)))
-                [IO.File]::WriteAllText($customScriptPath, "`$ErrorActionPreference = `"Stop`"`n$decodedScript")
-                [IO.File]::WriteAllText($dockerfilePath, "FROM $ImageTemplate
-COPY script.ps1 .
-RUN pwsh -noni -ep unrestricted .\script.ps1")
+                if ($ImageCustomScript) {
+                    $customScriptPath = Join-Path -Path $dockerTempPath -ChildPath 'script.ps1'
+                    $decodedScript = [Text.Encoding]::UTF8.GetString(([Convert]::FromBase64String($ImageCustomScript)))
+                    [IO.File]::WriteAllText($customScriptPath, "`$ErrorActionPreference = `"Stop`"`n$decodedScript")                    
+                    $dockerfile += "COPY script.ps1 ."
+                    $dockerfile += "RUN pwsh -noni -ep unrestricted .\script.ps1"
+                }
             }
+
+            # write and build Dockerfile
+            [IO.File]::WriteAllLines($dockerfilePath, $dockerfile)
 
             docker build -t $dockerImageName -f $dockerfilePath $dockerTempPath
 
