@@ -176,7 +176,6 @@ Function Connect-AppVeyorToAWS {
     $ImageTemplate = GetImageTemplatePath $imageTemplate
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
-    $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = CreatePassword
 
@@ -515,9 +514,10 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
         #Run Packer to create an AMI
         if (-not $AmiId) {
             $packerPath = GetPackerPath
+            $packerManifest = "$(CreateTempFolder)/packer-manifest.json"
             Write-host "`nRunning Packer to create a basic build VM AMI..." -ForegroundColor Cyan
             Write-Warning "Add '-AmiId' parameter with if you want to to skip Packer build and and reuse existing AMI. It must be in '$($aws_region_full)' region)."
-            Remove-Item $packer_manifest -Force -ErrorAction Ignore
+            Remove-Item $packerManifest -Force -ErrorAction Ignore
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
             & $packerPath build '--only=amazon-ebs' `
@@ -536,14 +536,14 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
 
 
             #Get VHD path
-            if (-not (test-path $packer_manifest)) {
-                Write-Warning "Unable to find $packer_manifest. Please ensure Packer job finsihed successfully."
+            if (-not (test-path $packerManifest)) {
+                Write-Warning "Packer build failed."
                 ExitScript
             }
             Write-host "`nGetting AMI ID..." -ForegroundColor Cyan
-            $manifest = Get-Content -Path $packer_manifest | ConvertFrom-Json
+            $manifest = Get-Content -Path $packerManifest | ConvertFrom-Json
             $AmiId = $manifest.builds[0].artifact_id.TrimStart("$($Region)").TrimStart(":")        
-            Remove-Item $packer_manifest -Force -ErrorAction Ignore
+            Remove-Item $packerManifest -Force -ErrorAction Ignore
             Write-host "Build image AMI created by Packer. AMI ID: '$($AmiId)'" -ForegroundColor DarkGray
             Write-Host "Default build VM credentials: User: 'appveyor', Password: '$($install_password)'. Normally you do not need this password as it will be reset to a random string when the build starts. However you can use it if you need to create and update a VM from the Packer-created VHD manually"  -ForegroundColor DarkGray
         }
