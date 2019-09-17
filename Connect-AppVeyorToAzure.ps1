@@ -167,7 +167,6 @@ Function Connect-AppVeyorToAzure {
     $ImageTemplate = GetImageTemplatePath $imageTemplate
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
-    $packerPath = GetPackerPath
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = CreatePassword
@@ -479,6 +478,7 @@ Function Connect-AppVeyorToAzure {
 
         #Run Packer to create an image
         if (-not $VhdFullPath) {
+            $packerPath = GetPackerPath
             Write-Host "`nCreating temporary Azure AD service principal for Packer..." -ForegroundColor Cyan
             $packer_service_principal_name = "$($CommonPrefix)-packer-sp"
             $packer_azure_client = CreateServicePrincipal $packer_service_principal_name

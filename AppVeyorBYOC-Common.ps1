@@ -213,7 +213,7 @@ function GetPackerPath {
     else {
         $packerFolder = CreateTempFolder
         $zipPath = Join-Path $packerFolder "packer_$($packerVersion)_windows_amd64.zip"
-        Write-Host "Downloading Packer version $packerVersion to $packerFolder" -ForegroundColor DarkGray
+        Write-Host "Downloading Packer version $packerVersion to temporary folder..." -ForegroundColor DarkGray
         $currentSecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol
         $zipFile = if ($isLinux) {"packer_$($packerVersion)_linux_386.zip"} elseif ($isMacOS) {"packer_$($packerVersion)_darwin_386.zip"} else {"packer_$($packerVersion)_windows_386.zip"} 
         [System.Net.ServicePointManager]::SecurityProtocol = "Tls12"
@@ -221,7 +221,9 @@ function GetPackerPath {
         [System.Net.ServicePointManager]::SecurityProtocol = $currentSecurityProtocol
         Expand-Archive -LiteralPath $zipPath -DestinationPath $packerFolder
         Remove-Item $zipPath -force -ErrorAction Ignore
-        return (Join-Path $packerFolder "packer")
+        $packerPath = Join-Path $packerFolder "packer"
+        Write-Host "Using $packerPath" -ForegroundColor DarkGray
+        return $packerPath
     }
 }
 

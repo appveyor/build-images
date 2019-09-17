@@ -176,7 +176,6 @@ Function Connect-AppVeyorToAWS {
     $ImageTemplate = GetImageTemplatePath $imageTemplate
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
-    $packerPath = GetPackerPath
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = CreatePassword
@@ -515,6 +514,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
 
         #Run Packer to create an AMI
         if (-not $AmiId) {
+            $packerPath = GetPackerPath
             Write-host "`nRunning Packer to create a basic build VM AMI..." -ForegroundColor Cyan
             Write-Warning "Add '-AmiId' parameter with if you want to to skip Packer build and and reuse existing AMI. It must be in '$($aws_region_full)' region)."
             Remove-Item $packer_manifest -Force -ErrorAction Ignore

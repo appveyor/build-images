@@ -165,7 +165,6 @@ Function Connect-AppVeyorToGCE {
     $ImageTemplate = GetImageTemplatePath $imageTemplate
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
-    $packerPath = GetPackerPath
     $packer_manifest = "$PSScriptRoot/packer-manifest.json"
     $install_user = "appveyor"
     $install_password = CreatePassword
@@ -371,6 +370,7 @@ Function Connect-AppVeyorToGCE {
 
         #Run Packer to create an image
         if (-not $ImageId) {
+            $packerPath = GetPackerPath
 
             Write-host "`nCreating temporary service account key for Packer..." -ForegroundColor Cyan
             #TODO check is number of keys already used
