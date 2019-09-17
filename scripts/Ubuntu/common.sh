@@ -439,8 +439,8 @@ function install_nvm_and_nodejs() {
 
 function install_nvm() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME} user. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}' user. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     #TODO have to figure out latest release version automatically
@@ -451,16 +451,16 @@ function install_nvm() {
 }
 
 function install_nvm_nodejs() {
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
         CURRENT_NODEJS=8
     else
         CURRENT_NODEJS=$1
-    fi
-    # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
-        return 1
     fi
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
@@ -524,8 +524,8 @@ function install_gitlfs() {
 
 function configure_gitlfs() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     git lfs install ||
@@ -560,8 +560,8 @@ function install_cvs() {
 
 function configure_svn() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     pushd ${HOME}
@@ -905,8 +905,8 @@ function install_jdk() {
 
 function configure_jdk() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     local file
@@ -941,8 +941,8 @@ function install_rvm_and_rubies() {
 
 function install_rvm() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     # Install mpapis public key (might need `gpg2` and or `sudo`)
@@ -966,8 +966,8 @@ function install_rvm() {
 
 function install_rubies() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     command -v rvm ||
@@ -1005,8 +1005,8 @@ function install_gvm_and_golangs() {
 
 function install_gvm(){
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     if [[ -s "${HOME}/.gvm/scripts/gvm" ]]; then
@@ -1029,8 +1029,8 @@ function install_gvm(){
 
 function install_golangs() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     command -v gvm && gvm version ||
@@ -1120,7 +1120,7 @@ function install_sqlserver() {
 function configure_sqlserver() {
     # this must be executed as appveyor user
     if [ "$(whoami)" != "${USER_NAME}" ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     if [[ -z "${MSSQL_SA_PASSWORD-}" ]]; then
