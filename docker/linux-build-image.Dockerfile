@@ -8,6 +8,6 @@ COPY ./scripts/Ubuntu ./scripts
 
 RUN ./scripts/dockerconfig.sh
 
-#USER appveyor
+USER appveyor
 
 ENTRYPOINT [ "/opt/appveyor/build-agent/appveyor-build-agent" ]

@@ -26,5 +26,8 @@ apt-get update && apt-get install -y curl git mercurial subversion
 add_user ||
     _abort $?
 
+mkdir -p /appveyor/bin && chown ${USER_NAME}:${USER_NAME} /appveyor/bin
+mkdir -p /appveyor/temp && chown ${USER_NAME}:${USER_NAME} /appveyor/temp
+
 copy_appveyoragent ||
      _abort $?

@@ -171,10 +171,16 @@ function add_user() {
     if [[ -z "${USER_PASSWORD-}" || "${#USER_PASSWORD}" = "0" ]]; then
         USER_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${USER_PASSWORD_LENGTH};)
     fi
-    id -u ${USER_NAME} >/dev/null 2>&1 || \
-        useradd ${USER_NAME} --shell /bin/bash --create-home --password ${USER_NAME}
 
-    if $IS_DOCKER; then
+    if ! $IS_DOCKER; then
+        # create user without ID specified
+        id -u ${USER_NAME} >/dev/null 2>&1 || \
+            useradd ${USER_NAME} --shell /bin/bash --create-home --password ${USER_NAME}    
+    else
+        # create user with ID=1000
+        useradd ${USER_NAME} --shell /bin/bash --uid 1000 --create-home --password ${USER_NAME}
+
+        # install sudo
         apt-get update && apt-get -y install sudo
     fi
 
