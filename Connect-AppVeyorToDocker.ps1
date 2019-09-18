@@ -251,7 +251,7 @@ Function Connect-AppVeyorToDocker {
                     $decodedScript = [Text.Encoding]::UTF8.GetString(([Convert]::FromBase64String($ImageCustomScript)))
                     [IO.File]::WriteAllText($customScriptPath, $decodedScript.Replace("`r`n", "`n"))
                     $dockerfile += "COPY ./script.sh ."
-                    $dockerfile += "RUN chmod +x ./script.sh && ./script.sh"
+                    $dockerfile += "RUN sudo chmod +x ./script.sh && ./script.sh"
                 }
 
                 $dockerfile += "USER appveyor"
