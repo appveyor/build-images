@@ -255,7 +255,7 @@ Function Connect-AppVeyorToDocker {
                 }
 
                 $dockerfile += "USER appveyor"
-                $dockerfile += "ENTRYPOINT [ `"/opt/appveyor/build-agent/appveyor-build-agent`" ]"
+                $dockerfile += "CMD [ `"/bin/bash`", `"/scripts/entrypoint.sh`" ]"
 
             } else {
 

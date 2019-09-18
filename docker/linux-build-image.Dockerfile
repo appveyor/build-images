@@ -10,4 +10,4 @@ RUN ./scripts/dockerconfig.sh
 
 USER appveyor
 
-CMD [ "/scripts/entrypoint.sh" ]
+CMD [ "/bin/bash", "/scripts/entrypoint.sh" ]
