@@ -323,27 +323,30 @@ function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $Im
     }
 
     if($ImageCustomScript) {
+        $fileExtension =  if ($imageOs -eq "Windows") {"ps1"} elseif ($imageOs -eq "Linux") {"sh"}
+        $provisionerShell =  if ($imageOs -eq "Windows") {"powershell"} elseif ($imageOs -eq "Linux") {"shell"}
         $ImageCustomScript = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($ImageCustomScript))
+        $customScriptFile = Join-Path $(CreateTempFolder) "$(New-Guid).$fileExtension"
+        $ImageCustomScript | Set-Content -Path $customScriptFile
+        $custom_before_reboot_script =  @($customScriptFile)
+
+        $custom_before_reboot = 
         if ($imageOs -eq "Windows") {
-            $customScriptFile = "$(New-Guid).ps1"
-            $ImageCustomScript | Set-Content -Path "$PSScriptRoot/scripts/Windows/custom-scripts/$customScriptFile"
-
-            $custom_before_reboot_script = @()
-            $custom_before_reboot_script += "{{ template_dir }}/scripts/Windows/custom-scripts/$customScriptFile"
-
-            $custom_before_reboot = @{
-                'type' = 'powershell'
-                'scripts' = $custom_before_reboot_script
-                'elevated_user' = '{{user `install_user`}}'
-                'elevated_password' = '{{user `install_password`}}'
+            @{
+            'type' = $provisionerShell
+            'scripts' = $custom_before_reboot_script
+            'elevated_user' = '{{user `install_user`}}'
+            'elevated_password' = '{{user `install_password`}}'
             }
-            $packer_file.provisioners += $custom_before_reboot
         }
         elseif ($imageOs -eq "Linux") {
-            $customScriptFile = "$(New-Guid).sh"
-            $ImageCustomScript | Set-Content -Path "$PSScriptRoot/scripts/Ubuntu/custom-scripts/$customScriptFile"
-            return $imageTemplate
+            @{
+            'type' = $provisionerShell
+            'scripts' = $custom_before_reboot_script
+            }
         }
+
+       $packer_file.provisioners += $custom_before_reboot
     }
 
     if($ImageCustomScriptAfterReboot -and $imageOs -eq "Windows") {
@@ -353,12 +356,10 @@ function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $Im
         }
         $packer_file.provisioners += $reboot
 
-        $customScriptFileAfterReboot = "$(New-Guid).ps1"
-        $ImageCustomScriptAfterReboot | Set-Content -Path "$PSScriptRoot/scripts/Windows/custom-scripts/$customScriptFileAfterReboot"
-
-        $custom_after_reboot_scripts = @()
-        $custom_after_reboot_scripts += "{{ template_dir }}/scripts/Windows/custom-scripts/$customScriptFileAfterReboot"
-
+        $ImageCustomScriptAfterReboot = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($ImageCustomScriptAfterReboot))
+        $customScriptFileAfterReboot = Join-Path $(CreateTempFolder) "$(New-Guid).ps1"
+        $ImageCustomScriptAfterReboot | Set-Content -Path $customScriptFileAfterReboot
+        $custom_after_reboot_scripts = @($customScriptFileAfterReboot)
         $custom_after_reboot = @{
             'type' = 'powershell'
             'scripts' = $custom_after_reboot_scripts
@@ -368,7 +369,8 @@ function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $Im
         $packer_file.provisioners += $custom_after_reboot
     }
 
-    $imageTemplateCustom = $ImageTemplate.Replace((Get-Item $imageTemplate).Basename, "$((Get-Item $ImageTemplate).Basename)-custom")
+    $imageTemplateCustom = Join-Path $(CreateTempFolder) $(Split-Path $ImageTemplate -Leaf)
+    Copy-Item -Path "$PSScriptRoot\scripts" -Destination $(Split-Path $imageTemplateCustom -Parent) -recurse -Force
     $packer_file | ConvertTo-Json -Depth 20 | Set-Content -Path $imageTemplateCustom
     return $imageTemplateCustom
 }

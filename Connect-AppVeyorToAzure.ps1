@@ -492,7 +492,6 @@ Function Connect-AppVeyorToAzure {
             $packerManifest = "$(CreateTempFolder)/packer-manifest.json"
             Write-host "`nRunning Packer to create a basic build VM image..." -ForegroundColor Cyan
             Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to skip Packer build and reuse existing VHD. It must be in '$($azure_storage_account)' storage account."
-            Remove-Item $packerManifest -Force -ErrorAction Ignore
             function RunPacker {
                 $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
                 & $packerPath build '--only=azure-arm' `
@@ -509,7 +508,7 @@ Function Connect-AppVeyorToAzure {
                 -var "build_agent_mode=Azure" `
                 -var "image_description=$ImageName" `
                 -var "datemark=$date_mark" `
-                -var "packer_manifest=$packer_manifest" `
+                -var "packer_manifest=$packerManifest" `
                 -var "OPT_FEATURES=$ImageFeatures" `
                 $ImageTemplate
             }
