@@ -173,6 +173,11 @@ function add_user() {
     fi
     id -u ${USER_NAME} >/dev/null 2>&1 || \
         useradd ${USER_NAME} --shell /bin/bash --create-home --password ${USER_NAME}
+
+    if $IS_DOCKER; then
+        apt-get update && apt-get -y install sudo
+    fi
+
     usermod -aG sudo ${USER_NAME}
 
     # Add Appveyor user to sudoers.d
@@ -331,8 +336,11 @@ function install_KVP_packages(){
 
 function copy_appveyoragent() {
     if [[ -z "${APPVEYOR_BUILD_AGENT_VERSION-}" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
-        APPVEYOR_BUILD_AGENT_VERSION=7.0.2366;
+        APPVEYOR_BUILD_AGENT_VERSION=7.0.2375;
     fi
+
+    echo "[INFO] Installing AppVeyor Build Agent v${APPVEYOR_BUILD_AGENT_VERSION}"
+
     AGENT_FILE=appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-x64.tar.gz
 
     if [[ -z "${AGENT_DIR-}" ]]; then

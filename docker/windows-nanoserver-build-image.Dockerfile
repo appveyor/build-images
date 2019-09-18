@@ -2,6 +2,8 @@ ARG BUILD_IMAGE=mcr.microsoft.com/windows/servercore:ltsc2019
 ARG BASE_IMAGE=mcr.microsoft.com/windows/nanoserver:1809
 FROM $BUILD_IMAGE as installer-env
 
+ENV APPVEYOR_BUILD_AGENT_VERSION=7.0.2375
+
 COPY ./scripts/Windows ./scripts
 
 USER ContainerAdministrator

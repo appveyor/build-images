@@ -87,10 +87,10 @@ init_logging
 
 configure_path
 
-if ! $IS_DOCKER; then
-    add_user ||
-        _abort $?
+add_user ||
+    _abort $?
 
+if ! $IS_DOCKER; then
     wait_cloudinit || _continue
 fi
 
@@ -120,13 +120,12 @@ install_powershell ||
 
 install_cvs ||
     _abort $?
-if ! $IS_DOCKER; then
+
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f configure_svn)
         configure_svn" ||
     _abort $?
-fi
 
 # execute optional Features
 if [[ -n "${OPT_FEATURES-}" && "${#OPT_FEATURES}" -gt "0" ]]; then
