@@ -244,7 +244,6 @@ Function Connect-AppVeyorToDocker {
                     $dockerfile += "ENV IS_DOCKER=true"
                     $dockerfile += "COPY ./scripts/Ubuntu ./scripts"
                     $dockerfile += "RUN chmod +x ./scripts/minimalconfig.sh && ./scripts/minimalconfig.sh"
-                    $dockerfile += "USER appveyor"
                 }
 
                 if ($ImageCustomScript) {
@@ -255,6 +254,7 @@ Function Connect-AppVeyorToDocker {
                     $dockerfile += "RUN chmod +x ./script.sh && ./script.sh"
                 }
 
+                $dockerfile += "USER appveyor"
                 $dockerfile += "ENTRYPOINT [ `"/opt/appveyor/build-agent/appveyor-build-agent`" ]"
 
             } else {

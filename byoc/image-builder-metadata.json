@@ -199,36 +199,12 @@
          ],
          "optionalFeatures":[
             {
-               "id": "install_nodejs",
-               "title": "Node.js"
-            },
-            {
                "id": "install_nvm_and_nodejs",
                "title": "Node.js with NVM"
             },
             {
-               "id": "install_gitlfs",
-               "title": "Git LFS"
-            },
-            {
-               "id": "install_cvs",
-               "title": "CVS (Git, Mercurial, Subversion)"
-            },
-            {
-               "id": "install_virtualenv",
-               "title": "Virtualenv - isolated Python environments"
-            },
-            {
-               "id": "install_pip",
-               "title": "Pip - Python package-management system"
-            },
-            {
                "id": "install_pythons",
                "title": "Pythons"
-            },
-            {
-               "id": "install_powershell",
-               "title": "Powershell"
             },
             {
                "id": "install_dotnets",
@@ -240,27 +216,27 @@
             },
             {
                "id": "install_mono",
-               "title": "Mono framework"
+               "title": "Mono framework (latest)"
             },
             {
                "id": "install_jdks",
-               "title": "jdks"
+               "title": "JDK 7, 8, 9, 10, 11, 12, 13, 14"
             },
             {
                "id": "install_rvm_and_rubies",
-               "title": "Ruby in RVM"
+               "title": "Ruby (all 2.x versions) and RVM"
             },
             {
                "id": "install_gvm_and_golangs",
-               "title": "Golangs in GVM"
+               "title": "Golang 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 1.12.x and GVM"
             },
             {
                "id": "install_docker",
-               "title": "Docker"
+               "title": "Docker CE (latest)"
             },
             {
                "id": "install_MSSQLServer",
-               "title": "MS SQL Server"
+               "title": "Microsoft SQL Server 2017 for Linux"
             },
             {
                "id": "install_mysql",
@@ -283,12 +259,16 @@
                "title": "RabbitMQ"
             },
             {
+               "id": "install_powershell",
+               "title": "PowerShell Core 6.x"
+            },            
+            {
                "id": "install_p7zip",
                "title": "p7zip"
             },
             {
                "id": "install_packer",
-               "title": "Hashicorp Packer"
+               "title": "Packer by Hashicorp"
             },
             {
                "id": "install_yarn",
@@ -312,7 +292,7 @@
             },
             {
                "id": "install_cmake",
-               "title": "cmake"
+               "title": "CMake 3.15.2"
             },
             {
                "id": "install_kubectl",
@@ -324,15 +304,15 @@
             },
             {
                "id": "install_browsers",
-               "title": "Browsers"
+               "title": "Firefox and Chrome browsers"
             },
             {
                "id": "install_virtualbox",
-               "title": "Virtualbox"
+               "title": "VirtualBox"
             },
             {
                "id": "install_clang",
-               "title": "clang"
+               "title": "CLang"
             },
             {
                "id": "install_octo",

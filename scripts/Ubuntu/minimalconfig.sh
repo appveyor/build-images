@@ -121,6 +121,9 @@ install_powershell ||
 install_cvs ||
     _abort $?
 
+install_gitlfs ||
+    _abort $?
+
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f configure_svn)
