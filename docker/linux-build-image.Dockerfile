@@ -10,4 +10,4 @@ RUN ./scripts/dockerconfig.sh
 
 USER appveyor
 
-ENTRYPOINT [ "/opt/appveyor/build-agent/appveyor-build-agent" ]
+CMD [ "./scripts/entrypoint.sh" ]
