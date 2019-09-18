@@ -8,8 +8,8 @@ if [ -d /appveyor/bin ]; then
     sudo chown -R $(id -u):$(id -g) /appveyor/bin
 fi
 
-if [[ ! -z "${APPVEYOR_BUILD_FOLDER-}" ]]; then
-    sudo chown -R $(id -u):$(id -g) ${APPVEYOR_BUILD_FOLDER}
+if [[ -n "${APPVEYOR_BUILD_AGENT_PROJECTS_BUILDS_PATH-}" && "${#APPVEYOR_BUILD_AGENT_PROJECTS_BUILDS_PATH}" -gt "0" ]]; then
+    sudo chown -R $(id -u):$(id -g) ${APPVEYOR_BUILD_AGENT_PROJECTS_BUILDS_PATH}
 fi
 
 # execute build agent
