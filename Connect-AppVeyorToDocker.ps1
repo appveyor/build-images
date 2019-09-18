@@ -243,7 +243,7 @@ Function Connect-AppVeyorToDocker {
                     }
                     $dockerfile += "ENV IS_DOCKER=true"
                     $dockerfile += "COPY ./scripts/Ubuntu ./scripts"
-                    $dockerfile += "RUN ./scripts/minimalconfig.sh"
+                    $dockerfile += "RUN chmod +x ./scripts/minimalconfig.sh && ./scripts/minimalconfig.sh"
                     $dockerfile += "USER appveyor"
                 }
 
