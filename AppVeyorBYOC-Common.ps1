@@ -79,7 +79,11 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
                 return
             }
 
-            if (brew list appveyor-host-agent >/dev/null) {
+            $backupErrorActionPreference = $ErrorActionPreference
+            $ErrorActionPreference = "Ignore"
+            $brew_output = $(brew list appveyor-host-agent)
+            $ErrorActionPreference = $backupErrorActionPreference
+            if (-not $brew_output) {
                 Write-Host "Installing Host Agent..." -ForegroundColor Gray
                 bash -c "HOMEBREW_APPVEYOR_URL=$appVeyorUrl HOMEBREW_HOST_AUTH_TKN=$hostAuthorizationToken brew install appveyor/brew/appveyor-host-agent"
             } else{
