@@ -135,8 +135,10 @@ Function Connect-AppVeyorToHyperV {
 
     #TODO test IP and NAT
     #TODO scenario if subnet is occuped (to get existing subnets: gwmi -computer .  -class "win32_networkadapterconfiguration" | % {$_.ipsubnet})
-    $natSwitch = "$CommonPrefix-NATSwitch"
-    $natNetwork = "$CommonPrefix-NATNetwork"
+    $natSwitch = "$CommonPrefix-NAT-Switch"
+    $natNetwork = "$CommonPrefix-NAT-Network"
+    $MasterIPAddress = "10.118.232.2"
+    $SubnetMask = "255.255.255.0"
     $StartIPAddress = "10.118.232.100"
     $DefaultGateway = "10.118.232.1"
     Write-host "`nGetting or creating virtual switch $natSwitch..." -ForegroundColor Cyan
@@ -161,7 +163,7 @@ Function Connect-AppVeyorToHyperV {
             -var "install_user=$install_user" `
             -var "build_agent_mode=HyperV" `
             -var "disk_size=61440" `
-            -var "hyperv_switchname=$natSwitch " `
+            -var "hyperv_switchname=$natSwitch" `
             -var "iso_checksum=$iso_checksum" `
             -var "iso_checksum_type=$iso_checksum_type" `
             -var "iso_url=$iso_url" `
@@ -169,6 +171,9 @@ Function Connect-AppVeyorToHyperV {
             -var "datemark=$date_mark" `
             -var "packer_manifest=$packerManifest" `
             -var "OPT_FEATURES=$ImageFeatures" `
+            -var "host_ip_addr=$MasterIPAddress" `
+            -var "host_ip_mask=$SubnetMask" `
+            -var "host_ip_gw=$DefaultGateway" `
             $ImageTemplate
 
             #Get VHD path
