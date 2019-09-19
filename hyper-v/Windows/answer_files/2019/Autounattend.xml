@@ -182,7 +182,7 @@
                 </SynchronousCommand>
 
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>cmd.exe /c powershell -Command "New-NetIPAddress -InterfaceAlias Ethernet -IPAddress 192.168.231.2 -AddressFamily IPv4 -PrefixLength 24 -DefaultGateway 192.168.231.1"</CommandLine>
+                    <CommandLine>cmd.exe /c powershell -Command "New-NetIPAddress -InterfaceAlias Ethernet -IPAddress 10.118.232.2 -AddressFamily IPv4 -PrefixLength 24 -DefaultGateway 10.118.232.1"</CommandLine>
                     <Description>Assign IP behind NAT</Description>
                     <Order>11</Order>
                     <RequiresUserInput>true</RequiresUserInput>

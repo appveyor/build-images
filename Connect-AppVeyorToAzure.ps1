@@ -105,8 +105,7 @@ Function Connect-AppVeyorToAzure {
     )
 
     function ExitScript {
-        Remove-Item $PSScriptRoot/scripts/Windows/custom-scripts/*.ps1 -Force -ErrorAction Ignore
-        Remove-Item $PSScriptRoot/scripts/Ubuntu/custom-scripts/*.sh -Force -ErrorAction Ignore
+        # some cleanup?
         break all
     }
 
