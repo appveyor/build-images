@@ -163,6 +163,54 @@
             {
                "id":"winsdk_1903",
                "title":"Microsoft Windows SDK 1903 (10.0.18362.1)"
+            },
+            {
+               "id":"yarn",
+               "title":"Yarn 1.16.0"
+            },
+            {
+               "id":"wix311",
+               "title":"WiX Toolset 3.11.1"
+            },
+            {
+               "id":"llvm",
+               "title":"LLVM 8.0.0"
+            },
+            {
+               "id":"innosetup",
+               "title":"InnoSetup 6.0.2 Unicode"
+            },
+            {
+               "id":"coverity",
+               "title":"Coverity Scan 2019.03"
+            },
+            {
+               "id":"iis_win2019",
+               "title":"Internet Information Services (IIS) 10"
+            },
+            {
+               "id":"nsis",
+               "title":"NSIS 3.04"
+            },
+            {
+               "id":"octo",
+               "title":"Octo 6.12.0"
+            },
+            {
+               "id":"java_7_8",
+               "title":"Java 7-8"
+            },
+            {
+               "id":"jdk11",
+               "title":"JDK 11.0.2 (x64)"
+            },
+            {
+               "id":"jdk12",
+               "title":"JDK 12 (x64)"
+            },
+            {
+               "id":"msys64",
+               "title":"MSYS2"
             }
          ]
       },
