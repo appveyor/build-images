@@ -180,7 +180,7 @@
       ],
 
       "iso_checksum": "{{user `iso_checksum`}}",
-      "iso_checksum_type": "md5",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "ssh_host": "{{ user `host_ip_addr` }}",
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
