@@ -7,6 +7,8 @@ build_script:
 - ps: Copy-Item -Path scripts\* -Destination AppVeyorBYOC\scripts -Recurse
 - ps: New-Item AppVeyorBYOC\hyper-v -Type Directory | Out-Null
 - ps: Copy-Item -Path hyper-v\* -Destination AppVeyorBYOC\hyper-v -Recurse
+- ps: New-Item AppVeyorBYOC\http -Type Directory | Out-Null
+- ps: Copy-Item -Path http\* -Destination AppVeyorBYOC\http -Recurse
 - ps: Copy-Item -Path AppVeyorBYOC-Common.ps1 -Destination AppVeyorBYOC
 - ps: Copy-Item -Path Connect-*.ps1 -Destination AppVeyorBYOC
 - ps: Copy-Item -Path *.json -Destination AppVeyorBYOC

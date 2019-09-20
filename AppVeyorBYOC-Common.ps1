@@ -380,6 +380,7 @@ function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $Im
     $imageTemplateCustom = Join-Path $(CreateTempFolder) $(Split-Path $ImageTemplate -Leaf)
     Copy-Item -Path "$PSScriptRoot\scripts" -Destination $(Split-Path $imageTemplateCustom -Parent) -recurse -Force
     Copy-Item -Path "$PSScriptRoot\hyper-v" -Destination $(Split-Path $imageTemplateCustom -Parent) -recurse -Force
+    Copy-Item -Path "$PSScriptRoot\http" -Destination $(Split-Path $imageTemplateCustom -Parent) -recurse -Force
     $packer_file | ConvertTo-Json -Depth 20 | Set-Content -Path $imageTemplateCustom
     return $imageTemplateCustom
 }
