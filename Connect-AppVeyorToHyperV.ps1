@@ -159,7 +159,7 @@ Function Connect-AppVeyorToHyperV {
         New-NetNAT -Name $natNetwork -InternalIPInterfaceAddressPrefix 10.118.232.0/24
     }
     if ($imageOs -eq "Linux" -and (-not (Get-NetFirewallRule -Name $FirewalRuleName -ErrorAction Ignore))) {
-         New-NetFirewallRule -Name $FirewalRuleName -DisplayName $FirewalRuleName -Enabled True -Direction Inbound -Action Allow -LocalAddress $DefaultGateway -RemoteAddress $MasterIPAddress -LocalPort "HttpPortMin-$HttpPortMax" -Protocol TCP
+         New-NetFirewallRule -Name $FirewalRuleName -DisplayName $FirewalRuleName -Enabled True -Direction Inbound -Action Allow -LocalAddress $DefaultGateway -RemoteAddress $MasterIPAddress -LocalPort "$HttpPortMin-$HttpPortMax" -Protocol TCP
     }
 
     try {
