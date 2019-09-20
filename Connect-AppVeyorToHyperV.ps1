@@ -272,10 +272,12 @@ Function Connect-AppVeyorToHyperV {
                     ($settings.settings.cloudSettings.images.list | ? {$_.name -eq $ImageName}).vhdPath = $VhdPath
                 }
                 else {
-                    isDefault = $false
-                    name = $ImageName
-                    vhdPath = $VhdPath
-                    osType = $ImageOs
+                    $new_image = @{
+                        isDefault = $false
+                        name = $ImageName
+                        vhdPath = $VhdPath
+                        osType = $ImageOs
+                    }
                 }
                 $new_image = $new_image | ConvertTo-Json | ConvertFrom-Json
                 $settings.settings.cloudSettings.images.list += $new_image
