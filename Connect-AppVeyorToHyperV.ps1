@@ -267,10 +267,6 @@ Function Connect-AppVeyorToHyperV {
             }
         }
 
-        $jsonBody = $settings | ConvertTo-Json -Depth 10
-        Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds"-Headers $headers -Body $jsonBody -Method Put | Out-Null
-        Write-host "AppVeyor build environment '$($build_cloud_name)' has been updated." -ForegroundColor DarkGray
-
         SetBuildWorkerImage $headers $ImageName $ImageOs
 
         # Install Host Agent
