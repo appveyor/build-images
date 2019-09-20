@@ -228,17 +228,10 @@ function ValidateDependencies ($cloudType) {
     }
     
    if ($cloudType -eq "HyperV") {
-        Write-host "`nChecking if Hyper-V feature is installed..."  -ForegroundColor Cyan
-        if (-not (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-All -Online -ErrorAction Ignore)) {
-            Write-Warning "Hyper-V feature is not installed."
-            $installHyperV = Read-Host "Enter 1 to install it or any other key to stop command execution and install it manually"
-            if ($installHyperV -eq 1) {
-                Install-WindowsFeature -Name Hyper-V -IncludeManagementTools
-            }
-            else {
-                Write-Warning "Please install Hyper-V feature with 'Install-WindowsFeature -Name Hyper-V -IncludeManagementTools' and re-run the command."
-                ExitScript
-            }
+        Write-host "`nChecking if Hyper-V tools are installed..."  -ForegroundColor Cyan
+        if (-not (Get-Command Test-VHD -ErrorAction Ignore)) {
+            Write-Warning "Hyper-V feature or its management tools are not installed. Please install Hyper-V feature with 'Install-WindowsFeature -Name Hyper-V -IncludeManagementTools' (might require a reboot) and re-run the command."
+            ExitScript
         }
     }
 }
