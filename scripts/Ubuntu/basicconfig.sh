@@ -106,6 +106,9 @@ fi
 
 configure_path
 
+apt-get -y -qq update && apt-get install -y -q sudo ||
+    _continue $?
+
 add_user ||
     _abort $?
 
@@ -286,6 +289,8 @@ install_awscli ||
     _abort $?
 install_localstack || _continue
 install_azurecli ||
+    _abort $?
+install_gcloud ||
     _abort $?
 install_kubectl ||
     _abort $?

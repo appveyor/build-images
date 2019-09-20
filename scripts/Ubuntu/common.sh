@@ -172,26 +172,18 @@ function add_user() {
         USER_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${USER_PASSWORD_LENGTH};)
     fi
 
-    if ! $IS_DOCKER; then
-        # create user without ID specified
-        id -u ${USER_NAME} >/dev/null 2>&1 || \
-            useradd ${USER_NAME} --shell /bin/bash --create-home --password ${USER_NAME}    
-    else
-        # create user with ID=1000
-        useradd ${USER_NAME} --shell /bin/bash --uid 1000 --create-home --password ${USER_NAME}
+    id -u ${USER_NAME} >/dev/null 2>&1 || \
+        useradd ${USER_NAME} --shell /bin/bash --create-home --password ${USER_NAME}
 
-        # install sudo
-        apt-get update && apt-get -y install sudo
+    if command -v sudo >/dev/null; then
+        usermod -aG sudo ${USER_NAME}
+        # Add Appveyor user to sudoers.d
+        {
+            echo -e "${USER_NAME}\tALL=(ALL)\tNOPASSWD: ALL"
+            echo -e "Defaults:${USER_NAME}        !requiretty"
+            echo -e 'Defaults    env_keep += "DEBIAN_FRONTEND ACCEPT_EULA"'
+        } > /etc/sudoers.d/${USER_NAME}
     fi
-
-    usermod -aG sudo ${USER_NAME}
-
-    # Add Appveyor user to sudoers.d
-    {
-        echo -e "${USER_NAME}\tALL=(ALL)\tNOPASSWD: ALL"
-        echo -e "Defaults:${USER_NAME}        !requiretty"
-        echo -e 'Defaults    env_keep += "DEBIAN_FRONTEND ACCEPT_EULA"'
-    } > /etc/sudoers.d/${USER_NAME}
 
     echo -e "${USER_PASSWORD}\n${USER_PASSWORD}\n" | passwd "${USER_NAME}"
     if "${LOGGING}"; then
@@ -1354,6 +1346,8 @@ function install_gcloud() {
     apt-get -y -qq update &&
     apt-get -y -q install google-cloud-sdk ||
         { echo "[ERROR] Cannot install google-cloud-sdk." 1>&2; return 10; }
+
+    log_version gcloud version
 }
 
 function install_azurecli() {
