@@ -118,6 +118,14 @@ Function Connect-AppVeyorToHyperV {
     $install_user = "appveyor"
     $install_password = CreatePassword
 
+    $autounattendPath = Join-Path (Split-Path $ImageTemplate -Parent) "hyper-v\Windows\answer_files\2019\Autounattend.xml"
+    [xml]$autounattend = Get-Content $autounattendPath
+    $MicrosoftWindowsShellSetup = $autounattend.unattend.settings.component | ? {$_.name -eq "Microsoft-Windows-Shell-Setup"}
+    $MicrosoftWindowsShellSetup.Autologon.password.Value = $install_password
+    $MicrosoftWindowsShellSetup.UserAccounts.AdministratorPassword.Value = $install_password
+    $MicrosoftWindowsShellSetup.UserAccounts.LocalAccounts.LocalAccount.Password.Value = $install_password
+    $autounattend.Save($autounattendPath)
+
     $iso_checksum = "221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562"
     $iso_checksum_type = "sha256"
     $iso_url = "https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso"

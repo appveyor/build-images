@@ -271,16 +271,10 @@ function GetPackerPath {
 }
 
 function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $ImageCustomScript, $ImageCustomScriptAfterReboot, $imageOs) {
-    if(-not ($imageFeatures -or $ImageCustomScript -or $ImageCustomScriptAfterReboot)) {
-        return $imageTemplate
-    }
     $imageFeatures = $imageFeatures.Trim()
     if(($imageFeatures.Contains(' ') -and -not $imageFeatures.Contains(',')) -or $imageFeatures.Contains(';')) {
         Write-Warning "'ImageFeatures' should be comma-separate list or single value"
         ExitScript
-    }
-    if($imageOs -eq "Linux" -and -not $ImageCustomScript) {
-        return $imageTemplate
     }
 
     $packer_file = Get-Content $imageTemplate | ConvertFrom-Json
