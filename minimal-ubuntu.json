@@ -80,45 +80,6 @@
       "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"]
     },
     {
-      "type": "hyperv-iso",
-      "boot_command": [
-        "<esc><wait10><esc><esc><enter><wait>",
-        "linux /install/vmlinuz ",
-        " netcfg/disable_autoconfig=true<wait>",
-        " netcfg/get_ipaddress={{ user `host_ip_addr` }}<wait>",
-        " netcfg/get_netmask={{ user `host_ip_mask` }}<wait>",
-        " netcfg/get_gateway={{ user `host_ip_gw` }}<wait>",
-        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed18.cfg<wait>",
-        " netcfg/get_nameservers=8.8.8.8",
-        " debian-installer=en_US.UTF-8 auto locale=en_US.UTF-8 kbd-chooser/method=us",
-        " hostname={{.Name}} domain= ",
-        " fb=false debconf/frontend=noninteractive",
-        " keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA",
-        " keyboard-configuration/variant=USA console-setup/ask_detect=false<enter>",
-        "initrd /install/initrd.gz<enter>",
-        "boot<enter>"
-      ],
-      "boot_wait": "10s",
-      "http_directory": "http",
-      "iso_urls": [
-        "iso/ubuntu-18.04.3-server-amd64.iso",
-        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso"
-      ],
-
-      "iso_checksum": "{{user `iso_checksum_md5`}}",
-      "iso_checksum_type": "md5",
-      "ssh_host": "{{ user `host_ip_addr` }}",
-      "ssh_username": "{{ user `install_user` }}",
-      "ssh_password": "{{ user `install_password` }}",
-      "ssh_timeout" : "1h",
-      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now",
-      "cpus": "1",
-      "memory": "3072",
-      "disk_size": 40960,
-      "enable_secure_boot": false,
-      "generation": 2
-    },
-    {
       "type": "amazon-ebs",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",

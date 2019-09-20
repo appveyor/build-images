@@ -259,10 +259,24 @@ Function Connect-AppVeyorToHyperV {
         else {
             Write-Host "AppVeyor cloud '$build_cloud_name' already exists." -ForegroundColor DarkGray
             if ($cloud.CloudType -eq 'HyperV') {
-                Write-Host "Reading Host Agent authorization token from the existing cloud."
+                Write-Host "Updating image in the existing cloud..."
+                if ($settings.settings.cloudSettings.images.list | ? {$_.name -eq $ImageName}) {
+                    ($settings.settings.cloudSettings.images.list | ? {$_.name -eq $ImageName}).vhdPath = $VhdPath
+                }
+                else {
+                    isDefault = $false
+                    name = $ImageName
+                    vhdPath = $VhdPath
+                    osType = $ImageOs
+                }
+                $new_image = $new_image | ConvertTo-Json | ConvertFrom-Json
+                $settings.settings.cloudSettings.images.list += $new_image
+
+                Write-Host "Using Host Agent authorization token from the existing cloud."
                 $settings = Invoke-RestMethod -Uri "$AppVeyorUrl/api/build-clouds/$($cloud.buildCloudId)" -Headers $headers -Method Get
                 $hostAuthorizationToken = $settings.hostAuthorizationToken
-            } else {
+            }
+            else {
                 throw "Existing build cloud '$build_cloud_name' is not of 'HyperV' type."
             }
         }
