@@ -1354,6 +1354,8 @@ function install_gcloud() {
     apt-get -y -qq update &&
     apt-get -y -q install google-cloud-sdk ||
         { echo "[ERROR] Cannot install google-cloud-sdk." 1>&2; return 10; }
+
+    log_version gcloud version
 }
 
 function install_azurecli() {

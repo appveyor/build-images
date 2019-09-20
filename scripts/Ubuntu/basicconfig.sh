@@ -287,6 +287,8 @@ install_awscli ||
 install_localstack || _continue
 install_azurecli ||
     _abort $?
+install_gcloud ||
+    _abort $?
 install_kubectl ||
     _abort $?
 install_cmake ||
