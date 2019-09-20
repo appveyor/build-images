@@ -62,6 +62,7 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
 
         } else {
             Write-Host "Host Agent is already installed" -ForegroundColor DarkGray
+            /opt/appveyor/host-agent/appveyor version
         }
 
     } elseif ($isMacOS) {
@@ -103,6 +104,7 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
             }    
         } else {
             Write-Host "Host Agent is already installed" -ForegroundColor DarkGray
+            brew list --versions appveyor-host-agent
         }
 
     } else {
