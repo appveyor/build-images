@@ -21,7 +21,7 @@ function _continue() {
     echo "Continue installation..." 1>&2
 }
 
-apt-get update && apt-get install -y curl git mercurial subversion
+apt-get update && apt-get install -y curl git mercurial subversion sudo
 
 add_user ||
     _abort $?

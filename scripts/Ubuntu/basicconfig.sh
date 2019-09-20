@@ -106,6 +106,9 @@ fi
 
 configure_path
 
+apt-get -y -qq update && apt-get install -y -q sudo ||
+    _continue $?
+
 add_user ||
     _abort $?
 
