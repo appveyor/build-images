@@ -173,7 +173,7 @@
         "boot<enter>"
       ],
       "boot_wait": "10s",
-      "http_directory": "http",
+      "http_directory": "{{ template_dir }}/http",
       "iso_urls": [
         "iso/ubuntu-18.04.3-server-amd64.iso",
         "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso"
