@@ -116,7 +116,7 @@ Function Connect-AppVeyorToHyperV {
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
     $install_user = "appveyor"
-    $install_password = CreatePassword
+    $install_password = "appveyor" #CreatePassword
 
     $autounattendPath = Join-Path (Split-Path $ImageTemplate -Parent) "hyper-v\Windows\answer_files\2019\Autounattend.xml"
     [xml]$autounattend = Get-Content $autounattendPath
@@ -149,11 +149,17 @@ Function Connect-AppVeyorToHyperV {
     $SubnetMask = "255.255.255.0"
     $StartIPAddress = "10.118.232.100"
     $DefaultGateway = "10.118.232.1"
+    $HttpPortMin = "9990"
+    $HttpPortMax = "9999"
+    $FirewalRuleName = "$CommonPrefix-packer-inbound"
     Write-host "`nGetting or creating virtual switch $natSwitch..." -ForegroundColor Cyan
     if (-not (Get-VMSwitch $natSwitch -ErrorAction Ignore)) {
         New-VMSwitch -SwitchName $natSwitch -SwitchType Internal
         New-NetIPAddress -IPAddress 10.118.232.1 -PrefixLength 24 -InterfaceAlias "vEthernet ($natSwitch)"
         New-NetNAT -Name $natNetwork -InternalIPInterfaceAddressPrefix 10.118.232.0/24
+    }
+    if ($imageOs -eq "Linux" -and (-not (Get-NetFirewallRule -Name $FirewalRuleName -ErrorAction Ignore))) {
+         New-NetFirewallRule -Name $FirewalRuleName -DisplayName $FirewalRuleName -Enabled True -Direction Inbound -Action Allow -LocalAddress $DefaultGateway -RemoteAddress $MasterIPAddress -LocalPort "HttpPortMin-$HttpPortMax" -Protocol TCP
     }
 
     try {
@@ -182,6 +188,8 @@ Function Connect-AppVeyorToHyperV {
             -var "host_ip_addr=$MasterIPAddress" `
             -var "host_ip_mask=$SubnetMask" `
             -var "host_ip_gw=$DefaultGateway" `
+            -var "http_port_min=$HttpPortMin" `
+            -var "http_port_max=$HttpPortMax" `
             $ImageTemplate
 
             #Get VHD path
