@@ -194,7 +194,7 @@
       "memory": "3072",
       "disk_size": 40960,
       "enable_secure_boot": false,
-      "generation": 1
+      "generation": 2
     }
   ],
   "post-processors": [
