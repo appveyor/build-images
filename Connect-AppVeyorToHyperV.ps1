@@ -283,6 +283,10 @@ Function Connect-AppVeyorToHyperV {
                 $new_image = $new_image | ConvertTo-Json | ConvertFrom-Json
                 $settings.settings.cloudSettings.images.list += $new_image
 
+                $jsonBody = $settings | ConvertTo-Json -Depth 10
+                Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds"-Headers $headers -Body $jsonBody -Method Put | Out-Null
+                Write-host "AppVeyor build environment '$($build_cloud_name)' has been updated." -ForegroundColor DarkGray
+
                 Write-Host "Using Host Agent authorization token from the existing cloud."
                 $hostAuthorizationToken = $settings.hostAuthorizationToken
             }
