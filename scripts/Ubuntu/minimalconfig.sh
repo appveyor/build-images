@@ -136,9 +136,11 @@ su -l ${USER_NAME} -c "
 
 # execute optional Features
 if [[ -n "${OPT_FEATURES-}" && "${#OPT_FEATURES}" -gt "0" ]]; then
-    echo "[DEBUG] There is OPT_FEATURES variable defined: $OPT_FEATURES"
-    FEATURES=$(echo $OPT_FEATURES | tr "," "\n")
-    while read -r FEATURE; do
+    echo "[DEBUG] There is OPT_FEATURES variable defined: '$OPT_FEATURES'"
+    local arrFEATURES
+    OFS=$IFS; IFS=','; arrFEATURES=($OPT_FEATURES); IFS=$OFS
+    for i in "${!arrFEATURES[@]}"; do
+        FEATURE=${arrFEATURES[i]}
         WORD1=$(IFS=" " ; set -- $FEATURE ; echo $1)
         if [ "$(type -t $WORD1)x" == 'functionx' ]; then
             echo "[DEBUG] executing '$FEATURE'..."
@@ -146,7 +148,7 @@ if [[ -n "${OPT_FEATURES-}" && "${#OPT_FEATURES}" -gt "0" ]]; then
         else
             echo "[WARNING] $WORD1 not a function, skipping"
         fi
-    done <<< "$FEATURES"
+    done
 fi
 # Deploy Parts of config
 if [ "$#" -gt 0 ]; then
