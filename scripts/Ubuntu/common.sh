@@ -1157,7 +1157,8 @@ function configure_sqlserver() {
     done
     if [ $errstatus = 1 ]; then
         systemctl status mssql-server
-        echo "Cannot connect to SQL Server." 1>&2
+        if command -v netstat; then netstat -alnp|grep sqlservr; fi
+        echo "[ERROR] Cannot connect to SQL Server." 1>&2
         return 10
     fi
 }
