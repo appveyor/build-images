@@ -1134,11 +1134,11 @@ function install_sqlserver() {
 function configure_sqlserver() {
     # this must be executed as appveyor user
     if [ "$(whoami)" != "${USER_NAME}" ]; then
-        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        echo "[ERROR] This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     if [[ -z "${MSSQL_SA_PASSWORD-}" ]]; then
-        echo "MSSQL_SA_PASSWORD variable not set!" 1>&2
+        echo "[ERROR] MSSQL_SA_PASSWORD variable not set!" 1>&2
         return 2
     fi
     # Add SQL Server tools to the path by default:
