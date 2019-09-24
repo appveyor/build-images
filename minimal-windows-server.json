@@ -170,27 +170,25 @@
     {
       "type": "hyperv-iso",
       "boot_wait": "0s",
+      "boot_command": [
+        "<enter>",
+        "<enter>"
+      ],
       "communicator": "winrm",
       "cpus": 2,
       "disk_size": "{{user `disk_size`}}",
       "enable_secure_boot": true,
       "enable_virtualization_extensions": true,
-      "floppy_files": [
-        "{{ template_dir }}/hyper-v/Windows/answer_files/2019/Autounattend.xml",
-        "{{ template_dir }}/hyper-v/Windows/scripts/disable-screensaver.ps1",
-        "{{ template_dir }}/hyper-v/Windows/scripts/disable-winrm.ps1",
-        "{{ template_dir }}/hyper-v/Windows/scripts/enable-winrm.ps1",
-        "{{ template_dir }}/hyper-v/Windows/scripts/microsoft-updates.bat",
-        "{{ template_dir }}/hyper-v/Windows/scripts/unattend.xml",
-        "{{ template_dir }}/hyper-v/Windows/scripts/shutdown_vm.bat",
-        "{{ template_dir }}/hyper-v/Windows/scripts/win-updates.ps1"
+      "generation": 2,
+      "secondary_iso_images": [
+        "{{ template_dir }}/iso/minimal-windows-server.iso"
       ],
       "guest_additions_mode": "disable",
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
       "memory": 4096,
-      "shutdown_command": "a:/shutdown_vm.bat",
+      "shutdown_command": "e:/shutdown_vm.bat",
       "output_directory": "{{user `output_directory`}}",
       "switch_name": "{{user `hyperv_switchname`}}",
       "vm_name": "windows-server-2019-{{user `datemark`}}",
