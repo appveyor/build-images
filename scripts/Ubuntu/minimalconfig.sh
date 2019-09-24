@@ -49,9 +49,10 @@ esac
 
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )
+echo "[DEBUG] Searching installation scripts in ${LIB_FOLDERS[*]}"
 for LIB_FOLDER in "${LIB_FOLDERS[@]}"; do
     if [ -f "${LIB_FOLDER}/common.sh" ]; then
-        echo "[DEBUG] installation scripts found in ${LIB_FOLDERS[*]}"
+        echo "[DEBUG] installation scripts found in ${LIB_FOLDER}"
         break
     fi
 done
