@@ -1346,12 +1346,13 @@ function install_localstack() {
 }
 
 function install_gcloud() {
-    CLOUD_SDK_REPO="cloud-sdk-${OS_CODENAME}"
-    add-apt-repository "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" &&
-    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - &&
+    apt-get install apt-transport-https ca-certificates &&
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/sources.list.d/google-cloud-sdk.list &&
+    curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - ||
+        { echo "[ERROR] Cannot add google-cloud-sdk repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install google-cloud-sdk ||
-        { echo "[ERROR] Cannot install google-cloud-sdk." 1>&2; return 10; }
+        { echo "[ERROR] Cannot install google-cloud-sdk." 1>&2; return 20; }
 
     log_version gcloud version
 }
