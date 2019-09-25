@@ -151,6 +151,7 @@
       "cpus": "1",
       "memory": "3072",
       "disk_size": 40960,
+      "disk_block_size": "1",
       "enable_secure_boot": false,
       "generation": 2
     },
