@@ -13,7 +13,8 @@ readonly AZURE_VARS="azure_client_id azure_client_secret azure_location azure_re
 readonly GCE_VARS="gce_account_file gce_project gce_zone"
 readonly AWS_VARS="aws_access_key aws_secret_key aws_region"
 readonly AWS_OPT_VARS="aws_ssh_keypair_name aws_ssh_private_key_file"
-readonly APPVEYOR_CREDENTIALS="aws_region install_user install_password"
+readonly VIRTUALBOX_VARS="host_ip_addr host_ip_mask host_ip_gw"
+readonly APPVEYOR_CREDENTIALS="install_user install_password"
 readonly APPVEYOR_BUILD_VARS="APPVEYOR_BUILD_VERSION APPVEYOR_BUILD_NUMBER APPVEYOR_REPO_COMMIT APPVEYOR_REPO_COMMIT_MESSAGE"
 PACKER_PARAMS=( )
 
@@ -56,11 +57,13 @@ case "${builders}" in
     if [[ -n "${aws_ssh_private_key_file}" ]] && [[ -n "${aws_ssh_private_key_base64}" ]]; then
         echo "${aws_ssh_private_key_base64}" | base64 -d > "${aws_ssh_private_key_file}"
     fi
+    make_params "aws_region"
     ;;
 esac
 if [[ $builders =~ azure- ]]; then check_env_vars ${AZURE_VARS} || exit $?; make_params ${AZURE_VARS}; fi
 if [[ $builders =~ amazon- ]]; then check_env_vars ${AWS_VARS} || exit $?; make_params ${AWS_VARS} ${AWS_OPT_VARS}; fi
 if [[ $builders =~ google ]]; then check_env_vars ${GCE_VARS} || exit $?; make_params ${GCE_VARS}; fi
+if [[ $builders =~ virtualbox- ]]; then check_env_vars ${VIRTUALBOX_VARS} || exit $?; make_params ${VIRTUALBOX_VARS}; fi
 make_params ${APPVEYOR_CREDENTIALS}
 
 # check secret files passed to container
@@ -127,8 +130,6 @@ fi
 # run packer
 PACKER_LOG_PATH=${APPVEYOR_LOGS_PATH} PACKER_LOG=1 CHECKPOINT_DISABLE=1 ${PACKER_CMD} build \
         --only=${builders} \
-        -var "install_user=${install_user}" \
-        -var "install_password=${install_password}" \
         "${PACKER_PARAMS[@]}" \
         ${TEMPLATE}.json
 
