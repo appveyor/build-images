@@ -23,7 +23,16 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
-case  ${PACKER_BUILDER_TYPE} in
+# Check for execution in docker container
+if [[ -z "${IS_DOCKER-}" || "${#IS_DOCKER}" = "0" ]]; then
+    if grep -Eq '/(lxc|docker)/[[:xdigit:]]{64}' /proc/1/cgroup; then
+        IS_DOCKER=true
+    else
+        IS_DOCKER=false
+    fi
+fi
+
+case  ${PACKER_BUILDER_TYPE-} in
     googlecompute )
         BUILD_AGENT_MODE=GCE;;
     hyperv* )
@@ -33,14 +42,17 @@ case  ${PACKER_BUILDER_TYPE} in
     amazon-* )
         BUILD_AGENT_MODE=AmazonEC2;;
     * )
-        BUILD_AGENT_MODE=GCE;;
+        BUILD_AGENT_MODE=''
+        echo "[WARNING] Unknown packer builder '${PACKER_BUILDER_TYPE-}'. BUILD_AGENT_MODE variable not set." 1>&2
+        ;;
 esac
 
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )
+echo "[DEBUG] Searching installation scripts in ${LIB_FOLDERS[*]}"
 for LIB_FOLDER in "${LIB_FOLDERS[@]}"; do
     if [ -f "${LIB_FOLDER}/common.sh" ]; then
-        echo "[DEBUG] installation scripts found in ${LIB_FOLDERS[*]}"
+        echo "[DEBUG] installation scripts found in ${LIB_FOLDER}"
         break
     fi
 done
@@ -76,10 +88,15 @@ init_logging
 
 configure_path
 
+apt-get -y -qq update && apt-get install -y -q sudo ||
+    _continue $?
+
 add_user ||
     _abort $?
 
-wait_cloudinit || _continue
+if ! $IS_DOCKER; then
+    wait_cloudinit || _continue
+fi
 
 configure_apt ||
     _abort $?
@@ -94,14 +111,23 @@ if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
         _abort $?
 fi
 
-install_appveyoragent "${BUILD_AGENT_MODE}" ||
-    _abort $?
+if $IS_DOCKER; then
+    copy_appveyoragent ||
+        _abort $?
+else
+    install_appveyoragent "${BUILD_AGENT_MODE}" ||
+        _abort $?
+fi
 
 install_powershell ||
     _abort $?
 
 install_cvs ||
     _abort $?
+
+install_gitlfs ||
+    _abort $?
+
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f configure_svn)
@@ -109,9 +135,27 @@ su -l ${USER_NAME} -c "
     _abort $?
 
 # execute optional Features
+if [[ -n "${OPT_FEATURES-}" && "${#OPT_FEATURES}" -gt "0" ]]; then
+    echo "[DEBUG] There is OPT_FEATURES variable defined: '$OPT_FEATURES'"
+    local arrFEATURES
+    OFS=$IFS; IFS=','; arrFEATURES=($OPT_FEATURES); IFS=$OFS
+    for i in "${!arrFEATURES[@]}"; do
+        FEATURE=${arrFEATURES[i]}
+        WORD1=$(IFS=" " ; set -- $FEATURE ; echo $1)
+        if [ "$(type -t $WORD1)x" == 'functionx' ]; then
+            echo "[DEBUG] executing '$FEATURE'..."
+            $FEATURE
+        else
+            echo "[WARNING] $WORD1 not a function, skipping"
+        fi
+    done
+fi
+# Deploy Parts of config
 if [ "$#" -gt 0 ]; then
+    echo "[DEBUG] $0 script have arguments: $*"
     while [[ "$#" -gt 0 ]]; do
         if [ "$(type -t $1)x" == 'functionx' ]; then
+            echo "[DEBUG] argument recognized as a function to call: $1"
             if [ "$#" -gt 1 ] && [ "$(type -t $2)x" != 'functionx' ]; then
                 #execute function with argument
                 $1 $2
@@ -128,11 +172,12 @@ fi
 
 add_ssh_known_hosts ||
     _continue $?
-configure_sshd ||
-    _abort $?
-configure_uefi ||
-    _abort $?
-configure_network ||
-    _abort $?
-
+if ! $IS_DOCKER; then
+    configure_sshd ||
+        _abort $?
+    configure_uefi ||
+        _abort $?
+    configure_network ||
+        _abort $?
+fi
 cleanup

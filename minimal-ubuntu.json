@@ -2,18 +2,12 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "distrib",
-      "destination": "./",
-      "generated": "true"
-    },
-    {
-      "type": "file",
       "source": "{{ template_dir }}/scripts/Ubuntu/custom-scripts",
       "destination": "./custom-scripts"
     },
     {
       "type": "file",
-      "source": "scripts/Ubuntu/",
+      "source": "{{ template_dir }}/scripts/Ubuntu/",
       "destination": "./"
     },
     {
@@ -23,11 +17,12 @@
         "USER_PASSWORD={{ user `install_password` }}",
         "USER_HOME={{ user `install_home` }}",
         "APPVEYOR_BUILD_AGENT_VERSION={{user `APPVEYOR_BUILD_AGENT_VERSION` }}",
-        "DATEMARK={{ user `datemark` }}"
+        "DATEMARK={{ user `datemark` }}",
+        "OPT_FEATURES={{ user `opt_features` }}"
       ],
-      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",
+      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eu '{{.Path}}' {{user `deploy_parts`}}",
       "scripts": [
-        "scripts/Ubuntu/minimalconfig.sh"
+        "{{ template_dir }}/scripts/Ubuntu/minimalconfig.sh"
       ]
     },
     {
@@ -62,7 +57,7 @@
       "account_file": "{{user `gce_account_file`}}",
       "project_id": "{{ user `gce_project` }}",
       "zone": "{{ user `gce_zone` }}",
-      "source_image": "{{ user `gce_source_image` }}",
+      "source_image_family": "ubuntu-1804-lts",
       "state_timeout" : "15m",
       "scopes": [
           "https://www.googleapis.com/auth/userinfo.email",
@@ -81,46 +76,8 @@
       "image_name": "packer-ubuntu1804-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
       "disk_size": 40,
+      "disk_type": "pd-ssd",
       "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"]
-    },
-    {
-      "type": "hyperv-iso",
-      "boot_command": [
-        "<esc><wait10><esc><esc><enter><wait>",
-        "linux /install/vmlinuz ",
-        " netcfg/disable_autoconfig=true<wait>",
-        " netcfg/get_ipaddress={{ user `host_ip_addr` }}<wait>",
-        " netcfg/get_netmask={{ user `host_ip_mask` }}<wait>",
-        " netcfg/get_gateway={{ user `host_ip_gw` }}<wait>",
-        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed18.cfg<wait>",
-        " netcfg/get_nameservers=8.8.8.8",
-        " debian-installer=en_US.UTF-8 auto locale=en_US.UTF-8 kbd-chooser/method=us",
-        " hostname={{.Name}} domain= ",
-        " fb=false debconf/frontend=noninteractive",
-        " keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA",
-        " keyboard-configuration/variant=USA console-setup/ask_detect=false<enter>",
-        "initrd /install/initrd.gz<enter>",
-        "boot<enter>"
-      ],
-      "boot_wait": "10s",
-      "http_directory": "http",
-      "iso_urls": [
-        "iso/ubuntu-18.04.3-server-amd64.iso",
-        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso"
-      ],
-
-      "iso_checksum": "{{user `iso_checksum_md5`}}",
-      "iso_checksum_type": "md5",
-      "ssh_host": "{{ user `host_ip_addr` }}",
-      "ssh_username": "{{ user `install_user` }}",
-      "ssh_password": "{{ user `install_password` }}",
-      "ssh_timeout" : "1h",
-      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now",
-      "cpus": "1",
-      "memory": "3072",
-      "disk_size": 40960,
-      "enable_secure_boot": false,
-      "generation": 2
     },
     {
       "type": "amazon-ebs",
@@ -195,6 +152,50 @@
         "description": "{{user `image_description`}}",
         "date": "{{user `datemark`}}"
       }
+    },
+    {
+      "type": "hyperv-iso",
+      "boot_command": [
+        "<esc><wait10><esc><esc><enter><wait>",
+        "linux /install/vmlinuz ",
+        " netcfg/disable_autoconfig=true<wait>",
+        " netcfg/get_ipaddress={{ user `host_ip_addr` }}<wait>",
+        " netcfg/get_netmask={{ user `host_ip_mask` }}<wait>",
+        " netcfg/get_gateway={{ user `host_ip_gw` }}<wait>",
+        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed18.cfg<wait>",
+        " netcfg/get_nameservers=8.8.8.8",
+        " debian-installer=en_US.UTF-8 auto locale=en_US.UTF-8 kbd-chooser/method=us",
+        " hostname={{.Name}} domain= ",
+        " fb=false debconf/frontend=noninteractive",
+        " keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA",
+        " keyboard-configuration/variant=USA console-setup/ask_detect=false<enter>",
+        "initrd /install/initrd.gz<enter>",
+        "boot<enter>"
+      ],
+      "boot_wait": "10s",
+      "http_directory": "{{ template_dir }}/http",
+      "iso_urls": [
+        "iso/ubuntu-18.04.3-server-amd64.iso",
+        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso"
+      ],
+
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "ssh_host": "{{ user `host_ip_addr` }}",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
+      "ssh_timeout" : "1h",
+      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now",
+      "output_directory":  "{{user `output_directory`}}",
+      "switch_name": "{{user `hyperv_switchname`}}",
+      "http_port_min": "{{user `http_port_min`}}",
+      "http_port_max": "{{user `http_port_max`}}",
+      "cpus": "1",
+      "memory": "3072",
+      "disk_size": 40960,
+      "enable_secure_boot": false,
+      "disk_block_size": "1",
+      "generation": 2
     }
   ],
   "post-processors": [

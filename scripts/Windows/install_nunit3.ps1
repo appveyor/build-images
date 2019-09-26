@@ -4,7 +4,9 @@
 
 $nunitPath = "$env:SYSTEMDRIVE\Tools\NUnit3"
 
-Remove-Item $nunitPath -Recurse -Force
+if (Test-Path $nunitPath) {
+    Remove-Item $nunitPath -Recurse -Force
+}
 
 # nunit
 $zipPath = "$($env:TEMP)\NUnit.Console-3.9.0.zip"

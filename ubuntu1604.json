@@ -53,9 +53,10 @@
         "USER_PASSWORD={{ user `install_password` }}",
         "USER_HOME={{ user `install_home` }}",
         "APPVEYOR_BUILD_AGENT_VERSION={{user `APPVEYOR_BUILD_AGENT_VERSION` }}",
-        "DATEMARK={{ user `datemark` }}"
+        "DATEMARK={{ user `datemark` }}",
+        "OPT_FEATURES={{ user `opt_features` }}"
       ],
-      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}' {{user `deploy_parts`}}",
+      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eu '{{.Path}}' {{user `deploy_parts`}}",
       "scripts": [
         "scripts/Ubuntu/basicconfig.sh"
       ]
@@ -151,6 +152,7 @@
       "cpus": "1",
       "memory": "3072",
       "disk_size": 40960,
+      "disk_block_size": "1",
       "enable_secure_boot": false,
       "generation": 2
     },

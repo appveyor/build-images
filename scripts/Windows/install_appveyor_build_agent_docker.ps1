@@ -1,7 +1,11 @@
-$AGENT_VERSION = '7.0.2366'
+$AGENT_VERSION = '7.0.2375'
 
-Write-Host "Installing AppVeyor Build Agent Core"
-Write-Host "===================================="
+if ($env:APPVEYOR_BUILD_AGENT_VERSION) {
+	$AGENT_VERSION = $env:APPVEYOR_BUILD_AGENT_VERSION
+}
+
+Write-Host "Installing AppVeyor Build Agent Core $AGENT_VERSION"
+Write-Host "==================================================="
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 

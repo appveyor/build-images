@@ -150,7 +150,7 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/prepare_sql_server_2017.ps1"
+            "{{ template_dir }}/scripts/Windows/sql_server_2017_after_reboot.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}" 

@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
 # This script checks that all variables are set and starts packer.
 # this script should execute in an container.
@@ -13,25 +13,32 @@ readonly AZURE_VARS="azure_client_id azure_client_secret azure_location azure_re
 readonly GCE_VARS="gce_account_file gce_project gce_zone"
 readonly AWS_VARS="aws_access_key aws_secret_key aws_region"
 readonly AWS_OPT_VARS="aws_ssh_keypair_name aws_ssh_private_key_file"
-readonly APPVEYOR_CREDENTIALS="aws_region install_user install_password"
+readonly VIRTUALBOX_VARS="host_ip_addr host_ip_mask host_ip_gw"
+readonly APPVEYOR_CREDENTIALS="install_user install_password"
 readonly APPVEYOR_BUILD_VARS="APPVEYOR_BUILD_VERSION APPVEYOR_BUILD_NUMBER APPVEYOR_REPO_COMMIT APPVEYOR_REPO_COMMIT_MESSAGE"
 PACKER_PARAMS=( )
 
 function check_env_vars() {
-    for v in "$@"; do
-        # echo "$v"
-        # echo "\$$v $(eval echo \$$v)"
-        [ -z ${!v+x} ] && { echo "Error: Please define $v variable."; return 10; }
-    done
+    local v
+    if [ "$#" -gt 0 ]; then
+        for v in "$@"; do
+            # echo "$v"
+            # echo "\$$v $(eval echo \$$v)"
+            [ -z ${!v+x} ] && { echo "Error: Please define $v variable."; return 10; }
+        done
+    fi
     return 0
 }
 
 function make_params() {
-    for v in "$@"; do
-        if [[ -n "${!v}" ]]; then
-            PACKER_PARAMS+=( "-var"  "${v}=${!v}" )
-        fi
-    done
+    local v
+    if [ "$#" -gt 0 ]; then
+        for v in "$@"; do
+            if [[ -n "${!v-}" ]]; then
+                PACKER_PARAMS+=( "-var"  "${v}=${!v}" )
+            fi
+        done
+    fi
 }
 
 # check that all required variables are set
@@ -50,11 +57,13 @@ case "${builders}" in
     if [[ -n "${aws_ssh_private_key_file}" ]] && [[ -n "${aws_ssh_private_key_base64}" ]]; then
         echo "${aws_ssh_private_key_base64}" | base64 -d > "${aws_ssh_private_key_file}"
     fi
+    make_params "aws_region"
     ;;
 esac
 if [[ $builders =~ azure- ]]; then check_env_vars ${AZURE_VARS} || exit $?; make_params ${AZURE_VARS}; fi
 if [[ $builders =~ amazon- ]]; then check_env_vars ${AWS_VARS} || exit $?; make_params ${AWS_VARS} ${AWS_OPT_VARS}; fi
 if [[ $builders =~ google ]]; then check_env_vars ${GCE_VARS} || exit $?; make_params ${GCE_VARS}; fi
+if [[ $builders =~ virtualbox- ]]; then check_env_vars ${VIRTUALBOX_VARS} || exit $?; make_params ${VIRTUALBOX_VARS}; fi
 make_params ${APPVEYOR_CREDENTIALS}
 
 # check secret files passed to container
@@ -75,18 +84,27 @@ if check_env_vars ${APPVEYOR_BUILD_VARS}; then
     PACKER_PARAMS+=( "-var" "image_description=${DESCR}" )
 fi
 
-if [[ -n "${DEPLOY_PARTS}" ]]; then
+if [[ -n "${DEPLOY_PARTS-}" ]]; then
     PACKER_PARAMS+=( "-var" "deploy_parts=${DEPLOY_PARTS}" )
     echo "DEPLOY_PARTS set to ${DEPLOY_PARTS}"
 fi
 
-if [[ -n "${GCE_IMAGE_NAME}" ]]; then
+if [[ -n "${OPT_FEATURES-}" ]]; then
+    PACKER_PARAMS+=( "-var" "opt_features=${OPT_FEATURES}" )
+    echo "OPT_FEATURES set to ${OPT_FEATURES}"
+fi
+
+if [[ -n "${GCE_IMAGE_NAME-}" ]]; then
     echo "gce_source_image set to ${GCE_IMAGE_NAME}"
     PACKER_PARAMS+=( "-var" "gce_source_image=${GCE_IMAGE_NAME}" )
 fi
+if [[ -n "${build_agent_mode-}" ]]; then
+    echo "gce_source_image set to ${build_agent_mode}"
+    PACKER_PARAMS+=( "-var" "build_agent_mode=${build_agent_mode}" )
+fi
 
 # check template exists
-if [[ -z "${TEMPLATE}" ]]; then
+if [[ -z "${TEMPLATE-}" ]]; then
     echo "[ERROR] TEMPLATE variable not set."
     exit 10
 fi
@@ -96,7 +114,7 @@ if [ ! -f "${TEMPLATE}.json" ]; then
 fi
 
 # set packer log file
-if [[ -n "${APPVEYOR_BUILD_VERSION}" ]]; then
+if [[ -n "${APPVEYOR_BUILD_VERSION-}" ]]; then
     PACKER_LOG=packer-${APPVEYOR_BUILD_VERSION}-${builders}-${TEMPLATE}-${DATEMARK}.log
 else
     PACKER_LOG=packer-${builders}-${TEMPLATE}-${DATEMARK}.log
@@ -112,9 +130,6 @@ fi
 # run packer
 PACKER_LOG_PATH=${APPVEYOR_LOGS_PATH} PACKER_LOG=1 CHECKPOINT_DISABLE=1 ${PACKER_CMD} build \
         --only=${builders} \
-        -var "install_user=${install_user}" \
-        -var "install_password=${install_password}" \
-        -var "build_agent_mode=${build_agent_mode}" \
         "${PACKER_PARAMS[@]}" \
         ${TEMPLATE}.json
 
@@ -136,9 +151,9 @@ if [ -d /mnt/packer-logs ]; then
 fi
 
 # slack notification
-if [[ -n "${slackhook_url}" ]]; then
+if [[ -n "${slackhook_url-}" ]]; then
     curl -X POST -H 'Content-type: application/json' \
-    --data "{'text':'Image Build finished:\\n${TEMPLATE}\\n${DESCR}\\n${PACKER_LOG}\\nversions-${DATEMARK}.log\\npwd-${DATEMARK}.log'}" \
+    --data "{'text':'Image Build finished:\\n${TEMPLATE}\\n${DESCR-}\\n${PACKER_LOG}\\nversions-${DATEMARK}.log\\npwd-${DATEMARK}.log'}" \
     "${slackhook_url}"
 else
     echo 'Cannot notify Slack: $slackhook_url not set'

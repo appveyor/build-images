@@ -146,13 +146,20 @@ function check_apt_locks() {
     local LOCK_TIMEOUT=60
     local START_TIME=$(date +%s)
     local END_TIME=$(( START_TIME + LOCK_TIMEOUT ))
+    if ! command -v lsof >/dev/null; then
+        echo "[WARNING] lsof command not found. Are we in docker container?"
+        echo "[WARNING] Skipping check_apt_locks"
+        return 1
+    fi
     while [ "$(date +%s)" -lt "$END_TIME" ]; do
         if lsof /var/lib/apt/lists/lock; then
             sleep 1
         else
+            #apt succcessfully unlocked
             return 0
         fi
     done
+
     return 1
 }
 
@@ -164,16 +171,19 @@ function add_user() {
     if [[ -z "${USER_PASSWORD-}" || "${#USER_PASSWORD}" = "0" ]]; then
         USER_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${USER_PASSWORD_LENGTH};)
     fi
+
     id -u ${USER_NAME} >/dev/null 2>&1 || \
         useradd ${USER_NAME} --shell /bin/bash --create-home --password ${USER_NAME}
-    usermod -aG sudo ${USER_NAME}
 
-    # Add Appveyor user to sudoers.d
-    {
-        echo -e "${USER_NAME}\tALL=(ALL)\tNOPASSWD: ALL"
-        echo -e "Defaults:${USER_NAME}        !requiretty"
-        echo -e 'Defaults    env_keep += "DEBIAN_FRONTEND ACCEPT_EULA"'
-    } > /etc/sudoers.d/${USER_NAME}
+    if command -v sudo >/dev/null; then
+        usermod -aG sudo ${USER_NAME}
+        # Add Appveyor user to sudoers.d
+        {
+            echo -e "${USER_NAME}\tALL=(ALL)\tNOPASSWD: ALL"
+            echo -e "Defaults:${USER_NAME}        !requiretty"
+            echo -e 'Defaults    env_keep += "DEBIAN_FRONTEND ACCEPT_EULA"'
+        } > /etc/sudoers.d/${USER_NAME}
+    fi
 
     echo -e "${USER_PASSWORD}\n${USER_PASSWORD}\n" | passwd "${USER_NAME}"
     if "${LOGGING}"; then
@@ -257,8 +267,12 @@ function configure_apt() {
     # Disable daily apt unattended updates.
     write_line /etc/apt/apt.conf.d/10periodic 'APT::Periodic::Enable "0";' 'APT::Periodic::Enable '
     # configure appveyor env variables for future apt-get upgrades
-    write_line "$USER_HOME/.profile" 'export DEBIAN_FRONTEND=noninteractive'
-    write_line "$USER_HOME/.profile" 'export ACCEPT_EULA=Y'
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "$USER_HOME/.profile" 'export DEBIAN_FRONTEND=noninteractive'
+        write_line "$USER_HOME/.profile" 'export ACCEPT_EULA=Y'
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
+    fi
     return 0
 }
 
@@ -286,12 +300,11 @@ function install_tools() {
 
     # next packages required by KVP to communicate with HyperV
     if [ "${BUILD_AGENT_MODE}" = "HyperV" ]; then
-#        tools_array+=( "linux-virtual-lts-${OS_CODENAME}" "linux-tools-virtual-lts-${OS_CODENAME}" "linux-cloud-tools-virtual-lts-${OS_CODENAME}" )
         tools_array+=( "linux-tools-generic" "linux-cloud-tools-generic" )
     fi
-    sleep 5
-    APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
-    apt-get -y ${APT_GET_OPTIONS} install "${tools_array[@]}" --no-install-recommends ||
+
+    #APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
+    apt-get -y ${APT_GET_OPTIONS-} install "${tools_array[@]}" --no-install-recommends ||
         { 
             echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2;
             apt-cache policy gcc 
@@ -321,11 +334,17 @@ function install_KVP_packages(){
 
 function copy_appveyoragent() {
     if [[ -z "${APPVEYOR_BUILD_AGENT_VERSION-}" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
-        APPVEYOR_BUILD_AGENT_VERSION=7.0.2366;
+        APPVEYOR_BUILD_AGENT_VERSION=7.0.2408;
     fi
+
+    echo "[INFO] Installing AppVeyor Build Agent v${APPVEYOR_BUILD_AGENT_VERSION}"
+
     AGENT_FILE=appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-x64.tar.gz
 
-    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
+    if [[ -z "${AGENT_DIR-}" ]]; then
+        echo "[WARNING] AGENT_DIR variable is not set. Setting it to AGENT_DIR=/opt/appveyor/build-agent" 1>&2;
+        AGENT_DIR=/opt/appveyor/build-agent
+    fi
 
     mkdir -p ${AGENT_DIR} &&
     #chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR} &&
@@ -345,7 +364,7 @@ function copy_appveyoragent() {
 }
 
 function install_appveyoragent() {
-    AGENT_MODE=$1
+    AGENT_MODE=${1-}
     CONFIG_FILE=appsettings.json
     PROJECT_BUILDS_DIRECTORY="$USER_HOME"/projects
     SERVICE_NAME=appveyor-build-agent.service
@@ -359,15 +378,20 @@ function install_appveyoragent() {
 
     pushd -- "${AGENT_DIR}" ||
         { echo "[ERROR] Cannot cd to ${AGENT_DIR} folder." 1>&2; return 10; }
-
-    [ -f ${CONFIG_FILE} ] &&
-        python -c "import json; import io;
+    if [ "${#AGENT_MODE}" -gt 0 ]; then
+        if command -v python; then
+            [ -f ${CONFIG_FILE} ] &&
+            python -c "import json; import io;
 a=json.load(io.open('${CONFIG_FILE}', encoding='utf-8-sig'));
 a[u'AppVeyor'][u'Mode']='${AGENT_MODE}';
 a[u'AppVeyor'][u'ProjectBuildsDirectory']='${PROJECT_BUILDS_DIRECTORY}';
 json.dump(a,open('${CONFIG_FILE}','w'))" &&
-        cat ${CONFIG_FILE} ||
-        { echo "[ERROR] Cannot update config file '${CONFIG_FILE}'." 1>&2; popd; return 40; }
+            cat ${CONFIG_FILE} ||
+                { echo "[ERROR] Cannot update config file '${CONFIG_FILE}'." 1>&2; popd; return 40; }
+        fi
+    else
+        echo "[WARNING] AGENT_MODE variable not set"
+    fi
 
     echo "[Unit]
 Description=Appveyor Build Agent
@@ -401,52 +425,55 @@ function install_nodejs() {
 }
 
 function install_nvm_and_nodejs() {
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_nvm)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        install_nvm" &&
-    su -l ${USER_NAME} -c "
-        [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_nvm_nodejs)
-        install_nvm_nodejs ${CURRENT_NODEJS}" ||
-    return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_nvm)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            install_nvm" &&
+        su -l ${USER_NAME} -c "
+            [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+            USER_NAME=${USER_NAME}
+            $(declare -f log_version)
+            $(declare -f install_nvm_nodejs)
+            install_nvm_nodejs ${CURRENT_NODEJS}" ||
+        return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install NVM and Nodejs"
+    fi
 }
 
 function install_nvm() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}' user. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     #TODO have to figure out latest release version automatically
     curl -fsSLo- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-
     write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
     write_line "${HOME}/.profile" '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'
     write_line "${HOME}/.profile" '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'
 }
 
 function install_nvm_nodejs() {
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
         CURRENT_NODEJS=8
     else
         CURRENT_NODEJS=$1
     fi
-    # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
-        return 1
-    fi
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "lts/argon" "lts/boron" "lts/carbon" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -492,17 +519,21 @@ function install_gitlfs() {
     apt-get -y -q install git-lfs ||
         { echo "Failed to install git lfs." 1>&2; return 10; }
     log_version dpkg -l git-lfs
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_gitlfs)
-        configure_gitlfs"  ||
-            return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_gitlfs)
+            configure_gitlfs"  ||
+                return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_gitlfs"
+    fi
 }
 
 function configure_gitlfs() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     git lfs install ||
@@ -524,17 +555,21 @@ function install_cvs() {
     apt-get -y -q install subversion
 
     log_version dpkg -l git mercurial subversion
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_svn)
-        configure_svn" ||
-            return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_svn)
+            configure_svn" ||
+                return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_svn"
+    fi
 }
 
 function configure_svn() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     pushd ${HOME}
@@ -570,7 +605,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0b3" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0b4" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
@@ -690,11 +725,14 @@ function preheat_dotnet_sdks() {
 }
 
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=( "2.0.0" "2.0.2" "2.0.3" "2.1.2" "2.1.3" "2.1.4" "2.1.101" "2.1.103" "2.1.104" "2.1.105" "2.1.200" "2.1.201" "2.1.202" "2.1" "2.2" )
+    SDK_VERSIONS=( "2.0.0" "2.0.2" "2.0.3" "2.1.2" "2.1.3" "2.1.4" "2.1.101" "2.1.103" "2.1.104" "2.1.105" "2.1.200" "2.1.201" "2.1.202" "2.1" "2.2" "3.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.0.0" "2.0.3" "2.0.4" "2.0.5" "2.0.6" "2.0.7" "2.0.9" "2.1" "2.2" )
     dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
+
+    declare RUNTIME_VERSIONS=( "2.1" "2.2" "3.0" )
+    dotnet_packages "aspnetcore-runtime-" RUNTIME_VERSIONS[@]
 
     declare DEV_VERSIONS=( "1.1.5" "1.1.6" "1.1.7" "1.1.8" "1.1.9" "1.1.10" "1.1.11" "1.1.12" )
     dotnet_packages "dotnet-dev-" DEV_VERSIONS[@]
@@ -728,8 +766,12 @@ function install_dotnets() {
         { echo "[ERROR] Cannot install dotnet packages ${PACKAGES[*]}." 1>&2; return 20; }
 
     #set env
-    write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
-    write_line "$USER_HOME/.profile" "export DOTNET_PRINT_TELEMETRY_MESSAGE=false" 'DOTNET_PRINT_TELEMETRY_MESSAGE='
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
+        write_line "$USER_HOME/.profile" "export DOTNET_PRINT_TELEMETRY_MESSAGE=false" 'DOTNET_PRINT_TELEMETRY_MESSAGE='
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
+    fi
 
     #cleanup
     if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
@@ -824,19 +866,23 @@ function install_jdks() {
         return $?
     install_jdk 13 https://download.java.net/java/GA/jdk13/5b8a42f3905b406298b72d750b6919f6/33/GPL/openjdk-13_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 14 https://download.java.net/java/early_access/jdk14/10/GPL/openjdk-14-ea+10_linux-x64_bin.tar.gz ||
+    install_jdk 14 https://download.java.net/java/early_access/jdk14/15/GPL/openjdk-14-ea+15_linux-x64_bin.tar.gz ||
         return $?
-    OFS=$IFS
-    IFS=$'\n'
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_jdk)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
-            return $?
-    IFS=$OFS
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        OFS=$IFS
+        IFS=$'\n'
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_jdk)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            configure_jdk" <<< "${PROFILE_LINES[*]}" ||
+                return $?
+        IFS=$OFS
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_jdk"
+    fi
 }
 
 function install_jdk() {
@@ -870,8 +916,8 @@ function install_jdk() {
 
 function configure_jdk() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     local file
@@ -887,25 +933,34 @@ function configure_jdk() {
 }
 
 function install_rvm_and_rubies() {
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_rvm)
-        install_rvm" &&
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
-        $(declare -f log_version)
-        $(declare -f install_rubies)
-        install_rubies" ||
-            return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_rvm)
+            install_rvm" &&
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
+            $(declare -f log_version)
+            $(declare -f install_rubies)
+            install_rubies" ||
+                return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install RVM and rubies"
+    fi
 }
 
 function install_rvm() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
+
+    # Docker fix from here: https://github.com/inversepath/usbarmory-debian-base_image/issues/9#issuecomment-451635505
+    mkdir -p ${HOME}/.gnupg
+    echo "disable-ipv6" >> ${HOME}/.gnupg/dirmngr.conf
+
     # Install mpapis public key (might need `gpg2` and or `sudo`)
     gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
 
@@ -927,8 +982,8 @@ function install_rvm() {
 
 function install_rubies() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     command -v rvm ||
@@ -944,26 +999,30 @@ function install_rubies() {
 }
 
 function install_gvm_and_golangs() {
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_gvm)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        install_gvm" &&
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        source \"${HOME}/.gvm/scripts/gvm\"
-        $(declare -f log_version)
-        $(declare -f install_golangs)
-        install_golangs" ||
-            return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_gvm)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            install_gvm" &&
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            source \"${HOME}/.gvm/scripts/gvm\"
+            $(declare -f log_version)
+            $(declare -f install_golangs)
+            install_golangs" ||
+                return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install GVM and Go Langs"
+    fi
 }
 
 function install_gvm(){
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     if [[ -s "${HOME}/.gvm/scripts/gvm" ]]; then
@@ -980,17 +1039,14 @@ function install_gvm(){
     fi
     # gvm-installer do not fix .profile for non-interactive shell
     [[ -s "${HOME}/.gvm/scripts/gvm" ]] && (
-        local file
-        for file in "${HOME}/.profile"; do
-            write_line "${file}" '[[ -s "/home/appveyor/.gvm/scripts/gvm" ]] && source "/home/appveyor/.gvm/scripts/gvm"'
-        done
+            write_line "${HOME}/.profile" '[[ -s "/home/appveyor/.gvm/scripts/gvm" ]] && source "/home/appveyor/.gvm/scripts/gvm"'
     ) || true
 }
 
 function install_golangs() {
     # this must be executed as appveyor user
-    if [ "$(whoami)" != ${USER_NAME} ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     command -v gvm && gvm version ||
@@ -998,7 +1054,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.12" "go1.12.7" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.10" "go1.13.1" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1030,7 +1086,9 @@ function install_docker() {
     systemctl start docker &&
     systemctl is-active docker ||
         { echo "[ERROR] Docker service failed to start." 1>&2; return 30; }
-    usermod -aG docker ${USER_NAME}
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        usermod -aG docker ${USER_NAME}
+    fi
     pull_dockerimages
     systemctl disable docker
 
@@ -1039,15 +1097,19 @@ function install_docker() {
 
 function install_MSSQLServer(){
     if [[ -z "${MSSQL_SA_PASSWORD-}" || "${#MSSQL_SA_PASSWORD}" = "0" ]]; then MSSQL_SA_PASSWORD="Password12!"; fi
-    install_sqlserver &&
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
-        $(declare -f configure_sqlserver)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_sqlserver" &&
+    install_sqlserver
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+            $(declare -f configure_sqlserver)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            configure_sqlserver"
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot installconfigure MS SQL Server"
+    fi
     disable_sqlserver ||
             return $?
 }
@@ -1074,11 +1136,11 @@ function install_sqlserver() {
 function configure_sqlserver() {
     # this must be executed as appveyor user
     if [ "$(whoami)" != "${USER_NAME}" ]; then
-        echo "This script must be run as ${USER_NAME}. Current user is '$(whoami)'" 1>&2
+        echo "[ERROR] This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
     if [[ -z "${MSSQL_SA_PASSWORD-}" ]]; then
-        echo "MSSQL_SA_PASSWORD variable not set!" 1>&2
+        echo "[ERROR] MSSQL_SA_PASSWORD variable not set!" 1>&2
         return 2
     fi
     # Add SQL Server tools to the path by default:
@@ -1097,7 +1159,8 @@ function configure_sqlserver() {
     done
     if [ $errstatus = 1 ]; then
         systemctl status mssql-server
-        echo "Cannot connect to SQL Server." 1>&2
+        if command -v netstat; then netstat -alnp|grep sqlservr; fi
+        echo "[ERROR] Cannot connect to SQL Server." 1>&2
         return 10
     fi
 }
@@ -1283,12 +1346,15 @@ function install_localstack() {
 }
 
 function install_gcloud() {
-    CLOUD_SDK_REPO="cloud-sdk-${OS_CODENAME}"
-    add-apt-repository "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" &&
-    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - &&
+    apt-get install apt-transport-https ca-certificates &&
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/sources.list.d/google-cloud-sdk.list &&
+    curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - ||
+        { echo "[ERROR] Cannot add google-cloud-sdk repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install google-cloud-sdk ||
-        { echo "[ERROR] Cannot install google-cloud-sdk." 1>&2; return 10; }
+        { echo "[ERROR] Cannot install google-cloud-sdk." 1>&2; return 20; }
+
+    log_version gcloud version
 }
 
 function install_azurecli() {
@@ -1306,7 +1372,7 @@ function install_azurecli() {
 function install_cmake() {
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.15.2
+        VERSION=3.15.3
     else
         VERSION=$1
     fi
@@ -1413,7 +1479,7 @@ function install_browsers() {
 function install_virtualbox() {
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=6.0.10
+        VERSION=6.0.12
     else
         VERSION=$1
     fi
@@ -1426,7 +1492,9 @@ function install_virtualbox() {
     apt-get -y -qq update &&
     apt-get -y -q install virtualbox-${VB_VERSION} ||
         { echo "[ERROR] Cannot install virtualbox-${VB_VERSION}." 1>&2; return 20; }
-    usermod -aG vboxusers "${USER_NAME}"
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        usermod -aG vboxusers "${USER_NAME}"
+    fi
 
     TMP_DIR=$(mktemp -d)
     pushd -- ${TMP_DIR}
@@ -1476,7 +1544,11 @@ function install_octo() {
     mkdir -p /opt/octopus &&
     tar zxf OctopusTools.tar.gz -C /opt/octopus ||
         { echo "[ERROR] Cannot unpack and copy OctopusTools." 1>&2; popd; return 20; }
-    write_line "${HOME}/.profile" 'add2path /opt/octopus'
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "${HOME}/.profile" 'add2path /opt/octopus'
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
+    fi
     log_version /opt/octopus/Octo version
     # cleanup
     rm OctopusTools.tar.gz
@@ -1545,13 +1617,16 @@ function cleanup() {
     apt-get -y -q autoremove
 
     # cleanup Systemd Journals
-    journalctl --rotate
-    journalctl --vacuum-time=1s
-
+    if command -v journalctl; then
+        journalctl --rotate
+        journalctl --vacuum-time=1s
+    fi
     # clean bash_history
-    cat /dev/null > ${HOME}/.bash_history
-    cat /dev/null > ${USER_HOME}/.bash_history
-    chown ${USER_NAME}:${USER_NAME} -R ${USER_HOME}
+    [ -f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        [ -f ${USER_HOME}/.bash_history ] && cat /dev/null > ${USER_HOME}/.bash_history
+        chown ${USER_NAME}:${USER_NAME} -R ${USER_HOME}
+    fi
 
     # cleanup script guts
     find $HOME -maxdepth 1 -name "*.sh" -delete
