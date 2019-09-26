@@ -171,7 +171,9 @@
       "type": "hyperv-iso",
       "boot_wait": "0s",
       "boot_command": [
-        "<enter><wait><enter><wait><enter><wait><enter>"
+        "<esc>",
+        "<enter>",
+        "<enter>"
       ],
       "communicator": "winrm",
       "cpus": 2,

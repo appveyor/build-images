@@ -247,10 +247,10 @@ function GetPackerPath {
     }
     else {
         $packerFolder = CreateTempFolder
-        $zipPath = Join-Path $packerFolder "packer_$($packerVersion)_windows_amd64.zip"
+        $zipPath = Join-Path $packerFolder "packer_$($packerVersion)_amd64.zip"
         Write-Host "Downloading Packer version $packerVersion to temporary folder..." -ForegroundColor DarkGray
         $currentSecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol
-        $zipFile = if ($isLinux) {"packer_$($packerVersion)_linux_386.zip"} elseif ($isMacOS) {"packer_$($packerVersion)_darwin_386.zip"} else {"packer_$($packerVersion)_windows_386.zip"} 
+        $zipFile = if ($isLinux) {"packer_$($packerVersion)_linux_amd64.zip"} elseif ($isMacOS) {"packer_$($packerVersion)_darwin_amd64.zip"} else {"packer_$($packerVersion)_windows_amd64.zip"} 
         [System.Net.ServicePointManager]::SecurityProtocol = "Tls12"
         (New-Object Net.WebClient).DownloadFile("https://releases.hashicorp.com/packer/$packerVersion/$zipFile", $zipPath)
         [System.Net.ServicePointManager]::SecurityProtocol = $currentSecurityProtocol
