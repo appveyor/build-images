@@ -35,7 +35,7 @@ Function Connect-AppVeyorToAWS {
         It may be that you run the command, and it creates a valid AMI, but some AppVeyor settings are not set correctly (or you may just want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating an AMI) and pass the existing AMI ID to this parameter.
 
     .PARAMETER CommonPrefix
-        Command will prepend all created AWS resources and AppVeyor build environment name with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
+        Command will prepend all created AWS resources names with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
 
     .PARAMETER ImageOs
         Operating system of build VM image. Valid values: 'Windows', 'Linux'. Default value is 'Windows'.

@@ -12,6 +12,30 @@ Function Connect-AppVeyorToHyperV {
     .PARAMETER ApiToken
         API key for specific account (not 'All accounts'). Hosted AppVeyor users can find it at https://ci.appveyor.com/api-keys. Appveyor Server users can find it at <appveyor_server_url>/api-keys.
 
+    .PARAMETER CpuCores
+        Number of CPU cores for build VMs.
+
+    .PARAMETER RamMb
+        Memory (in megabytes) for build VMs.
+
+    .PARAMETER ImagesDirectory
+        Directory to keep build VM images.
+
+    .PARAMETER VmsDirectory
+        Directory to create build VMs.
+
+    .PARAMETER DnsServers
+        DNS server to assign to build VMs NIC.
+
+    .PARAMETER SubnetMask
+        Subnet mask to assign to build VMs NIC.
+
+    .PARAMETER VhdPath
+        Path existing build VM VHD (in case you prefer to skip Packer build and use existing VHD).
+
+    .PARAMETER CommonPrefix
+        Command will prepend all created resources (like Hyper-V virtual swith or firewall rule) it creates and with it.
+
     .PARAMETER ImageOs
         Operating system of build VM image. Valid values: 'Windows', 'Linux'. Default value is 'Windows'.
 
@@ -21,12 +45,21 @@ Function Connect-AppVeyorToHyperV {
     .PARAMETER ImageTemplate
         If you are familiar with the Hashicorp Packer, you can replace template used by this command with another one. Default value is '.\minimal-windows-server.json'.
 
+    .PARAMETER ImageFeatures
+        Comma-separated list of feature IDs to be installed on the image. Available IDs can be found at https://github.com/appveyor/build-images/blob/master/byoc/image-builder-metadata.json under 'installedFeatures'.
+
+    .PARAMETER ImageCustomScript
+        Base-64 encoded text of custom sript to execute during image creation. It should not contain reboot instructions.
+
+    .PARAMETER ImageCustomScriptAfterReboot
+        Base-64 encoded text of custom sript to execute during image creation, after reboot. It is usefull for cases when custom software being installed with 'ImageCustomScript' required some additional action after computer restarted.
+
         .EXAMPLE
         Connect-AppVeyorToHyperV
         Let command collect all required information
 
         .EXAMPLE
-        Connect-AppVeyorToHyperV -ApiToken XXXXXXXXXXXXXXXXXXXXX -AppVeyorUrl "https://ci.appveyor.com"
+        Connect-AppVeyorToHyperV -ApiToken XXXXXXXXXXXXXXXXXXXXX -AppVeyorUrl "https://ci.appveyor.com" -CpuCores 2 -RamMb 2048 -ImageOs "Windows"
         Run command with all required parameters so command will ask no questions. It will create build VM image and configure Hyper-V build cloud in AppVeyor.
     #>
 
@@ -44,6 +77,24 @@ Function Connect-AppVeyorToHyperV {
 
       [Parameter(Mandatory=$false)]
       [string]$RamMb = 4096,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImagesDirectory,
+
+      [Parameter(Mandatory=$false)]
+      [string]$VmsDirectory,
+
+      [Parameter(Mandatory=$false)]
+      [string]$DnsServers = "8.8.8.8; 8.8.4.4",
+
+      [Parameter(Mandatory=$false)]
+      [string]$SubnetMask = "255.255.255.0",
+
+      [Parameter(Mandatory=$false)]
+      [string]$PreheatedVMs = 2,
+
+      [Parameter(Mandatory=$false)]
+      [string]$VhdPath,
 
       [Parameter(Mandatory=$false)]
       [string]$CommonPrefix = "appveyor",
@@ -65,25 +116,7 @@ Function Connect-AppVeyorToHyperV {
       [string]$ImageCustomScript,
 
       [Parameter(Mandatory=$false)]
-      [string]$ImageCustomScriptAfterReboot,
-
-      [Parameter(Mandatory=$false)]
-      [string]$ImagesDirectory,
-
-      [Parameter(Mandatory=$false)]
-      [string]$VmsDirectory,
-
-      [Parameter(Mandatory=$false)]
-      [string]$DnsServers = "8.8.8.8; 8.8.4.4",
-
-      [Parameter(Mandatory=$false)]
-      [string]$SubnetMask = "255.255.255.0",
-
-      [Parameter(Mandatory=$false)]
-      [string]$PreheatedVMs = 2,
-
-      [Parameter(Mandatory=$false)]
-      [string]$VhdPath
+      [string]$ImageCustomScriptAfterReboot
     )
 
     function ExitScript {
@@ -172,9 +205,7 @@ d-i passwd/user-default-groups appveyor sudo
     if (-not $VmsDirectory) {
         $VmsDirectory = Join-Path $env:SystemDrive "$CommonPrefix-VMs"
     }
-    
 
-    #TODO test IP and NAT
     #TODO scenario if subnet is occuped (to get existing subnets: gwmi -computer .  -class "win32_networkadapterconfiguration" | % {$_.ipsubnet})
     $natSwitch = "$CommonPrefix-NAT-Switch"
     $natNetwork = "$CommonPrefix-NAT-Network"

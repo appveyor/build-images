@@ -28,7 +28,7 @@ Function Connect-AppVeyorToAzure {
         It can happen that you run the command, and it created a valid VHD, but some AppVeyor settings were not set correctly (or just you want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating a VHD) and pass already created VHD path to this parameter.
 
     .PARAMETER CommonPrefix
-        Command will prepend all created Azure resources and AppVeyor build environment name with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
+        Command will prepend all created Azure resources names with it. Because of storage account names restrictions, is must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
 
     .PARAMETER ImageOs
         Operating system of build VM image. Valid values: 'Windows', 'Linux'. Default value is 'Windows'.
