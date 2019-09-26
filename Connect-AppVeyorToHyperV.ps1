@@ -116,32 +116,48 @@ Function Connect-AppVeyorToHyperV {
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
     $install_user = "appveyor"
-    $install_password = "appveyor" #CreatePassword
+    $install_password = CreatePassword
 
     #Temporary template parent folder
     $ParentFolder = Split-Path $ImageTemplate -Parent
 
-    $autounattendPath = Join-Path $ParentFolder "hyper-v\Windows\answer_files\2019\Autounattend.xml"
-    [xml]$autounattend = Get-Content $autounattendPath
-    $MicrosoftWindowsShellSetup = $autounattend.unattend.settings.component | ? {$_.name -eq "Microsoft-Windows-Shell-Setup"}
-    $MicrosoftWindowsShellSetup.Autologon.password.Value = $install_password
-    $MicrosoftWindowsShellSetup.UserAccounts.AdministratorPassword.Value = $install_password
-    $MicrosoftWindowsShellSetup.UserAccounts.LocalAccounts.LocalAccount.Password.Value = $install_password
-    $autounattend.Save($autounattendPath)
+    if ($imageOs -eq "Windows") {
+        $autounattendPath = Join-Path $ParentFolder "hyper-v\Windows\answer_files\2019\Autounattend.xml"
+        [xml]$autounattend = Get-Content $autounattendPath
+        $MicrosoftWindowsShellSetup = $autounattend.unattend.settings.component | ? {$_.name -eq "Microsoft-Windows-Shell-Setup"}
+        $MicrosoftWindowsShellSetup.Autologon.password.Value = $install_password
+        $MicrosoftWindowsShellSetup.UserAccounts.AdministratorPassword.Value = $install_password
+        $MicrosoftWindowsShellSetup.UserAccounts.LocalAccounts.LocalAccount.Password.Value = $install_password
+        $autounattend.Save($autounattendPath)
 
-    #bake iso
-    $FileName="$ParentFolder/iso/minimal-windows-server.iso";
-    $Files=@(
-        "$ParentFolder/hyper-v/Windows/answer_files/2019/Autounattend.xml",
-        "$ParentFolder/hyper-v/Windows/scripts/disable-screensaver.ps1",
-        "$ParentFolder/hyper-v/Windows/scripts/disable-winrm.ps1",
-        "$ParentFolder/hyper-v/Windows/scripts/enable-winrm.ps1",
-        "$ParentFolder/hyper-v/Windows/scripts/microsoft-updates.bat",
-        "$ParentFolder/hyper-v/Windows/scripts/unattend.xml",
-        "$ParentFolder/hyper-v/Windows/scripts/shutdown_vm.bat",
-        "$ParentFolder/hyper-v/Windows/scripts/win-updates.ps1"
-    )
-    New-IsoFile -Path $FileName -Source $Files -Force -Media "CDR"
+        #bake iso
+        $FileName="$ParentFolder/iso/minimal-windows-server.iso";
+        $Files=@(
+            "$ParentFolder/hyper-v/Windows/answer_files/2019/Autounattend.xml",
+            "$ParentFolder/hyper-v/Windows/scripts/disable-screensaver.ps1",
+            "$ParentFolder/hyper-v/Windows/scripts/disable-winrm.ps1",
+            "$ParentFolder/hyper-v/Windows/scripts/enable-winrm.ps1",
+            "$ParentFolder/hyper-v/Windows/scripts/microsoft-updates.bat",
+            "$ParentFolder/hyper-v/Windows/scripts/unattend.xml",
+            "$ParentFolder/hyper-v/Windows/scripts/shutdown_vm.bat",
+            "$ParentFolder/hyper-v/Windows/scripts/win-updates.ps1"
+        )
+        New-IsoFile -Path $FileName -Source $Files -Force -Media "CDR"
+    }
+    elseif ($imageOs -eq "Linux")
+    {
+        $createAccountDirective = "`n
+# Create appveyor user account.
+d-i passwd/user-fullname string appveyor
+d-i passwd/username string appveyor
+d-i passwd/user-password password $install_password
+d-i passwd/user-password-again password $install_password
+d-i user-setup/allow-password-weak boolean true
+d-i user-setup/encrypt-home boolean false
+d-i passwd/user-default-groups appveyor sudo
+"
+[System.IO.File]::AppendAllText("$ParentFolder/http/preseed18.cfg", $createAccountDirective)
+    }
 
     $iso_checksum = if ($imageOs -eq "Windows") {"221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562"} elseif ($imageOs -eq "Linux") {"7d8e0055d663bffa27c1718685085626cb59346e7626ba3d3f476322271f573e"}
     $iso_checksum_type = "sha256"
