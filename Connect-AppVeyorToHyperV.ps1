@@ -222,8 +222,15 @@ d-i passwd/user-default-groups appveyor sudo
         New-NetIPAddress -IPAddress 10.118.232.1 -PrefixLength 24 -InterfaceAlias "vEthernet ($natSwitch)"
         New-NetNAT -Name $natNetwork -InternalIPInterfaceAddressPrefix 10.118.232.0/24
     }
-    if ($imageOs -eq "Linux" -and (-not (Get-NetFirewallRule -Name $FirewalRuleName -ErrorAction Ignore))) {
-         New-NetFirewallRule -Name $FirewalRuleName -DisplayName $FirewalRuleName -Enabled True -Direction Inbound -Action Allow -LocalAddress $DefaultGateway -RemoteAddress $MasterIPAddress -LocalPort "$HttpPortMin-$HttpPortMax" -Protocol TCP
+    if ($imageOs -eq "Linux") {
+        Write-host "`nGetting or creating inbound firewall rule '$FirewalRuleName' to allow access to Packer HTTP server on ports $HttpPortMin-$HttpPortMax..." -ForegroundColor Cyan
+        if (-not (Get-NetFirewallRule -Name $FirewalRuleName -ErrorAction Ignore)) {
+            New-NetFirewallRule -Name $FirewalRuleName -DisplayName $FirewalRuleName -Enabled True -Direction Inbound -Action Allow -LocalAddress $DefaultGateway -RemoteAddress $MasterIPAddress -LocalPort "$HttpPortMin-$HttpPortMax" -Protocol TCP | out-null
+            Write-host "`Firewall rule '$FirewalRuleName' created." -ForegroundColor DarkGray
+        }
+        else {
+            Write-host "`Using existing firewall rule '$FirewalRuleName'." -ForegroundColor DarkGray
+        }
     }
 
     try {
