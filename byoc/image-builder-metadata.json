@@ -539,35 +539,7 @@
             {
                "id": "install_gvm_and_golangs",
                "title": "Golang 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 1.12.x and GVM"
-            },
-            {
-               "id": "install_MSSQLServer",
-               "title": "Microsoft SQL Server 2017 for Linux"
-            },
-            {
-               "id": "install_mysql",
-               "title": "MySQL"
-            },
-            {
-               "id": "install_postgresql",
-               "title": "PostgreSQL"
-            },
-            {
-               "id": "install_mongodb",
-               "title": "MongoDB"
-            },
-            {
-               "id": "install_redis",
-               "title": "Redis"
-            },
-            {
-               "id": "install_rabbitmq",
-               "title": "RabbitMQ"
-            },
-            {
-               "id": "install_powershell",
-               "title": "PowerShell Core 6.x"
-            },            
+            },          
             {
                "id": "install_p7zip",
                "title": "p7zip"
@@ -601,20 +573,8 @@
                "title": "CMake 3.15.2"
             },
             {
-               "id": "install_kubectl",
-               "title": "kubectl"
-            },
-            {
                "id": "install_gcc",
                "title": "GCC"
-            },
-            {
-               "id": "install_browsers",
-               "title": "Firefox and Chrome browsers"
-            },
-            {
-               "id": "install_virtualbox",
-               "title": "VirtualBox"
             },
             {
                "id": "install_clang",
