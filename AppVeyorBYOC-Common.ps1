@@ -18,11 +18,14 @@ function CreateSlug($str) {
 }
 
 function CreateTempFolder {
-    if ($isMacOS -or $isLinux) {
-        return (New-TemporaryFile | %{ rm $_; mkdir $_; chmod 700 $_ ; (Resolve-Path $_).Path})
-    }
-    else {
-        return (New-TemporaryFile | % { rm $_; mkdir $_}).FullName
+    New-TemporaryFile | % {
+        $tmpFolder = Join-Path $(Join-Path $(Split-Path $_ -Parent) "AppVeyorBYOC") $(Split-Path $_ -Leaf)
+        rm $_ 
+        mkdir $tmpFolder | out-null
+        if ($isMacOS -or $isLinux) {
+            chmod 700 $tmpFolder
+        }
+        (Resolve-Path $tmpFolder).Path
     }
 }
 
