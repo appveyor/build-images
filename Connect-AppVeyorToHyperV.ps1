@@ -199,7 +199,7 @@ d-i passwd/user-default-groups appveyor sudo
 
         #Run Packer to create an VHD
         if (-not $VhdPath) {
-            $packerPath = GetPackerPath
+            $packerPath = if ($imageOs -eq "Windows") {$(GetPackerPath -prerelease)} else {$(GetPackerPath)}
             $packerManifest = "$(CreateTempFolder)/packer-manifest.json"
             Write-host "`nRunning Packer to create a basic build VM VHD..." -ForegroundColor Cyan
             Write-Warning "Add '-VhdPath' parameter with if you want to to skip Packer build and and reuse existing VHD."

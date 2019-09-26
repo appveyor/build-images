@@ -238,8 +238,8 @@ function ValidateDependencies ($cloudType) {
     }
 }
 
-function GetPackerPath {
-    $packerVersion = "1.4.3"
+function GetPackerPath ([switch]$prerelease) {
+    $packerVersion = if ($prerelease) {"1.4.4"} else {"1.4.3"}
     Write-host "`nChecking if Hashicorp Packer version $packerVersion is installed..."  -ForegroundColor Cyan
     if ((Get-Command packer -ErrorAction Ignore) -and (packer --version) -eq $packerVersion) {
         Write-Host "Packer version $packerVersion found" -ForegroundColor DarkGray
@@ -252,7 +252,8 @@ function GetPackerPath {
         $currentSecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol
         $zipFile = if ($isLinux) {"packer_$($packerVersion)_linux_amd64.zip"} elseif ($isMacOS) {"packer_$($packerVersion)_darwin_amd64.zip"} else {"packer_$($packerVersion)_windows_amd64.zip"} 
         [System.Net.ServicePointManager]::SecurityProtocol = "Tls12"
-        (New-Object Net.WebClient).DownloadFile("https://releases.hashicorp.com/packer/$packerVersion/$zipFile", $zipPath)
+        $URL = if ($prerelease) {"https://github.com/appveyor/build-images/releases/download/packer-1.4.4/packer_windows_amd64.zip"} else {"https://releases.hashicorp.com/packer/$packerVersion/$zipFile"}
+        (New-Object Net.WebClient).DownloadFile($URL, $zipPath)
         [System.Net.ServicePointManager]::SecurityProtocol = $currentSecurityProtocol
         Expand-Archive -LiteralPath $zipPath -DestinationPath $packerFolder
         Remove-Item $zipPath -force -ErrorAction Ignore
