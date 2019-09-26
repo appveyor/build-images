@@ -1,15 +1,6 @@
 {
   "provisioners": [
     {
-      "type": "file",
-      "source": "{{ template_dir }}/scripts/Windows/custom-scripts",
-      "destination": "C:/"
-    },
-    {
-        "type": "windows-restart",
-        "restart_timeout": "30m"
-    },
-    {
         "type": "powershell",
         "scripts": [
             "{{ template_dir }}/scripts/Windows/create_appveyor_user.ps1"
@@ -68,17 +59,6 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
-            "{{ template_dir }}/scripts/Windows/install_test_agent_build_tools_2019.ps1",
-            "{{ template_dir }}/scripts/Windows/install_dotnet_devpack.ps1",
-            "{{ template_dir }}/scripts/Windows/install_dotnet_sdk.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}"
-    },
-    {
-        "type": "powershell",
-        "scripts":[
             "{{ template_dir }}/scripts/Windows/install_appveyor_build_agent_core.ps1",
             "{{ template_dir }}/scripts/Windows/enable_autologon.ps1"
         ],
@@ -86,14 +66,6 @@
             "appveyor_user={{user `install_user`}}",
             "appveyor_password={{user `install_password`}}",
             "build_agent_mode={{user `build_agent_mode`}}"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}"
-    },
-    {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/run_custom_scripts.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
@@ -150,7 +122,7 @@
       "source_ami_filter": {
         "filters": {
         "virtualization-type": "hvm",
-        "name": "Windows_Server-2016-English-Full-Base*",
+        "name": "Windows_Server-2019-English-Full-Base*",
         "root-device-type": "ebs"
         },
         "owners": ["801119661308"],
@@ -162,9 +134,9 @@
       "winrm_username": "Administrator",
       "winrm_use_ssl": true,
       "winrm_insecure": true,
-      "user_data_file":"./scripts/Windows/ec2-userdata.ps1",
+      "user_data_file":"{{ template_dir }}/scripts/Windows/ec2-userdata.ps1",
 
-      "ami_name": "Appveyor Worker Windows Server 2016 {{uuid}}",
+      "ami_name": "Appveyor Worker Windows Server 2019 {{uuid}}",
       "ami_description": "{{user `image_description`}}",
       "launch_block_device_mappings": [
         {
@@ -187,14 +159,44 @@
       "winrm_username": "packer_user",
       "winrm_insecure": true,
       "winrm_use_ssl": true,
-      "instance_name": "Windows-server-2019-{{uuid}}",
-      "image_name": "Windows-server-2019-{{timestamp}}",
+      "instance_name": "windows-server-2019-{{uuid}}",
+      "image_name": "windows-server-2019-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
       "disk_size": 200,
       "metadata": {
         "windows-startup-script-cmd": "winrm quickconfig -quiet & net user /add packer_user & net localgroup administrators packer_user /add & winrm set winrm/config/service/auth @{Basic=\"true\"}"
       }
+    },
+    {
+      "type": "hyperv-iso",
+      "boot_wait": "0s",
+      "boot_command": [
+        "<enter>",
+        "<enter>"
+      ],
+      "communicator": "winrm",
+      "cpus": 2,
+      "disk_size": "{{user `disk_size`}}",
+      "enable_secure_boot": true,
+      "enable_virtualization_extensions": true,
+      "generation": 2,
+      "secondary_iso_images": [
+        "{{ template_dir }}/iso/minimal-windows-server.iso"
+      ],
+      "guest_additions_mode": "disable",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_url": "{{user `iso_url`}}",
+      "memory": 4096,
+      "shutdown_command": "e:/shutdown_vm.bat",
+      "output_directory": "{{user `output_directory`}}",
+      "switch_name": "{{user `hyperv_switchname`}}",
+      "vm_name": "windows-server-2019-{{user `datemark`}}",
+      "winrm_timeout": "2h",
+      "winrm_password": "{{user `install_password`}}",
+      "winrm_username": "{{user `install_user`}}"
     }
+    
   ],
   "post-processors": [
     {

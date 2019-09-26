@@ -1,6 +1,6 @@
-﻿$110Letter = "k"
-$111Letter = "c"
-$102Letter = "s"
+﻿$110Letter = "L"
+$111Letter = "d"
+$102Letter = "t"
 
 function GetUninstallString($productName) {
     $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
@@ -38,6 +38,7 @@ Write-Host "Installing OpenSSL 1.1.0$110Letter 32-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:temp\Win32OpenSSL-1_1_0$110Letter.exe"
 (New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-1_1_0$110Letter.exe", $exePath)
+if (-not (Test-Path $exePath)) {throw "Unable to find $exePath"}
 Write-Host "Installing..."
 cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v11-Win32-temp
 Write-Host "Installed" -ForegroundColor Green
@@ -47,6 +48,7 @@ Write-Host "Installing OpenSSL 1.1.0$110Letter 64-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:temp\Win64OpenSSL-1_1_0$110Letter.exe"
 (New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win64OpenSSL-1_1_0$110Letter.exe", $exePath)
+if (-not (Test-Path $exePath)) {throw "Unable to find $exePath"}
 Write-Host "Installing..."
 cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v11-Win64-temp
 Write-Host "Installed" -ForegroundColor Green
@@ -59,6 +61,7 @@ Write-Host "Installing OpenSSL 1.1.1$111Letter 32-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:temp\Win32OpenSSL-1_1_1$111Letter.exe"
 (New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-1_1_1$111Letter.exe", $exePath)
+if (-not (Test-Path $exePath)) {throw "Unable to find $exePath"}
 Write-Host "Installing..."
 cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v111-Win32-temp
 Write-Host "Installed" -ForegroundColor Green
@@ -68,6 +71,7 @@ Write-Host "Installing OpenSSL 1.1.1$111Letter 64-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:temp\Win64OpenSSL-1_1_1$111Letter.exe"
 (New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win64OpenSSL-1_1_1$111Letter.exe", $exePath)
+if (-not (Test-Path $exePath)) {throw "Unable to find $exePath"}
 Write-Host "Installing..."
 cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v111-Win64-temp
 Write-Host "Installed" -ForegroundColor Green
@@ -80,6 +84,7 @@ Write-Host "Installing OpenSSL 1.0.2$102Letter 32-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:temp\Win32OpenSSL-1_0_2$102Letter.exe"
 (New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-1_0_2$102Letter.exe", $exePath)
+if (-not (Test-Path $exePath)) {throw "Unable to find $exePath"}
 Write-Host "Installing..."
 cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes
 del $exePath
@@ -89,6 +94,7 @@ Write-Host "Installing OpenSSL 1.0.2$102Letter 64-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:temp\Win64OpenSSL-1_0_2$102Letter.exe"
 (New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win64OpenSSL-1_0_2$102Letter.exe", $exePath)
+if (-not (Test-Path $exePath)) {throw "Unable to find $exePath"}
 Write-Host "Installing..."
 cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes
 del $exePath

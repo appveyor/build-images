@@ -12,15 +12,23 @@
             "Windows"
          ],
          "imageOperatingSystem":"Windows",
-         "template":"ws2019.json",
+         "template":"minimal-windows-server.json",
          "installedFeatures":[
             {
                "id":"git",
                "title":"Git 2.19.1"
             },
             {
-               "id":"hg",
-               "title":"Mercurial"
+               "id":"git_lfs",
+               "title":"Git LFS 2.6.1"
+            },
+            {
+               "id":"mercurial",
+               "title":"Mercurial 4.1.1"
+            },
+            {
+               "id":"subversion",
+               "title":"Subversion 1.8.17"
             },
             {
                "id":"powershell_core",
@@ -35,23 +43,175 @@
                "title":"Chocolatey"
             },
             {
+               "id":"nuget",
+               "title":"NuGet"
+            },
+            {
+               "id":"pstools",
+               "title":"PsTools"
+            },
+            {
                "id":"appveyor_build_agent",
                "title":"AppVeyor Build Agent"
             }
          ],
          "optionalFeatures":[
             {
-               "id":"vs2019_build_tools",
-               "title":"Visual Studio 2019 Build Tools"
+               "id":"test_agent_build_tools_2019",
+               "title":"Visual Studio 2019 Test Agent and Build Tools"
             },
             {
-               "id":"sqlserver2017",
+               "id":"dotnet_devpack",
+               "title":".NET Framework Developer Packs (4.5.2 - 4.8)"
+            },
+            {
+               "id":"dotnet_sdk",
+               "title":"NET Core SDKs (1.1.14 - 2.2.301)"
+            },
+            {
+               "id":"sql_server_2017",
                "title":"SQL Server 2017 Developer Edition"
             },
             {
-               "id":"mysql76",
-               "title":"MySQL Server 7.6"
-            }            
+               "id":"nodejs_latest",
+               "title":"Node.js"
+            },
+            {
+               "id":"vs2017",
+               "title":"Visual Studio Community 2017"
+            },
+            {
+               "id":"vs2019",
+               "title":"Visual Studio Community 2019"
+            },
+            {
+               "id":"xunit_20",
+               "title":"xUnit 2.0.0 RTM"
+            },
+            {
+               "id":"nunit",
+               "title":"NUnit 2.6.4"
+            },
+            {
+               "id":"nunit3",
+               "title":"NUnit 3.9.0"
+            },
+            {
+               "id":"vstest_console_logger",
+               "title":"AppVeyor VSTest.Console logger"
+            },
+            {
+               "id":"ruby",
+               "title":"Ruby with DevKit (1.9.3 -  2.6.3)"
+            },
+            {
+               "id":"miniconda",
+               "title":"Miniconda"
+            },
+            {
+               "id":"python",
+               "title":"Python (2.6.6 - 3.7.4)"
+            },
+            {
+               "id":"openssl",
+               "title":"OpenSSL (1.0.2 - 1.1.1)"
+            },
+            {
+               "id":"cmake",
+               "title":"CMake 3.15.1"
+            },
+            {
+               "id":"postgres96",
+               "title":"PostgreSQL 9.6 "
+            },
+            {
+               "id":"postgres10",
+               "title":"PostgreSQL 10.6 "
+            },
+            {
+               "id":"postgres11",
+               "title":"PostgreSQL 11.1"
+            },
+            {
+               "id":"aws_cli",
+               "title":"AWS CLI (latest)"
+            },
+            {
+               "id":"azure_cli",
+               "title":"Microsoft Azure (latest)"
+            },
+            {
+               "id":"erlang",
+               "title":"Erlang OTP runtime 20.2"
+            },
+            {
+               "id":"mongo",
+               "title":"MongoDB 4.0.1"
+            },
+            {
+               "id":"wdk_1809",
+               "title":"WDK 1809 (10.0.17763.0)"
+            },
+            {
+               "id":"winsdk_1809",
+               "title":"Microsoft Windows SDK 1809 (10.0.17763.0)"
+            },
+            {
+               "id":"wdk_1903",
+               "title":"WDK  1903 (10.0.18362.1)"
+            },
+            {
+               "id":"winsdk_1903",
+               "title":"Microsoft Windows SDK 1903 (10.0.18362.1)"
+            },
+            {
+               "id":"yarn",
+               "title":"Yarn 1.16.0"
+            },
+            {
+               "id":"wix311",
+               "title":"WiX Toolset 3.11.1"
+            },
+            {
+               "id":"llvm",
+               "title":"LLVM 8.0.0"
+            },
+            {
+               "id":"innosetup",
+               "title":"InnoSetup 6.0.2 Unicode"
+            },
+            {
+               "id":"coverity",
+               "title":"Coverity Scan 2019.03"
+            },
+            {
+               "id":"iis_win2019",
+               "title":"Internet Information Services (IIS) 10"
+            },
+            {
+               "id":"nsis",
+               "title":"NSIS 3.04"
+            },
+            {
+               "id":"octo",
+               "title":"Octo 6.12.0"
+            },
+            {
+               "id":"java_7_8",
+               "title":"Java 7-8"
+            },
+            {
+               "id":"jdk11",
+               "title":"JDK 11.0.2 (x64)"
+            },
+            {
+               "id":"jdk12",
+               "title":"JDK 12 (x64)"
+            },
+            {
+               "id":"msys64",
+               "title":"MSYS2"
+            }
          ]
       },
       {
@@ -87,40 +247,12 @@
          ],
          "optionalFeatures":[
             {
-               "id": "install_nodejs",
-               "title": "Node.js"
-            },
-            {
-               "id": "install_nvm",
-               "title": "NVM - Node Version Manager"
-            },
-            {
                "id": "install_nvm_and_nodejs",
                "title": "Node.js with NVM"
             },
             {
-               "id": "install_gitlfs",
-               "title": "Git LFS"
-            },
-            {
-               "id": "install_cvs",
-               "title": "CVS (Git, Mercurial, Subversion)"
-            },
-            {
-               "id": "install_virtualenv",
-               "title": "Virtualenv - isolated Python environments"
-            },
-            {
-               "id": "install_pip",
-               "title": "Pip - Python package-management system"
-            },
-            {
                "id": "install_pythons",
                "title": "Pythons"
-            },
-            {
-               "id": "install_powershell",
-               "title": "Powershell"
             },
             {
                "id": "install_dotnets",
@@ -132,35 +264,27 @@
             },
             {
                "id": "install_mono",
-               "title": "Mono framework"
+               "title": "Mono framework (latest)"
             },
             {
                "id": "install_jdks",
-               "title": "jdks"
-            },
-            {
-               "id": "install_rvm",
-               "title": "RVM - Ruby Version Manager"
+               "title": "JDK 7, 8, 9, 10, 11, 12, 13, 14"
             },
             {
                "id": "install_rvm_and_rubies",
-               "title": "Ruby in RVM"
-            },
-            {
-               "id": "install_gvm",
-               "title": "GVM - Go Version Manager"
+               "title": "Ruby (all 2.x versions) and RVM"
             },
             {
                "id": "install_gvm_and_golangs",
-               "title": "Golangs in GVM"
+               "title": "Golang 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 1.12.x and GVM"
             },
             {
                "id": "install_docker",
-               "title": "Docker"
+               "title": "Docker CE (latest)"
             },
             {
                "id": "install_MSSQLServer",
-               "title": "MS SQL Server (requires VM with 3G RAM)"
+               "title": "Microsoft SQL Server 2017 for Linux (requires VM with 3G RAM)"
             },
             {
                "id": "install_mysql",
@@ -183,12 +307,16 @@
                "title": "RabbitMQ"
             },
             {
+               "id": "install_powershell",
+               "title": "PowerShell Core 6.x"
+            },            
+            {
                "id": "install_p7zip",
                "title": "p7zip"
             },
             {
                "id": "install_packer",
-               "title": "Hashicorp Packer"
+               "title": "Packer by Hashicorp"
             },
             {
                "id": "install_yarn",
@@ -212,7 +340,7 @@
             },
             {
                "id": "install_cmake",
-               "title": "cmake"
+               "title": "CMake 3.15.2"
             },
             {
                "id": "install_kubectl",
@@ -224,48 +352,19 @@
             },
             {
                "id": "install_browsers",
-               "title": "Browsers"
+               "title": "Firefox and Chrome browsers"
             },
             {
                "id": "install_virtualbox",
-               "title": "Virtualbox"
+               "title": "VirtualBox"
             },
             {
                "id": "install_clang",
-               "title": "clang"
+               "title": "CLang"
             },
             {
                "id": "install_octo",
                "title": "OctopusTools"
-            }
-         ]
-      },
-      {
-         "name":"Windows Nano Server 1809 Minimal",
-         "cloudTypes":[
-            "Docker"
-         ],
-         "operatingSystems":[
-            "Windows"
-         ],
-         "imageOperatingSystem":"Windows",
-         "template":"windows-nanoserver-build-image",
-         "installedFeatures":[
-            {
-               "id":"git",
-               "title":"Git 2.19.1"
-            },
-            {
-               "id":"hg",
-               "title":"Mercurial"
-            },
-            {
-               "id":"powershell_core",
-               "title":"PowerShell Core 6.2.0"
-            },
-            {
-               "id":"appveyor_build_agent",
-               "title":"AppVeyor Build Agent"
             }
          ]
       },
@@ -278,16 +377,57 @@
             "Windows"
          ],
          "imageOperatingSystem":"Windows",
-         "template":"windows-servercore-build-image",
+         "template":"appveyor/build-image:minimal-windowsservercore-ltsc2019",
          "installedFeatures":[
             {
                "id":"git",
-               "title":"Git 2.19.1"
+               "title":"Git 2.23.0"
             },
             {
                "id":"hg",
-               "title":"Mercurial"
+               "title":"Mercurial 5.1.1"
             },
+            {
+               "id":"svn",
+               "title":"Subversion 1.8.17"
+            },              
+            {
+               "id":"7zip",
+               "title":"7-Zip 19.0"
+            },
+            {
+               "id":"chocolatey",
+               "title":"Chocolatey"
+            },             
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.2"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      },
+      {
+         "name":"Windows Nano Server 1809 Minimal",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows"
+         ],
+         "imageOperatingSystem":"Windows",
+         "template":"appveyor/build-image:minimal-nanoserver-1809",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.21.0"
+            },
+            {
+               "id":"7zip",
+               "title":"7-Zip 18.05"
+            }, 
             {
                "id":"powershell_core",
                "title":"PowerShell Core 6.2.0"
@@ -297,7 +437,7 @@
                "title":"AppVeyor Build Agent"
             }
          ]
-      },
+      },      
       {
          "name":"Ubuntu 18.04 Minimal",
          "cloudTypes":[
@@ -309,25 +449,182 @@
             "MacOS"
          ],
          "imageOperatingSystem":"Linux",
-         "template":"linux-build-image",
+         "template":"appveyor/build-image:minimal-ubuntu-18.04",
          "installedFeatures":[
             {
                "id":"git",
-               "title":"Git 2.19.1"
+               "title":"Git (latest)"
             },
             {
                "id":"hg",
-               "title":"Mercurial"
+               "title":"Mercurial (latest)"
             },
             {
+               "id":"svn",
+               "title":"Subversion (latest)"
+            },            
+            {
                "id":"powershell_core",
-               "title":"PowerShell Core 6.2.0"
+               "title":"PowerShell Core 6.2.2"
             },
             {
                "id":"appveyor_build_agent",
                "title":"AppVeyor Build Agent"
             }
          ]
-      }
+      },
+      {
+         "name":"Ubuntu 18.04 Full",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows",
+            "Linux",
+            "MacOS"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"mcr.microsoft.com/powershell:ubuntu-18.04",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git (latest)"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial (latest)"
+            },
+            {
+               "id":"svn",
+               "title":"Subversion (latest)"
+            },            
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.2"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ],
+         "optionalFeatures":[
+            {
+               "id": "install_nvm_and_nodejs",
+               "title": "Node.js with NVM"
+            },
+            {
+               "id": "install_pythons",
+               "title": "Pythons"
+            },
+            {
+               "id": "install_dotnets",
+               "title": ".NET Core SDKs"
+            },
+            {
+               "id": "install_dotnetv3_preview",
+               "title": ".NET Core 3.0 preview"
+            },
+            {
+               "id": "install_mono",
+               "title": "Mono framework (latest)"
+            },
+            {
+               "id": "install_jdks",
+               "title": "JDK 7, 8, 9, 10, 11, 12, 13, 14"
+            },
+            {
+               "id": "install_rvm_and_rubies",
+               "title": "Ruby (all 2.x versions) and RVM"
+            },
+            {
+               "id": "install_gvm_and_golangs",
+               "title": "Golang 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 1.12.x and GVM"
+            },
+            {
+               "id": "install_MSSQLServer",
+               "title": "Microsoft SQL Server 2017 for Linux"
+            },
+            {
+               "id": "install_mysql",
+               "title": "MySQL"
+            },
+            {
+               "id": "install_postgresql",
+               "title": "PostgreSQL"
+            },
+            {
+               "id": "install_mongodb",
+               "title": "MongoDB"
+            },
+            {
+               "id": "install_redis",
+               "title": "Redis"
+            },
+            {
+               "id": "install_rabbitmq",
+               "title": "RabbitMQ"
+            },
+            {
+               "id": "install_powershell",
+               "title": "PowerShell Core 6.x"
+            },            
+            {
+               "id": "install_p7zip",
+               "title": "p7zip"
+            },
+            {
+               "id": "install_packer",
+               "title": "Packer by Hashicorp"
+            },
+            {
+               "id": "install_yarn",
+               "title": "Yarn package manager"
+            },
+            {
+               "id": "install_awscli",
+               "title": "AWS CLI"
+            },
+            {
+               "id": "install_localstack",
+               "title": "Localstack"
+            },
+            {
+               "id": "install_gcloud",
+               "title": "gcloud command-line tool"
+            },
+            {
+               "id": "install_azurecli",
+               "title": "Azure CLI"
+            },
+            {
+               "id": "install_cmake",
+               "title": "CMake 3.15.2"
+            },
+            {
+               "id": "install_kubectl",
+               "title": "kubectl"
+            },
+            {
+               "id": "install_gcc",
+               "title": "GCC"
+            },
+            {
+               "id": "install_browsers",
+               "title": "Firefox and Chrome browsers"
+            },
+            {
+               "id": "install_virtualbox",
+               "title": "VirtualBox"
+            },
+            {
+               "id": "install_clang",
+               "title": "CLang"
+            },
+            {
+               "id": "install_octo",
+               "title": "OctopusTools"
+            }
+         ]         
+      }      
    ]
 }

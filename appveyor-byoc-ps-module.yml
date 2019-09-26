@@ -1,0 +1,20 @@
+build_script:
+
+# copy module contents
+- ps: New-Item AppVeyorBYOC -Type Directory | Out-Null
+- ps: Copy-Item -Path appveyor-byoc-psm\* -Destination AppVeyorBYOC
+- ps: New-Item AppVeyorBYOC\scripts -Type Directory | Out-Null
+- ps: Copy-Item -Path scripts\* -Destination AppVeyorBYOC\scripts -Recurse
+- ps: New-Item AppVeyorBYOC\hyper-v -Type Directory | Out-Null
+- ps: Copy-Item -Path hyper-v\* -Destination AppVeyorBYOC\hyper-v -Recurse
+- ps: New-Item AppVeyorBYOC\http -Type Directory | Out-Null
+- ps: Copy-Item -Path http\* -Destination AppVeyorBYOC\http -Recurse
+- ps: Copy-Item -Path AppVeyorBYOC-Common.ps1 -Destination AppVeyorBYOC
+- ps: Copy-Item -Path Connect-*.ps1 -Destination AppVeyorBYOC
+- ps: Copy-Item -Path *.json -Destination AppVeyorBYOC
+
+# publish module
+- ps: (Get-Content AppVeyorBYOC\AppVeyorBYOC.psd1).replace("ModuleVersion = '1.0.0'", "ModuleVersion = '$env:APPVEYOR_BUILD_VERSION'") | Set-Content AppVeyorBYOC\AppVeyorBYOC.psd1
+- ps: Publish-Module -Path $env:APPVEYOR_BUILD_FOLDER\AppVeyorBYOC -NuGetApiKey $env:psg_api_key
+
+test: off

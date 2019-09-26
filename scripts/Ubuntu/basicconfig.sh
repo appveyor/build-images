@@ -23,7 +23,7 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
-case  ${PACKER_BUILDER_TYPE} in
+case  ${PACKER_BUILDER_TYPE-} in
     googlecompute )
         BUILD_AGENT_MODE=GCE;;
     hyperv* )
@@ -33,14 +33,15 @@ case  ${PACKER_BUILDER_TYPE} in
     amazon-* )
         BUILD_AGENT_MODE=AmazonEC2;;
     * )
-        BUILD_AGENT_MODE=GCE;;
+        BUILD_AGENT_MODE='';;
 esac
 
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )
+echo "[DEBUG] Searching installation scripts in ${LIB_FOLDERS[*]}"
 for LIB_FOLDER in "${LIB_FOLDERS[@]}"; do
     if [ -f "${LIB_FOLDER}/common.sh" ]; then
-        echo "[DEBUG] installation scripts found in ${LIB_FOLDERS[*]}"
+        echo "[DEBUG] installation scripts found in ${LIB_FOLDER}"
         break
     fi
 done
@@ -106,6 +107,9 @@ fi
 
 configure_path
 
+apt-get -y -qq update && apt-get install -y -q sudo ||
+    _continue $?
+
 add_user ||
     _abort $?
 
@@ -158,8 +162,8 @@ su -l ${USER_NAME} -c "
 # .NET stuff
 install_dotnets ||
     _abort $?
-install_dotnetv3_preview ||
-    _abort $?
+# install_dotnetv3_preview ||
+#     _abort $?
 install_powershell ||
     _abort $?
 
@@ -286,6 +290,8 @@ install_awscli ||
     _abort $?
 install_localstack || _continue
 install_azurecli ||
+    _abort $?
+install_gcloud ||
     _abort $?
 install_kubectl ||
     _abort $?

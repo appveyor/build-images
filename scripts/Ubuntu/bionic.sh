@@ -41,7 +41,7 @@ network:
 
     # rename host
     if [[ -n "${HOST_NAME-}" ]]; then
-        hostnamectl set-hostname "${HOST_NAME}"
+        echo "${HOST_NAME}" > /etc/hostname
     fi
 }
 
@@ -59,11 +59,14 @@ function install_pip() {
 }
 
 function prepare_dotnet_packages() {
-    declare SDK_VERSIONS=( "2.1.105" "2.1.200" "2.1.201" "2.1" "2.2" )
+    declare SDK_VERSIONS=( "2.1.105" "2.1.200" "2.1.201" "2.1" "2.2" "3.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.0.7" "2.1" "2.2" )
     dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
+
+    declare RUNTIME_VERSIONS=( "2.1" "2.2" "3.0" )
+    dotnet_packages "aspnetcore-runtime-" RUNTIME_VERSIONS[@]
 
     declare DEV_VERSIONS=( "1.1.5" "1.1.6" "1.1.7" "1.1.8" "1.1.9" "1.1.11" )
     dotnet_packages "dotnet-dev-" DEV_VERSIONS[@]
@@ -100,12 +103,15 @@ function install_cvs() {
     apt-get -y -q install subversion
 
     log_version dpkg -l git mercurial subversion
-
-    su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_svn)
-        configure_svn" ||
-            return $?
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_svn)
+            configure_svn" ||
+                return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_svn"
+    fi
 }
 
 function install_mongodb() {
@@ -163,10 +169,27 @@ function install_sqlserver() {
         /opt/mssql/bin/mssql-conf -n setup accept-eula ||
         { echo "[ERROR] Cannot configure mssql-server." 1>&2; popd; return 30; }
 
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -  &&
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/18.04/prod.list)" ||
+        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 35; }
+
     ACCEPT_EULA=Y apt-get -y -q install mssql-tools unixodbc-dev
     systemctl restart mssql-server
     systemctl is-active mssql-server ||
         { echo "[ERROR] mssql-server service failed to start." 1>&2; popd; return 40; }
+
+    # disable updates of the SQL Server
+    apt-mark hold mssql-server
+
+    # Workaround https://stackoverflow.com/a/57453901
+    ln -sf /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0 /opt/mssql/lib/libcrypto.so &&
+    ln -sf /usr/lib/x86_64-linux-gnu/libssl.so.1.0.0 /opt/mssql/lib/libssl.so &&
+    mkdir -p /etc/systemd/system/mssql-server.service.d/ &&
+    (
+        echo '[Service]'
+        echo 'Environment="LD_LIBRARY_PATH=/opt/mssql/lib"'
+    ) > /etc/systemd/system/mssql-server.service.d/override.conf ||
+        { echo "[ERROR] Cannot configure workaround for mssql-server." 1>&2; return 45; }
 
     popd
     log_version dpkg -l mssql-server
