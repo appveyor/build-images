@@ -171,6 +171,7 @@
       "type": "hyperv-iso",
       "boot_wait": "0s",
       "boot_command": [
+        "<esc>",
         "<enter>",
         "<enter>"
       ],

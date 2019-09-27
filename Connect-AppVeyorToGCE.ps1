@@ -28,7 +28,7 @@ Function Connect-AppVeyorToGCE {
         It may be that having run the command and created a valid VM image, some AppVeyor settings are not set correctly (or you may just want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating an image with Packer) and pass the existing image ID to this parameter.
 
     .PARAMETER CommonPrefix
-        Command will prepend all created GCE resources and AppVeyor build environment name with it. Due to storage account names restrictions, it must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
+        Command will prepend all created GCE resources names with it. Due to storage account names restrictions, it must contain only letters and numbers and be shorter than 16 symbols. Default value is 'appveyor'.
 
     .PARAMETER ImageOs
         Operating system of build VM image. Valid values: 'Windows', 'Linux'. Default value is 'Windows'.
