@@ -135,8 +135,8 @@ Function Connect-AppVeyorToDocker {
         if (-not $cloud) {
 
             # check if there is a cloud already with the name "$build_cloud_name" and grab $hostAuthorizationToken from there
-            $docker_build_cloud_name = "$build_cloud_name"
-            $processCloud = $clouds | Where-Object ({$_.name -eq $docker_build_cloud_name})[0]
+            $process_build_cloud_name = "$hostName"
+            $processCloud = $clouds | Where-Object ({$_.name -eq $process_build_cloud_name})[0]
 
             if ($processCloud -and $processCloud.CloudType -eq 'Process') {
                 Write-Host "There is an existing 'Process' cloud for that computer. Reading Host Agent authorization token from Process cloud." -ForegroundColor DarkGray

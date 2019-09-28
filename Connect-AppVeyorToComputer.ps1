@@ -75,7 +75,7 @@ Function Connect-AppVeyorToComputer {
         if (-not $cloud) {
 
             # check if there is a cloud already with the name "$build_cloud_name Docker" and grab $hostAuthorizationToken from there
-            $docker_build_cloud_name = "$build_cloud_name Docker"
+            $docker_build_cloud_name = "$hostName Docker"
             $dockerCloud = $clouds | Where-Object ({$_.name -eq $docker_build_cloud_name})[0]
 
             if ($dockerCloud -and $dockerCloud.CloudType -eq 'Docker') {
