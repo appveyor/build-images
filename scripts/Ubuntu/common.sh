@@ -246,7 +246,7 @@ function wait_cloudinit () {
     if [ -d /var/lib/cloud/instances ]; then
         log "waiting 180 seconds for cloud-init to update /etc/apt/sources.list"
         log_exec timeout 180 /bin/bash -c \
-            'until stat /var/lib/cloud/instance/boot-finished 2>/dev/null; do echo waiting for cloud-initto finish ...; sleep 1; done'
+            'until stat /var/lib/cloud/instance/boot-finished 2>/dev/null; do echo waiting for cloud-init to finish ...; sleep 1; done'
         log "Wait for cloud-init finished."
     else
         log "There is no cloud-init scripts."
@@ -1502,7 +1502,7 @@ function install_virtualbox() {
         { echo "[ERROR] Cannot download Virtualbox Extention pack." 1>&2; popd; return 30; }
     yes | VBoxManage extpack install --replace "${VBE_URL##*/}" ||
         { echo "[ERROR] Cannot install Virtualbox Extention pack." 1>&2; popd; return 40; }
-    /sbin/vboxconfig
+    /sbin/vboxconfig ||
         { echo "[ERROR] Cannot configure Virtualbox." 1>&2; popd; return 50; }
 
     #cleanup
