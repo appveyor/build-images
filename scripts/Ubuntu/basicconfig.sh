@@ -88,22 +88,46 @@ init_logging
 
 wait_cloudinit || _continue
 
-# execute only required parts of deployment
+# execute optional Features
+if [[ -n "${OPT_FEATURES-}" && "${#OPT_FEATURES}" -gt "0" ]]; then
+    echo "[DEBUG] There is OPT_FEATURES variable defined: '$OPT_FEATURES'"
+    local arrFEATURES
+    OFS=$IFS; IFS=','; arrFEATURES=($OPT_FEATURES); IFS=$OFS
+    for i in "${!arrFEATURES[@]}"; do
+        FEATURE=${arrFEATURES[i]}
+        WORD1=$(IFS=" " ; set -- $FEATURE ; echo $1)
+        if [ "$(type -t $WORD1)x" == 'functionx' ]; then
+            echo "[DEBUG] executing '$FEATURE'..."
+            $FEATURE
+        else
+            echo "[WARNING] $WORD1 not a function, skipping"
+        fi
+    done
+    cleanup         #cleanup should be executed each time.
+    exit 0
+fi
+# Deploy Parts of config
 if [ "$#" -gt 0 ]; then
+    echo "[DEBUG] $0 script have arguments: $*"
     while [[ "$#" -gt 0 ]]; do
-        case "$1" in
-            install_appveyoragent)  install_appveyoragent "${BUILD_AGENT_MODE}" || _abort $?; ;;
-            install_pythons)        install_pythons || _abort $?; ;;
-            install_docker)         install_docker || _abort $?; ;;
-            add_user)               add_user || _abort $?; ;;
-            cleanup)                cleanup || _abort $?; ;;
-            *)                      echo "[ERROR] Unknown argument '$1'"; ;;
-        esac
+        if [ "$(type -t $1)x" == 'functionx' ]; then
+            echo "[DEBUG] argument recognized as a function to call: $1"
+            if [ "$#" -gt 1 ] && [ "$(type -t $2)x" != 'functionx' ]; then
+                #execute function with argument
+                $1 $2
+            else
+                #execute function without argument
+                $1
+            fi
+        else
+            echo "[ERROR] Unknown argument '$1'";
+        fi
         shift
     done
     cleanup         #cleanup should be executed each time.
     exit 0
 fi
+
 
 configure_path
 
