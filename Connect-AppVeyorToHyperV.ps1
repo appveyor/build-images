@@ -12,6 +12,9 @@ Function Connect-AppVeyorToHyperV {
     .PARAMETER ApiToken
         API key for specific account (not 'All accounts'). Hosted AppVeyor users can find it at https://ci.appveyor.com/api-keys. Appveyor Server users can find it at <appveyor_server_url>/api-keys.
 
+    .PARAMETER SkipDisclaimer
+        Skip warning related to computer configration changes. It is recommended to read the warning at least once, but it can come handy if you need to re-run the command.
+
     .PARAMETER CpuCores
         Number of CPU cores for build VMs.
 
@@ -71,6 +74,9 @@ Function Connect-AppVeyorToHyperV {
 
       [Parameter(Mandatory=$true,HelpMessage="API key for specific account (not 'All accounts')`nHosted AppVeyor users can find it at https://ci.appveyor.com/api-keys`nAppveyor Server users can find it at <appveyor_server_url>/api-keys")]
       [string]$ApiToken,
+
+      [Parameter(Mandatory=$false)]
+      [switch]$SkipDisclaimer,
 
       [Parameter(Mandatory=$false)]
       [string]$CpuCores = 2,
@@ -142,6 +148,11 @@ Function Connect-AppVeyorToHyperV {
     if (-not $regex.Match($CommonPrefix).Success) {
         Write-Warning "'CommonPrefix' can contain only letters and numbers"
         ExitScript
+    }
+
+    if (-not $SkipDisclaimer) {
+         Write-Warning "`nThis command will create Hyper-V resources such as virtual switch and related subnet and NAT. For Linux VMs it will also create a new firewall rule. Also, it will run Hashicorp Packer which will create its own temporary Hyper-V resources and leave VHD for future use by AppVeyor build VMs.`n`nIf this server contains production resources you might consider using separate one.`n`nPress Enter to continue or Ctrl-C to exit the command. Use '-SkipDisclaimer' switch parameter to skip this message next time."
+         $disclaimer = Read-Host
     }
 
     $ImageName = if ($ImageName) {$ImageName} else {$ImageOs}
