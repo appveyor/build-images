@@ -130,3 +130,7 @@ if (get-Service IpOverUsbSvc -ErrorAction Ignore) {
   Stop-Service IpOverUsbSvc
   Set-Service IpOverUsbSvc -StartupType Manual
 }
+
+Write-Host "Adding Visual Studio 2019 current MSBuild to PATH..." -ForegroundColor Cyan
+Add-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
+Add-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150"

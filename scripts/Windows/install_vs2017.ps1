@@ -102,3 +102,7 @@ if (get-Service IpOverUsbSvc -ErrorAction Ignore) {
   Stop-Service IpOverUsbSvc
   Set-Service IpOverUsbSvc -StartupType Manual
 }
+
+Write-Host "Adding MSBuild 15.0 to PATH..." -ForegroundColor Cyan
+Add-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin"
+Add-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\130"
