@@ -47,6 +47,7 @@ network:
 
 
 function install_pip() {
+    echo "Running install_pip..."
     curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
     python get-pip.py ||
@@ -82,6 +83,7 @@ function config_dotnet_repository() {
 }
 
 function install_nodejs() {
+    echo "Running install_nodejs..."
     apt-get -y -q install nodejs npm &&
     npm install -g pm2 ||
         { echo "[ERROR] Something went wrong."; return 100; }
@@ -89,6 +91,7 @@ function install_nodejs() {
 }
 
 function install_cvs() {
+    echo "Running install_cvs..."
     # install git
     # at this time there is git version 2.7.4 in apt repos
     # in case if we need recent version we have to run make_git function
@@ -113,6 +116,7 @@ function install_cvs() {
 }
 
 function install_mongodb() {
+    echo "Running install_mongodb..."
     apt install -yqq mongodb ||
         { echo "[ERROR] Cannot install mongodb." 1>&2; return 10; }
 
@@ -120,6 +124,7 @@ function install_mongodb() {
 }
 
 function install_jdks_from_repository() {
+    echo "Running install_jdks_from_repository..."
     add-apt-repository -y ppa:openjdk-r/ppa
     apt-get -y -qq update && {
         apt-get -y -q install --no-install-recommends openjdk-8-jdk
@@ -138,6 +143,7 @@ function install_jdks_from_repository() {
 }
 
 function install_sqlserver() {
+    echo "Running install_sqlserver..."
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
@@ -195,6 +201,7 @@ function install_sqlserver() {
 }
 
 function install_azurecli() {
+    echo "Running install_azurecli..."
     AZ_REPO=$OS_CODENAME
     apt-key adv --keyserver packages.microsoft.com --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF ||
         { echo "[ERROR] Cannot add microsoft's repository key." 1>&2; return 5; }
@@ -213,6 +220,7 @@ function prerequisites_dotnetv3_preview () {
 }
 
 function install_browsers() {
+    echo "Running install_browsers..."
     local DEBNAME=google-chrome-stable_current_amd64.deb
     add-apt-repository -y ppa:ubuntu-mozilla-security/ppa &&
     apt-get -y -qq update &&
