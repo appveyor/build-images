@@ -236,7 +236,7 @@
         [ "modifyvm", "{{.Name}}", "--cableconnected1", "on" ]
       ]
     },
-        {
+    {
       "type": "parallels-iso",
       "guest_os_type": "ubuntu",
       "parallels_tools_flavor": "lin",
@@ -270,7 +270,8 @@
       "ssh_password": "{{ user `install_password` }}",
       "ssh_port": 22,
       "ssh_wait_timeout": "10000s",
-      "shutdown_command": "echo '{{ user `install_password` }}'|sudo -S shutdown -P now"
+      "shutdown_command": "echo '{{ user `install_password` }}'|sudo -S shutdown -P now",
+      "vm_name": "packer-ubuntu-18.04"
     },
     {
       "type": "azure-arm",
