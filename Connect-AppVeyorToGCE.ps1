@@ -173,7 +173,7 @@ Function Connect-AppVeyorToGCE {
     $gce_firewall_winrm__name = "$($CommonPrefix)-firewall-winrm"
     $gce_firewall_winrm__port = 5986
     $gce_service_account = "$($CommonPrefix)-sa"
-    $gce_account_file = if ($env:HOME) {"$env:HOME/$($CommonPrefix)-account-file.json"} elseif ($env:HOMEPATH) {"$env:HOMEPATH\$($CommonPrefix)-account-file.json"}
+    $gce_account_file = Join-Path $(CreateTempFolder) "$CommonPrefix-account-file.json"
     $gce_account_certificate_file = if ($env:HOME) {"$env:HOME/$($CommonPrefix)-account-certificate.p12"} elseif ($env:HOMEPATH) {"$env:HOMEPATH\$($CommonPrefix)-account-certificate.p12"}
 
     if (-not $SkipDisclaimer) {
