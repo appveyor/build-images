@@ -111,8 +111,11 @@ $WorkLoads = '--add Microsoft.VisualStudio.Workload.ManagedDesktop ' + `
 		'--add microsoft.visualstudio.component.vc.14.21.arm64.spectre ' + `
 		'--add microsoft.visualstudio.component.vc.14.21.x86.x64.spectre ' + `
 		'--add microsoft.visualstudio.component.portablelibrary ' + `
-		'--add component.android.sdk27 ' + `
-		'--add component.android.ndk.r16b '
+		'--add component.android.sdk25.private ' + `
+		'--add component.android.ndk.r16b ' + `
+		'--add component.ant ' + `
+		'--add component.mdd.android ' + `
+		'--add microsoft.visualstudio.workload.nativemobile '
 
 $Sku = 'Community'
 $VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
