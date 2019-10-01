@@ -286,7 +286,7 @@ Function Connect-AppVeyorToAzure {
 
         Write-host "`nGetting or creating Azure AD service principal $service_principal_name..." -ForegroundColor Cyan
         $build_cloud_name = "Azure $Location_full $VmSize"
-        $service_principal_name = CreateSlug($build_cloud_name) + "-sp"
+        $service_principal_name = $(CreateSlug($build_cloud_name)) + "sp"
         $azure_client = GetOrCreateServicePrincipal $service_principal_name $build_cloud_name $headers
 
         #Select VM size
@@ -543,6 +543,11 @@ Function Connect-AppVeyorToAzure {
             $vhd_path = $VhdFullPath.Replace("https://$($azure_storage_account).blob.core.windows.net/", "")
             $storagekey = (Get-AzStorageAccountKey -ResourceGroupName $azure_resource_group_name -Name $azure_storage_account)[0].Value
             $storagecontext =  New-AzStorageContext -StorageAccountName $azure_storage_account -StorageAccountKey $storagekey
+            if ($vhd_path.IndexOf("/") -eq 0)
+            {
+                Write-Warning "Invalid '-VhdFullPath' value."
+                ExitScript
+            }
             $storagecontainername = $vhd_path.Substring(0, $vhd_path.IndexOf("/"))
             $storageblobname = $vhd_path.Substring($vhd_path.IndexOf("/") + 1)
             $storageblob = Get-AzStorageBlob -Context $storagecontext -Container $storagecontainername -Blob $storageblobname -ErrorAction Ignore
@@ -717,14 +722,7 @@ Function Connect-AppVeyorToAzure {
         Write-Host "`nCompleted in $completed."
 
         #Report results and next steps
-        Write-host "`nNext steps:"  -ForegroundColor Cyan
-        Write-host " - Optionally review build environment '$($build_cloud_name)' at '$($AppVeyorUrl)/build-clouds/$($cloud.buildCloudId)'" -ForegroundColor DarkGray
-        Write-host " - To start building on Azure set " -ForegroundColor DarkGray -NoNewline
-        Write-host "$($ImageName) " -NoNewline 
-        Write-host "build worker image " -ForegroundColor DarkGray -NoNewline 
-        Write-host "and " -ForegroundColor DarkGray -NoNewline 
-        Write-host "$($build_cloud_name) " -NoNewline 
-        Write-host "build cloud in AppVeyor project settings or appveyor.yml." -NoNewline -ForegroundColor DarkGray
+        PrintSummary 'Azure VMs' $AppVeyorUrl $cloud.buildCloudId $build_cloud_name $imageName
     }
 
     catch {
