@@ -73,12 +73,10 @@ function prepare_dotnet_packages() {
 }
 
 function config_dotnet_repository() {
-    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg &&
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg &&
     mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/ &&
-    wget -q https://packages.microsoft.com/config/ubuntu/18.04/prod.list &&
-    mv prod.list /etc/apt/sources.list.d/microsoft-prod.list &&
     chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg &&
-    chown root:root /etc/apt/sources.list.d/microsoft-prod.list &&
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/18.04/prod.list)" &&
     apt-get -y -qq update ||
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
 }
