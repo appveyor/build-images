@@ -225,7 +225,7 @@
       "ssh_wait_timeout": "10000s",
       "ssh_host": "{{user `host_ip_addr`}}",
       "ssh_skip_nat_mapping": "true",
-      "shutdown_command": "echo 'appveyor'|sudo -S shutdown -P now",
+      "shutdown_command": "echo '{{ user `install_password` }}'|sudo -S shutdown -P now",
       "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
       "virtualbox_version_file": ".vbox_version",
       "vm_name": "packer-ubuntu-18.04",
@@ -235,6 +235,42 @@
         [ "modifyvm", "{{.Name}}", "--nicpromisc1", "allow-all" ],
         [ "modifyvm", "{{.Name}}", "--cableconnected1", "on" ]
       ]
+    },
+        {
+      "type": "parallels-iso",
+      "guest_os_type": "ubuntu",
+      "parallels_tools_flavor": "lin",
+      "boot_command": [
+        "<esc><wait>",
+        "<esc><wait>",
+        "<enter><wait>",
+        "/install/vmlinuz<wait>",
+        " initrd=/install/initrd.gz<wait>",
+        " auto-install/enable=true<wait>",
+        " debconf/priority=critical<wait>",
+        " noapic<wait>",
+        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed18.cfg<wait>",
+        " netcfg/get_nameservers=8.8.8.8",
+        " hostname={{.Name}} domain= ",
+        " -- <wait>",
+        "<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "cpus": 1,
+      "memory": 3072,
+      "disk_size": 40960,
+      "http_directory": "http",
+      "iso_urls": [
+        "iso/ubuntu-18.04.3-server-amd64.iso",
+        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso"
+      ],
+      "iso_checksum": "{{user `iso_checksum_md5`}}",
+      "iso_checksum_type": "md5",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo '{{ user `install_password` }}'|sudo -S shutdown -P now"
     },
     {
       "type": "azure-arm",
