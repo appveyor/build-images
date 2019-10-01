@@ -1,3 +1,5 @@
+# https://github.com/microsoft/azure-pipelines-image-generation/blob/master/images/win/scripts/Installers/Update-AndroidSDK.ps1
+
 $sdk_root = Join-Path ${env:ProgramFiles(x86)} "Android\android-sdk"
 $ndk_root = Join-Path  $env:SystemDrive "Microsoft\AndroidNDK64\"
 $zipPath = "$env:temp\android-sdk-tools.zip"
