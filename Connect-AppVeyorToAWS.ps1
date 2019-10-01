@@ -180,7 +180,7 @@ Function Connect-AppVeyorToAWS {
     $install_password = CreatePassword
 
     if (-not $SkipDisclaimer) {
-         Write-Warning "`nThis command will create EC2 resources such as security group and key pair. Also, it will run Hashicorp Packer which will create its own temporary EC2 resources and leave AMI for future use by AppVeyor build VMs. Please be aware of possible charges from Amazon. `nIf AWS account you are authorized to contains production resources, you might consider creating a separate account and run this command against it. Additionally, a separate account is better to distinguish AWS bills for CI machines from other AWS bills. `nPress Enter to continue or Ctrl-C to exit the command. Use '-SkipDisclaimer' switch parameter to skip this message next time."
+         Write-Warning "`nThis command will create EC2 resources such as security group and key pair. Also, it will run Hashicorp Packer which will create its own temporary EC2 resources and leave AMI for future use by AppVeyor build VMs. Please be aware of possible charges from Amazon. `n`nIf AWS account you are authorized to contains production resources, you might consider creating a separate account and run this command against it. Additionally, a separate account is better to distinguish AWS bills for CI machines from other AWS bills. `n`nPress Enter to continue or Ctrl-C to exit the command. Use '-SkipDisclaimer' switch parameter to skip this message next time."
          $disclaimer = Read-Host
          }
 

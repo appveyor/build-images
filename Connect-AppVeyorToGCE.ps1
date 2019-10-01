@@ -177,7 +177,7 @@ Function Connect-AppVeyorToGCE {
     $gce_account_certificate_file = if ($env:HOME) {"$env:HOME/$($CommonPrefix)-account-certificate.p12"} elseif ($env:HOMEPATH) {"$env:HOMEPATH\$($CommonPrefix)-account-certificate.p12"}
 
     if (-not $SkipDisclaimer) {
-         Write-Warning "`nThis command will create GCE resources such as network and service account, as well as GCS buckets. Also, it will run Hashicorp Packer which will create its own temporary GCE resources and c reate a VM image for future use by AppVeyor build VMs. Please be aware of possible charges from Google. `nIf GCE project you are authorized to contains production resources, you might consider creating a separate project or even account and run this command against it. Additionally, a separate account is better to distinguish Google bills for CI machines from other Google bills. `nPress Enter to continue or Ctrl-C to exit the command. Use '-SkipDisclaimer' switch parameter to skip this message next time."
+         Write-Warning "`nThis command will create GCE resources such as network and service account, as well as GCS buckets. Also, it will run Hashicorp Packer which will create its own temporary GCE resources and create a VM image for future use by AppVeyor build VMs. Please be aware of possible charges from Google. `n`nIf GCE project you are authorized to contains production resources, you might consider creating a separate project or even account and run this command against it. Additionally, a separate account is better to distinguish Google bills for CI machines from other Google bills. `n`nPress Enter to continue or Ctrl-C to exit the command. Use '-SkipDisclaimer' switch parameter to skip this message next time."
          $disclaimer = Read-Host
          }
 
