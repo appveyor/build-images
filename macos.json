@@ -1,0 +1,51 @@
+{
+  "variables": {
+    "install_user": "appveyor",
+    "install_password": "appveyor"
+  },
+  "provisioners": [
+    {
+      "type": "shell-local",
+      "command": "sleep 0"
+    }
+  ],
+  "builders": [
+    {
+      "type": "parallels-iso",
+      "guest_os_type": "win-8",
+      "parallels_tools_flavor": "mac",
+      "boot_wait": "10s",
+      "cpus": 2,
+      "disk_size": 40960,
+      "http_directory": "http",
+      "iso_urls": [
+      ],
+      "iso_checksum_type": "none",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo '{{ user `install_password` }}'|sudo -S shutdown -h now",
+      "vm_name": "packer-macos",
+      "prlctl": [
+        ["set", "{{.Name}}", "--memsize", "2048"],
+        ["set", "{{.Name}}", "--memquota", "512:2048"],
+        ["set", "{{.Name}}", "--cpus", "2"],
+        ["set", "{{.Name}}", "--distribution", "macosx"],
+        ["set", "{{.Name}}", "--3d-accelerate", "highest"],
+        ["set", "{{.Name}}", "--high-resolution", "off"],
+        ["set", "{{.Name}}", "--auto-share-camera", "off"],
+        ["set", "{{.Name}}", "--auto-share-bluetooth", "off"],
+        ["set", "{{.Name}}", "--on-window-close", "keep-running"],
+        ["set", "{{.Name}}", "--shf-host", "off"]
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "{{user `packer_manifest`}}",
+      "strip_path": true
+    }
+  ]
+}
