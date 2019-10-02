@@ -1,8 +1,6 @@
 image: Visual Studio 2017
 
 install:
-#use latest PowerShellGet
-- ps: Remove-Module -Name PowerShellGet -Force -ErrorAction Ignore
 - ps: Install-Module -Name PowerShellGet -Repository PSGallery -Force -AllowClobber
 - ps: Import-Module -Name PowerShellGet
 
