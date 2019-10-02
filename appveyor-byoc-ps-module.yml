@@ -1,12 +1,13 @@
 image: Visual Studio 2017
 
 install:
-- ps: Uninstall-Module -Name PowerShellGet -Force -AllVersions
-- ps: Install-Module -Name PowerShellGet -Repository PSGallery -Force -AllowClobber
-- ps: Get-Module -Name PowerShellGet
-- ps: Remove-Module -Name PowerShellGet -Force -ErrorAction Ignore
-- ps: Import-Module -Name PowerShellGet
-- ps: Get-Module -Name PowerShellGet
+- ps: [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+- ps: $msiPath = "$env:TEMP\PowerShell-Core.msi"
+- ps: (New-Object Net.WebClient).DownloadFile('https://github.com/PowerShell/PowerShell/releases/download/v6.2.3/PowerShell-6.2.3-win-x64.msi', $msiPath)
+- ps: cmd /c start /wait msiexec /i $msiPath /quiet
+- ps: del $msiPath
+- ps: Add-SessionPath "$env:ProgramFiles\PowerShell\6"
+- ps: pwsh --version
 
 build_script:
 
