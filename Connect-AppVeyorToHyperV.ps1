@@ -312,7 +312,7 @@ d-i passwd/user-default-groups appveyor sudo
                     }
                     cloudSettings = @{
                         vmConfiguration =@{
-                            generation = "1"
+                            generation = "2"
                             cpuCores = [int]$($CpuCores)
                             ramMb = [int]$RamMb
                             directory = $VmsDirectory
