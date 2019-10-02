@@ -1,3 +1,11 @@
+image: Visual Studio 2017
+
+install:
+#use latest PowerShellGet
+- ps: Remove-Module -Name PowerShellGet -Force
+- ps: Install-Module -Name PowerShellGet -Repository PSGallery -Force -AllowClobber
+- ps: Import-Module -Name PowerShellGet
+
 build_script:
 
 # copy module contents
@@ -16,6 +24,6 @@ build_script:
 # publish module
 - ps: $ModuleVersion = if ($env:APPVEYOR_REPO_BRANCH -eq 'master') {$env:APPVEYOR_BUILD_VERSION} else {"$env:APPVEYOR_BUILD_VERSION-beta"}
 - ps: (Get-Content AppVeyorBYOC\AppVeyorBYOC.psd1).replace("ModuleVersion = '1.0.0'", "ModuleVersion = '$ModuleVersion'") | Set-Content AppVeyorBYOC\AppVeyorBYOC.psd1
-- pwsh: Publish-Module -Path $env:APPVEYOR_BUILD_FOLDER\AppVeyorBYOC -NuGetApiKey $env:psg_api_key
+- ps: Publish-Module -Path $env:APPVEYOR_BUILD_FOLDER\AppVeyorBYOC -NuGetApiKey $env:psg_api_key
 
 test: off
