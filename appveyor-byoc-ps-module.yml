@@ -23,7 +23,7 @@ build_script:
 - ps: Copy-Item -Path *.json -Destination AppVeyorBYOC
 
 # publish module
-- ps: $ModuleVersion = if ($env:APPVEYOR_REPO_BRANCH -eq 'master') {$env:APPVEYOR_BUILD_VERSION} else {"$env:APPVEYOR_BUILD_VERSION-beta"}
+- ps: $ModuleVersion = if ($env:APPVEYOR_REPO_BRANCH -eq 'master') {$env:APPVEYOR_BUILD_VERSION} else {"$env:APPVEYOR_BUILD_VERSION-alpha"}
 - ps: (Get-Content AppVeyorBYOC\AppVeyorBYOC.psd1).replace("ModuleVersion = '1.0.0'", "ModuleVersion = '$ModuleVersion'") | Set-Content AppVeyorBYOC\AppVeyorBYOC.psd1
 - ps: Publish-Module -Path $env:APPVEYOR_BUILD_FOLDER\AppVeyorBYOC -NuGetApiKey $env:psg_api_key
 
