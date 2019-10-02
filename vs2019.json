@@ -130,6 +130,7 @@
             "{{ template_dir }}/scripts/Windows/install_java_7_8.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk11.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
+            "{{ template_dir }}/scripts/Windows/install_maven.ps1",
             "{{ template_dir }}/scripts/Windows/install_msys64.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
