@@ -1,15 +1,3 @@
-image: Visual Studio 2017
-
-install:
-- ps: | 
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $msiPath = "$env:TEMP\PowerShell-Core.msi"
-    (New-Object Net.WebClient).DownloadFile('https://github.com/PowerShell/PowerShell/releases/download/v6.2.3/PowerShell-6.2.3-win-x64.msi', $msiPath)
-    cmd /c start /wait msiexec /i $msiPath /quiet
-    del $msiPath
-    Add-SessionPath "$env:ProgramFiles\PowerShell\6"
-    pwsh --version
-
 build_script:
 
 # copy module contents
@@ -26,8 +14,7 @@ build_script:
 - ps: Copy-Item -Path *.json -Destination AppVeyorBYOC
 
 # publish module
-- ps: $ModuleVersion = if ($env:APPVEYOR_REPO_BRANCH -eq 'master') {$env:APPVEYOR_BUILD_VERSION} else {"$env:APPVEYOR_BUILD_VERSION-beta"}
-- ps: (Get-Content AppVeyorBYOC\AppVeyorBYOC.psd1).replace("ModuleVersion = '1.0.0'", "ModuleVersion = '$ModuleVersion'") | Set-Content AppVeyorBYOC\AppVeyorBYOC.psd1
+- ps: if ($env:APPVEYOR_REPO_BRANCH -eq 'master') {Update-ModuleManifest -Path AppVeyorBYOC\AppVeyorBYOC.psd1 -ModuleVersion $env:APPVEYOR_BUILD_VERSION} else {Update-ModuleManifest -Path AppVeyorBYOC\AppVeyorBYOC.psd1 -ModuleVersion $env:APPVEYOR_BUILD_VERSION -Prerelease "beta"}
 - ps: Publish-Module -Path $env:APPVEYOR_BUILD_FOLDER\AppVeyorBYOC -NuGetApiKey $env:psg_api_key
 
 test: off
