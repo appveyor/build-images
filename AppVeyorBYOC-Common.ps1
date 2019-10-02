@@ -584,3 +584,21 @@ public class ISOFile
   }
 }
 
+#from https://d-fens.ch/2013/11/01/nobrainer-using-powershell-to-convert-an-ipv4-subnet-mask-length-into-a-subnet-mask-address/
+function Convert-IpAddressToMaskLength([string] $dottedIpAddressString)
+{
+  $result = 0; 
+  # ensure we have a valid IP address
+  [IPAddress] $ip = $dottedIpAddressString;
+  $octets = $ip.IPAddressToString.Split('.');
+  foreach($octet in $octets)
+  {
+    while(0 -ne $octet) 
+    {
+      $octet = ($octet -shl 1) -band [byte]::MaxValue
+      $result++; 
+    }
+  }
+  return $result;
+}
+

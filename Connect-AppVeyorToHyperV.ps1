@@ -27,11 +27,23 @@ Function Connect-AppVeyorToHyperV {
     .PARAMETER VmsDirectory
         Directory to create build VMs.
 
-    .PARAMETER DnsServers
-        DNS server to assign to build VMs NIC.
+    .PARAMETER SubnetId
+        AppVeyor will create Virtual switch and subnet to use with build VMs and manage build VMs IP configuration in that subnet. Default value is 10.118.232.0.
 
     .PARAMETER SubnetMask
-        Subnet mask to assign to build VMs NIC.
+        Subnet mask to be used with build VMs. Default value is 255.255.255.0.
+
+    .PARAMETER MasterIPAddress
+        IP address to be assigned to master VM created by Packer. Default value is 10.118.232.2.
+        
+    .PARAMETER DefaultGateway
+        IP address to assign to Virtual Switch NIC, which will be default gateway for VMs. Default value is 10.118.232.1.
+        
+    .PARAMETER StartIPAddress
+        Address from which AppVeyor will start assigning IPs to VMs. It is importand to ensure it is not conflicting with MasterIPAddress and DefaultGateway, but still in the same subnet (check SubnetMask parameter) and them.
+
+    .PARAMETER DnsServers
+        DNS server to assign to build VMs NIC.
 
     .PARAMETER VhdPath
         Path existing build VM VHD (in case you prefer to skip Packer build and use existing VHD).
@@ -91,10 +103,22 @@ Function Connect-AppVeyorToHyperV {
       [string]$VmsDirectory,
 
       [Parameter(Mandatory=$false)]
-      [string]$DnsServers = "8.8.8.8; 8.8.4.4",
+      [string]$SubnetId = "10.118.232.0",
 
       [Parameter(Mandatory=$false)]
       [string]$SubnetMask = "255.255.255.0",
+
+      [Parameter(Mandatory=$false)]
+      [string]$MasterIPAddress = "10.118.232.2",
+
+      [Parameter(Mandatory=$false)]
+      [string]$DefaultGateway = "10.118.232.1",
+      
+      [Parameter(Mandatory=$false)]
+      [string]$StartIPAddress = "10.118.232.100",
+
+      [Parameter(Mandatory=$false)]
+      [string]$DnsServers = "8.8.8.8; 8.8.4.4",
 
       [Parameter(Mandatory=$false)]
       [string]$PreheatedVMs = 2,
@@ -165,13 +189,24 @@ Function Connect-AppVeyorToHyperV {
     #Temporary template parent folder
     $ParentFolder = Split-Path $ImageTemplate -Parent
 
+    $MaskCidr = Convert-IpAddressToMaskLength $SubnetMask
+
     if ($imageOs -eq "Windows") {
         $autounattendPath = Join-Path $ParentFolder "hyper-v\Windows\answer_files\2019\Autounattend.xml"
         [xml]$autounattend = Get-Content $autounattendPath
         $MicrosoftWindowsShellSetup = $autounattend.unattend.settings.component | ? {$_.name -eq "Microsoft-Windows-Shell-Setup"}
+        # set password to randomly generated
         $MicrosoftWindowsShellSetup.Autologon.password.Value = $install_password
         $MicrosoftWindowsShellSetup.UserAccounts.AdministratorPassword.Value = $install_password
         $MicrosoftWindowsShellSetup.UserAccounts.LocalAccounts.LocalAccount.Password.Value = $install_password
+
+        # set up IP configuration
+        ($MicrosoftWindowsShellSetup.FirstLogonCommands.SynchronousCommand | ? {$_.Description -eq "Assign IP behind NAT"}).CommandLine = `
+        "cmd.exe /c powershell -Command `"New-NetIPAddress -InterfaceAlias Ethernet -IPAddress $MasterIPAddress -AddressFamily IPv4 -PrefixLength $MaskCidr -DefaultGateway $DefaultGateway`""
+        $DnsFormatted =""; $DnsServers.Split(@(',', ';')) | % {$DnsFormatted += "'$($_.Trim())', "}; $DnsFormatted = $DnsFormatted.Trim(@(',', ' ')); $DnsFormatted = "@($DnsFormatted)"
+        ($MicrosoftWindowsShellSetup.FirstLogonCommands.SynchronousCommand | ? {$_.Description -eq "Set DNS"}).CommandLine = `
+        "cmd.exe /c powershell -Command `"Set-DnsClientServerAddress -InterfaceAlias Ethernet -ServerAddresses $DnsFormatted`""
+
         $autounattend.Save($autounattendPath)
 
         #bake iso
@@ -220,18 +255,14 @@ d-i passwd/user-default-groups appveyor sudo
     #TODO scenario if subnet is occuped (to get existing subnets: gwmi -computer .  -class "win32_networkadapterconfiguration" | % {$_.ipsubnet})
     $natSwitch = "$CommonPrefix-NAT-Switch"
     $natNetwork = "$CommonPrefix-NAT-Network"
-    $MasterIPAddress = "10.118.232.2"
-    $SubnetMask = "255.255.255.0"
-    $StartIPAddress = "10.118.232.100"
-    $DefaultGateway = "10.118.232.1"
     $HttpPortMin = "9990"
     $HttpPortMax = "9999"
     $FirewalRuleName = "$CommonPrefix-packer-inbound"
     Write-host "`nGetting or creating virtual switch $natSwitch..." -ForegroundColor Cyan
     if (-not (Get-VMSwitch $natSwitch -ErrorAction Ignore)) {
         New-VMSwitch -SwitchName $natSwitch -SwitchType Internal
-        New-NetIPAddress -IPAddress 10.118.232.1 -PrefixLength 24 -InterfaceAlias "vEthernet ($natSwitch)"
-        New-NetNAT -Name $natNetwork -InternalIPInterfaceAddressPrefix 10.118.232.0/24
+        New-NetIPAddress -IPAddress $DefaultGateway -PrefixLength $MaskCidr -InterfaceAlias "vEthernet ($natSwitch)"
+        New-NetNAT -Name $natNetwork -InternalIPInterfaceAddressPrefix $SubnetId/$MaskCidr
     }
     if ($imageOs -eq "Linux") {
         Write-host "`nGetting or creating inbound firewall rule '$FirewalRuleName' to allow access to Packer HTTP server on ports $HttpPortMin-$HttpPortMax..." -ForegroundColor Cyan
