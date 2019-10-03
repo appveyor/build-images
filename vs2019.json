@@ -135,7 +135,8 @@
             "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk13.ps1",
             "{{ template_dir }}/scripts/Windows/install_maven.ps1",
-            "{{ template_dir }}/scripts/Windows/install_msys64.ps1"
+            "{{ template_dir }}/scripts/Windows/install_msys64.ps1",
+            "{{ template_dir }}/scripts/Windows/install_boost_1.71.0_vs2019.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
