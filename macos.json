@@ -11,6 +11,15 @@
   ],
   "builders": [
     {
+      "type": "parallels-pvm",
+      "parallels_tools_flavor": "mac",
+      "source_path": "iso/macOS_10.14.6.pvm",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
+      "ssh_timeout": "30s",
+      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now"
+    },
+    {
       "type": "parallels-iso",
       "guest_os_type": "win-8",
       "parallels_tools_flavor": "mac",
@@ -19,6 +28,7 @@
       "disk_size": 40960,
       "http_directory": "http",
       "iso_urls": [
+        "iso/Mojave.iso"
       ],
       "iso_checksum_type": "none",
       "ssh_username": "{{ user `install_user` }}",
