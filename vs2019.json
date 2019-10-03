@@ -117,6 +117,7 @@
             "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1",
             "{{ template_dir }}/scripts/Windows/install_winsdk_1903.ps1",
             "{{ template_dir }}/scripts/Windows/install_dxsdk.ps1",
+            "{{ template_dir }}/scripts/Windows/install_vdproj_vs2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix311.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix_toolset_vs2019.ps1",
