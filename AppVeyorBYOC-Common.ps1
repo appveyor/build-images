@@ -241,6 +241,7 @@ function ValidateDependencies ($cloudType) {
     
    if ($cloudType -eq "HyperV") {
         Write-host "`nChecking if Hyper-V tools are installed..."  -ForegroundColor Cyan
+        Get-Command Test-VHD -ErrorAction Ignore | out-null # warm up to avoid confusing error
         if (-not (Get-Command Test-VHD -ErrorAction Ignore)) {
             Write-Warning "Hyper-V feature or its management tools are not installed. Please install Hyper-V feature with 'Install-WindowsFeature -Name Hyper-V -IncludeManagementTools' (for Windows Server) or 'Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All' (for Windows 10), restart computer if needed, and re-run the command."
             ExitScript

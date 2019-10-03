@@ -260,9 +260,9 @@ d-i passwd/user-default-groups appveyor sudo
     $FirewalRuleName = "$CommonPrefix-packer-inbound"
     Write-host "`nGetting or creating virtual switch $natSwitch..." -ForegroundColor Cyan
     if (-not (Get-VMSwitch $natSwitch -ErrorAction Ignore)) {
-        New-VMSwitch -SwitchName $natSwitch -SwitchType Internal
-        New-NetIPAddress -IPAddress $DefaultGateway -PrefixLength $MaskCidr -InterfaceAlias "vEthernet ($natSwitch)"
-        New-NetNAT -Name $natNetwork -InternalIPInterfaceAddressPrefix $SubnetId/$MaskCidr
+        New-VMSwitch -SwitchName $natSwitch -SwitchType Internal | out-null
+        New-NetIPAddress -IPAddress $DefaultGateway -PrefixLength $MaskCidr -InterfaceAlias "vEthernet ($natSwitch)" | out-null
+        New-NetNAT -Name $natNetwork -InternalIPInterfaceAddressPrefix $SubnetId/$MaskCidr | out-null
     }
     if ($imageOs -eq "Linux") {
         Write-host "`nGetting or creating inbound firewall rule '$FirewalRuleName' to allow access to Packer HTTP server on ports $HttpPortMin-$HttpPortMax..." -ForegroundColor Cyan
@@ -343,7 +343,7 @@ d-i passwd/user-default-groups appveyor sudo
                     }
                     cloudSettings = @{
                         vmConfiguration =@{
-                            generation = "1"
+                            generation = "2"
                             cpuCores = [int]$($CpuCores)
                             ramMb = [int]$RamMb
                             directory = $VmsDirectory
