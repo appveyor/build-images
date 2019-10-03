@@ -5,8 +5,11 @@
   },
   "provisioners": [
     {
-      "type": "shell-local",
-      "command": "sleep 0"
+      "type": "shell",
+      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -ex '{{.Path}}'",
+      "scripts": [
+        "scripts/macos/common.sh"
+      ]
     }
   ],
   "builders": [
@@ -17,7 +20,9 @@
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout": "30s",
-      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now"
+      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
+      "vm_name": "packer-macos",
+      "skip_compaction": "true"
     },
     {
       "type": "parallels-iso",
