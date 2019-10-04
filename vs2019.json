@@ -57,13 +57,19 @@
     },
     {
         "type": "powershell",
+        "inline":[
+            "cmd /c cscript \"%windir%\\system32\\slmgr.vbs\" /ipk {{user `avma_key`}}"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },
+    {
+        "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/activate_avma.ps1",
             "{{ template_dir }}/scripts/Windows/disable_winupdates.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}",
-        "avma_key": "{{user `avma_key`}}",
+        "elevated_password": "{{user `install_password`}}",          
         "only": ["hyperv-iso"]
     },
     {
