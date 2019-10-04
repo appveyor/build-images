@@ -54,6 +54,21 @@ Function Connect-AppVeyorToHyperV {
     .PARAMETER ImageOs
         Operating system of build VM image. Valid values: 'Windows', 'Linux'. Default value is 'Windows'.
 
+    .PARAMETER UpdateWindows
+        Update Windows before creating a master VHD.
+
+    .PARAMETER IsoUrl
+        ISO from which to install master VM. Can be URK, local and UNC path. Default it Windows Server 2019 Evaluation.
+
+    .PARAMETER IsoChecksum
+        SHA256 checksum of installation ISO file. Needed only if IsoUrl parameter specified.
+
+    .PARAMETER ProductKey
+        Enter your product key if you are using retail or volume license ISOs.
+
+    .PARAMETER AVMAKey
+        To benefit from Automatic virtual machine activation enter respective AVMA Key which can be found at https://docs.microsoft.com/en-us/windows-server/get-started-19/vm-activation-19#avma-keys. You still need retail or volume license ISO and ProductKey for initial installation to use AVMA.
+
     .PARAMETER ImageName
         Description to be passed to Packer and name to be used for AppVeyor image.  Default value generated is based on the value of 'ImageOs' parameter.
 
@@ -134,6 +149,21 @@ Function Connect-AppVeyorToHyperV {
       [string]$ImageOs = "Windows",
 
       [Parameter(Mandatory=$false)]
+      [switch]$UpdateWindows,
+
+      [Parameter(Mandatory=$false)]
+      [string]$IsoUrl = "https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso",
+
+      [Parameter(Mandatory=$false)]
+      [string]$IsoChecksum,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ProductKey,
+
+      [Parameter(Mandatory=$false)]
+      [string]$AVMAKey,
+
+      [Parameter(Mandatory=$false)]
       [string]$ImageName,
 
       [Parameter(Mandatory=$false)]
@@ -193,6 +223,12 @@ Function Connect-AppVeyorToHyperV {
 
     if ($imageOs -eq "Windows") {
         $autounattendPath = Join-Path $ParentFolder "hyper-v\Windows\answer_files\2019\Autounattend.xml"
+        if ($UpdateWindows)
+        {
+            $autounattendWithUpdatePath = Join-Path $ParentFolder "hyper-v\Windows\answer_files\2019\Autounattend-withupdate.xml"
+            Remove-Item $autounattendPath -force
+            Copy $autounattendWithUpdatePath $autounattendPath
+        }
         [xml]$autounattend = Get-Content $autounattendPath
         $MicrosoftWindowsShellSetup = $autounattend.unattend.settings.component | ? {$_.name -eq "Microsoft-Windows-Shell-Setup"}
         # set password to randomly generated
@@ -206,6 +242,14 @@ Function Connect-AppVeyorToHyperV {
         $DnsFormatted =""; $DnsServers.Split(@(',', ';')) | % {$DnsFormatted += "'$($_.Trim())', "}; $DnsFormatted = $DnsFormatted.Trim(@(',', ' ')); $DnsFormatted = "@($DnsFormatted)"
         ($MicrosoftWindowsShellSetup.FirstLogonCommands.SynchronousCommand | ? {$_.Description -eq "Set DNS"}).CommandLine = `
         "cmd.exe /c powershell -Command `"Set-DnsClientServerAddress -InterfaceAlias Ethernet -ServerAddresses $DnsFormatted`""
+
+        # custom license key
+        if ($ProductKey) {
+            $key = $autounattend.CreateNode([System.Xml.XmlNodeType]::Element , "Key", "urn:schemas-microsoft-com:unattend")
+            $MicrosoftWindowsSetup = $autounattend.unattend.settings.component | ? {$_.name -eq "Microsoft-Windows-Setup"}
+            $MicrosoftWindowsSetup.UserData.ProductKey.AppendChild($key) | out-null
+            $MicrosoftWindowsSetup.UserData.ProductKey.Key = $ProductKey
+        }
 
         $autounattend.Save($autounattendPath)
 
@@ -238,10 +282,17 @@ d-i passwd/user-default-groups appveyor sudo
 [System.IO.File]::AppendAllText("$ParentFolder/http/preseed18.cfg", $createAccountDirective)
     }
 
-    $iso_checksum = if ($imageOs -eq "Windows") {"221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562"} elseif ($imageOs -eq "Linux") {"7d8e0055d663bffa27c1718685085626cb59346e7626ba3d3f476322271f573e"}
+    # sanitize ISO URL if needed (more reliable than escape backslashes in local/unc paths).
+    $PathInfo = [System.Uri]($IsoUrl)
+    if ($PathInfo.IsFile -or $PathInfo.IsUnc)
+    {
+        $IsoUrl = $PathInfo.AbsoluteUri
+    }
+
+    if (-not $IsoChecksum) {
+        $IsoChecksum = if ($imageOs -eq "Windows") {"221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562"} elseif ($imageOs -eq "Linux") {"7d8e0055d663bffa27c1718685085626cb59346e7626ba3d3f476322271f573e"}
+    }
     $iso_checksum_type = "sha256"
-    $iso_url = "https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso"
-    $manually_download_iso_from = "https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019"
 
     if (-not $ImagesDirectory) {
         $ImagesDirectory = Join-Path $env:SystemDrive "$CommonPrefix-Images"
@@ -291,9 +342,9 @@ d-i passwd/user-default-groups appveyor sudo
             -var "build_agent_mode=HyperV" `
             -var "disk_size=61440" `
             -var "hyperv_switchname=$natSwitch" `
-            -var "iso_checksum=$iso_checksum" `
+            -var "iso_checksum=$IsoChecksum" `
             -var "iso_checksum_type=$iso_checksum_type" `
-            -var "iso_url=$iso_url" `
+            -var "iso_url=$IsoUrl" `
             -var "output_directory=$output_directory" `
             -var "datemark=$date_mark" `
             -var "packer_manifest=$packerManifest" `
@@ -303,6 +354,7 @@ d-i passwd/user-default-groups appveyor sudo
             -var "host_ip_gw=$DefaultGateway" `
             -var "http_port_min=$HttpPortMin" `
             -var "http_port_max=$HttpPortMax" `
+            -var "avma_key=$AVMAKey" `
             $ImageTemplate
 
             #Get VHD path

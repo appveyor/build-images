@@ -76,6 +76,15 @@
         "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/InitializeInstance.ps1 -Schedule"
     ],
     "only": ["amazon-ebs"]
+    },
+    {
+    "type": "powershell",
+    "scripts":[
+        "{{ template_dir }}/scripts/Windows/activate_avma.ps1"
+    ],
+    "elevated_user": "{{user `install_user`}}",
+    "elevated_password": "{{user `install_password`}}",
+    "only": ["hyperv-iso"]
     }
   ],
   "builders": [
@@ -172,6 +181,7 @@
       "boot_wait": "0s",
       "boot_command": [
         "<esc>",
+        "<enter>",
         "<enter>",
         "<enter>"
       ],
