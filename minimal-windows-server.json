@@ -33,6 +33,17 @@
     {
         "type": "powershell",
         "scripts":[
+            "{{ template_dir }}/scripts/Windows/activate_avma.ps1",
+            "{{ template_dir }}/scripts/Windows/disable_winupdates.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}",
+        "avma_key": "{{user `avma_key`}}",        
+        "only": ["hyperv-iso"]
+    },
+    {
+        "type": "powershell",
+        "scripts":[
             "{{ template_dir }}/scripts/Windows/install_path_utils.ps1",
             "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1",
             "{{ template_dir }}/scripts/Windows/install_powershell_get.ps1",
@@ -76,15 +87,6 @@
         "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/InitializeInstance.ps1 -Schedule"
     ],
     "only": ["amazon-ebs"]
-    },
-    {
-    "type": "powershell",
-    "scripts":[
-        "{{ template_dir }}/scripts/Windows/activate_avma.ps1"
-    ],
-    "elevated_user": "{{user `install_user`}}",
-    "elevated_password": "{{user `install_password`}}",
-    "only": ["hyperv-iso"]
     }
   ],
   "builders": [
