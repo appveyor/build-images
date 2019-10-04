@@ -355,6 +355,8 @@ d-i passwd/user-default-groups appveyor sudo
             -var "http_port_min=$HttpPortMin" `
             -var "http_port_max=$HttpPortMax" `
             -var "avma_key=$AVMAKey" `
+            -var "cpus=$CpuCores" `
+            -var "memory=$RamMb" `
             $ImageTemplate
 
             #Get VHD path
