@@ -6,7 +6,7 @@ $exePath = "$env:TEMP\qt-unified-windows-x86-online.exe"
 
 $qsPath = "$PSScriptRoot\qt-installer-windows.qs"
 if (-not (Test-Path $qsPath)) {
-    $qsPath = "$env:USERPROFILE\qt-installer-windows.qs"
+    $qsPath = "$env:TEMP\qt-installer-windows.qs"
 }
 
 Write-Host "Installing..."

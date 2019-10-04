@@ -96,13 +96,44 @@
         "elevated_password": "{{user `install_password`}}" 
     },
     {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_docker_hyperv_wsl_features.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "windows-restart",
+        "restart_timeout": "30m"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/noop-plug.ps1",
+            "{{ template_dir }}/scripts/Windows/install_wsl.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_docker.ps1",
+            "{{ template_dir }}/scripts/Windows/install_docker_images.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },    
+    {
         "type": "file",
         "source": "{{ template_dir }}/scripts/Windows/qt-installer-windows.qs",
-        "destination": "C:/Users/{{user `install_user`}}/qt-installer-windows.qs"
+        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/qt-installer-windows.qs"
     },    
     {
         "type": "powershell",
         "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_qt.ps1",
             "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
             "{{ template_dir }}/scripts/Windows/install_ruby.ps1",
             "{{ template_dir }}/scripts/Windows/install_miniconda.ps1",
@@ -141,8 +172,7 @@
             "{{ template_dir }}/scripts/Windows/install_jdk13.ps1",
             "{{ template_dir }}/scripts/Windows/install_maven.ps1",
             "{{ template_dir }}/scripts/Windows/install_msys64.ps1",
-            "{{ template_dir }}/scripts/Windows/install_boost_1.71.0_vs2019.ps1",
-            "{{ template_dir }}/scripts/Windows/install_qt.ps1"
+            "{{ template_dir }}/scripts/Windows/install_boost_1.71.0_vs2019.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
