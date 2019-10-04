@@ -14,7 +14,7 @@
     "gce_project": "",
     "gce_source_image": "windows-server-2016-dc-v20190108",
     "gce_source_image_family": "windows-2016",
-    "azure_vm_size": "Standard_D8s_v3",
+    "azure_vm_size": "Standard_D4s_v3",
 
     "install_user": "",
     "install_password": "",
@@ -93,15 +93,6 @@
     {
         "type": "windows-restart",
         "restart_timeout": "30m"
-    },
-    {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/noop-plug.ps1",
-            "{{ template_dir }}/scripts/Windows/install_wsl.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}" 
     },
     {
         "type": "powershell",
