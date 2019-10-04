@@ -1,4 +1,4 @@
-﻿Write-Host "Installing Apache Maven 3.6.0 ..." -ForegroundColor Cyan
+﻿Write-Host "Installing Apache Maven 3.6.2 ..." -ForegroundColor Cyan
 
 $apachePath = 'C:\Program Files (x86)\Apache'
 $mavenPath = "$apachePath\Maven"
@@ -12,20 +12,21 @@ if(-not (Test-Path $apachePath)) {
 }
 
 Write-Host "Downloading..."
-$zipPath = "$env:TEMP\apache-maven-3.6.0-bin.zip"
-(New-Object Net.WebClient).DownloadFile('http://mirror.csclub.uwaterloo.ca/apache/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.zip', $zipPath)
+$zipPath = "$env:TEMP\apache-maven-3.6.2-bin.zip"
+(New-Object Net.WebClient).DownloadFile('http://mirror.csclub.uwaterloo.ca/apache/maven/maven-3/3.6.2/binaries/apache-maven-3.6.2-bin.zip', $zipPath)
 
 Write-Host "Unpacking..."
 7z x $zipPath -oC:\apache-maven | Out-Null
-[IO.Directory]::Move('C:\apache-maven\apache-maven-3.6.0', $mavenPath)
+[IO.Directory]::Move('C:\apache-maven\apache-maven-3.6.2', $mavenPath)
 Remove-Item 'C:\apache-maven' -Recurse -Force
 del $zipPath
 
 [Environment]::SetEnvironmentVariable("M2_HOME", $mavenPath, "Machine")
 [Environment]::SetEnvironmentVariable("MAVEN_HOME", $mavenPath, "Machine")
 
-add-path "$mavenPath\bin"
+Add-Path "$mavenPath\bin"
+Add-SessionPath "$mavenPath\bin"
 
 mvn --version
 
-Write-Host "Apache Maven 3.6.0 installed" -ForegroundColor Green
+Write-Host "Apache Maven 3.6.2 installed" -ForegroundColor Green

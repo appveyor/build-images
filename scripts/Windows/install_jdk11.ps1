@@ -16,4 +16,6 @@ Write-Host "Unpacking..."
 Remove-Item 'C:\jdk11_temp' -Recurse -Force
 del $zipPath
 
+cmd /c "`"$jdkPath\bin\java`" --version"
+
 Write-Host "JDK 11 installed" -ForegroundColor Green

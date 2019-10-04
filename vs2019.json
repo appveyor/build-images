@@ -102,6 +102,27 @@
     {
         "type": "powershell",
         "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_docker_hyperv_wsl_features.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "windows-restart",
+        "restart_timeout": "30m"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_docker.ps1",
+            "{{ template_dir }}/scripts/Windows/install_docker_images.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },    
+    {
+        "type": "powershell",
+        "scripts":[
             "{{ template_dir }}/scripts/Windows/install_vs2019.ps1",
             "{{ template_dir }}/scripts/Windows/update_msbuild_path.ps1",
             "{{ template_dir }}/scripts/Windows/install_xunit_20.ps1",
@@ -113,8 +134,14 @@
         "elevated_password": "{{user `install_password`}}" 
     },
     {
+        "type": "file",
+        "source": "{{ template_dir }}/scripts/Windows/qt-installer-windows.qs",
+        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/qt-installer-windows.qs"
+    },    
+    {
         "type": "powershell",
         "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_qt.ps1",
             "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
             "{{ template_dir }}/scripts/Windows/install_ruby.ps1",
             "{{ template_dir }}/scripts/Windows/install_miniconda.ps1",
@@ -124,6 +151,7 @@
             "{{ template_dir }}/scripts/Windows/install_postgres96.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres10.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres11.ps1",
+            "{{ template_dir }}/scripts/Windows/install_mysql.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
             "{{ template_dir }}/scripts/Windows/install_azure_cli.ps1",
             "{{ template_dir }}/scripts/Windows/install_erlang.ps1",
@@ -132,6 +160,8 @@
             "{{ template_dir }}/scripts/Windows/install_winsdk_1809.ps1",
             "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1",
             "{{ template_dir }}/scripts/Windows/install_winsdk_1903.ps1",
+            "{{ template_dir }}/scripts/Windows/install_dxsdk.ps1",
+            "{{ template_dir }}/scripts/Windows/install_vdproj_vs2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix311.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix_toolset_vs2019.ps1",
@@ -147,7 +177,10 @@
             "{{ template_dir }}/scripts/Windows/install_java_7_8.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk11.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
-            "{{ template_dir }}/scripts/Windows/install_msys64.ps1"
+            "{{ template_dir }}/scripts/Windows/install_jdk13.ps1",
+            "{{ template_dir }}/scripts/Windows/install_maven.ps1",
+            "{{ template_dir }}/scripts/Windows/install_msys64.ps1",
+            "{{ template_dir }}/scripts/Windows/install_boost_1.71.0_vs2019.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
