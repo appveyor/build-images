@@ -61,6 +61,7 @@ if ($osVer.Major -eq 10 -and $osVer.Build -ge 16299) {
 	Write-Host "Re-registering Docker with experimental features enabled"
 	dockerd --unregister-service
 	dockerd --register-service --experimental
+	Start-Service docker
 
 	# run simplest test
 	docker run --rm busybox echo hello_world
@@ -78,3 +79,4 @@ Write-Host "Downloading docker-credential-wincred"
 (New-Object Net.WebClient).DownloadFile('https://github.com/docker/docker-credential-helpers/releases/download/v0.6.0/docker-credential-wincred-v0.6.0-amd64.zip', "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip")
 Expand-Archive -Path "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip" -DestinationPath "$env:ProgramFiles\Docker" -Force
 Remove-Item "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip"
+Write-Host "docker-credential-wincred installed"
