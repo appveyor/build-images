@@ -64,7 +64,6 @@ if [[ $builders =~ azure- ]]; then check_env_vars ${AZURE_VARS} || exit $?; make
 if [[ $builders =~ amazon- ]]; then check_env_vars ${AWS_VARS} || exit $?; make_params ${AWS_VARS} ${AWS_OPT_VARS}; fi
 if [[ $builders =~ google ]]; then check_env_vars ${GCE_VARS} || exit $?; make_params ${GCE_VARS}; fi
 if [[ $builders =~ virtualbox- ]]; then check_env_vars ${VIRTUALBOX_VARS} || exit $?; make_params ${VIRTUALBOX_VARS}; fi
-if [[ $builders =~ parallels- ]]; then check_env_vars ${VIRTUALBOX_VARS} || exit $?; make_params ${VIRTUALBOX_VARS}; fi
 make_params ${APPVEYOR_CREDENTIALS}
 
 # check secret files passed to container
