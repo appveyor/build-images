@@ -9,25 +9,34 @@ function DiskInfo() {
 
 DiskInfo
 
-# extend system volume
-
-$diskPartScript = @"
-list disk
-select disk 0
-list volume
-select disk 1
-list volume
-select disk 0
-select volume 1 
-extend
-"@
-
+# find volume to extend
 $diskPartScriptPath = [IO.Path]::GetTempFileName()
-[IO.File]::WriteAllText($diskPartScriptPath, $diskPartScript)
+[IO.File]::WriteAllText($diskPartScriptPath, @"
+list volume
+"@)
+
+$startLine = 8
+$volumes = (diskpart /s $diskPartScriptPath)
+
+$volumeIndex = 0;
+for($i = $startLine; $i -lt $volumes.Length; $i++) {
+    Write-Host $volumes[$i]
+    if ($volumes[$i].contains('Boot')) {
+        $volumeIndex = $i - $startLine
+    }
+}
+
+# extend volume
+$diskPartScriptPath = [IO.Path]::GetTempFileName()
+[IO.File]::WriteAllText($diskPartScriptPath, @"
+select volume $volumeIndex
+extend
+"@)
 
 diskpart /s $diskPartScriptPath
-Remove-Item -Path $diskPartScriptPath -ErrorAction Ignore
 
 DiskInfo
+
+Remove-Item -Path $diskPartScriptPath -ErrorAction Ignore
 
 Write-Host "System volume extended`n" -ForegroundColor Green
