@@ -66,13 +66,10 @@ $WorkLoads = '--add Microsoft.VisualStudio.Workload.ManagedDesktop ' + `
 		'--add microsoft.visualstudio.component.vc.testadapterforboosttest ' + `
 		'--add microsoft.visualstudio.component.vc.testadapterforgoogletest ' + `
 		'--add microsoft.component.vc.runtime.ucrtsdk ' + `
-		'--add microsoft.visualstudio.component.windows81sdk ' + `
-		'--add microsoft.visualstudio.component.windows10sdk.17134 ' + `
-		'--add microsoft.visualstudio.componentgroup.windows10sdk.16299 ' + `
-		'--add microsoft.visualstudio.componentgroup.windows10sdk.15063 ' + `
-		'--add microsoft.visualstudio.component.windows10sdk.14393 ' + `
-		'--add microsoft.visualstudio.component.windows10sdk.10586 ' + `
-		'--add microsoft.visualstudio.component.windows10sdk.10240 ' + `
+		'--add Microsoft.VisualStudio.Component.Windows10SDK.16299 ' + `
+		'--add Microsoft.VisualStudio.Component.Windows10SDK.17134 ' + `
+		'--add Microsoft.VisualStudio.Component.Windows10SDK.17763 ' + `
+		'--add Microsoft.VisualStudio.Component.Windows10SDK.18362 ' + `
 		'--add microsoft.visualstudio.component.vc.140 ' + `
 		'--add microsoft.visualstudio.componentgroup.web.cloudtools ' + `
 		'--add microsoft.visualstudio.component.aspnet45 ' + `
