@@ -173,11 +173,11 @@ Function Connect-AppVeyorToGCE {
     $gce_firewall_winrm__name = "$($CommonPrefix)-firewall-winrm"
     $gce_firewall_winrm__port = 5986
     $gce_service_account = "$($CommonPrefix)-sa"
-    $gce_account_file = if ($env:HOME) {"$env:HOME/$($CommonPrefix)-account-file.json"} elseif ($env:HOMEPATH) {"$env:HOMEPATH\$($CommonPrefix)-account-file.json"}
+    $gce_account_file = Join-Path $(CreateTempFolder) "$CommonPrefix-account-file.json"
     $gce_account_certificate_file = if ($env:HOME) {"$env:HOME/$($CommonPrefix)-account-certificate.p12"} elseif ($env:HOMEPATH) {"$env:HOMEPATH\$($CommonPrefix)-account-certificate.p12"}
 
     if (-not $SkipDisclaimer) {
-         Write-Warning "`nThis command will create GCE resources such as network and service account, as well as GCS buckets. Also, it will run Hashicorp Packer which will create its own temporary GCE resources and c reate a VM image for future use by AppVeyor build VMs. Please be aware of possible charges from Google. `nIf GCE project you are authorized to contains production resources, you might consider creating a separate project or even account and run this command against it. Additionally, a separate account is better to distinguish Google bills for CI machines from other Google bills. `nPress Enter to continue or Ctrl-C to exit the command. Use '-SkipDisclaimer' switch parameter to skip this message next time."
+         Write-Warning "`nThis command will create GCE resources such as network and service account, as well as GCS buckets. Also, it will run Hashicorp Packer which will create its own temporary GCE resources and create a VM image for future use by AppVeyor build VMs. Please note that charges for cloud VMs and other cloud resources will be applied directly to your GCE account bill. `n`nIf GCE project you are authorized to contains production resources, you might consider creating a separate project or even account and run this command against it. Additionally, a separate account is better to distinguish Google bills for CI machines from other Google bills. `n`nPress Enter to continue or Ctrl-C to exit the command. Use '-SkipDisclaimer' switch parameter to skip this message next time."
          $disclaimer = Read-Host
          }
 
@@ -523,6 +523,8 @@ Function Connect-AppVeyorToGCE {
         #Create or update cloud
         Write-host "`nCreating or updating build environment on AppVeyor..." -ForegroundColor Cyan
         $build_cloud_name = "GCE $Zone $VmSize"
+        $clouds = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get
+        $cloud = $clouds | ? ({$_.name -eq $build_cloud_name})[0]
         $image_size = if ($ImageOs -eq "Windows") {200} elseif ($ImageOs -eq "Linux") {40}
         if (-not $cloud) {
             $body = @{
@@ -615,15 +617,7 @@ Function Connect-AppVeyorToGCE {
         $completed = "{0:hh}:{0:mm}:{0:ss}" -f $StopWatch.elapsed
         Write-Host "`nCompleted in $completed."
 
-        #Report results and next steps
-        Write-host "`nNext steps:"  -ForegroundColor Cyan
-        Write-host " - Optionally review build environment '$($build_cloud_name)' at '$($AppVeyorUrl)/build-clouds/$($cloud.buildCloudId)'" -ForegroundColor DarkGray
-        Write-host " - To start building on GCE set " -ForegroundColor DarkGray -NoNewline
-        Write-host "$($ImageName) " -NoNewline 
-        Write-host "build worker image " -ForegroundColor DarkGray -NoNewline 
-        Write-host "and " -ForegroundColor DarkGray -NoNewline 
-        Write-host "$($build_cloud_name) " -NoNewline 
-        Write-host "build cloud in AppVeyor project settings or appveyor.yml." -NoNewline -ForegroundColor DarkGray
+        PrintSummary 'GCE VMs' $AppVeyorUrl $cloud.buildCloudId $build_cloud_name $imageName
     }
 
     catch {

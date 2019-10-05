@@ -180,7 +180,7 @@ Function Connect-AppVeyorToAWS {
     $install_password = CreatePassword
 
     if (-not $SkipDisclaimer) {
-         Write-Warning "`nThis command will create EC2 resources such as security group and key pair. Also, it will run Hashicorp Packer which will create its own temporary EC2 resources and leave AMI for future use by AppVeyor build VMs. Please be aware of possible charges from Amazon. `nIf AWS account you are authorized to contains production resources, you might consider creating a separate account and run this command against it. Additionally, a separate account is better to distinguish AWS bills for CI machines from other AWS bills. `nPress Enter to continue or Ctrl-C to exit the command. Use '-SkipDisclaimer' switch parameter to skip this message next time."
+         Write-Warning "`nThis command will create EC2 resources such as security group and key pair. Also, it will run Hashicorp Packer which will create its own temporary EC2 resources and leave AMI for future use by AppVeyor build VMs. Please note that charges for cloud VMs and other cloud resources will be applied directly to your AWS account bill. `n`nIf AWS account you are authorized to contains production resources, you might consider creating a separate account and run this command against it. Additionally, a separate account is better to distinguish AWS bills for CI machines from other AWS bills. `n`nPress Enter to continue or Ctrl-C to exit the command. Use '-SkipDisclaimer' switch parameter to skip this message next time."
          $disclaimer = Read-Host
          }
 
@@ -712,14 +712,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
         Write-Host "`nCompleted in $completed."
 
         #Report results and next steps
-        Write-host "`nNext steps:"  -ForegroundColor Cyan
-        Write-host " - Optionally review build environment '$($build_cloud_name)' at '$($AppVeyorUrl)/build-clouds/$($cloud.buildCloudId)'" -ForegroundColor DarkGray
-        Write-host " - To start building on AWS set " -ForegroundColor DarkGray -NoNewline
-        Write-host "$($ImageName) " -NoNewline
-        Write-host "build worker image " -ForegroundColor DarkGray -NoNewline 
-        Write-host "and " -ForegroundColor DarkGray -NoNewline 
-        Write-host "$($build_cloud_name) " -NoNewline 
-        Write-host "build cloud in AppVeyor project settings or appveyor.yml." -ForegroundColor DarkGra
+        PrintSummary 'AWS EC2 VMs' $AppVeyorUrl $cloud.buildCloudId $build_cloud_name $imageName
         if (Test-Path $aws_kp_path) {
             Write-Host " - Please do not forget to move $($aws_kp_path) to a secure location." -ForegroundColor DarkGray
         }
