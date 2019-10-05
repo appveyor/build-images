@@ -21,6 +21,9 @@ Function Connect-AppVeyorToHyperV {
     .PARAMETER RamMb
         Memory (in megabytes) for build VMs.
 
+    .PARAMETER DiskSize
+        Disk Size (in gigabytes) for build VMs.
+
     .PARAMETER ImagesDirectory
         Directory to keep build VM images.
 
@@ -106,10 +109,13 @@ Function Connect-AppVeyorToHyperV {
       [switch]$SkipDisclaimer,
 
       [Parameter(Mandatory=$false)]
-      [string]$CpuCores = 2,
+      [int]$CpuCores = 2,
 
       [Parameter(Mandatory=$false)]
-      [string]$RamMb = 4096,
+      [int]$RamMb = 4096,
+
+      [Parameter(Mandatory=$false)]
+      [int]$DiskSize = 61440,
 
       [Parameter(Mandatory=$false)]
       [string]$ImagesDirectory,
@@ -340,7 +346,7 @@ d-i passwd/user-default-groups appveyor sudo
             -var "install_password=$install_password" `
             -var "install_user=$install_user" `
             -var "build_agent_mode=HyperV" `
-            -var "disk_size=61440" `
+            -var "disk_size=$DiskSize" `
             -var "hyperv_switchname=$natSwitch" `
             -var "iso_checksum=$IsoChecksum" `
             -var "iso_checksum_type=$iso_checksum_type" `
