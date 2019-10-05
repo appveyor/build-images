@@ -12,6 +12,11 @@ DiskInfo
 # extend system volume
 
 $diskPartScript = @"
+list disk
+select disk 0
+list volume
+select disk 1
+list volume
 select disk 0
 select volume 1 
 extend
