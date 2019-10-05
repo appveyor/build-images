@@ -13,6 +13,7 @@ Write-Host "User Access Control (UAC) has been disabled." -ForegroundColor Green
 
 Write-Host "Changing PS execution policy to Unrestricted"
 Write-Host "============================================"
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force -ErrorAction Ignore -Scope Process
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force -ErrorAction Ignore
 Write-Host "PS policy updated"
 

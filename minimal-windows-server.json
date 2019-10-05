@@ -32,6 +32,23 @@
     },
     {
         "type": "powershell",
+        "inline":[
+            "cmd /c cscript \"%windir%\\system32\\slmgr.vbs\" /ipk {{user `avma_key`}}"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/disable_winupdates.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}",          
+        "only": ["hyperv-iso"]
+    },
+    {
+        "type": "powershell",
         "scripts":[
             "{{ template_dir }}/scripts/Windows/install_path_utils.ps1",
             "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1",
@@ -173,10 +190,11 @@
       "boot_command": [
         "<esc>",
         "<enter>",
+        "<enter>",
         "<enter>"
       ],
       "communicator": "winrm",
-      "cpus": 2,
+      "cpus": "{{user `cpus`}}",
       "disk_size": "{{user `disk_size`}}",
       "enable_secure_boot": true,
       "enable_virtualization_extensions": true,
@@ -188,7 +206,7 @@
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
-      "memory": 4096,
+      "memory": "{{user `memory`}}",
       "shutdown_command": "e:/shutdown_vm.bat",
       "output_directory": "{{user `output_directory`}}",
       "switch_name": "{{user `hyperv_switchname`}}",
@@ -196,8 +214,7 @@
       "winrm_timeout": "2h",
       "winrm_password": "{{user `install_password`}}",
       "winrm_username": "{{user `install_user`}}"
-    }
-    
+    }    
   ],
   "post-processors": [
     {
