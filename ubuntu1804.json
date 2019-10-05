@@ -135,24 +135,28 @@
         "boot<enter>"
       ],
       "boot_wait": "10s",
-      "http_directory": "http",
+      "http_directory": "{{ template_dir }}/http",
       "iso_urls": [
         "iso/ubuntu-18.04.3-server-amd64.iso",
         "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso"
       ],
 
-      "iso_checksum": "{{user `iso_checksum_md5`}}",
-      "iso_checksum_type": "md5",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "ssh_host": "{{ user `host_ip_addr` }}",
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout" : "1h",
       "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now",
+      "output_directory":  "{{user `output_directory`}}",
+      "switch_name": "{{user `hyperv_switchname`}}",
+      "http_port_min": "{{user `http_port_min`}}",
+      "http_port_max": "{{user `http_port_max`}}",
       "cpus": "1",
       "memory": "3072",
       "disk_size": 40960,
-      "disk_block_size": "1",
       "enable_secure_boot": false,
+      "disk_block_size": "1",
       "generation": 2
     },
     {
