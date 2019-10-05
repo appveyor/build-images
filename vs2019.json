@@ -58,19 +58,14 @@
     },
     {
         "type": "powershell",
-        "inline":[
-            "cmd /c cscript \"%windir%\\system32\\slmgr.vbs\" /ipk {{user `avma_key`}}"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}"
-    },
-    {
-        "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/disable_winupdates.ps1"
+            "{{ template_dir }}/scripts/Windows/activate_avma.ps1"
         ],
+        "environment_vars": [
+            "avma_key={{user `avma_key`}}"
+        ],        
         "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}",          
+        "elevated_password": "{{user `install_password`}}",
         "only": ["hyperv-iso"]
     },
     {
@@ -111,15 +106,6 @@
     {
         "type": "windows-restart",
         "restart_timeout": "30m"
-    },
-    {	
-        "type": "powershell",	
-        "scripts":[	
-            "{{ template_dir }}/scripts/Windows/noop-plug.ps1",	
-            "{{ template_dir }}/scripts/Windows/install_wsl.ps1"	
-        ],	
-        "elevated_user": "{{user `install_user`}}",	
-        "elevated_password": "{{user `install_password`}}" 	
     },
     {
         "type": "powershell",
@@ -255,6 +241,15 @@
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}" 
     },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/disable_winupdates.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}",          
+        "only": ["hyperv-iso"]
+    },    
     {
         "type": "powershell",
         "scripts":[
