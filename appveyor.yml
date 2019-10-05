@@ -113,7 +113,7 @@ build_script:
     az container create -g test-westus \
       --name bake-${CLOUD,,}-${TEMPLATE}-image \
       --image appveyor/build-images:${BUILD_CONTAINER_BUILD_VERSION} \
-      --cpu 2 --memory 2 --restart-policy Never \
+      --cpu 2 --memory 4 --restart-policy Never \
       --azure-file-volume-account-name ${packer_logs_storage_account_name} \
       --azure-file-volume-account-key ${packer_logs_storage_account_key} \
       --azure-file-volume-share-name packer-logs \
