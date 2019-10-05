@@ -1,3 +1,7 @@
+#
+# The list of VS 2019 components: https://docs.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-community?vs-2019&view=vs-2019
+#
+
 Function InstallVS
 {
   Param

@@ -46,7 +46,8 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/init_server.ps1"
+            "{{ template_dir }}/scripts/Windows/init_server.ps1",
+            "{{ template_dir }}/scripts/Windows/extend_system_volume.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
@@ -149,9 +150,7 @@
             "{{ template_dir }}/scripts/Windows/install_erlang.ps1",
             "{{ template_dir }}/scripts/Windows/install_mongo.ps1",
             "{{ template_dir }}/scripts/Windows/install_wdk_1809.ps1",
-            "{{ template_dir }}/scripts/Windows/install_winsdk_1809.ps1",
             "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1",
-            "{{ template_dir }}/scripts/Windows/install_winsdk_1903.ps1",
             "{{ template_dir }}/scripts/Windows/install_dxsdk.ps1",
             "{{ template_dir }}/scripts/Windows/install_vdproj_vs2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
