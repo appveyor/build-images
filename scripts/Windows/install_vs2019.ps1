@@ -19,10 +19,10 @@ Function InstallVS
     Invoke-WebRequest -Uri $VSBootstrapperURL -OutFile "${env:Temp}\vs_$Sku.exe"
 
     $FilePath = "${env:Temp}\vs_$Sku.exe"
-    $Arguments = ('/c', $FilePath, $WorkLoads, '--quiet', '--norestart', '--wait', '--nocache' )
+    $Arguments = ($WorkLoads, '--quiet', '--norestart', '--wait', '--nocache')
 
     Write-Host "Starting Install ..."
-    $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru
+    $process = Start-Process -FilePath $FilePath -ArgumentList $Arguments -Wait -PassThru
     $exitCode = $process.ExitCode
 
     if ($exitCode -eq 0 -or $exitCode -eq 3010)
