@@ -1,41 +1,5 @@
 {
-  "variables": {
-    "install_user": "appveyor",
-    "install_password": "appveyor",
-    "install_home":"/home/appveyor",
-    "APPVEYOR_BUILD_AGENT_VERSION": "{{env `APPVEYOR_BUILD_AGENT_VERSION`}}",
-    "host_ip_addr": "10.0.0.47",
-    "host_ip_mask": "255.255.255.0",
-    "host_ip_gw": "10.0.0.1",
-    "aws_access_key": "",
-    "aws_secret_key": "",
-    "aws_region": "",
-    "aws_ssh_keypair_name": "",
-    "aws_ssh_private_key_file": "",
-    "gce_account_file": "",
-    "gce_zone": "",
-    "gce_project": "",
-    "gce_source_image": "ubuntu-1604-xenial-v20190212",
-    "gce_source_image_family": "ubuntu-1604-lts",
-    "iso_checksum_md5": "ac8a79a86a905ebdc3ef3f5dd16b7360",
-    "azure_client_id": "",
-    "azure_client_secret": "",
-    "azure_location": "",
-    "azure_resource_group_name": "",
-    "azure_storage_account": "",
-    "azure_subscription_id": "",
-    "azure_vm_size": "Standard_A2_v2",
-    "image_description": "",
-    "deploy_parts": "",
-    "datemark": ""
-  },
   "provisioners": [
-    {
-      "type": "file",
-      "source": "distrib",
-      "destination": "./",
-      "generated": "true"
-    },
     {
       "type": "file",
       "source": "{{ template_dir }}/scripts/Ubuntu/custom-scripts",
@@ -43,7 +7,7 @@
     },
     {
       "type": "file",
-      "source": "scripts/Ubuntu/",
+      "source": "{{ template_dir }}/scripts/Ubuntu/",
       "destination": "./"
     },
     {
@@ -58,7 +22,7 @@
       ],
       "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eu '{{.Path}}' {{user `deploy_parts`}}",
       "scripts": [
-        "scripts/Ubuntu/basicconfig.sh"
+        "{{ template_dir }}/scripts/Ubuntu/basicconfig.sh"
       ]
     },
     {
