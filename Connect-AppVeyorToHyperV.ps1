@@ -315,6 +315,10 @@ d-i passwd/user-default-groups appveyor sudo
         $VmsDirectory = Join-Path $env:SystemDrive "$CommonPrefix-VMs"
     }
 
+    if ($PackerTempDirectory -and -not (Test-Path $PackerTempDirectory)) {
+        New-Item $PackerTempDirectory -ItemType Directory -Force | Out-Null
+    }
+
     #TODO scenario if subnet is occuped (to get existing subnets: gwmi -computer .  -class "win32_networkadapterconfiguration" | % {$_.ipsubnet})
     $natSwitch = "$CommonPrefix-NAT-Switch"
     $natNetwork = "$CommonPrefix-NAT-Network"
