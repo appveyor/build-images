@@ -1598,6 +1598,13 @@ printf "OS %s (%s %s %s)\n" "$PRETTY_NAME" "$(uname -o)" "$(uname -r)" "$(uname 
     chmod +x /etc/update-motd.d/00-appveyor
 }
 
+function fix_grub_timeout() {
+    # https://askubuntu.com/questions/1114797/grub-timeout-set-to-30-after-upgrade
+    echo 'Fixing GRUB_TIMEOUT'
+    sudo sh -c 'echo GRUB_RECORDFAIL_TIMEOUT=0 >> /etc/default/grub';
+    sudo update-grub; sudo grub-install;
+}
+
 function check_folders() {
     if [ "$#" -gt 0 ]; then
         while [[ "$#" -gt 0 ]]; do
