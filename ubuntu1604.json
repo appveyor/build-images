@@ -122,7 +122,8 @@
       "disk_size": 40960,
       "enable_secure_boot": false,
       "disk_block_size": "1",
-      "generation": 2
+      "generation": 2,
+      "temp_path": "{{user `packer_temp_dir`}}"
     },
     {
       "type": "hyperv-vmcx",
