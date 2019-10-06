@@ -30,6 +30,9 @@ Function Connect-AppVeyorToHyperV {
     .PARAMETER VmsDirectory
         Directory to create build VMs.
 
+    .PARAMETER PackerTempDirectory
+        Temp directory for Packer VMs.
+
     .PARAMETER SubnetId
         AppVeyor will create Virtual switch and subnet to use with build VMs and manage build VMs IP configuration in that subnet. Default value is 10.118.232.0.
 
@@ -122,6 +125,9 @@ Function Connect-AppVeyorToHyperV {
 
       [Parameter(Mandatory=$false)]
       [string]$VmsDirectory,
+
+      [Parameter(Mandatory=$false)]
+      [string]$PackerTempDirectory,      
 
       [Parameter(Mandatory=$false)]
       [string]$SubnetId = "10.118.232.0",
@@ -363,6 +369,7 @@ d-i passwd/user-default-groups appveyor sudo
             -var "avma_key=$AVMAKey" `
             -var "cpus=$CpuCores" `
             -var "memory=$RamMb" `
+            -var "packer_temp_dir=$PackerTempDirectory" `
             $ImageTemplate
 
             #Get VHD path

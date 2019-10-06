@@ -46,11 +46,19 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/init_server.ps1",
-            "{{ template_dir }}/scripts/Windows/extend_system_volume.ps1"
+            "{{ template_dir }}/scripts/Windows/init_server.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/extend_system_volume.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}",
+        "only": ["azure-arm"]
     },    
     {
         "type": "windows-restart",
@@ -408,7 +416,8 @@
       "vm_name": "windows-server-2019-{{user `datemark`}}",
       "winrm_timeout": "2h",
       "winrm_password": "{{user `install_password`}}",
-      "winrm_username": "{{user `install_user`}}"
+      "winrm_username": "{{user `install_user`}}",
+      "temp_path": "{{user `packer_temp_dir`}}"
     }
   ],
   "post-processors": [
