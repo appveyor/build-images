@@ -115,7 +115,7 @@ Function Connect-AppVeyorToHyperV {
       [int]$RamMb = 4096,
 
       [Parameter(Mandatory=$false)]
-      [int]$DiskSize = 61440,
+      [int]$DiskSize = 60,
 
       [Parameter(Mandatory=$false)]
       [string]$ImagesDirectory,
@@ -346,7 +346,7 @@ d-i passwd/user-default-groups appveyor sudo
             -var "install_password=$install_password" `
             -var "install_user=$install_user" `
             -var "build_agent_mode=HyperV" `
-            -var "disk_size=$DiskSize" `
+            -var "disk_size=$($DiskSize * 1024)" `
             -var "hyperv_switchname=$natSwitch" `
             -var "iso_checksum=$IsoChecksum" `
             -var "iso_checksum_type=$iso_checksum_type" `
