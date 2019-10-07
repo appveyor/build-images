@@ -1,4 +1,9 @@
 {
+  "variables": {
+    "iso_url": "http://releases.ubuntu.com/xenial/ubuntu-16.04.6-server-amd64.iso",
+    "iso_checksum": "16afb1375372c57471ea5e29803a89a5a6bd1f6aabea2e5e34ac1ab7eb9786ac",
+    "iso_checksum_type": "sha256"
+  },   
   "provisioners": [
     {
       "type": "file",
@@ -101,10 +106,7 @@
       ],
       "boot_wait": "20s",
       "http_directory": "{{ template_dir }}/http",
-      "iso_urls": [
-        "iso/ubuntu-16.04.6-server-amd64.iso",
-        "http://releases.ubuntu.com/xenial/ubuntu-16.04.6-server-amd64.iso"
-      ],
+      "iso_url": "{{user `iso_url`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "communicator":"ssh",

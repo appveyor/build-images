@@ -164,7 +164,7 @@ Function Connect-AppVeyorToHyperV {
       [switch]$UpdateWindows,
 
       [Parameter(Mandatory=$false)]
-      [string]$IsoUrl = "https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso",
+      [string]$IsoUrl,
 
       [Parameter(Mandatory=$false)]
       [string]$IsoChecksum,
@@ -295,16 +295,19 @@ d-i passwd/user-default-groups appveyor sudo
     }
 
     # sanitize ISO URL if needed (more reliable than escape backslashes in local/unc paths).
-    $PathInfo = [System.Uri]($IsoUrl)
-    if ($PathInfo.IsFile -or $PathInfo.IsUnc)
-    {
-        $IsoUrl = $PathInfo.AbsoluteUri
+    if ($IsoUrl) {
+        $PathInfo = [System.Uri]($IsoUrl)
+        if ($PathInfo.IsFile -or $PathInfo.IsUnc)
+        {
+            $IsoUrl = $PathInfo.AbsoluteUri
+        }
     }
 
-    if (-not $IsoChecksum) {
-        $IsoChecksum = if ($imageOs -eq "Windows") {"221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562"} elseif ($imageOs -eq "Linux") {"7d8e0055d663bffa27c1718685085626cb59346e7626ba3d3f476322271f573e"}
+    if ($IsoUrl -and $IsoChecksum) {
+        $iso_checksum_type = 'sha256'
+    } elseif ($IsoUrl) {
+        $iso_checksum_type = 'none'
     }
-    $iso_checksum_type = "sha256"
 
     if (-not $ImagesDirectory) {
         $ImagesDirectory = Join-Path $env:SystemDrive "$CommonPrefix-Images"

@@ -1,4 +1,9 @@
 {
+  "variables": {
+    "iso_url": "https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso",
+    "iso_checksum": "221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562",
+    "iso_checksum_type": "sha256"
+  },
   "provisioners": [
     {
         "type": "powershell",
@@ -203,9 +208,9 @@
         "{{ template_dir }}/iso/minimal-windows-server.iso"
       ],
       "guest_additions_mode": "disable",
+      "iso_url": "{{user `iso_url`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
-      "iso_url": "{{user `iso_url`}}",
       "memory": "{{user `memory`}}",
       "shutdown_command": "e:/shutdown_vm.bat",
       "output_directory": "{{user `output_directory`}}",
