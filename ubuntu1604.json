@@ -89,7 +89,7 @@
         " netcfg/get_ipaddress={{ user `host_ip_addr` }}<wait>",
         " netcfg/get_netmask={{ user `host_ip_mask` }}<wait>",
         " netcfg/get_gateway={{ user `host_ip_gw` }}<wait>",
-        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed18.cfg<wait>",
+        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed16.cfg<wait>",
         " netcfg/get_nameservers=8.8.8.8",
         " debian-installer=en_US.UTF-8 auto locale=en_US.UTF-8 kbd-chooser/method=us",
         " hostname={{.Name}} domain= ",
