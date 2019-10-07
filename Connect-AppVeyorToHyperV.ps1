@@ -355,29 +355,43 @@ d-i passwd/user-default-groups appveyor sudo
             Write-Warning "Add '-VhdPath' parameter with if you want to to skip Packer build and and reuse existing VHD."
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
-            & $packerPath build '--only=hyperv-iso' `
-            -var "install_password=$install_password" `
-            -var "install_user=$install_user" `
-            -var "build_agent_mode=HyperV" `
-            -var "disk_size=$($DiskSize * 1024)" `
-            -var "hyperv_switchname=$natSwitch" `
-            -var "iso_checksum=$IsoChecksum" `
-            -var "iso_checksum_type=$iso_checksum_type" `
-            -var "iso_url=$IsoUrl" `
-            -var "output_directory=$output_directory" `
-            -var "datemark=$date_mark" `
-            -var "packer_manifest=$packerManifest" `
-            -var "OPT_FEATURES=$ImageFeatures" `
-            -var "host_ip_addr=$MasterIPAddress" `
-            -var "host_ip_mask=$SubnetMask" `
-            -var "host_ip_gw=$DefaultGateway" `
-            -var "http_port_min=$HttpPortMin" `
-            -var "http_port_max=$HttpPortMax" `
-            -var "avma_key=$AVMAKey" `
-            -var "cpus=$CpuCores" `
-            -var "memory=$RamMb" `
-            -var "packer_temp_dir=$PackerTempDirectory" `
-            $ImageTemplate
+
+        $packerArgs = @('build',
+            '--only=hyperv-iso',
+            '-var', "`"install_password=$install_password`"",
+            '-var', "`"install_user=$install_user`"",
+            '-var', "`"build_agent_mode=HyperV`"",
+            '-var', "`"disk_size=$($DiskSize * 1024)`"",
+            '-var', "`"hyperv_switchname=$natSwitch`"",
+            '-var', "`"output_directory=$output_directory`"",
+            '-var', "`"datemark=$date_mark`"",
+            '-var', "`"packer_manifest=$packerManifest`"",
+            '-var', "`"OPT_FEATURES=$ImageFeatures`"",
+            '-var', "`"host_ip_addr=$MasterIPAddress`"",
+            '-var', "`"host_ip_mask=$SubnetMask`"",
+            '-var', "`"host_ip_gw=$DefaultGateway`"",
+            '-var', "`"http_port_min=$HttpPortMin`"",
+            '-var', "`"http_port_max=$HttpPortMax`"",
+            '-var', "`"avma_key=$AVMAKey`"",
+            '-var', "`"cpus=$CpuCores`"",
+            '-var', "`"memory=$RamMb`"",
+            '-var', "`"packer_temp_dir=$PackerTempDirectory`"")
+
+        if ($IsoUrl) {
+            $packerArgs += @('-var', "`"iso_url=$IsoUrl`"")
+        }
+
+        if ($IsoChecksum) {
+            $packerArgs += @('-var', "`"iso_checksum=$IsoChecksum`"")
+        }
+
+        if ($iso_checksum_type) {
+            $packerArgs += @('-var', "`"iso_checksum_type=$iso_checksum_type`"")
+        }
+
+        $packerArgs += $ImageTemplate
+
+        cmd /c "`"$packerPath`" $($packerArgs -join ' ')"
 
             #Get VHD path
             if (-not (test-path $packerManifest)) {
