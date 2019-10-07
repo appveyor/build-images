@@ -291,7 +291,7 @@ d-i user-setup/allow-password-weak boolean true
 d-i user-setup/encrypt-home boolean false
 d-i passwd/user-default-groups appveyor sudo
 "
-[System.IO.File]::AppendAllText("$ParentFolder/http/preseed18.cfg", $createAccountDirective)
+[System.IO.File]::AppendAllText("$ParentFolder/http/preseed.cfg", $createAccountDirective)
     }
 
     # sanitize ISO URL if needed (more reliable than escape backslashes in local/unc paths).
