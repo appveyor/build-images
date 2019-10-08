@@ -10,7 +10,7 @@ if (-not (Test-Path $qsPath)) {
 }
 
 Write-Host "Installing..."
-cmd /c "$exePath" --script "$qsPath"
+cmd /c "$exePath" --verbose --script "$qsPath"
 Remove-Item $exePath
 
 # set aliases
