@@ -102,6 +102,14 @@ Write-Host "====================="
 cmd /c 'winrm set winrm/config/client @{TrustedHosts="*"}'
 Write-Host "WinRM configured"
 
+# Allow RDP connections
+
+Write-Host "Allow RDP connections"
+Write-Host "====================="
+
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+Write-Host "RDP connections enabled"
+
 # Disable new network location wizard
 
 Write-Host "Disabling new network location wizard"
