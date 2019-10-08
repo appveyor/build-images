@@ -214,6 +214,37 @@ Controller.prototype.TargetDirectoryPageCallback = function()
 }
 
 Controller.prototype.ComponentSelectionPageCallback = function() {
+    
+    var page = gui.pageWidgetByObjectName("ComponentSelectionPage");
+
+    // if CategoryGroupBox is visible, check one of the checkboxes
+    // and click fetch button before selecting any components
+    var groupBox = gui.findChild(page, "CategoryGroupBox");
+    if (groupBox) {
+        console.log("groupBox found");
+        // findChild second argument is the display name of the checkbox
+        var checkBox = gui.findChild(page, "Archive");
+        if (checkBox) {
+            console.log("checkBox found");
+            console.log("checkBox name: " + checkBox.text);
+            if (checkBox.checked == false) {
+                checkBox.click();
+                var fetchButton = gui.findChild(page, "FetchCategoryButton");
+                if (fetchButton) {
+                    console.log("fetchButton found");
+                    fetchButton.click();
+                } else {
+                    console.log("fetchButton NOT found");
+                }
+            }
+        } else {
+            console.log("checkBox NOT found");
+        }
+    } else {
+        console.log("groupBox NOT found");
+    }
+    // you can now select components from the fetched category
+
     var widget = gui.currentPageWidget();
 
     widget.deselectAll();
