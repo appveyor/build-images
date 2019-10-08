@@ -214,7 +214,8 @@ Controller.prototype.TargetDirectoryPageCallback = function()
 }
 
 Controller.prototype.ComponentSelectionPageCallback = function() {
-    
+
+    // https://doc-snapshots.qt.io/qtifw-3.1/noninteractive.html
     var page = gui.pageWidgetByObjectName("ComponentSelectionPage");
 
     // if CategoryGroupBox is visible, check one of the checkboxes
