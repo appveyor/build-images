@@ -205,6 +205,15 @@ Controller.prototype.IntroductionPageCallback = function() {
     gui.clickButton(buttons.NextButton);
 }
 
+Controller.prototype.DynamicTelemetryPluginFormCallback = function() {
+    gui.currentPageWidget().TelemetryPluginForm.statisticGroupBox.disableStatisticRadioButton.setChecked(true);
+    gui.clickButton(buttons.NextButton);
+
+    //for(var key in widget.TelemetryPluginForm.statisticGroupBox){
+    //    console.log(key);
+    //}
+}
+
 Controller.prototype.TargetDirectoryPageCallback = function()
 {
     // Keep default at "C:\Qt".
