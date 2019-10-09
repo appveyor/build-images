@@ -5,7 +5,7 @@ $exePath = "$env:USERPROFILE\SQLServer2017-DEV-x64-ENU.exe"
 (New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/E/F/2/EF23C21D-7860-4F05-88CE-39AA114B014B/SQLServer2017-DEV-x64-ENU.exe', $exePath)
 
 Write-Host "Extracting..."
-$extractPath = "$env:USERPROFILE\SQL2017Developer"
+$extractPath = "$env:TEMP\SQL2017Developer"
 Start-Process "$exePath" "/Q /x:`"$extractPath`"" -Wait
 
 Write-Host "Installing..."
@@ -19,7 +19,7 @@ Remove-Item $extractPath -Recurse -Force -ErrorAction Ignore
 Write-Host "OK"
 
 Write-Host "Downloading SQL Server Reporting Services..."
-$reportingPath = "$env:USERPROFILE\SQLServerReportingServices.exe"
+$reportingPath = "$env:TEMP\SQLServerReportingServices.exe"
 (New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/E/6/4/E6477A2A-9B58-40F7-8AD6-62BB8491EA78/SQLServerReportingServices.exe', $reportingPath)
 
 Write-Host "Installing..."
