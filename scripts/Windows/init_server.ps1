@@ -120,6 +120,15 @@ reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Network\NetworkLocat
 
 Write-Host "Network location wizard disabled"
 
+# Set UTC time zone
+
+Write-Host "Switch time zone to UTC"
+Write-Host "========================"
+
+tzutil /s UTC
+
+Write-Host "Time zone switched"
+
 # .NET 3.5
 
 Write-Host "Installing .NET 3.5"
