@@ -12,11 +12,15 @@ Write-Host "Installing..."
 cmd /c start /wait $exePath /VERYSILENT /NORESTART /NOCANCEL /SP- /NOICONS /COMPONENTS="icons,icons\quicklaunch,ext,ext\reg,ext\reg\shellhere,ext\reg\guihere,assoc,assoc_sh" /LOG
 del $exePath
 
-Add-Path "$env:ProgramFiles\Git\cmd"
-Add-SessionPath "$env:ProgramFiles\Git\cmd"
+$gitCmdPath = "$env:ProgramFiles\Git\cmd"
+Remove-Path $gitCmdPath
+Add-Path $gitCmdPath -before
+Add-SessionPath $gitCmdPath
 
-Add-Path "$env:ProgramFiles\Git\usr\bin"
-Add-SessionPath "$env:ProgramFiles\Git\usr\bin"
+$gitUsrBinPath = "$env:ProgramFiles\Git\usr\bin"
+Remove-Path $gitUsrBinPath
+Add-Path $gitUsrBinPath -before
+Add-SessionPath $gitUsrBinPath
 
 git config --global core.autocrlf input
 git config --system --unset credential.helper
