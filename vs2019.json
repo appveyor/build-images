@@ -182,6 +182,7 @@
             "{{ template_dir }}/scripts/Windows/install_mysql.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
             "{{ template_dir }}/scripts/Windows/install_azure_cli.ps1",
+            "{{ template_dir }}/scripts/Windows/install_gcloud_sdk.ps1",
             "{{ template_dir }}/scripts/Windows/install_erlang.ps1",
             "{{ template_dir }}/scripts/Windows/install_mongo.ps1",
             "{{ template_dir }}/scripts/Windows/install_winsdk_81.ps1",
