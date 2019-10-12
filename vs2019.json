@@ -169,6 +169,7 @@
     {
         "type": "powershell",
         "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_android_sdk.ps1",
             "{{ template_dir }}/scripts/Windows/install_qt.ps1",
             "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
             "{{ template_dir }}/scripts/Windows/install_ruby.ps1",
