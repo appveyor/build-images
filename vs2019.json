@@ -395,7 +395,7 @@
       "winrm_timeout" : "1h",
       "winrm_username": "{{ user `install_user` }}",
       "winrm_password": "{{ user `install_password` }}",
-      "shutdown_command": "shutdown /s",
+      "shutdown_command": "shutdown /s /t 1",
       "output_directory": "{{user `output_directory`}}",
       "cpus": "{{user `cpus`}}",
       "memory": "{{user `memory`}}",
