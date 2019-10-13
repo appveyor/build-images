@@ -37,7 +37,8 @@
         "environment_vars": [
             "appveyor_user={{user `install_user`}}",
             "appveyor_password={{user `install_password`}}"
-        ]
+        ],
+        "except": ["hyperv-vmcx"]
     },
     {
         "type": "powershell",
@@ -66,7 +67,7 @@
     },    
     {
         "type": "windows-restart",
-        "restart_timeout": "30m"
+        "restart_timeout": "10m"
     },
     {
         "type": "powershell",
@@ -113,11 +114,11 @@
             "{{ template_dir }}/scripts/Windows/install_docker_hyperv_wsl_features.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}" 
+        "elevated_password": "{{user `install_password`}}"
     },
     {
         "type": "windows-restart",
-        "restart_timeout": "30m"
+        "restart_timeout": "10m"
     },
     {
         "type": "powershell",
@@ -147,7 +148,7 @@
     },
     {
         "type": "windows-restart",
-        "restart_timeout": "30m"
+        "restart_timeout": "10m"
     },    
     {
         "type": "powershell",
@@ -226,7 +227,7 @@
     },
     {
         "type": "windows-restart",
-        "restart_timeout": "30m"
+        "restart_timeout": "10m"
     },
     {
         "type": "powershell",
@@ -248,7 +249,7 @@
     },
     {
         "type": "windows-restart",
-        "restart_timeout": "30m"
+        "restart_timeout": "10m"
     },
     {
         "type": "powershell",
@@ -283,7 +284,7 @@
     },
     {
         "type": "windows-restart",
-        "restart_timeout": "30m"
+        "restart_timeout": "10m"
     }  
   ],
   "builders": [
