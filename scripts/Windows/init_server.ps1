@@ -13,6 +13,7 @@ Write-Host "User Access Control (UAC) has been disabled." -ForegroundColor Green
 
 Write-Host "Changing PS execution policy to Unrestricted"
 Write-Host "============================================"
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force -ErrorAction Ignore -Scope Process
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force -ErrorAction Ignore
 Write-Host "PS policy updated"
 
@@ -101,6 +102,14 @@ Write-Host "====================="
 cmd /c 'winrm set winrm/config/client @{TrustedHosts="*"}'
 Write-Host "WinRM configured"
 
+# Allow RDP connections
+
+Write-Host "Allow RDP connections"
+Write-Host "====================="
+
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+Write-Host "RDP connections enabled"
+
 # Disable new network location wizard
 
 Write-Host "Disabling new network location wizard"
@@ -110,6 +119,15 @@ reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Network\NewNetworkWi
 reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Network\NetworkLocationWizard /v HideWizard /t REG_DWORD /d 1 /f
 
 Write-Host "Network location wizard disabled"
+
+# Set UTC time zone
+
+Write-Host "Switch time zone to UTC"
+Write-Host "========================"
+
+tzutil /s UTC
+
+Write-Host "Time zone switched"
 
 # .NET 3.5
 

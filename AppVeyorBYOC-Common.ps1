@@ -241,7 +241,8 @@ function ValidateDependencies ($cloudType) {
     
    if ($cloudType -eq "HyperV") {
         Write-host "`nChecking if Hyper-V tools are installed..."  -ForegroundColor Cyan
-        if (-not (Get-Command Test-VHD -ErrorAction Ignore)) {
+        Import-Module Hyper-V -ErrorAction Ignore
+        if (-not (Get-Module Hyper-V -ErrorAction Ignore)) {
             Write-Warning "Hyper-V feature or its management tools are not installed. Please install Hyper-V feature with 'Install-WindowsFeature -Name Hyper-V -IncludeManagementTools' (for Windows Server) or 'Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All' (for Windows 10), restart computer if needed, and re-run the command."
             ExitScript
         }
@@ -582,5 +583,23 @@ public class ISOFile
     [ISOFile]::Create($Target.FullName,$Result.ImageStream,$Result.BlockSize,$Result.TotalBlocks)
     Write-Verbose -Message "Target image ($($Target.FullName)) has been created"
   }
+}
+
+#from https://d-fens.ch/2013/11/01/nobrainer-using-powershell-to-convert-an-ipv4-subnet-mask-length-into-a-subnet-mask-address/
+function Convert-IpAddressToMaskLength([string] $dottedIpAddressString)
+{
+  $result = 0; 
+  # ensure we have a valid IP address
+  [IPAddress] $ip = $dottedIpAddressString;
+  $octets = $ip.IPAddressToString.Split('.');
+  foreach($octet in $octets)
+  {
+    while(0 -ne $octet) 
+    {
+      $octet = ($octet -shl 1) -band [byte]::MaxValue
+      $result++; 
+    }
+  }
+  return $result;
 }
 

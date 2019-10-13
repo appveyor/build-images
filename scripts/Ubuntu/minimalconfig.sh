@@ -179,5 +179,7 @@ if ! $IS_DOCKER; then
         _abort $?
     configure_network ||
         _abort $?
+    fix_grub_timeout ||
+        _abort $?        
 fi
 cleanup

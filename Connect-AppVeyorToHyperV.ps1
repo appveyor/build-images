@@ -21,17 +21,35 @@ Function Connect-AppVeyorToHyperV {
     .PARAMETER RamMb
         Memory (in megabytes) for build VMs.
 
+    .PARAMETER DiskSize
+        Disk Size (in gigabytes) for build VMs.
+
     .PARAMETER ImagesDirectory
         Directory to keep build VM images.
 
     .PARAMETER VmsDirectory
         Directory to create build VMs.
 
-    .PARAMETER DnsServers
-        DNS server to assign to build VMs NIC.
+    .PARAMETER PackerTempDirectory
+        Temp directory for Packer VMs.
+
+    .PARAMETER SubnetId
+        AppVeyor will create Virtual switch and subnet to use with build VMs and manage build VMs IP configuration in that subnet. Default value is 10.118.232.0.
 
     .PARAMETER SubnetMask
-        Subnet mask to assign to build VMs NIC.
+        Subnet mask to be used with build VMs. Default value is 255.255.255.0.
+
+    .PARAMETER MasterIPAddress
+        IP address to be assigned to master VM created by Packer. Default value is 10.118.232.2.
+        
+    .PARAMETER DefaultGateway
+        IP address to assign to Virtual Switch NIC, which will be default gateway for VMs. Default value is 10.118.232.1.
+        
+    .PARAMETER StartIPAddress
+        Address from which AppVeyor will start assigning IPs to VMs. It is importand to ensure it is not conflicting with MasterIPAddress and DefaultGateway, but still in the same subnet (check SubnetMask parameter) and them.
+
+    .PARAMETER DnsServers
+        DNS server to assign to build VMs NIC.
 
     .PARAMETER VhdPath
         Path existing build VM VHD (in case you prefer to skip Packer build and use existing VHD).
@@ -41,6 +59,21 @@ Function Connect-AppVeyorToHyperV {
 
     .PARAMETER ImageOs
         Operating system of build VM image. Valid values: 'Windows', 'Linux'. Default value is 'Windows'.
+
+    .PARAMETER UpdateWindows
+        Update Windows before creating a master VHD.
+
+    .PARAMETER IsoUrl
+        ISO from which to install master VM. Can be URK, local and UNC path. Default it Windows Server 2019 Evaluation.
+
+    .PARAMETER IsoChecksum
+        SHA256 checksum of installation ISO file. Needed only if IsoUrl parameter specified.
+
+    .PARAMETER ProductKey
+        Enter your product key if you are using retail or volume license ISOs.
+
+    .PARAMETER AVMAKey
+        To benefit from Automatic virtual machine activation enter respective AVMA Key which can be found at https://docs.microsoft.com/en-us/windows-server/get-started-19/vm-activation-19#avma-keys. You still need retail or volume license ISO and ProductKey for initial installation to use AVMA.
 
     .PARAMETER ImageName
         Description to be passed to Packer and name to be used for AppVeyor image.  Default value generated is based on the value of 'ImageOs' parameter.
@@ -56,6 +89,15 @@ Function Connect-AppVeyorToHyperV {
 
     .PARAMETER ImageCustomScriptAfterReboot
         Base-64 encoded text of custom sript to execute during image creation, after reboot. It is usefull for cases when custom software being installed with 'ImageCustomScript' required some additional action after computer restarted.
+
+    .PARAMETER CloneVM
+        VM name to use as a base for a new VM from.
+
+    .PARAMETER ImageUser
+        Username inside the image.
+
+    .PARAMETER ImagePassword
+        User password inside the image.
 
         .EXAMPLE
         Connect-AppVeyorToHyperV
@@ -79,10 +121,13 @@ Function Connect-AppVeyorToHyperV {
       [switch]$SkipDisclaimer,
 
       [Parameter(Mandatory=$false)]
-      [string]$CpuCores = 2,
+      [int]$CpuCores = 2,
 
       [Parameter(Mandatory=$false)]
-      [string]$RamMb = 4096,
+      [int]$RamMb = 4096,
+
+      [Parameter(Mandatory=$false)]
+      [int]$DiskSize = 60,
 
       [Parameter(Mandatory=$false)]
       [string]$ImagesDirectory,
@@ -91,10 +136,25 @@ Function Connect-AppVeyorToHyperV {
       [string]$VmsDirectory,
 
       [Parameter(Mandatory=$false)]
-      [string]$DnsServers = "8.8.8.8; 8.8.4.4",
+      [string]$PackerTempDirectory,      
+
+      [Parameter(Mandatory=$false)]
+      [string]$SubnetId = "10.118.232.0",
 
       [Parameter(Mandatory=$false)]
       [string]$SubnetMask = "255.255.255.0",
+
+      [Parameter(Mandatory=$false)]
+      [string]$MasterIPAddress = "10.118.232.2",
+
+      [Parameter(Mandatory=$false)]
+      [string]$DefaultGateway = "10.118.232.1",
+      
+      [Parameter(Mandatory=$false)]
+      [string]$StartIPAddress = "10.118.232.100",
+
+      [Parameter(Mandatory=$false)]
+      [string]$DnsServers = "8.8.8.8; 8.8.4.4",
 
       [Parameter(Mandatory=$false)]
       [string]$PreheatedVMs = 2,
@@ -110,6 +170,21 @@ Function Connect-AppVeyorToHyperV {
       [string]$ImageOs = "Windows",
 
       [Parameter(Mandatory=$false)]
+      [switch]$UpdateWindows,
+
+      [Parameter(Mandatory=$false)]
+      [string]$IsoUrl,
+
+      [Parameter(Mandatory=$false)]
+      [string]$IsoChecksum,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ProductKey,
+
+      [Parameter(Mandatory=$false)]
+      [string]$AVMAKey,
+
+      [Parameter(Mandatory=$false)]
       [string]$ImageName,
 
       [Parameter(Mandatory=$false)]
@@ -122,7 +197,16 @@ Function Connect-AppVeyorToHyperV {
       [string]$ImageCustomScript,
 
       [Parameter(Mandatory=$false)]
-      [string]$ImageCustomScriptAfterReboot
+      [string]$ImageCustomScriptAfterReboot,
+
+      [Parameter(Mandatory=$false)]
+      [string]$CloneVM,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImageUser,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImagePassword      
     )
 
     function ExitScript {
@@ -160,18 +244,49 @@ Function Connect-AppVeyorToHyperV {
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
     $install_user = "appveyor"
+    if ($ImageUser) {
+        $install_user = $ImageUser
+    }
     $install_password = CreatePassword
+    if ($ImagePassword) {
+        $install_password = $ImagePassword
+    }
 
     #Temporary template parent folder
     $ParentFolder = Split-Path $ImageTemplate -Parent
 
+    $MaskCidr = Convert-IpAddressToMaskLength $SubnetMask
+
     if ($imageOs -eq "Windows") {
         $autounattendPath = Join-Path $ParentFolder "hyper-v\Windows\answer_files\2019\Autounattend.xml"
+        if ($UpdateWindows)
+        {
+            $autounattendWithUpdatePath = Join-Path $ParentFolder "hyper-v\Windows\answer_files\2019\Autounattend-withupdate.xml"
+            Remove-Item $autounattendPath -force
+            Copy $autounattendWithUpdatePath $autounattendPath
+        }
         [xml]$autounattend = Get-Content $autounattendPath
         $MicrosoftWindowsShellSetup = $autounattend.unattend.settings.component | ? {$_.name -eq "Microsoft-Windows-Shell-Setup"}
+        # set password to randomly generated
         $MicrosoftWindowsShellSetup.Autologon.password.Value = $install_password
         $MicrosoftWindowsShellSetup.UserAccounts.AdministratorPassword.Value = $install_password
         $MicrosoftWindowsShellSetup.UserAccounts.LocalAccounts.LocalAccount.Password.Value = $install_password
+
+        # set up IP configuration
+        ($MicrosoftWindowsShellSetup.FirstLogonCommands.SynchronousCommand | ? {$_.Description -eq "Assign IP behind NAT"}).CommandLine = `
+        "cmd.exe /c powershell -Command `"New-NetIPAddress -InterfaceAlias Ethernet -IPAddress $MasterIPAddress -AddressFamily IPv4 -PrefixLength $MaskCidr -DefaultGateway $DefaultGateway`""
+        $DnsFormatted =""; $DnsServers.Split(@(',', ';')) | % {$DnsFormatted += "'$($_.Trim())', "}; $DnsFormatted = $DnsFormatted.Trim(@(',', ' ')); $DnsFormatted = "@($DnsFormatted)"
+        ($MicrosoftWindowsShellSetup.FirstLogonCommands.SynchronousCommand | ? {$_.Description -eq "Set DNS"}).CommandLine = `
+        "cmd.exe /c powershell -Command `"Set-DnsClientServerAddress -InterfaceAlias Ethernet -ServerAddresses $DnsFormatted`""
+
+        # custom license key
+        if ($ProductKey) {
+            $key = $autounattend.CreateNode([System.Xml.XmlNodeType]::Element , "Key", "urn:schemas-microsoft-com:unattend")
+            $MicrosoftWindowsSetup = $autounattend.unattend.settings.component | ? {$_.name -eq "Microsoft-Windows-Setup"}
+            $MicrosoftWindowsSetup.UserData.ProductKey.AppendChild($key) | out-null
+            $MicrosoftWindowsSetup.UserData.ProductKey.Key = $ProductKey
+        }
+
         $autounattend.Save($autounattendPath)
 
         #bake iso
@@ -200,13 +315,23 @@ d-i user-setup/allow-password-weak boolean true
 d-i user-setup/encrypt-home boolean false
 d-i passwd/user-default-groups appveyor sudo
 "
-[System.IO.File]::AppendAllText("$ParentFolder/http/preseed18.cfg", $createAccountDirective)
+[System.IO.File]::AppendAllText("$ParentFolder/http/preseed.cfg", $createAccountDirective)
     }
 
-    $iso_checksum = if ($imageOs -eq "Windows") {"221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562"} elseif ($imageOs -eq "Linux") {"7d8e0055d663bffa27c1718685085626cb59346e7626ba3d3f476322271f573e"}
-    $iso_checksum_type = "sha256"
-    $iso_url = "https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso"
-    $manually_download_iso_from = "https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019"
+    # sanitize ISO URL if needed (more reliable than escape backslashes in local/unc paths).
+    if ($IsoUrl) {
+        $PathInfo = [System.Uri]($IsoUrl)
+        if ($PathInfo.IsFile -or $PathInfo.IsUnc)
+        {
+            $IsoUrl = $PathInfo.AbsoluteUri
+        }
+    }
+
+    if ($IsoUrl -and $IsoChecksum) {
+        $iso_checksum_type = 'sha256'
+    } elseif ($IsoUrl) {
+        $iso_checksum_type = 'none'
+    }
 
     if (-not $ImagesDirectory) {
         $ImagesDirectory = Join-Path $env:SystemDrive "$CommonPrefix-Images"
@@ -217,21 +342,21 @@ d-i passwd/user-default-groups appveyor sudo
         $VmsDirectory = Join-Path $env:SystemDrive "$CommonPrefix-VMs"
     }
 
+    if ($PackerTempDirectory -and -not (Test-Path $PackerTempDirectory)) {
+        New-Item $PackerTempDirectory -ItemType Directory -Force | Out-Null
+    }
+
     #TODO scenario if subnet is occuped (to get existing subnets: gwmi -computer .  -class "win32_networkadapterconfiguration" | % {$_.ipsubnet})
     $natSwitch = "$CommonPrefix-NAT-Switch"
     $natNetwork = "$CommonPrefix-NAT-Network"
-    $MasterIPAddress = "10.118.232.2"
-    $SubnetMask = "255.255.255.0"
-    $StartIPAddress = "10.118.232.100"
-    $DefaultGateway = "10.118.232.1"
     $HttpPortMin = "9990"
     $HttpPortMax = "9999"
     $FirewalRuleName = "$CommonPrefix-packer-inbound"
     Write-host "`nGetting or creating virtual switch $natSwitch..." -ForegroundColor Cyan
     if (-not (Get-VMSwitch $natSwitch -ErrorAction Ignore)) {
-        New-VMSwitch -SwitchName $natSwitch -SwitchType Internal
-        New-NetIPAddress -IPAddress 10.118.232.1 -PrefixLength 24 -InterfaceAlias "vEthernet ($natSwitch)"
-        New-NetNAT -Name $natNetwork -InternalIPInterfaceAddressPrefix 10.118.232.0/24
+        New-VMSwitch -SwitchName $natSwitch -SwitchType Internal | out-null
+        New-NetIPAddress -IPAddress $DefaultGateway -PrefixLength $MaskCidr -InterfaceAlias "vEthernet ($natSwitch)" | out-null
+        New-NetNAT -Name $natNetwork -InternalIPInterfaceAddressPrefix $SubnetId/$MaskCidr | out-null
     }
     if ($imageOs -eq "Linux") {
         Write-host "`nGetting or creating inbound firewall rule '$FirewalRuleName' to allow access to Packer HTTP server on ports $HttpPortMin-$HttpPortMax..." -ForegroundColor Cyan
@@ -254,25 +379,52 @@ d-i passwd/user-default-groups appveyor sudo
             Write-Warning "Add '-VhdPath' parameter with if you want to to skip Packer build and and reuse existing VHD."
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
-            & $packerPath build '--only=hyperv-iso' `
-            -var "install_password=$install_password" `
-            -var "install_user=$install_user" `
-            -var "build_agent_mode=HyperV" `
-            -var "disk_size=61440" `
-            -var "hyperv_switchname=$natSwitch" `
-            -var "iso_checksum=$iso_checksum" `
-            -var "iso_checksum_type=$iso_checksum_type" `
-            -var "iso_url=$iso_url" `
-            -var "output_directory=$output_directory" `
-            -var "datemark=$date_mark" `
-            -var "packer_manifest=$packerManifest" `
-            -var "OPT_FEATURES=$ImageFeatures" `
-            -var "host_ip_addr=$MasterIPAddress" `
-            -var "host_ip_mask=$SubnetMask" `
-            -var "host_ip_gw=$DefaultGateway" `
-            -var "http_port_min=$HttpPortMin" `
-            -var "http_port_max=$HttpPortMax" `
-            $ImageTemplate
+
+            $packerBuilder = 'hyperv-iso'
+            if ($CloneVM) {
+                $packerBuilder = 'hyperv-vmcx'
+            }
+
+            $packerArgs = @('build',
+                "--only=$packerBuilder",
+                '-var', "`"install_password=$install_password`"",
+                '-var', "`"install_user=$install_user`"",
+                '-var', "`"build_agent_mode=HyperV`"",
+                '-var', "`"disk_size=$($DiskSize * 1024)`"",
+                '-var', "`"hyperv_switchname=$natSwitch`"",
+                '-var', "`"output_directory=$output_directory`"",
+                '-var', "`"datemark=$date_mark`"",
+                '-var', "`"packer_manifest=$packerManifest`"",
+                '-var', "`"OPT_FEATURES=$ImageFeatures`"",
+                '-var', "`"host_ip_addr=$MasterIPAddress`"",
+                '-var', "`"host_ip_mask=$SubnetMask`"",
+                '-var', "`"host_ip_gw=$DefaultGateway`"",
+                '-var', "`"http_port_min=$HttpPortMin`"",
+                '-var', "`"http_port_max=$HttpPortMax`"",
+                '-var', "`"avma_key=$AVMAKey`"",
+                '-var', "`"cpus=$CpuCores`"",
+                '-var', "`"memory=$RamMb`"",
+                '-var', "`"packer_temp_dir=$PackerTempDirectory`"")
+
+            if ($IsoUrl) {
+                $packerArgs += @('-var', "`"iso_url=$IsoUrl`"")
+            }
+
+            if ($IsoChecksum) {
+                $packerArgs += @('-var', "`"iso_checksum=$IsoChecksum`"")
+            }
+
+            if ($iso_checksum_type) {
+                $packerArgs += @('-var', "`"iso_checksum_type=$iso_checksum_type`"")
+            }
+
+            if ($CloneVM) {
+                $packerArgs += @('-var', "`"clone_vm_name=$CloneVM`"")
+            }        
+
+            $packerArgs += $ImageTemplate
+
+            cmd /c "`"$packerPath`" $($packerArgs -join ' ')"
 
             #Get VHD path
             if (-not (test-path $packerManifest)) {

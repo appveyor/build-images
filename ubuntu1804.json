@@ -1,41 +1,10 @@
 {
   "variables": {
-    "install_user": "appveyor",
-    "install_password": "appveyor",
-    "install_home":"/home/appveyor",
-    "APPVEYOR_BUILD_AGENT_VERSION": "{{env `APPVEYOR_BUILD_AGENT_VERSION`}}",
-    "host_ip_addr": "10.0.0.47",
-    "host_ip_mask": "255.255.255.0",
-    "host_ip_gw": "10.0.0.1",
-    "aws_access_key": "",
-    "aws_secret_key": "",
-    "aws_region": "",
-    "aws_ssh_keypair_name": "",
-    "aws_ssh_private_key_file": "",
-    "gce_account_file": "",
-    "gce_zone": "",
-    "gce_project": "",
-    "gce_source_image": "ubuntu-1804-bionic-v20190212a",
-    "gce_source_image_family": "ubuntu-1804-lts",
-    "iso_checksum_md5": "cb7cd5a0c94899a04a536441c8b6d2bf",
-    "azure_client_id": "",
-    "azure_client_secret": "",
-    "azure_location": "",
-    "azure_resource_group_name": "",
-    "azure_storage_account": "",
-    "azure_subscription_id": "",
-    "azure_vm_size": "Standard_A2_v2",
-    "image_description": "",
-    "deploy_parts": "",
-    "datemark": ""
-  },
+    "iso_url": "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso",
+    "iso_checksum": "7d8e0055d663bffa27c1718685085626cb59346e7626ba3d3f476322271f573e",
+    "iso_checksum_type": "sha256"
+  },  
   "provisioners": [
-    {
-      "type": "file",
-      "source": "distrib",
-      "destination": "./",
-      "generated": "true"
-    },
     {
       "type": "file",
       "source": "{{ template_dir }}/scripts/Ubuntu/custom-scripts",
@@ -43,7 +12,7 @@
     },
     {
       "type": "file",
-      "source": "scripts/Ubuntu/",
+      "source": "{{ template_dir }}/scripts/Ubuntu/",
       "destination": "./"
     },
     {
@@ -58,7 +27,7 @@
       ],
       "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eu '{{.Path}}' {{user `deploy_parts`}}",
       "scripts": [
-        "scripts/Ubuntu/basicconfig.sh"
+        "{{ template_dir }}/scripts/Ubuntu/basicconfig.sh"
       ]
     },
     {
@@ -135,25 +104,26 @@
         "boot<enter>"
       ],
       "boot_wait": "10s",
-      "http_directory": "http",
-      "iso_urls": [
-        "iso/ubuntu-18.04.3-server-amd64.iso",
-        "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso"
-      ],
-
-      "iso_checksum": "{{user `iso_checksum_md5`}}",
-      "iso_checksum_type": "md5",
+      "http_directory": "{{ template_dir }}/http",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "ssh_host": "{{ user `host_ip_addr` }}",
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout" : "1h",
       "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now",
-      "cpus": "1",
-      "memory": "3072",
-      "disk_size": 40960,
-      "disk_block_size": "1",
+      "output_directory":  "{{user `output_directory`}}",
+      "switch_name": "{{user `hyperv_switchname`}}",
+      "http_port_min": "{{user `http_port_min`}}",
+      "http_port_max": "{{user `http_port_max`}}",
+      "cpus": "{{user `cpus`}}",
+      "memory": "{{user `memory`}}",
+      "disk_size": "{{user `disk_size`}}",
       "enable_secure_boot": false,
-      "generation": 2
+      "disk_block_size": "1",
+      "generation": 2,
+      "temp_path": "{{user `packer_temp_dir`}}"
     },
     {
       "type": "hyperv-vmcx",

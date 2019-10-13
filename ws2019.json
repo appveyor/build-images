@@ -22,6 +22,10 @@
     "image_description": "",
     "deploy_parts": "",
 
+    "iso_url": "https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso",
+    "iso_checksum": "221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562",
+    "iso_checksum_type": "sha256",
+
     "helper_script_folder": "C:\\Program Files\\WindowsPowerShell\\Modules\\"
   },
   "provisioners": [
