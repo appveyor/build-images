@@ -90,6 +90,15 @@ Function Connect-AppVeyorToHyperV {
     .PARAMETER ImageCustomScriptAfterReboot
         Base-64 encoded text of custom sript to execute during image creation, after reboot. It is usefull for cases when custom software being installed with 'ImageCustomScript' required some additional action after computer restarted.
 
+    .PARAMETER CloneVM
+        VM name to use as a base for a new VM from.
+
+    .PARAMETER ImageUser
+        Username inside the image.
+
+    .PARAMETER ImagePassword
+        User password inside the image.
+
         .EXAMPLE
         Connect-AppVeyorToHyperV
         Let command collect all required information
@@ -188,7 +197,16 @@ Function Connect-AppVeyorToHyperV {
       [string]$ImageCustomScript,
 
       [Parameter(Mandatory=$false)]
-      [string]$ImageCustomScriptAfterReboot
+      [string]$ImageCustomScriptAfterReboot,
+
+      [Parameter(Mandatory=$false)]
+      [string]$CloneVM,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImageUser,
+
+      [Parameter(Mandatory=$false)]
+      [string]$ImagePassword      
     )
 
     function ExitScript {
@@ -226,7 +244,13 @@ Function Connect-AppVeyorToHyperV {
     $ImageTemplate = ParseImageFeaturesAndCustomScripts $ImageFeatures $ImageTemplate $ImageCustomScript $ImageCustomScriptAfterReboot $ImageOs
 
     $install_user = "appveyor"
+    if ($ImageUser) {
+        $install_user = $ImageUser
+    }
     $install_password = CreatePassword
+    if ($ImagePassword) {
+        $install_password = $ImagePassword
+    }
 
     #Temporary template parent folder
     $ParentFolder = Split-Path $ImageTemplate -Parent
@@ -356,42 +380,51 @@ d-i passwd/user-default-groups appveyor sudo
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
 
-        $packerArgs = @('build',
-            '--only=hyperv-iso',
-            '-var', "`"install_password=$install_password`"",
-            '-var', "`"install_user=$install_user`"",
-            '-var', "`"build_agent_mode=HyperV`"",
-            '-var', "`"disk_size=$($DiskSize * 1024)`"",
-            '-var', "`"hyperv_switchname=$natSwitch`"",
-            '-var', "`"output_directory=$output_directory`"",
-            '-var', "`"datemark=$date_mark`"",
-            '-var', "`"packer_manifest=$packerManifest`"",
-            '-var', "`"OPT_FEATURES=$ImageFeatures`"",
-            '-var', "`"host_ip_addr=$MasterIPAddress`"",
-            '-var', "`"host_ip_mask=$SubnetMask`"",
-            '-var', "`"host_ip_gw=$DefaultGateway`"",
-            '-var', "`"http_port_min=$HttpPortMin`"",
-            '-var', "`"http_port_max=$HttpPortMax`"",
-            '-var', "`"avma_key=$AVMAKey`"",
-            '-var', "`"cpus=$CpuCores`"",
-            '-var', "`"memory=$RamMb`"",
-            '-var', "`"packer_temp_dir=$PackerTempDirectory`"")
+            $packerBuilder = 'hyperv-iso'
+            if ($CloneVM) {
+                $packerBuilder = 'hyperv-vmcx'
+            }
 
-        if ($IsoUrl) {
-            $packerArgs += @('-var', "`"iso_url=$IsoUrl`"")
-        }
+            $packerArgs = @('build',
+                "--only=$packerBuilder",
+                '-var', "`"install_password=$install_password`"",
+                '-var', "`"install_user=$install_user`"",
+                '-var', "`"build_agent_mode=HyperV`"",
+                '-var', "`"disk_size=$($DiskSize * 1024)`"",
+                '-var', "`"hyperv_switchname=$natSwitch`"",
+                '-var', "`"output_directory=$output_directory`"",
+                '-var', "`"datemark=$date_mark`"",
+                '-var', "`"packer_manifest=$packerManifest`"",
+                '-var', "`"OPT_FEATURES=$ImageFeatures`"",
+                '-var', "`"host_ip_addr=$MasterIPAddress`"",
+                '-var', "`"host_ip_mask=$SubnetMask`"",
+                '-var', "`"host_ip_gw=$DefaultGateway`"",
+                '-var', "`"http_port_min=$HttpPortMin`"",
+                '-var', "`"http_port_max=$HttpPortMax`"",
+                '-var', "`"avma_key=$AVMAKey`"",
+                '-var', "`"cpus=$CpuCores`"",
+                '-var', "`"memory=$RamMb`"",
+                '-var', "`"packer_temp_dir=$PackerTempDirectory`"")
 
-        if ($IsoChecksum) {
-            $packerArgs += @('-var', "`"iso_checksum=$IsoChecksum`"")
-        }
+            if ($IsoUrl) {
+                $packerArgs += @('-var', "`"iso_url=$IsoUrl`"")
+            }
 
-        if ($iso_checksum_type) {
-            $packerArgs += @('-var', "`"iso_checksum_type=$iso_checksum_type`"")
-        }
+            if ($IsoChecksum) {
+                $packerArgs += @('-var', "`"iso_checksum=$IsoChecksum`"")
+            }
 
-        $packerArgs += $ImageTemplate
+            if ($iso_checksum_type) {
+                $packerArgs += @('-var', "`"iso_checksum_type=$iso_checksum_type`"")
+            }
 
-        cmd /c "`"$packerPath`" $($packerArgs -join ' ')"
+            if ($CloneVM) {
+                $packerArgs += @('-var', "`"clone_vm_name=$CloneVM`"")
+            }        
+
+            $packerArgs += $ImageTemplate
+
+            cmd /c "`"$packerPath`" $($packerArgs -join ' ')"
 
             #Get VHD path
             if (-not (test-path $packerManifest)) {
