@@ -1399,6 +1399,7 @@ function install_cmake() {
 }
 
 function configure_nuget() {
+    echo "[INFO] Configure nuget..."
     # this must be executed as appveyor user
     if [ "$(whoami)" != "${USER_NAME}" ]; then
         echo "This script must be run as '${USER_NAME}' user. Current user is '$(whoami)'" 1>&2
