@@ -346,9 +346,9 @@ function copy_appveyoragent() {
         AGENT_DIR=/opt/appveyor/build-agent
     fi
 
-    mkdir -p ${AGENT_DIR} &&
+    mkdir -p "${AGENT_DIR}" &&
     #chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR} &&
-    pushd -- ${AGENT_DIR} ||
+    pushd -- "${AGENT_DIR}" ||
         { echo "[ERROR] Cannot create ${AGENT_DIR} folder." 1>&2; return 10; }
 
     if [ -f "${HOME}/distrib/${AGENT_FILE}" ]; then
@@ -495,21 +495,22 @@ function make_git() {
         return 0
     fi
     TMP_DIR=$(mktemp -d)
-    pushd -- ${TMP_DIR}
+    pushd -- "${TMP_DIR}"
     curl -fsSL https://github.com/git/git/archive/v${GIT_VERSION}.zip -o git-${GIT_VERSION}.zip ||
         { echo "[ERROR] Cannot download git ${GIT_VERSION}." 1>&2; popd; return 10; }
     DIR_NAME=$(unzip -l git-${GIT_VERSION}.zip | awk 'NR>4{sub(/\/.*/,"",$4);print $4;}'|sort|uniq|tr -d '\n')
-    [ -d ${DIR_NAME} ] && rm -rf ${DIR_NAME} || true
-    unzip -q -o git-${GIT_VERSION}.zip ||
-        { echo "[ERROR] Cannot unzip git-${GIT_VERSION}.zip." 1>&2; popd; return 20; }
-    cd -- ${DIR_NAME} || { echo "[ERROR] Cannot cd into ${DIR_NAME}. Something went wrong." 1>&2; popd; return 30; }
+    [ -d "${DIR_NAME}" ] && rm -rf "${DIR_NAME}" || true
+    unzip -q -o "git-${GIT_VERSION}.zip" ||
+        { echo "[ERROR] Cannot unzip 'git-${GIT_VERSION}.zip'." 1>&2; popd; return 20; }
+    cd -- ${DIR_NAME} || { echo "[ERROR] Cannot cd into '${DIR_NAME}'. Something went wrong." 1>&2; popd; return 30; }
     #build
     make --silent prefix=/usr/local all &&
         make --silent prefix=/usr/local install ||
         { echo "Make command failed." 1>&2; popd; return 40; }
 
     # cleanup
-    popd && rm -rf ${TMP_DIR}
+    popd &&
+    rm -rf "${TMP_DIR}"
     log_version git --version
 }
 
@@ -520,7 +521,7 @@ function install_gitlfs() {
         { echo "Failed to install git lfs." 1>&2; return 10; }
     log_version dpkg -l git-lfs
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        su -l ${USER_NAME} -c "
+        su -l "${USER_NAME}" -c "
             USER_NAME=${USER_NAME}
             $(declare -f configure_gitlfs)
             configure_gitlfs"  ||
@@ -572,7 +573,7 @@ function configure_svn() {
         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
-    pushd ${HOME}
+    pushd "${HOME}"
     mkdir -p .subversion &&
     echo "[global]
 store-passwords = yes
@@ -612,11 +613,11 @@ function install_pythons(){
         curl -fsSL -O http://www.python.org/ftp/python/${i%[abrcf]*}/Python-${i}.tgz ||
             { echo "[WARNING] Cannot download Python ${i}."; continue; }
         tar -zxf Python-${i}.tgz &&
-        pushd Python-${i} ||
+        pushd "Python-${i}" ||
             { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
         PY_PATH=${HOME}/.localpython${i}
-        mkdir -p ${PY_PATH}
-        ./configure --silent --prefix=${PY_PATH} &&
+        mkdir -p "${PY_PATH}"
+        ./configure --silent "--prefix=${PY_PATH}" &&
         make --silent &&
         make install --silent >/dev/null ||
             { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
@@ -625,17 +626,17 @@ function install_pythons(){
         else
             PY_BIN=python
         fi
-        virtualenv -p $PY_PATH/bin/${PY_BIN} ${VENV_PATH} ||
+        virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
         popd
         fi
     done
-    rm -rf ${HOME}/Python-*
+    find "$HOME" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
 }
 
 function install_powershell() {
     # Import the public repository GPG keys
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - &&
+    curl -fsSL "https://packages.microsoft.com/keys/microsoft.asc" | apt-key add - &&
     # Register the Microsoft Ubuntu repository
     add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/prod.list)" ||
         { echo "[ERROR] Cannot add Microsoft's APT source." 1>&2; return 10; }
@@ -718,8 +719,8 @@ function preheat_dotnet_sdks() {
         pushd  ${TMP_DIR}
         global_json ${ver} >global.json
         dotnet new console
-        popd
-        rm -r ${TMP_DIR}
+        popd &&
+        rm -rf "${TMP_DIR}"
     done
 }
 
@@ -822,7 +823,8 @@ function install_dotnetv3_preview() {
     tar -zxf "${DOTNET3_RUNTIME_TAR}" -C /usr/share/dotnet/ ||
         { echo "[ERROR] Cannot download and unpack .NET Runtime 3.0 preview from url '${DOTNET3_RUNTIME_URL}'." 1>&2; popd; return 30; }
 
-    popd
+    popd &&
+    rm -rf "${TMP_DIR}"
     log_version dotnet --list-sdks
     log_version dotnet --list-runtimes
 }
@@ -910,7 +912,8 @@ function install_jdk() {
     # cleanup
     rm -rf "${DIR_NAME}"
     rm "${JDK_ARCHIVE}"
-    popd
+    popd &&
+    rm -rf "${TMP_DIR}"
 }
 
 function configure_jdk() {
@@ -1268,7 +1271,8 @@ Restart=always" > /etc/systemd/system/redis.service
 
     systemctl enable redis &&
     systemctl disable redis
-    popd
+    popd &&
+    rm -rf "${TMP_DIR}"
     log_version redis-server --version
 }
 
@@ -1291,16 +1295,16 @@ function install_rabbitmq() {
 
 function install_p7zip() {
     local TMP_DIR=$(mktemp -d)
-    pushd -- ${TMP_DIR}
-    curl -fsSL -O https://sourceforge.net/projects/p7zip/files/p7zip/16.02/p7zip_16.02_src_all.tar.bz2 &&
-    tar jxf p7zip_16.02_src_all.tar.bz2 ||
+    pushd -- "${TMP_DIR}"
+    curl -fsSL -O "https://sourceforge.net/projects/p7zip/files/p7zip/16.02/p7zip_16.02_src_all.tar.bz2" &&
+    tar jxf "p7zip_16.02_src_all.tar.bz2" ||
         { echo "[ERROR] Cannot download and unpack p7zip source code." 1>&2; popd; return 10; }
-    cd p7zip_16.02
+    cd "p7zip_16.02"
     make --silent all &&
     ./install.sh ||
         { echo "[ERROR] Cannot build and install p7zip." 1>&2; popd; return 20; }
-    popd
-    rm -rf ${TMP_DIR}
+    popd &&
+    rm -rf "${TMP_DIR}"
 }
 
 function install_packer() {
@@ -1377,12 +1381,12 @@ function install_cmake() {
     fi
     local TAR_FILE=cmake-${VERSION}-Linux-x86_64.tar.gz
     local TMP_DIR=$(mktemp -d)
-    pushd -- ${TMP_DIR}
-    curl -fsSL -O https://cmake.org/files/v${VERSION%.*}/${TAR_FILE} &&
-    tar -zxf ${TAR_FILE} ||
+    pushd -- "${TMP_DIR}"
+    curl -fsSL -O "https://cmake.org/files/v${VERSION%.*}/${TAR_FILE}" &&
+    tar -zxf "${TAR_FILE}" ||
         { echo "[ERROR] Cannot download and untar cmake." 1>&2; popd; return 10; }
     DIR_NAME=$(tar -ztf ${TAR_FILE} |cut -d'/' -f1|sort|uniq|head -n1)
-    cd -- ${DIR_NAME} ||
+    cd -- "${DIR_NAME}" ||
         { echo "[ERROR] Cannot change directory to ${DIR_NAME}." 1>&2; popd; return 20; }
     [ -d "/usr/share/cmake-${VERSION%.*}" ] && rm -rf "/usr/share/cmake-${VERSION%.*}" || true
     mv -f ./bin/* /usr/bin/ &&
@@ -1390,7 +1394,8 @@ function install_cmake() {
     mv -f ./share/aclocal/* /usr/share/aclocal/||
         { echo "[ERROR] Cannot install cmake." 1>&2; popd; return 30; }
     log_version cmake --version
-    popd
+    popd &&
+    rm -rf "${TMP_DIR}"
 }
 
 function configure_nuget() {
@@ -1454,12 +1459,12 @@ function install_curl() {
     fi
     local TAR_FILE=curl-${VERSION}.tar.gz
     local TMP_DIR=$(mktemp -d)
-    pushd -- ${TMP_DIR}
-    curl -fsSL -O https://curl.haxx.se/download/${TAR_FILE} &&
-    tar -zxf ${TAR_FILE} ||
+    pushd -- "${TMP_DIR}"
+    curl -fsSL -O "https://curl.haxx.se/download/${TAR_FILE}" &&
+    tar -zxf "${TAR_FILE}" ||
         { echo "[ERROR] Cannot download and untar curl." 1>&2; popd; return 10; }
     DIR_NAME=$(tar -ztf ${TAR_FILE} |cut -d'/' -f1|sort|uniq|head -n1)
-    cd -- ${DIR_NAME} ||
+    cd -- "${DIR_NAME}" ||
         { echo "[ERROR] Cannot change directory to ${DIR_NAME}." 1>&2; popd; return 20; }
 
     # purge all installed curl packages
@@ -1473,7 +1478,8 @@ function install_curl() {
     make install ||
         { echo "[ERROR] Cannot make curl." 1>&2; popd; return 30; }
     log_version curl --version
-    popd
+    popd &&
+    rm -rf "${TMP_DIR}"
 }
 
 function install_browsers() {
@@ -1514,7 +1520,7 @@ function install_virtualbox() {
     fi
 
     TMP_DIR=$(mktemp -d)
-    pushd -- ${TMP_DIR}
+    pushd -- "${TMP_DIR}"
     curl -fsSL -O "${VBE_URL}" ||
         { echo "[ERROR] Cannot download Virtualbox Extention pack." 1>&2; popd; return 30; }
     yes | VBoxManage extpack install --replace "${VBE_URL##*/}" ||
@@ -1525,8 +1531,8 @@ function install_virtualbox() {
     #cleanup
     rm -f "${VBE_URL##*/}"
 
-    popd
-
+    popd &&
+    rm -rf "${TMP_DIR}"
     log_version vboxmanage --version
 }
 
@@ -1555,7 +1561,7 @@ function install_octo() {
     fi
     OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.ubuntu.16.04-x64.tar.gz"
     local TMP_DIR=$(mktemp -d)
-    pushd -- ${TMP_DIR}
+    pushd -- "${TMP_DIR}"
     curl -fsSL "${OCTO_URL}" -o OctopusTools.tar.gz ||
         { echo "[ERROR] Cannot download OctopusTools." 1>&2; popd; return 10; }
     mkdir -p /opt/octopus &&
@@ -1569,7 +1575,8 @@ function install_octo() {
     log_version /opt/octopus/Octo version
     # cleanup
     rm OctopusTools.tar.gz
-    popd
+    popd &&
+    rm -rf "${TMP_DIR}"
 }
 
 function add_ssh_known_hosts() {

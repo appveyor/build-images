@@ -191,7 +191,8 @@ function install_sqlserver() {
     ) > /etc/systemd/system/mssql-server.service.d/override.conf ||
         { echo "[ERROR] Cannot configure workaround for mssql-server." 1>&2; return 45; }
 
-    popd
+    popd &&
+    rm -rf "${TMP_DIR}"
     log_version dpkg -l mssql-server
 }
 
