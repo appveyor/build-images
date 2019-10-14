@@ -1618,8 +1618,10 @@ printf "OS %s (%s %s %s)\n" "$PRETTY_NAME" "$(uname -o)" "$(uname -r)" "$(uname 
 function fix_grub_timeout() {
     # https://askubuntu.com/questions/1114797/grub-timeout-set-to-30-after-upgrade
     echo 'Fixing GRUB_TIMEOUT'
-    sudo sh -c 'echo GRUB_RECORDFAIL_TIMEOUT=0 >> /etc/default/grub';
-    sudo update-grub; sudo grub-install;
+    echo "GRUB_RECORDFAIL_TIMEOUT=0" >> /etc/default/grub &&
+    update-grub &&
+    grub-install ||
+        { echo "[ERROR] Cannot update grub." 1>&2; return 10; }
 }
 
 function check_folders() {
