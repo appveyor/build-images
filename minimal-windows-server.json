@@ -6,158 +6,173 @@
   },
   "provisioners": [
     {
-        "type": "powershell",
-        "scripts": [
-            "{{ template_dir }}/scripts/Windows/create_appveyor_user.ps1"
-        ],
-        "environment_vars": [
-            "appveyor_user={{user `install_user`}}",
-            "appveyor_password={{user `install_password`}}"
-        ]
+      "type": "powershell",
+      "scripts": [
+        "{{ template_dir }}/scripts/Windows/create_appveyor_user.ps1"
+      ],
+      "environment_vars": [
+        "appveyor_user={{user `install_user`}}",
+        "appveyor_password={{user `install_password`}}"
+      ]
     },
     {
-        "type": "powershell",
-        "inline":[
-            "Write-Host \"Current user: $(whoami)\""
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}"
+      "type": "powershell",
+      "inline": [
+        "Write-Host \"Current user: $(whoami)\""
+      ],
+      "elevated_user": "{{user `install_user`}}",
+      "elevated_password": "{{user `install_password`}}"
     },
     {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/init_server.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}"
-    },    
-    {
-        "type": "windows-restart",
-        "restart_timeout": "30m"
+      "type": "powershell",
+      "scripts": [
+        "{{ template_dir }}/scripts/Windows/init_server.ps1"
+      ],
+      "elevated_user": "{{user `install_user`}}",
+      "elevated_password": "{{user `install_password`}}"
     },
     {
-        "type": "powershell",
-        "inline":[
-            "cmd /c cscript \"%windir%\\system32\\slmgr.vbs\" /ipk {{user `avma_key`}}"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}"
+      "type": "powershell",
+      "scripts": [
+        "{{ template_dir }}/scripts/Windows/extend_system_volume.ps1"
+      ],
+      "elevated_user": "{{user `install_user`}}",
+      "elevated_password": "{{user `install_password`}}",
+      "only": [
+        "azure-arm"
+      ]
     },
     {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/disable_winupdates.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}",          
-        "only": ["hyperv-iso"]
+      "type": "windows-restart",
+      "restart_timeout": "10m"
     },
     {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_path_utils.ps1",
-            "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1",
-            "{{ template_dir }}/scripts/Windows/install_powershell_get.ps1",
-            "{{ template_dir }}/scripts/Windows/install_7zip.ps1",
-            "{{ template_dir }}/scripts/Windows/install_chocolatey.ps1",
-            "{{ template_dir }}/scripts/Windows/install_nuget.ps1",
-            "{{ template_dir }}/scripts/Windows/install_pstools.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}" 
+      "type": "powershell",
+      "scripts": [
+        "{{ template_dir }}/scripts/Windows/activate_avma.ps1"
+      ],
+      "environment_vars": [
+        "avma_key={{user `avma_key`}}"
+      ],
+      "elevated_user": "{{user `install_user`}}",
+      "elevated_password": "{{user `install_password`}}",
+      "only": [
+        "hyperv-iso"
+      ]
     },
     {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_git.ps1",
-            "{{ template_dir }}/scripts/Windows/install_git_lfs.ps1",
-            "{{ template_dir }}/scripts/Windows/install_mercurial.ps1",
-            "{{ template_dir }}/scripts/Windows/install_subversion.ps1",
-            "{{ template_dir }}/scripts/Windows/add_ssh_known_hosts.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}" 
+      "type": "powershell",
+      "scripts": [
+        "{{ template_dir }}/scripts/Windows/install_path_utils.ps1",
+        "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1",
+        "{{ template_dir }}/scripts/Windows/install_powershell_get.ps1",
+        "{{ template_dir }}/scripts/Windows/install_7zip.ps1",
+        "{{ template_dir }}/scripts/Windows/install_chocolatey.ps1",
+        "{{ template_dir }}/scripts/Windows/install_nuget.ps1",
+        "{{ template_dir }}/scripts/Windows/install_pstools.ps1"
+      ],
+      "elevated_user": "{{user `install_user`}}",
+      "elevated_password": "{{user `install_password`}}"
     },
     {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_appveyor_build_agent_core.ps1",
-            "{{ template_dir }}/scripts/Windows/enable_autologon.ps1"
-        ],
-        "environment_vars": [
-            "appveyor_user={{user `install_user`}}",
-            "appveyor_password={{user `install_password`}}",
-            "build_agent_mode={{user `build_agent_mode`}}"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}"
+      "type": "powershell",
+      "scripts": [
+        "{{ template_dir }}/scripts/Windows/install_git.ps1",
+        "{{ template_dir }}/scripts/Windows/install_git_lfs.ps1",
+        "{{ template_dir }}/scripts/Windows/install_mercurial.ps1",
+        "{{ template_dir }}/scripts/Windows/install_subversion.ps1",
+        "{{ template_dir }}/scripts/Windows/add_ssh_known_hosts.ps1"
+      ],
+      "elevated_user": "{{user `install_user`}}",
+      "elevated_password": "{{user `install_password`}}"
     },
     {
-    "type": "powershell",
-    "inline": [
+      "type": "powershell",
+      "scripts": [
+        "{{ template_dir }}/scripts/Windows/disable_winupdates.ps1"
+      ],
+      "elevated_user": "{{user `install_user`}}",
+      "elevated_password": "{{user `install_password`}}",
+      "only": [
+        "hyperv-iso"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "{{ template_dir }}/scripts/Windows/install_appveyor_build_agent_core.ps1",
+        "{{ template_dir }}/scripts/Windows/enable_autologon.ps1"
+      ],
+      "environment_vars": [
+        "appveyor_user={{user `install_user`}}",
+        "appveyor_password={{user `install_password`}}",
+        "build_agent_mode={{user `build_agent_mode`}}"
+      ],
+      "elevated_user": "{{user `install_user`}}",
+      "elevated_password": "{{user `install_password`}}"
+    },
+    {
+      "type": "powershell",
+      "inline": [
         "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/InitializeInstance.ps1 -Schedule"
-    ],
-    "only": ["amazon-ebs"]
+      ],
+      "only": [
+        "amazon-ebs"
+      ]
     }
   ],
   "builders": [
     {
-        "type": "azure-arm",
-        "subscription_id": "{{ user `azure_subscription_id` }}",
-        "client_id": "{{ user `azure_client_id` }}",
-        "client_secret": "{{ user `azure_client_secret` }}",
-        "location": "{{ user `azure_location` }}",
-
-        "temp_resource_group_name": "packer-RG-win-{{uuid}}",
-
-        "os_type": "Windows",
-        "image_publisher": "MicrosoftWindowsServer",
-        "image_offer": "WindowsServer",
-        "image_sku": "2019-Datacenter",
-        "vm_size": "{{user `azure_vm_size`}}",
-        "os_disk_size_gb": 128,
-
-        "capture_container_name": "appveyor-images-win",
-        "capture_name_prefix": "win-{{user `datemark`}}",
-        "resource_group_name": "{{ user `azure_resource_group_name` }}",
-        "storage_account": "{{ user `azure_storage_account` }}",
-
-        "communicator": "winrm",
-        "winrm_use_ssl": "true",
-        "winrm_insecure": "true",
-        "winrm_timeout": "30m",
-        "winrm_username": "packer",
-
-        "azure_tags": {
-          "automation": "packer",
-          "OS": "WindowsServer 2019-Datacenter",
-          "description": "{{user `image_description`}}",
-          "date": "{{user `datemark`}}"
-        }
+      "type": "azure-arm",
+      "subscription_id": "{{ user `azure_subscription_id` }}",
+      "client_id": "{{ user `azure_client_id` }}",
+      "client_secret": "{{ user `azure_client_secret` }}",
+      "location": "{{ user `azure_location` }}",
+      "temp_resource_group_name": "packer-RG-win-{{uuid}}",
+      "os_type": "Windows",
+      "image_publisher": "MicrosoftWindowsServer",
+      "image_offer": "WindowsServer",
+      "image_sku": "2019-Datacenter",
+      "vm_size": "{{user `azure_vm_size`}}",
+      "os_disk_size_gb": 128,
+      "capture_container_name": "appveyor-images-win",
+      "capture_name_prefix": "win-{{user `datemark`}}",
+      "resource_group_name": "{{ user `azure_resource_group_name` }}",
+      "storage_account": "{{ user `azure_storage_account` }}",
+      "communicator": "winrm",
+      "winrm_use_ssl": "true",
+      "winrm_insecure": "true",
+      "winrm_timeout": "30m",
+      "winrm_username": "packer",
+      "azure_tags": {
+        "automation": "packer",
+        "OS": "WindowsServer 2019-Datacenter",
+        "description": "{{user `image_description`}}",
+        "date": "{{user `datemark`}}"
+      }
     },
     {
       "type": "amazon-ebs",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
       "region": "{{user `aws_region`}}",
-
       "source_ami_filter": {
         "filters": {
-        "virtualization-type": "hvm",
-        "name": "Windows_Server-2019-English-Full-Base*",
-        "root-device-type": "ebs"
+          "virtualization-type": "hvm",
+          "name": "Windows_Server-2019-English-Full-Base*",
+          "root-device-type": "ebs"
         },
-        "owners": ["801119661308"],
+        "owners": [
+          "801119661308"
+        ],
         "most_recent": true
       },
       "instance_type": "{{user `aws_instance_type`}}",
-
       "communicator": "winrm",
       "winrm_username": "Administrator",
       "winrm_use_ssl": true,
       "winrm_insecure": true,
-      "user_data_file":"{{ template_dir }}/scripts/Windows/ec2-userdata.ps1",
-
+      "user_data_file": "{{ template_dir }}/scripts/Windows/ec2-userdata.ps1",
       "ami_name": "Appveyor Worker Windows Server 2019 {{uuid}}",
       "ami_description": "{{user `image_description`}}",
       "launch_block_device_mappings": [
@@ -175,7 +190,7 @@
       "project_id": "{{ user `gce_project` }}",
       "zone": "{{ user `gce_zone` }}",
       "source_image_family": "windows-2019",
-      "state_timeout" : "15m",
+      "state_timeout": "15m",
       "machine_type": "{{ user `gce_machine_type` }}",
       "communicator": "winrm",
       "winrm_username": "packer_user",
@@ -188,6 +203,24 @@
       "metadata": {
         "windows-startup-script-cmd": "winrm quickconfig -quiet & net user /add packer_user & net localgroup administrators packer_user /add & winrm set winrm/config/service/auth @{Basic=\"true\"}"
       }
+    },
+    {
+      "type": "hyperv-vmcx",
+      "clone_from_vm_name": "{{ user `clone_vm_name` }}",
+      "vm_name": "master-vs2019-{{ user `datemark` }}",
+      "switch_name": "{{user `hyperv_switchname`}}",
+      "enable_secure_boot": true,
+      "enable_virtualization_extensions": true,
+      "generation": 2,      
+      "communicator":"winrm",
+      "winrm_timeout" : "1h",
+      "winrm_username": "{{ user `install_user` }}",
+      "winrm_password": "{{ user `install_password` }}",
+      "shutdown_command": "powershell -command Disable-NetFirewallRule -Direction Inbound; Stop-Computer",
+      "output_directory": "{{user `output_directory`}}",
+      "cpus": "{{user `cpus`}}",
+      "memory": "{{user `memory`}}",
+      "temp_path": "{{user `packer_temp_dir`}}"
     },
     {
       "type": "hyperv-iso",
@@ -212,14 +245,15 @@
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "memory": "{{user `memory`}}",
-      "shutdown_command": "e:/shutdown_vm.bat",
+      "shutdown_command": "powershell -command Disable-NetFirewallRule -Direction Inbound; Stop-Computer",
       "output_directory": "{{user `output_directory`}}",
       "switch_name": "{{user `hyperv_switchname`}}",
       "vm_name": "windows-server-2019-{{user `datemark`}}",
       "winrm_timeout": "2h",
       "winrm_password": "{{user `install_password`}}",
-      "winrm_username": "{{user `install_user`}}"
-    }    
+      "winrm_username": "{{user `install_user`}}",
+      "temp_path": "{{user `packer_temp_dir`}}"
+    }
   ],
   "post-processors": [
     {
