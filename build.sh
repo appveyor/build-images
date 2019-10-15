@@ -99,8 +99,12 @@ if [[ -n "${GCE_IMAGE_NAME-}" ]]; then
     PACKER_PARAMS+=( "-var" "gce_source_image=${GCE_IMAGE_NAME}" )
 fi
 if [[ -n "${build_agent_mode-}" ]]; then
-    echo "gce_source_image set to ${build_agent_mode}"
+    echo "build_agent_mode set to ${build_agent_mode}"
     PACKER_PARAMS+=( "-var" "build_agent_mode=${build_agent_mode}" )
+fi
+if [[ -n "${packer_custom_args-}" ]]; then
+    echo "packer_custom_args set to ${packer_custom_args}"
+    PACKER_PARAMS+=( "${packer_custom_args}" )
 fi
 
 # check template exists
