@@ -206,7 +206,7 @@ Function Connect-AppVeyorToHyperV {
       [string]$ImageUser,
 
       [Parameter(Mandatory=$false)]
-      [string]$ImagePassword      
+      [string]$ImagePassword
     )
 
     function ExitScript {
@@ -389,40 +389,44 @@ d-i passwd/user-default-groups appveyor sudo
 
             $packerArgs = @('build',
                 "--only=$packerBuilder",
-                '-var', "`"install_password=$install_password`"",
-                '-var', "`"install_user=$install_user`"",
-                '-var', "`"build_agent_mode=HyperV`"",
-                '-var', "`"disk_size=$($DiskSize * 1024)`"",
-                '-var', "`"hyperv_switchname=$natSwitch`"",
-                '-var', "`"output_directory=$output_directory`"",
-                '-var', "`"datemark=$date_mark`"",
-                '-var', "`"packer_manifest=$packerManifest`"",
-                '-var', "`"OPT_FEATURES=$ImageFeatures`"",
-                '-var', "`"host_ip_addr=$MasterIPAddress`"",
-                '-var', "`"host_ip_mask=$SubnetMask`"",
-                '-var', "`"host_ip_gw=$DefaultGateway`"",
-                '-var', "`"http_port_min=$HttpPortMin`"",
-                '-var', "`"http_port_max=$HttpPortMax`"",
-                '-var', "`"avma_key=$AVMAKey`"",
-                '-var', "`"cpus=$CpuCores`"",
-                '-var', "`"memory=$RamMb`"",
-                '-var', "`"packer_temp_dir=$PackerTempDirectory`"")
+                "-var `"install_password=$install_password`"",
+                "-var `"install_user=$install_user`"",
+                "-var `"build_agent_mode=HyperV`"",
+                "-var `"disk_size=$($DiskSize * 1024)`"",
+                "-var `"hyperv_switchname=$natSwitch`"",
+                "-var `"output_directory=$output_directory`"",
+                "-var `"datemark=$date_mark`"",
+                "-var `"packer_manifest=$packerManifest`"",
+                "-var `"OPT_FEATURES=$ImageFeatures`"",
+                "-var `"host_ip_addr=$MasterIPAddress`"",
+                "-var `"host_ip_mask=$SubnetMask`"",
+                "-var `"host_ip_gw=$DefaultGateway`"",
+                "-var `"http_port_min=$HttpPortMin`"",
+                "-var `"http_port_max=$HttpPortMax`"",
+                "-var `"avma_key=$AVMAKey`"",
+                "-var `"cpus=$CpuCores`"",
+                "-var `"memory=$RamMb`"",
+                "-var `"packer_temp_dir=$PackerTempDirectory`"")
 
             if ($IsoUrl) {
-                $packerArgs += @('-var', "`"iso_url=$IsoUrl`"")
+                $packerArgs += @("-var `"iso_url=$IsoUrl`"")
             }
 
             if ($IsoChecksum) {
-                $packerArgs += @('-var', "`"iso_checksum=$IsoChecksum`"")
+                $packerArgs += @("-var `"iso_checksum=$IsoChecksum`"")
             }
 
             if ($iso_checksum_type) {
-                $packerArgs += @('-var', "`"iso_checksum_type=$iso_checksum_type`"")
+                $packerArgs += @("-var `"iso_checksum_type=$iso_checksum_type`"")
             }
 
             if ($CloneVM) {
-                $packerArgs += @('-var', "`"clone_vm_name=$CloneVM`"")
-            }        
+                $packerArgs += @("-var `"clone_vm_name=$CloneVM`"")
+            }
+
+            if ($env:packer_custom_args) {
+                $packerArgs += $env:packer_custom_args
+            }
 
             $packerArgs += $ImageTemplate
 

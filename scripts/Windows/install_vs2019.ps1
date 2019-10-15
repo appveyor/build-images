@@ -238,7 +238,14 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.VisualStudio.Workload.VisualStudioExtension '
 
 $Sku = 'Community'
-$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
+
+if ($env:install_vs2019_preview) {
+	Write-Host "Installing from 'Preview' channel"
+	$VSBootstrapperURL = 'https://aka.ms/vs/16/pre/vs_community.exe'
+} else {
+	Write-Host "Installing from 'Release' channel"
+	$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
+}
 
 $ErrorActionPreference = 'Stop'
 

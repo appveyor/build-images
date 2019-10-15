@@ -144,7 +144,10 @@
             "{{ template_dir }}/scripts/Windows/install_vs2019.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}" 
+        "elevated_password": "{{user `install_password`}}",
+        "environment_vars": [
+            "install_vs2019_preview={{user `install_vs2019_preview`}}"
+        ]        
     },
     {
         "type": "windows-restart",
