@@ -8,15 +8,16 @@ cmd /c start /wait $exePath /quiet
 Remove-Item $exePath -Force -ErrorAction Ignore
 Write-Host "OK"
 
-if (-not (test-path "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community")) {
-  return
-}
-Write-Host "Installing Visual Studio 2019 WDK extension..."
-
 $vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community"
 if (-not (Test-Path $vsPath)) {
     $vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview"
 }
+
+if (-not (Test-Path $vsPath)) {
+  return
+}
+
+Write-Host "Installing Visual Studio 2019 WDK extension..."
 
 $vsVersion=& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationVersion | Out-String
 $vsVersion = $vsVersion -replace "`n|`r"

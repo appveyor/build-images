@@ -18,7 +18,7 @@ if($uninstallCommand) {
 
 # install mono
 Write-Host "Downloading..."
-$msiPath = "$($env:USERPROFILE)\mono-4.2.3.4-gtksharp-2.12.30-win32-0.msi"
+$msiPath = "$($env:TEMP)\mono-4.2.3.4-gtksharp-2.12.30-win32-0.msi"
 (New-Object Net.WebClient).DownloadFile('http://download.mono-project.com/archive/4.2.3/windows-installer/mono-4.2.3.4-gtksharp-2.12.30-win32-0.msi', $msiPath)
 
 Write-Host "Installing..."
@@ -26,6 +26,6 @@ cmd /c start /wait msiexec /i "$msiPath" /q
 del $msiPath
 
 # check
-if(Test-Path 'C:\Program Files (x86)\Mono\bin') {
+if(Test-Path "${env:ProgramFiles(x86)}\Mono\bin") {
     Write-host "Mono installed" -ForegroundColor Green
 }

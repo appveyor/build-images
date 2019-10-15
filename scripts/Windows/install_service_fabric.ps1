@@ -5,7 +5,7 @@ cmd /c start /wait $exePath /AcceptEULA
 del $exePath
 
 # install SDK and VS Tools
-if (test-path 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community') {
+if (test-path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community") {
     # SDK only
     cmd /c start /wait webpicmd /Install /Products:MicrosoftAzure-ServiceFabric-CoreSDK /AcceptEula
 } else {

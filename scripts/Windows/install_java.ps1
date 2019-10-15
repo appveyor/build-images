@@ -118,14 +118,14 @@ Disable-ScheduledTask -TaskPath '\' -TaskName 'JavaUpdateSched'
 $env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
 
 # Fix Java installs
-Remove-Path 'C:\ProgramData\Oracle\Java\javapath'
-Remove-Path 'C:\Program Files (x86)\Common Files\Oracle\Java\javapath'
-Remove-Path 'C:\Program Files\Java\jdk1.7.0\bin'
-Add-Path 'C:\Program Files\Java\jdk1.8.0\bin'
-del 'C:\Windows\System32\java.exe'
-del 'C:\Windows\System32\javaw.exe'
-del 'C:\Windows\SysWOW64\java.exe'
-del 'C:\Windows\SysWOW64\javaw.exe'
+Remove-Path "C:\ProgramData\Oracle\Java\javapath"
+Remove-Path "${env:ProgramFiles(x86)}\Common Files\Oracle\Java\javapath"
+Remove-Path "${env:ProgramFiles}\Java\jdk1.7.0\bin"
+Add-Path "${env:ProgramFiles}\Java\jdk1.8.0\bin"
+del "C:\Windows\System32\java.exe"
+del "C:\Windows\System32\javaw.exe"
+del "C:\Windows\SysWOW64\java.exe"
+del "C:\Windows\SysWOW64\javaw.exe"
 
 # Remove Java 6 from Registry (to get rid of Xamarin/Android warning)
 Remove-Item -Path 'hklm:\Software\JavaSoft\Java Development Kit\1.6' -Force

@@ -8,15 +8,15 @@ Write-Host "Installing..."
 cmd /c start /wait $exePath /S
 del $exePath
 
-Remove-Path 'C:\Program Files\erl7.1\bin'
-Remove-Path 'C:\Program Files\erl7.3\bin'
-Remove-Path 'C:\Program Files\erl8.2\bin'
-Remove-Path 'C:\Program Files\erl8.3\bin'
+Remove-Path "${env:ProgramFiles}\erl7.1\bin"
+Remove-Path "${env:ProgramFiles}\erl7.3\bin"
+Remove-Path "${env:ProgramFiles}\erl8.2\bin"
+Remove-Path "${env:ProgramFiles}\erl8.3\bin"
 
-Add-Path 'C:\Program Files\erl9.2\bin'
-[Environment]::SetEnvironmentVariable('ERLANG_HOME', 'C:\Program Files\erl9.2', 'Machine')
+Add-Path "${env:ProgramFiles}\erl9.2\bin"
+[Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\erl9.2", "Machine")
 
-# C:\Program Files\erl9.2
+# ${env:ProgramFiles}\erl9.2
 
 $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
 $x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `

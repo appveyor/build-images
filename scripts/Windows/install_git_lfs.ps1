@@ -4,7 +4,7 @@ Write-Host "=================="
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # delete existing Git LFS
-del 'C:\Program Files\Git\mingw64\bin\git-lfs.exe' -ErrorAction SilentlyContinue
+del "${env:ProgramFiles}\Git\mingw64\bin\git-lfs.exe" -ErrorAction SilentlyContinue
 
 $exePath = "$env:TEMP\git-lfs-windows.exe"
 

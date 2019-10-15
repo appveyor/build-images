@@ -11,7 +11,7 @@ $exePath = "$env:TEMP\rabbitmq-server-$rabbitVersion.exe"
 Write-Host "Installing..."
 cmd /c start /wait $exePath /S
 
-$rabbitPath = "C:\Program Files\RabbitMQ Server\rabbitmq_server-$rabbitVersion"
+$rabbitPath = "${env:ProgramFiles}\RabbitMQ Server\rabbitmq_server-$rabbitVersion"
 
 Write-Host "Installing service..."
 Start-Process -Wait "$rabbitPath\sbin\rabbitmq-service.bat" "install"
@@ -27,13 +27,13 @@ Write-Host "Installing RabbitMQ plugins..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
 $zipPath = "$env:TEMP\rabbitmq_delayed_message_exchange-20171201-3.7.x.zip"
-$pluginPath = "C:\Program Files\RabbitMQ Server\rabbitmq_server-$rabbitVersion\plugins"
+$pluginPath = "${env:ProgramFiles}\RabbitMQ Server\rabbitmq_server-$rabbitVersion\plugins"
 (New-Object Net.WebClient).DownloadFile('https://bintray.com/rabbitmq/community-plugins/download_file?file_path=3.7.x%2Frabbitmq_delayed_message_exchange%2Frabbitmq_delayed_message_exchange-20171201-3.7.x.zip', $zipPath)
 7z x $zipPath -y -o"$pluginPath" | Out-Null
 
 Write-Host "Installing..."
-& "C:\Program Files\RabbitMQ Server\rabbitmq_server-$rabbitVersion\sbin\rabbitmq-plugins.bat" enable rabbitmq_delayed_message_exchange
-& "C:\Program Files\RabbitMQ Server\rabbitmq_server-$rabbitVersion\sbin\rabbitmq-plugins.bat" enable rabbitmq_management
+& "${env:ProgramFiles}\RabbitMQ Server\rabbitmq_server-$rabbitVersion\sbin\rabbitmq-plugins.bat" enable rabbitmq_delayed_message_exchange
+& "${env:ProgramFiles}\RabbitMQ Server\rabbitmq_server-$rabbitVersion\sbin\rabbitmq-plugins.bat" enable rabbitmq_management
 
 # Management URL: http://127.0.0.1:15672/
 # Username/password: guest/guest

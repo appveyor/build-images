@@ -9,7 +9,7 @@ Write-Host "==================================================="
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$destPath = "C:\Program Files\AppVeyor\BuildAgent"
+$destPath = "${env:ProgramFiles}\AppVeyor\BuildAgent"
 
 if (Test-Path $destPath) {
 	Remove-Item $destPath -Recurse -Force

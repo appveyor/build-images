@@ -1,6 +1,6 @@
 ﻿Write-Host "Installing JDK 11 ..." -ForegroundColor Cyan
 
-$jdkPath = 'C:\Program Files\Java\jdk11'
+$jdkPath = "${env:ProgramFiles}\Java\jdk11"
 
 if(Test-Path $jdkPath) {
     Remove-Item $jdkPath -Recurse -Force

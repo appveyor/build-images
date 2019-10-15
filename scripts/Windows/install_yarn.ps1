@@ -8,6 +8,6 @@ Write-Host "Installing..."
 cmd /c start /wait msiexec /i "$msiPath" /quiet
 del $msiPath
 
-Add-Path 'C:\Program Files (x86)\Yarn\bin'
+Add-Path "${env:ProgramFiles(x86)}\Yarn\bin"
 
 Write-Host "Yarn installed" -ForegroundColor Green

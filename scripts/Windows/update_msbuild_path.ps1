@@ -48,6 +48,3 @@ if (Test-Path $msbuild_vs2019_path) {
     Add-Path $msbuild_12_path
     Add-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio 12.0\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\120"
 }
-
-# Add SqlPackage.exe
-#Add-Path 'C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\120'

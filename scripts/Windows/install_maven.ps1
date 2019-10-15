@@ -1,6 +1,6 @@
 ﻿Write-Host "Installing Apache Maven 3.6.2 ..." -ForegroundColor Cyan
 
-$apachePath = 'C:\Program Files (x86)\Apache'
+$apachePath = "${env:ProgramFiles(x86)}\Apache"
 $mavenPath = "$apachePath\Maven"
 
 if(Test-Path $mavenPath) {

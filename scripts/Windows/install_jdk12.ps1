@@ -1,6 +1,6 @@
 ﻿Write-Host "Installing JDK 12 ..." -ForegroundColor Cyan
 
-$jdkPath = 'C:\Program Files\Java\jdk12'
+$jdkPath = "${env:ProgramFiles}\Java\jdk12"
 
 if(Test-Path $jdkPath) {
     Remove-Item $jdkPath -Recurse -Force
