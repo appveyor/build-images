@@ -262,5 +262,11 @@ if (get-Service IpOverUsbSvc -ErrorAction Ignore) {
 }
 
 Write-Host "Adding Visual Studio 2019 current MSBuild to PATH..." -ForegroundColor Cyan
-Add-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
-Add-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150"
+
+$vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community"
+if (-not (Test-Path $vsPath)) {
+    $vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview"
+}
+
+Add-Path "$vsPath\MSBuild\Current\Bin"
+Add-Path "$vsPath\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150"

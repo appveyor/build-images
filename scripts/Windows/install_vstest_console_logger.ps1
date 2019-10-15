@@ -4,8 +4,14 @@ $vs2013TestWindowPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio 12.0\C
 $vs2015TestWindowPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio 14.0\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
 $vs2017TestWindowPath1 = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
 $vs2017TestWindowPath2 = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community\Common7\IDE\Extensions\TestPlatform"
-$vs2019TestWindowPath1 = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
-$vs2019TestWindowPath2 = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\TestPlatform"
+
+$vs2019RootPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community"
+if (-not (Test-Path $vsPath)) {
+    $vs2019RootPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview"
+}
+
+$vs2019TestWindowPath1 = "$vs2019RootPath\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
+$vs2019TestWindowPath2 = "$vs2019RootPath\Common7\IDE\Extensions\TestPlatform"
 
 $vs2013Path = "$vs2013TestWindowPath\Extensions"
 $vs2015Path = "$vs2015TestWindowPath\Extensions"

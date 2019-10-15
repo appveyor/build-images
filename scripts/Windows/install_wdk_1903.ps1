@@ -13,9 +13,14 @@ if (-not (test-path "C:\Program Files (x86)\Microsoft Visual Studio\2019\Communi
 }
 Write-Host "Installing Visual Studio 2019 WDK extension..."
 
-$vsVersion=& "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationVersion | Out-String
+$vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community"
+if (-not (Test-Path $vsPath)) {
+    $vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview"
+}
+
+$vsVersion=& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationVersion | Out-String
 $vsVersion = $vsVersion -replace "`n|`r"
-"`"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\VSIXInstaller.exe`"  /a /f /sp /q /skuName:Community /skuVersion:$vsVersion `"C:\Program Files (x86)\Windows Kits\10\Vsix\VS2019\WDK.vsix`"" | out-file ".\install-vsix.cmd" -Encoding ASCII
+"`"$vsPath\Common7\IDE\VSIXInstaller.exe`"  /a /f /sp /q /skuName:Community /skuVersion:$vsVersion `"${env:ProgramFiles(x86)}\Windows Kits\10\Vsix\VS2019\WDK.vsix`"" | out-file ".\install-vsix.cmd" -Encoding ASCII
 & .\install-vsix.cmd
 Remove-Item .\install-vsix.cmd -Force -ErrorAction Ignore
 Write-Host "OK"
