@@ -78,6 +78,8 @@ Function Connect-AppVeyorToDocker {
     #Validate AppVeyor API access
     $headers = ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
+    EnsureElevatedModeOnWindows
+
     try {
         
         $hostName = $env:COMPUTERNAME # Windows

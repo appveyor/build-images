@@ -225,6 +225,8 @@ Function Connect-AppVeyorToHyperV {
     #Validate AppVeyor API access
     $headers = ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
+    EnsureElevatedModeOnWindows
+
     #Ensure required tools installed
     ValidateDependencies -cloudType HyperV
 

@@ -36,6 +36,12 @@ function CreateTempFolder {
     }
 }
 
+function EnsureElevatedModeOnWindows() {
+    if (-not $isLinux -and -not $isMacOS -and -not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
+        throw "This command should be run in elevated mode to install AppVeyor Host Agent. Run PowerShell in elevated mode (Run as Administrator) and re-run the command."
+    }
+}
+
 function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
 
     $APPVEYOR_HOST_AGENT_MSI_URL = "https://www.appveyor.com/downloads/appveyor/appveyor-host-agent.msi"
@@ -126,10 +132,6 @@ function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
 
         $hostAgentService = Get-Service "Appveyor.HostAgent" -ErrorAction SilentlyContinue
         if (-not $hostAgentService) {
-
-            if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
-                throw "The script should be run in elevated mode to install Host Agent. Run PowerShell in elevated mode (Run as Administrator) and re-run original 'Connect-AppVeyorToComputer' command."
-            }
 
             Write-Host "Downloading appveyor-host-agent.msi..." -ForegroundColor Gray
             $msiPath = "$env:temp\appveyor-host-agent.msi"

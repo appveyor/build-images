@@ -47,8 +47,9 @@ Function Connect-AppVeyorToComputer {
     #Validate AppVeyor API access
     $headers = ValidateAppVeyorApiAccess $AppVeyorUrl $ApiToken
 
+    EnsureElevatedModeOnWindows
+
     try {
-        
         Write-Host "Configuring 'Process' build cloud in AppVeyor" -ForegroundColor Cyan
 
         $hostName = $env:COMPUTERNAME # Windows
