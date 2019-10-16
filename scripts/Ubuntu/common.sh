@@ -712,12 +712,11 @@ function global_json() {
 }
 
 function preheat_dotnet_sdks() {
-    declare SDK_VERSIONS=("$@")
-    for i in "${SDK_VERSIONS[@]}"; do
-        echo "Preheating .NET SDK version $i"
+    for ver in $(dotnet --list-sdks|cut -f1 -d' '); do
+        echo "Preheating .NET SDK version $ver"
         TMP_DIR=$(mktemp -d)
         pushd  ${TMP_DIR}
-        global_json ${i} >global.json
+        global_json ${ver} >global.json
         dotnet new console
         popd
         rm -r ${TMP_DIR}
@@ -777,7 +776,7 @@ function install_dotnets() {
     if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
 
     #pre-heat
-    preheat_dotnet_sdks "${SDK_VERSIONS[@]}"
+    preheat_dotnet_sdks
     log_version dotnet --list-sdks
     log_version dotnet --list-runtimes
 }
