@@ -270,3 +270,12 @@ if (-not (Test-Path $vsPath)) {
 
 Add-Path "$vsPath\MSBuild\Current\Bin"
 Add-Path "$vsPath\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150"
+
+Write-Host "Warm up default .NET Core SDK"
+
+$projectPath = "$env:temp\TestCoreApp"
+New-Item -Path $projectPath -Force -ItemType Directory | Out-Null
+Push-Location -Path $projectPath
+& $env:ProgramFiles\dotnet\dotnet.exe new console
+Pop-Location
+Remove-Item $projectPath -Force -Recurse
