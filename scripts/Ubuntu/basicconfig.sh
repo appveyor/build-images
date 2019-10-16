@@ -91,20 +91,18 @@ wait_cloudinit || _continue
 # execute optional Features
 if [[ -n "${OPT_FEATURES-}" && "${#OPT_FEATURES}" -gt "0" ]]; then
     echo "[DEBUG] There is OPT_FEATURES variable defined: '$OPT_FEATURES'"
-    local arrFEATURES
-    OFS=$IFS; IFS=','; arrFEATURES=($OPT_FEATURES); IFS=$OFS
+    OFS=$IFS; IFS=','; read -r -a arrFEATURES <<< "$OPT_FEATURES"; IFS=$OFS
     for i in "${!arrFEATURES[@]}"; do
         FEATURE=${arrFEATURES[i]}
-        WORD1=$(IFS=" " ; set -- $FEATURE ; echo $1)
-        if [ "$(type -t $WORD1)x" == 'functionx' ]; then
+        #shellcheck disable=SC2086
+        WORD1=$(IFS=" " ; set -- $FEATURE ; echo "$1")
+        if [ "$(type -t "$WORD1")x" == 'functionx' ]; then
             echo "[DEBUG] executing '$FEATURE'..."
             $FEATURE
         else
             echo "[WARNING] $WORD1 not a function, skipping"
         fi
     done
-    cleanup         #cleanup should be executed each time.
-    exit 0
 fi
 # Deploy Parts of config
 if [ "$#" -gt 0 ]; then
