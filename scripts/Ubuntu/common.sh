@@ -1394,6 +1394,24 @@ function install_cmake() {
     popd
 }
 
+function configure_nuget() {
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}' user. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+
+    mkdir -p "$HOME/.nuget/NuGet" &&
+    echo '<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+  </packageSources>
+</configuration>' > "$HOME/.nuget/NuGet/NuGet.Config" ||
+        { echo "[ERROR] Cannot configure nuget." 1>&2; return 10; }
+
+}
+
 function update_nuget() {
     nuget update -self ||
         { echo "[ERROR] Cannot update nuget."; return 10; }
