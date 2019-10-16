@@ -7,10 +7,7 @@ if (-not (Test-Path $vsPath)) {
     $vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview"
 }
 
-"`"$vsPath\Common7\IDE\VSIXInstaller.exe`" /q /a $vsixPath" | out-file ".\install-vsix.cmd" -Encoding ASCII
-Write-Host "Installing..."
-& .\install-vsix.cmd
-Write-Host "Deleting temporary files..."
-Remove-Item $vsixPath -ErrorAction Ignore
-Remove-Item .\install-vsix.cmd -ErrorAction Ignore
-Write-Host "OK" -ForegroundColor Green
+Start-Process "$vsPath\Common7\IDE\VSIXInstaller.exe" "/q /a $vsixPath" -Wait
+Remove-Item $vsixPath -Force -ErrorAction Ignore
+
+Write-Host "Installed" -ForegroundColor Green

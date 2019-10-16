@@ -10,5 +10,6 @@ if (-not (Test-Path $vsPath)) {
 }
 
 Start-Process "$vsPath\Common7\IDE\VSIXInstaller.exe" "/q /a $vsixPath" -Wait
-Write-Host "Installed" -ForegroundColor Green
 Remove-Item $vsixPath -Force -ErrorAction Ignore
+
+Write-Host "Installed" -ForegroundColor Green

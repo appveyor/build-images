@@ -19,9 +19,6 @@ if (-not (Test-Path $vsPath)) {
 
 Write-Host "Installing Visual Studio 2019 WDK extension..."
 
-$vsVersion=& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationVersion | Out-String
-$vsVersion = $vsVersion -replace "`n|`r"
-"`"$vsPath\Common7\IDE\VSIXInstaller.exe`"  /a /f /sp /q /skuName:Community /skuVersion:$vsVersion `"${env:ProgramFiles(x86)}\Windows Kits\10\Vsix\VS2019\WDK.vsix`"" | out-file ".\install-vsix.cmd" -Encoding ASCII
-& .\install-vsix.cmd
-Remove-Item .\install-vsix.cmd -Force -ErrorAction Ignore
-Write-Host "OK"
+Start-Process "$vsPath\Common7\IDE\VSIXInstaller.exe" "/q /a `"${env:ProgramFiles(x86)}\Windows Kits\10\Vsix\VS2019\WDK.vsix`"" -Wait
+
+Write-Host "Installed" -ForegroundColor Green
