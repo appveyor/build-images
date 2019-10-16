@@ -238,7 +238,14 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.VisualStudio.Workload.VisualStudioExtension '
 
 $Sku = 'Community'
-$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
+
+if ($env:install_vs2019_preview) {
+	Write-Host "Installing from 'Preview' channel"
+	$VSBootstrapperURL = 'https://aka.ms/vs/16/pre/vs_community.exe'
+} else {
+	Write-Host "Installing from 'Release' channel"
+	$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
+}
 
 $ErrorActionPreference = 'Stop'
 
@@ -255,5 +262,20 @@ if (get-Service IpOverUsbSvc -ErrorAction Ignore) {
 }
 
 Write-Host "Adding Visual Studio 2019 current MSBuild to PATH..." -ForegroundColor Cyan
-Add-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
-Add-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150"
+
+$vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community"
+if (-not (Test-Path $vsPath)) {
+    $vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview"
+}
+
+Add-Path "$vsPath\MSBuild\Current\Bin"
+Add-Path "$vsPath\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150"
+
+Write-Host "Warm up default .NET Core SDK"
+
+$projectPath = "$env:temp\TestCoreApp"
+New-Item -Path $projectPath -Force -ItemType Directory | Out-Null
+Push-Location -Path $projectPath
+& $env:ProgramFiles\dotnet\dotnet.exe new console
+Pop-Location
+Remove-Item $projectPath -Force -Recurse

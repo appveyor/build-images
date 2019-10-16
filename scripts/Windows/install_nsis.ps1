@@ -1,5 +1,4 @@
-﻿# C:\Program Files (x86)\NSIS
-Write-Host "Installing NSIS 3.04 ..." -ForegroundColor Cyan
+﻿Write-Host "Installing NSIS 3.04 ..." -ForegroundColor Cyan
 $exePath = "$($env:TEMP)\nsis-3.04-setup.exe"
 
 Write-Host "Downloading..."
@@ -12,5 +11,5 @@ Write-Host "Installed" -ForegroundColor Green
 
 Remove-Item "$env:USERPROFILE\Desktop\NSIS.lnk" -Force -ErrorAction Ignore
 
-Add-Path 'C:\Program Files (x86)\NSIS'
-Add-SessionPath 'C:\Program Files (x86)\NSIS'
+Add-Path "${env:ProgramFiles(x86)}\NSIS"
+Add-SessionPath "${env:ProgramFiles(x86)}\NSIS"

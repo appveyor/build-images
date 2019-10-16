@@ -21,7 +21,7 @@ Write-Host "Installing..."
 cmd /c start /wait msiexec /i $msiPath /quiet
 del $msiPath
 
-Add-Path 'C:\Program Files (x86)\CMake\bin'
+Add-Path "${env:ProgramFiles(x86)}\CMake\bin"
 
 remove-path 'C:\ProgramData\chocolatey\bin'
 add-path 'C:\ProgramData\chocolatey\bin'

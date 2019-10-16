@@ -391,6 +391,10 @@ Function Connect-AppVeyorToGCE {
             Write-Warning "Add '-ImageId' parameter with if you want to to skip Packer build and reuse existing image."
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
+
+            $env:PACKER_LOG=1
+            $env:PACKER_LOG_PATH="$env:USERPROFILE\packer-$date_mark.log"
+
             & $packerPath build '--only=googlecompute' `
             -var "gce_account_file=$gce_account_file" `
             -var "gce_project=$($activeconfig.properties.core.project)" `

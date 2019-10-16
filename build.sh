@@ -99,7 +99,7 @@ if [[ -n "${GCE_IMAGE_NAME-}" ]]; then
     PACKER_PARAMS+=( "-var" "gce_source_image=${GCE_IMAGE_NAME}" )
 fi
 if [[ -n "${build_agent_mode-}" ]]; then
-    echo "gce_source_image set to ${build_agent_mode}"
+    echo "build_agent_mode set to ${build_agent_mode}"
     PACKER_PARAMS+=( "-var" "build_agent_mode=${build_agent_mode}" )
 fi
 
@@ -130,7 +130,7 @@ fi
 # run packer
 PACKER_LOG_PATH=${APPVEYOR_LOGS_PATH} PACKER_LOG=1 CHECKPOINT_DISABLE=1 ${PACKER_CMD} build \
         --only=${builders} \
-        "${PACKER_PARAMS[@]}" \
+        "${PACKER_PARAMS[@]}" ${packer_custom_args-} \
         ${TEMPLATE}.json
 
 # run post packer (GCE, Hyperv)

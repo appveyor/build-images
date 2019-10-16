@@ -493,6 +493,10 @@ Function Connect-AppVeyorToAzure {
             Write-Warning "Add '-VhdFullPath' parameter with VHD URL value if you want to skip Packer build and reuse existing VHD. It must be in '$($azure_storage_account)' storage account."
             function RunPacker {
                 $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
+
+                $env:PACKER_LOG=1
+                $env:PACKER_LOG_PATH="$env:USERPROFILE\packer-$date_mark.log"                
+
                 & $packerPath build '--only=azure-arm' `
                 -var "azure_subscription_id=$azure_subscription_id" `
                 -var "azure_tenant_id=$azure_tenant_id" `
