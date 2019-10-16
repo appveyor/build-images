@@ -63,6 +63,7 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.Component.NetFX.Native ' + `
 	'--add Microsoft.Component.VC.Runtime.UCRTSDK ' + `
 	'--add Microsoft.ComponentGroup.Blend ' + `
+	'--add Microsoft.Net.Component.3.5.DeveloperTools ' + `
 	'--add Microsoft.Net.Component.4.5.1.TargetingPack ' + `
 	'--add Microsoft.Net.Component.4.5.2.TargetingPack ' + `
 	'--add Microsoft.Net.Component.4.5.TargetingPack ' + `
