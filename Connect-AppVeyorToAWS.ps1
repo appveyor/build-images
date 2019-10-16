@@ -519,6 +519,10 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             Write-Warning "Add '-AmiId' parameter with if you want to to skip Packer build and and reuse existing AMI. It must be in '$($aws_region_full)' region)."
             Write-Host "`n`nPacker progress:`n"
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
+
+            $env:PACKER_LOG=1
+            $env:PACKER_LOG_PATH="$env:USERPROFILE\packer-$date_mark.log"            
+
             & $packerPath build '--only=amazon-ebs' `
             -var "aws_access_key=$AccessKeyId" `
             -var "aws_secret_key=$SecretAccessKey" `

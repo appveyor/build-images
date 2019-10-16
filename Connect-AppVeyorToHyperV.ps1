@@ -99,6 +99,9 @@ Function Connect-AppVeyorToHyperV {
     .PARAMETER ImagePassword
         User password inside the image.
 
+    .PARAMETER PackerCustomArgs
+        Extra args for Packer.
+
         .EXAMPLE
         Connect-AppVeyorToHyperV
         Let command collect all required information
@@ -206,7 +209,10 @@ Function Connect-AppVeyorToHyperV {
       [string]$ImageUser,
 
       [Parameter(Mandatory=$false)]
-      [string]$ImagePassword
+      [string]$ImagePassword,
+
+      [Parameter(Mandatory=$false)]
+      [string]$PackerCustomArgs
     )
 
     function ExitScript {
@@ -427,8 +433,8 @@ d-i passwd/user-default-groups appveyor sudo
                 $packerArgs += @("-var `"clone_vm_name=$CloneVM`"")
             }
 
-            if ($env:packer_custom_args) {
-                $packerArgs += $env:packer_custom_args
+            if ($PackerCustomArgs) {
+                $packerArgs += $PackerCustomArgs
             }
 
             $packerArgs += $ImageTemplate
