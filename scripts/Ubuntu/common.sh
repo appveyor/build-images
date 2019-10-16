@@ -712,12 +712,11 @@ function global_json() {
 }
 
 function preheat_dotnet_sdks() {
-    declare SDK_VERSIONS=("$@")
-    for i in "${SDK_VERSIONS[@]}"; do
-        echo "Preheating .NET SDK version $i"
+    for ver in $(dotnet --list-sdks|cut -f1 -d' '); do
+        echo "Preheating .NET SDK version $ver"
         TMP_DIR=$(mktemp -d)
         pushd  ${TMP_DIR}
-        global_json ${i} >global.json
+        global_json ${ver} >global.json
         dotnet new console
         popd
         rm -r ${TMP_DIR}
@@ -777,7 +776,7 @@ function install_dotnets() {
     if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
 
     #pre-heat
-    preheat_dotnet_sdks "${SDK_VERSIONS[@]}"
+    preheat_dotnet_sdks
     log_version dotnet --list-sdks
     log_version dotnet --list-runtimes
 }
@@ -1392,6 +1391,24 @@ function install_cmake() {
         { echo "[ERROR] Cannot install cmake." 1>&2; popd; return 30; }
     log_version cmake --version
     popd
+}
+
+function configure_nuget() {
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}' user. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+
+    mkdir -p "$HOME/.nuget/NuGet" &&
+    echo '<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+  </packageSources>
+</configuration>' > "$HOME/.nuget/NuGet/NuGet.Config" ||
+        { echo "[ERROR] Cannot configure nuget." 1>&2; return 10; }
+
 }
 
 function update_nuget() {

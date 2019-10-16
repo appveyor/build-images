@@ -164,6 +164,11 @@ install_dotnets ||
     _abort $?
 # install_dotnetv3_preview ||
 #     _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_nuget)
+        configure_nuget" ||
+    _abort $?
 install_powershell ||
     _abort $?
 
