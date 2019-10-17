@@ -18,8 +18,10 @@ environment:
       CLOUD: GCE
     - TEMPLATE: ubuntu1804
       CLOUD: GCE
+      gce_source_image: ubuntu-1804-bionic-v20191008
     - TEMPLATE: ubuntu1604
       CLOUD: GCE
+      gce_source_image: ubuntu-1604-xenial-v20191010
 
     - TEMPLATE: ws2019
       CLOUD: AWS
@@ -92,15 +94,16 @@ build_script:
         ;;
       GCE )
         builders=googlecompute
-        CONTAINER_ENVS+=( gce_zone=${gce_zone} )
-        CONTAINER_ENVS+=( gce_project=${gce_project} )
-        CONTAINER_SECURE_ENVS+=( gce_account_file=${gce_account_file} )
+        CONTAINER_ENVS+=( "gce_zone=${gce_zone}" )
+        CONTAINER_ENVS+=( "gce_project=${gce_project}" )
+        CONTAINER_ENVS+=( "gce_source_image=${gce_source_image}" )
+        CONTAINER_SECURE_ENVS+=( "gce_account_file=${gce_account_file}" )
         ;;
       AWS )
         builders=amazon-ebs
-        CONTAINER_SECURE_ENVS+=( aws_access_key=${aws_access_key} )
-        CONTAINER_SECURE_ENVS+=( aws_secret_key=${aws_secret_key} )
-        CONTAINER_SECURE_ENVS+=( aws_region=${aws_region} )
+        CONTAINER_SECURE_ENVS+=( "aws_access_key=${aws_access_key}" )
+        CONTAINER_SECURE_ENVS+=( "aws_secret_key=${aws_secret_key}" )
+        CONTAINER_SECURE_ENVS+=( "aws_region=${aws_region}" )
         ;;
     esac
 - sh: |
