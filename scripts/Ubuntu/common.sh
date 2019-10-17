@@ -341,6 +341,7 @@ function copy_appveyoragent() {
 
     echo "[INFO] Installing AppVeyor Build Agent v${APPVEYOR_BUILD_AGENT_VERSION}"
 
+    local AGENT_FILE
     AGENT_FILE=appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-x64.tar.gz
 
     if [[ -z "${AGENT_DIR-}" ]]; then
@@ -353,11 +354,9 @@ function copy_appveyoragent() {
     pushd -- "${AGENT_DIR}" ||
         { echo "[ERROR] Cannot create ${AGENT_DIR} folder." 1>&2; return 10; }
 
-    if [ -f "${HOME}/distrib/${AGENT_FILE}" ]; then
-        cp "${HOME}/distrib/${AGENT_FILE}" ./
-    else
-        curl -fsSL https://appveyordownloads.blob.core.windows.net/appveyor/${APPVEYOR_BUILD_AGENT_VERSION}/${AGENT_FILE} -o ${AGENT_FILE}
-    fi &&
+    local AGENT_URL
+    AGENT_URL="https://appveyordownloads.blob.core.windows.net/appveyor/${APPVEYOR_BUILD_AGENT_VERSION}/${AGENT_FILE}"
+    curl -fsSL "${AGENT_URL}" -o "${AGENT_FILE}" &&
     tar -zxf ${AGENT_FILE} ||
         { echo "[ERROR] Cannot download and untar ${AGENT_FILE}." 1>&2; popd; return 20; }
     chmod +x ${AGENT_DIR}/appveyor ||
@@ -1721,7 +1720,6 @@ function cleanup() {
 
     # cleanup script guts
     find $HOME -maxdepth 1 -name "*.sh" -delete
-    if [ -d "$HOME/distrib" ]; then rm -rf "$HOME/distrib"; fi
 
     #log some data about image size
     log_version df -h
