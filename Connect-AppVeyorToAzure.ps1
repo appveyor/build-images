@@ -495,7 +495,7 @@ Function Connect-AppVeyorToAzure {
                 $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
 
                 $env:PACKER_LOG=1
-                $env:PACKER_LOG_PATH="$env:USERPROFILE\packer-$date_mark.log"                
+                $env:PACKER_LOG_PATH="$(GetHomeDir)\packer-$date_mark.log"                
 
                 & $packerPath build '--only=azure-arm' `
                 -var "azure_subscription_id=$azure_subscription_id" `

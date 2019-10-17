@@ -42,6 +42,14 @@ function EnsureElevatedModeOnWindows() {
     }
 }
 
+function GetHomeDir {
+    if ($isMacOS -or $isLinux) {
+        return $env:HOME
+    } else {
+        return $env:USERPROFILE
+    }
+}
+
 function InstallAppVeyorHostAgent($appVeyorUrl, $hostAuthorizationToken) {
 
     $APPVEYOR_HOST_AGENT_MSI_URL = "https://www.appveyor.com/downloads/appveyor/appveyor-host-agent.msi"

@@ -1446,15 +1446,25 @@ function configure_nuget() {
         return 1
     fi
 
-    mkdir -p "$HOME/.nuget/NuGet" &&
-    echo '<?xml version="1.0" encoding="utf-8"?>
+	local NUGET_CONFIG="$HOME/.nuget/NuGet/NuGet.Config"
+	
+	if [ -f "${NUGET_CONFIG}" ]; then
+		echo "${NUGET_CONFIG} already exists. Taking ownership."
+		cat ${NUGET_CONFIG}
+		sudo chown -R $(id -u):$(id -g) "$HOME/.nuget"
+	else 
+		echo "Creating ${NUGET_CONFIG}"
+		mkdir -p "$HOME/.nuget/NuGet" &&
+		echo '<?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <packageSources>
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
   </packageSources>
-</configuration>' > "$HOME/.nuget/NuGet/NuGet.Config" ||
+</configuration>' > ${NUGET_CONFIG} ||
         { echo "[ERROR] Cannot configure nuget." 1>&2; return 10; }
-
+	fi
+	
+	ls "$HOME/.nuget/NuGet" -al
 }
 
 function update_nuget() {
