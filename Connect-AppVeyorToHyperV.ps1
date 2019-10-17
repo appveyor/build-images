@@ -389,7 +389,7 @@ d-i passwd/user-default-groups appveyor sudo
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
 
             $env:PACKER_LOG=1
-            $env:PACKER_LOG_PATH="$env:USERPROFILE\packer-$date_mark.log"
+            $env:PACKER_LOG_PATH="$(GetHomeDir)\packer-$date_mark.log"
 
             $packerBuilder = 'hyperv-iso'
             if ($CloneVM) {
