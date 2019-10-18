@@ -339,7 +339,10 @@ configure_uefi ||
     _abort $?
 configure_network ||
     _abort $?
-fix_grub_timeout ||
-    _abort $?    
+if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
+    fix_grub_timeout ||
+        _abort $?
+fi
+
 
 cleanup

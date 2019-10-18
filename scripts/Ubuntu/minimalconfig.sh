@@ -180,6 +180,6 @@ if ! $IS_DOCKER; then
     configure_network ||
         _abort $?
     fix_grub_timeout ||
-        _abort $?        
+        _abort $?
 fi
 cleanup
