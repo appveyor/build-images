@@ -111,7 +111,8 @@ function install_cvs() {
     echo "[INFO] Running install_cvs..."
 
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un ${USER_NAME}  >/dev/null; then
-        brew install mercurial subversion
+        su -l ${USER_NAME} -c "brew install mercurial subversion" ||
+            { echo "Cannot install mercurial subversion with Homebrew." 1>&2; return 20; }
         su -l ${USER_NAME} -c "
             USER_NAME=${USER_NAME}
             $(declare -f configure_svn)

@@ -10,7 +10,6 @@
       "type": "shell",
       "inline": [
         "echo 'export PATH=\"$PATH:/usr/local/bin\"' >> $HOME/.bashrc",
-        "export PATH=\"$PATH:/usr/local/bin\"",
         "echo '{{ user `install_password` }}' | CI=1 /usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\"",
         "/usr/local/bin/brew cask install powershell"
       ]
@@ -22,9 +21,8 @@
         "HOMEBREW_HOST_AUTH_TKN={{user `hostAuthorizationToken`}}"
       ],
       "inline": [
-        "echo $PATH",
-        "/usr/local/bin/brew install appveyor/brew/appveyor-host-agent",
-        "/usr/local/bin/brew services restart appveyor/brew/appveyor-host-agent"
+        "brew install appveyor/brew/appveyor-host-agent",
+        "brew services restart appveyor/brew/appveyor-host-agent"
       ]
     },
     {
