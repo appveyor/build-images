@@ -15,7 +15,9 @@ done
         { echo "[ERROR] Cannot source common.sh script. Aborting." 1>&2; exit 2; }
 
 
-
-
+install_cvs
+install_gpg
 install_rvm_and_rubies
 install_fastline
+install_dotnets
+install_gvm_and_golangs
