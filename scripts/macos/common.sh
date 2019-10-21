@@ -3,6 +3,7 @@
 USER_NAME="appveyor"
 OSX_VERS=$(sw_vers -productVersion | awk -F "." '{print $2}')
 PlistBuddy="/usr/libexec/PlistBuddy"
+BREW_CMD=$(command -v brew)
 
 function init_logging() {
     if [[ -z "${LOG_FILE-}" ]]; then
@@ -111,7 +112,7 @@ function install_cvs() {
     echo "[INFO] Running install_cvs..."
 
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un ${USER_NAME}  >/dev/null; then
-        su -l ${USER_NAME} -c "brew install mercurial subversion" ||
+        su -l ${USER_NAME} -c "$BREW_CMD install mercurial subversion" ||
             { echo "Cannot install mercurial subversion with Homebrew." 1>&2; return 20; }
         su -l ${USER_NAME} -c "
             USER_NAME=${USER_NAME}
@@ -143,7 +144,6 @@ function install_gpg() {
     echo "[INFO] Running install_gpg..."
     command -v brew ||
         { echo "Cannot find brew. Install Homebrew first!" 1>&2; return 10; }
-    BREW_CMD=$(command -v brew)
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un ${USER_NAME}  >/dev/null; then
         su -l ${USER_NAME} -c "$BREW_CMD install gnupg gnupg2" ||
             { echo "Cannot install GnuPG." 1>&2; return 20; }
@@ -155,7 +155,6 @@ function install_fastline() {
     echo "[INFO] Running install_fastline..."
     command -v brew ||
         { echo "Cannot find brew. Install Homebrew first!" 1>&2; return 10; }
-    BREW_CMD=$(command -v brew)
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un ${USER_NAME}  >/dev/null; then
         su -l ${USER_NAME} -c "$BREW_CMD cask install fastlane" ||
             { echo "Cannot install Fastline." 1>&2; return 20; }
@@ -232,7 +231,7 @@ function install_gvm_and_golangs() {
     echo "[INFO] Running install_gvm_and_golangs..."
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un "${USER_NAME}" >/dev/null; then
         # install go in system first
-        brew install go ||
+        su -l ${USER_NAME} -c "$BREW_CMD install go" ||
             { echo "[ERROR] Cannot install Go with Homebrew." 1>&2; return 10; }
         su -l ${USER_NAME} -c "
             USER_NAME=${USER_NAME}

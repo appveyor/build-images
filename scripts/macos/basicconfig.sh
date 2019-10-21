@@ -14,6 +14,16 @@ done
 . "${LIB_FOLDER}/common.sh" ||
         { echo "[ERROR] Cannot source common.sh script. Aborting." 1>&2; exit 2; }
 
+#search for brew
+echo "PATH variable:"
+echo "$PATH" | tr ":" '\n'
+if ! command -v brew; then
+    if [ -x /usr/local/bin/brew ]; then
+        export PATH="$PATH:/usr/local/bin"
+    else
+        echo "[ERROR] cannot find brew in default path /usr/local/bin or in \$PATH."
+    fi
+fi
 
 install_cvs
 install_gpg
