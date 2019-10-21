@@ -10,7 +10,7 @@ appveyor-tools/
 .DS_Store
 packer-manifest.*
 *.pem
-output-hyperv-iso/
+output-*/
 minimal-windows-server-custom.json
 scripts/Windows/custom-scripts/*.ps1
 scripts/Ubuntu/custom-scripts/*.sh
