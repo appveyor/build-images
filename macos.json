@@ -28,18 +28,34 @@
       ]
     },
     {
+      "type": "file",
+      "source": "{{ template_dir }}/scripts/macos/custom-scripts",
+      "destination": "./custom-scripts"
+    },
+    {
+      "type": "file",
+      "source": "{{ template_dir }}/scripts/macos/",
+      "destination": "./"
+    },
+    {
       "type": "shell",
       "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -ex '{{.Path}}'",
       "scripts": [
-        "scripts/macos/common.sh"
+        "scripts/macos/basicconfig.sh"
       ]
+    },
+    {
+        "type": "shell",
+        "scripts":[
+            "{{ template_dir }}/scripts/macos/run_custom_scripts.sh"
+        ]
     }
   ],
   "builders": [
     {
       "type": "parallels-pvm",
       "parallels_tools_flavor": "mac",
-      "source_path": "iso/macOS_10.14.6.pvm",
+      "source_path": "iso/template1.pvm",
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout": "30s",
