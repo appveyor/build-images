@@ -108,12 +108,36 @@ function write_line() {
     echo "${NEW_TEXT}" > "${FILE}"
 }
 
+function check_user(){
+    [ -n "${USER_NAME-}" ] &&
+    [ "${#USER_NAME}" -gt "0" ] &&
+    id -un ${USER_NAME}  >/dev/null
+}
+
+function brew_install() {
+    run_brew "$@"
+}
+
+function brew_cask_install() {
+    BREW_CASK=cask run_brew "$@"
+}
+
+function run_brew() {
+    [ -x "${BREW_CMD-}" ] ||
+        { echo "[ERROR] Cannot find brew. Install Homebrew first!" 1>&2; return 1; }
+    if check_user; then
+        su -l ${USER_NAME} -c "$BREW_CMD ${BREW_CASK-} install $*" ||
+            { echo "[ERROR] Cannot install '$*' with Homebrew." 1>&2; return 20; }
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
+    fi
+}
+
 function install_cvs() {
     echo "[INFO] Running install_cvs..."
 
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un ${USER_NAME}  >/dev/null; then
-        su -l ${USER_NAME} -c "$BREW_CMD install mercurial subversion" ||
-            { echo "Cannot install mercurial subversion with Homebrew." 1>&2; return 20; }
+    brew_install mercurial subversion
+    if check_user; then
         su -l ${USER_NAME} -c "
             USER_NAME=${USER_NAME}
             $(declare -f configure_svn)
@@ -140,34 +164,32 @@ password-stores =" > .subversion/config ||
         { echo "[ERROR] Cannot configure svn." 1>&2; popd; return 10; }
     popd
 }
+
 function install_gpg() {
     echo "[INFO] Running install_gpg..."
-    command -v brew ||
-        { echo "Cannot find brew. Install Homebrew first!" 1>&2; return 10; }
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un ${USER_NAME}  >/dev/null; then
-        su -l ${USER_NAME} -c "$BREW_CMD install gnupg gnupg2" ||
-            { echo "Cannot install GnuPG." 1>&2; return 20; }
+    brew_install gnupg gnupg2
+    if command -v gpg; then
         ln -s "$(command -v gpg)" "$(command -v gpg)2"
     fi
+
+    log_version gpg --version
 }
 
-function install_fastline() {
-    echo "[INFO] Running install_fastline..."
-    command -v brew ||
-        { echo "Cannot find brew. Install Homebrew first!" 1>&2; return 10; }
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un ${USER_NAME}  >/dev/null; then
-        su -l ${USER_NAME} -c "$BREW_CMD cask install fastlane" ||
-            { echo "Cannot install Fastline." 1>&2; return 20; }
+function install_fastlane() {
+    echo "[INFO] Running install_fastlane..."
+    brew_cask_install fastlane
+    if check_user; then
         # shellcheck disable=SC2016
         write_line "${HOME}/.profile" 'export PATH="$HOME/.fastlane/bin:$PATH"'
     fi
+
 }
 
 function install_rvm() {
     echo "[INFO] Running install_rvm..."
-    command -v gpg2 ||
-        { echo "Cannot find gpg2. Install GPG first!" 1>&2; return 10; }
-    gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+    command -v gpg ||
+        { echo "Cannot find gpg. Install GPG first!" 1>&2; return 10; }
+    gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
     curl -fsSL https://get.rvm.io | bash -s stable
     # shellcheck disable=SC1090
     source "${HOME}/.rvm/scripts/rvm"
@@ -182,8 +204,6 @@ function install_rubies() {
     fi
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
-    command -v brew ||
-        { echo "Cannot find brew. Install Homebrew first!" 1>&2; return 20; }
     local v
     declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" )
     for v in "${RUBY_VERSIONS[@]}"; do
@@ -198,10 +218,12 @@ function install_rvm_and_rubies() {
     echo "[INFO] Running install_rvm_and_rubies..."
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un "${USER_NAME}"  >/dev/null; then
         su -l ${USER_NAME} -c "
+            PATH=$PATH
             USER_NAME=${USER_NAME}
             $(declare -f install_rvm)
             install_rvm" &&
         su -l ${USER_NAME} -c "
+            PATH=$PATH
             USER_NAME=${USER_NAME}
             [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
             $(declare -f log_version)

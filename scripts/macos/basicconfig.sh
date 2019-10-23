@@ -28,6 +28,6 @@ fi
 install_cvs
 install_gpg
 install_rvm_and_rubies
-install_fastline
+install_fastlane
 install_dotnets
 install_gvm_and_golangs
