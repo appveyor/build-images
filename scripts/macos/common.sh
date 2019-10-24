@@ -216,7 +216,7 @@ function install_rubies() {
 
 function install_rvm_and_rubies() {
     echo "[INFO] Running install_rvm_and_rubies..."
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un "${USER_NAME}"  >/dev/null; then
+    if check_user; then
         su -l ${USER_NAME} -c "
             PATH=$PATH
             USER_NAME=${USER_NAME}
@@ -251,10 +251,9 @@ function install_dotnets() {
 
 function install_gvm_and_golangs() {
     echo "[INFO] Running install_gvm_and_golangs..."
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && id -un "${USER_NAME}" >/dev/null; then
-        # install go in system first
-        su -l ${USER_NAME} -c "$BREW_CMD install go" ||
-            { echo "[ERROR] Cannot install Go with Homebrew." 1>&2; return 10; }
+    # install go in system first
+    brew_install go
+    if check_user; then
         su -l ${USER_NAME} -c "
             USER_NAME=${USER_NAME}
             $(declare -f install_gvm)
@@ -319,4 +318,70 @@ function install_golangs() {
     gvm use ${GO_VERSIONS[-1]} --default
     log_version gvm version
     log_version go version
+}
+
+
+
+function install_nvm_and_nodejs() {
+    echo "[INFO] Running install_nvm_and_nodejs..."
+    if check_user; then
+        su -l ${USER_NAME} -c "
+            PATH=$PATH
+            USER_NAME=${USER_NAME}
+            $(declare -f install_nvm)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            install_nvm" &&
+        su -l ${USER_NAME} -c "
+            PATH=$PATH
+            [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+            USER_NAME=${USER_NAME}
+            $(declare -f log_version)
+            $(declare -f install_nvm_nodejs)
+            install_nvm_nodejs ${CURRENT_NODEJS}" ||
+        return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install NVM and Nodejs"
+    fi
+}
+
+function install_nvm() {
+    echo "[INFO] Running install_nvm..."
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}' user. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    #TODO have to figure out latest release version automatically
+    curl -fsSLo- https://raw.githubusercontent.com/creationix/nvm/v0.35.0/install.sh | bash
+    write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
+    write_line "${HOME}/.profile" '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'
+    write_line "${HOME}/.profile" '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'
+}
+
+function install_nvm_nodejs() {
+    echo "[INFO] Running install_nvm_nodejs..."
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    local CURRENT_NODEJS
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        CURRENT_NODEJS=8
+    else
+        CURRENT_NODEJS=$1
+    fi
+    command -v nvm ||
+        { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
+    local v
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" )
+    for v in "${NVM_VERSIONS[@]}"; do
+        nvm install ${v} ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+    log_version nvm --version
+    log_version nvm list
+    nvm use ${CURRENT_NODEJS}
 }

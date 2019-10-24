@@ -31,3 +31,4 @@ install_rvm_and_rubies
 install_fastlane
 install_dotnets
 install_gvm_and_golangs
+install_nvm_and_nodejs
