@@ -205,6 +205,7 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
+    # declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-head" )
     declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install "${v}" ||
@@ -246,8 +247,6 @@ function install_dotnets() {
     ./dotnet-install.sh -channel LTS
 
 }
-
-
 
 function install_gvm_and_golangs() {
     echo "[INFO] Running install_gvm_and_golangs..."
@@ -293,6 +292,7 @@ function install_gvm() {
             { echo "[ERROR] Cannot install GVM." 1>&2; return 10; }
     fi
     # gvm-installer do not fix .profile for non-interactive shell
+    # shellcheck disable=SC2015
     [[ -s "${HOME}/.gvm/scripts/gvm" ]] && (
             write_line "${HOME}/.profile" '[[ -s "/home/appveyor/.gvm/scripts/gvm" ]] && source "/home/appveyor/.gvm/scripts/gvm"'
     ) || true
@@ -310,7 +310,8 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.10" "go1.13.1" )
+    # declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.10" "go1.13.1" )
+    declare GO_VERSIONS=( "go1.13.1" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -319,8 +320,6 @@ function install_golangs() {
     log_version gvm version
     log_version go version
 }
-
-
 
 function install_nvm_and_nodejs() {
     echo "[INFO] Running install_nvm_and_nodejs..."
@@ -376,12 +375,37 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" )
+    # declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" )
+    declare NVM_VERSIONS=( "8"  "12" )
     for v in "${NVM_VERSIONS[@]}"; do
-        nvm install ${v} ||
+        nvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
     log_version nvm --version
     log_version nvm list
-    nvm use ${CURRENT_NODEJS}
+    nvm use "${CURRENT_NODEJS}"
 }
+
+function install_xcode() {
+    XCODE_VERSION="11.2 beta 2"
+    #check fastlane
+    if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
+        [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
+        gem install xcode-install
+        export XCODE_INSTALL_USER=$APPLEID_USER
+        export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
+        xcversion install "$XCODE_VERSION"
+
+        # Cleanup
+        export XCODE_INSTALL_USER=
+        export XCODE_INSTALL_PASSWORD=
+    else
+        echo "[ERROR] Variables APPLEID_USER and/or APPLEID_PWD not set."
+        return 10
+    fi
+}
+
+
+
+
+

@@ -38,6 +38,10 @@
     },
     {
       "type": "shell",
+      "environment_vars": [
+        "APPLEID_USER={{user `appleIdUser`}}",
+        "APPLEID_PWD={{user `appleIdPasswd`}}"
+      ],
       "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -ex '{{.Path}}'",
       "scripts": [
         "scripts/macos/basicconfig.sh"
