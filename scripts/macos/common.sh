@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
-USER_NAME="appveyor"
+if [[ -z "${USER_NAME-}" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; fi
+if [[ -z "${USER_HOME-}" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/home/appveyor; fi
+HOST_NAME=appveyor-vm
 OSX_VERS=$(sw_vers -productVersion | awk -F "." '{print $2}')
 PlistBuddy="/usr/libexec/PlistBuddy"
 BREW_CMD=$(command -v brew)
@@ -187,6 +189,7 @@ function install_fastlane() {
 
 function install_rvm() {
     echo "[INFO] Running install_rvm..."
+    echo "gem: --no-document" >> $HOME/.gemrc
     command -v gpg ||
         { echo "Cannot find gpg. Install GPG first!" 1>&2; return 10; }
     gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
@@ -243,8 +246,11 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    ./dotnet-install.sh -channel Current
-    ./dotnet-install.sh -channel LTS
+    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" )
+    for v in "${RUBY_VERSIONS[@]}"; do
+        echo "[INFO] Installing .NET Core ${v}..."
+        ./dotnet-install.sh -channel "$v"
+    done
 
 }
 
@@ -403,6 +409,34 @@ function install_xcode() {
         echo "[ERROR] Variables APPLEID_USER and/or APPLEID_PWD not set."
         return 10
     fi
+}
+
+function check_folders() {
+    if [ "$#" -gt 0 ]; then
+        while [[ "$#" -gt 0 ]]; do
+            # echo "$FUNCNAME $1"
+            du -hs $1 2>/dev/null | sort -h |tail
+            shift
+        done
+    fi
+}
+
+function cleanup() {
+    # clean bash_history
+    [ -f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        [ -f ${USER_HOME}/.bash_history ] && cat /dev/null > ${USER_HOME}/.bash_history
+        chown ${USER_NAME}:${USER_NAME} -R ${USER_HOME}
+    fi
+
+    # cleanup script guts
+    # find $HOME -maxdepth 1 -name "*.sh" -delete
+
+    #log some data about image size
+    log_version df -h
+    log_version ls -ltra "${HOME}"
+    log_version check_folders ${HOME}/.*
+
 }
 
 

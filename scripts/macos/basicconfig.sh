@@ -33,3 +33,4 @@ install_xcode
 install_dotnets
 install_gvm_and_golangs
 install_nvm_and_nodejs
+cleanup
