@@ -136,7 +136,7 @@ function run_brew() {
 function install_cvs() {
     echo "[INFO] Running install_cvs..."
 
-    brew_install mercurial subversion
+    brew_install mercurial subversion git git-lfs
     if check_user; then
         su -l ${USER_NAME} -c "
             USER_NAME=${USER_NAME}
@@ -206,7 +206,7 @@ function install_rubies() {
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
     # declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-head" )
-    declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" )
+    declare RUBY_VERSIONS=( "ruby-2.7" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
