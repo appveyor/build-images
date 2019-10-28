@@ -234,6 +234,9 @@ function install_rvm_and_rubies() {
             $(declare -f install_rubies)
             install_rubies" ||
                 return $?
+        # load RVM into current shell instance
+        export PATH="$PATH:$HOME/.rvm/bin"
+        [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
     else
         echo "[WARNING] User '${USER_NAME-}' not found. Cannot install RVM and rubies"
     fi
@@ -247,11 +250,16 @@ function install_dotnets() {
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
     declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" )
-    for v in "${RUBY_VERSIONS[@]}"; do
+    for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
         ./dotnet-install.sh -channel "$v"
     done
 
+    local DOTNET_CMD
+    DOTNET_CMD="$HOME/.dotnet/dotnet"
+    [ -x "$DOTNET_CMD" ] && (
+        log_version "$DOTNET_CMD" --list-sdks
+        log_version "$DOTNET_CMD" --list-runtimes )
 }
 
 function install_gvm_and_golangs() {
