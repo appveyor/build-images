@@ -242,6 +242,91 @@ function install_rvm_and_rubies() {
     fi
 }
 
+function install_gcc() {
+    declare GCC_VERSIONS=( "gcc@6" "gcc@7" "gcc@8" )
+    brew_install "${GCC_VERSIONS[@]}"
+}
+
+function install_cmake() {
+    echo "[INFO] Running install_cmake..."
+    local VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        VERSION=3.15.4
+    else
+        VERSION=$1
+    fi
+    local TAR_FILE=cmake-${VERSION}-Darwin-x86_64.tar.gz
+    local TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+    curl -fsSL -O "https://cmake.org/files/v${VERSION%.*}/${TAR_FILE}" &&
+    tar -zxf "${TAR_FILE}" ||
+        { echo "[ERROR] Cannot download and untar cmake." 1>&2; popd; return 10; }
+    DIR_NAME=$(tar -ztf ${TAR_FILE} |cut -d'/' -f1|sort|uniq|head -n1)
+    cd -- "${DIR_NAME}" ||
+        { echo "[ERROR] Cannot change directory to ${DIR_NAME}." 1>&2; popd; return 20; }
+    [ -d "/Applications/CMake.app" ] && rm -rf "/Applications/CMake.app" || true
+    cp -R CMake.app /Applications/ &&
+    /Applications/CMake.app/Contents/bin/cmake-gui --install ||
+        { echo "[ERROR] Cannot install cmake." 1>&2; popd; return 30; }
+    log_version cmake --version
+    popd &&
+    rm -rf "${TMP_DIR}"
+}
+
+function install_virtualenv() {
+    echo "[INFO] Running install_virtualenv..."
+    command -v pip || install_pip
+    pip install virtualenv ||
+        { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
+
+    log_version virtualenv --version
+}
+
+function install_pip() {
+    echo "[INFO] Running install_pip..."
+    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
+        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
+    python get-pip.py ||
+        { echo "[WARNING] Cannot install pip." ; return 10; }
+
+    log_version pip --version
+
+    #cleanup
+    rm get-pip.py
+}
+
+function install_pythons(){
+    command -v virtualenv || install_virtualenv
+    # declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0" )
+    declare PY_VERSIONS=( "2.7.16" "3.8.0" )
+    for i in "${PY_VERSIONS[@]}"; do
+        VENV_PATH=${HOME}/venv${i%[abrcf]*}
+        if [ ! -d ${VENV_PATH} ]; then
+        curl -fsSL -O http://www.python.org/ftp/python/${i%[abrcf]*}/Python-${i}.tgz ||
+            { echo "[WARNING] Cannot download Python ${i}."; continue; }
+        tar -zxf Python-${i}.tgz &&
+        pushd "Python-${i}" ||
+            { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
+        PY_PATH=${HOME}/.localpython${i}
+        mkdir -p "${PY_PATH}"
+        ./configure --silent "--prefix=${PY_PATH}" &&
+        make --silent &&
+        make install --silent >/dev/null ||
+            { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
+        if [ ${i:0:1} -eq 3 ]; then
+            PY_BIN=python3
+        else
+            PY_BIN=python
+        fi
+        virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
+            { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
+        popd
+        fi
+    done
+    find "$HOME" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
+}
+
+
 function install_dotnets() {
     echo "[INFO] Running install_dotnets..."
     local SCRIPT_URL
@@ -249,7 +334,7 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" )
+    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" )
     for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
         ./dotnet-install.sh -channel "$v"

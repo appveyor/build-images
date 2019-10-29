@@ -29,6 +29,13 @@ install_cvs
 install_gpg
 install_rvm_and_rubies
 install_fastlane
+install_cmake
+install_gcc
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_pythons)
+        install_pythons" ||
+    _abort $?
 install_xcode
 install_dotnets
 install_gvm_and_golangs
