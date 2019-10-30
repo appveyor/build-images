@@ -1,5 +1,6 @@
 {
   "variables": {
+    "pvm_path": "iso/template1.pvm",
     "install_user": "appveyor",
     "install_password": "appveyor",
     "appVeyorUrl": "https://ci.appveyor.com",
@@ -58,7 +59,7 @@
     {
       "type": "parallels-pvm",
       "parallels_tools_flavor": "mac",
-      "source_path": "iso/template1.pvm",
+      "source_path": "{{ user `pvm_path` }}",
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout": "30s",
