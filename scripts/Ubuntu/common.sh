@@ -1084,7 +1084,9 @@ function install_golangs() {
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
-    gvm use ${GO_VERSIONS[-1]} --default
+    local index
+    index=$(( ${#GO_VERSIONS[*]} - 1 ))
+    gvm use "${GO_VERSIONS[$index]}" --default
     log_version gvm version
     log_version go version
 }

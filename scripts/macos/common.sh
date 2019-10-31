@@ -1,4 +1,5 @@
 #!/bin/bash -e
+#shellcheck disable=SC2086,SC2015,SC2164
 
 if [[ -z "${USER_NAME-}" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; fi
 if [[ -z "${USER_HOME-}" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/home/appveyor; fi
@@ -383,15 +384,10 @@ function install_gvm() {
         command -v gvm
         gvm version
     else
-        for pkg in curl git mercurial make binutils bison gcc build-essential; do
-            dpkg -s ${pkg} ||
-                { echo "[WARNING] $pkg is not installed! GVM may fail." 1>&2; }
-        done
         bash < <(curl -fsSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer) ||
             { echo "[ERROR] Cannot install GVM." 1>&2; return 10; }
     fi
     # gvm-installer do not fix .profile for non-interactive shell
-    # shellcheck disable=SC2015
     [[ -s "${HOME}/.gvm/scripts/gvm" ]] && (
             write_line "${HOME}/.profile" '[[ -s "/home/appveyor/.gvm/scripts/gvm" ]] && source "/home/appveyor/.gvm/scripts/gvm"'
     ) || true
@@ -406,16 +402,15 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    gvm install go1.4 -B &&
-    gvm use go1.4 ||
-        { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
     # declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.10" "go1.13.1" )
     declare GO_VERSIONS=( "go1.13.1" )
     for v in "${GO_VERSIONS[@]}"; do
-        gvm install ${v} ||
+        gvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
-    gvm use ${GO_VERSIONS[-1]} --default
+    local index
+    index=$(( ${#GO_VERSIONS[*]} - 1 ))
+    gvm use "${GO_VERSIONS[$index]}" --default
     log_version gvm version
     log_version go version
 }
