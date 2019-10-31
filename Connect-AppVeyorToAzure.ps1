@@ -24,6 +24,9 @@ Function Connect-AppVeyorToAzure {
     .PARAMETER VmSize
         Size of Azure build VM. Use short notation (not display name) e.g. 'Standard_D2s_v3', not 'Standard D2s v3'.
 
+    .PARAMETER BehindAzureLB
+        Create public static IP, Azure Load balancer and nessesary inbound/outbound NAT rules. Place build VMs behind it. Useful if you need to limit access from build VMs to private resources by specific static (fixed) IP address.
+
     .PARAMETER VhdFullPath
         It can happen that you run the command, and it created a valid VHD, but some AppVeyor settings were not set correctly (or just you want to change them without doing it in the AppVeyor build environments UI). In this case you want to skip the most time consuming step (creating a VHD) and pass already created VHD path to this parameter.
 
@@ -77,7 +80,10 @@ Function Connect-AppVeyorToAzure {
 
       [Parameter(Mandatory=$false)]
       [string]$VmSize,
-      
+
+      [Parameter(Mandatory=$false)]
+      [switch]$BehindAzureLB,
+
       [Parameter(Mandatory=$false)]
       [string]$VhdFullPath,
 
@@ -161,6 +167,12 @@ Function Connect-AppVeyorToAzure {
     $azure_vnet_name = "$($CommonPrefix)-vnet"
     $azure_subnet_name = "$($CommonPrefix)-subnet"
     $azure_nsg_name = "$($CommonPrefix)-nsg"
+
+    $azure_public_ip_name = "$($CommonPrefix)-public-ip"
+    $azure_load_balancer_name = "$($CommonPrefix)-lb"
+    $azure_frontend_pool_name = "$($CommonPrefix)-fe-pool"
+    $azure_backend_pool_name = "$($CommonPrefix)-be-pool"
+    $azure_outbound_rule_name = "$($CommonPrefix)-outbound-rule"
 
     $ImageName = if ($ImageName) {$ImageName} else {$ImageOs}
     $ImageTemplate = GetImageTemplatePath $imageTemplate
@@ -485,6 +497,71 @@ Function Connect-AppVeyorToAzure {
         }
         else {Write-host "Inbound rule to allow TCP $($remoteaccessport) ($($remoteaccessname)) already exist in network security group '$($azure_nsg_name)'" -ForegroundColor DarkGray}
 
+        if ($BehindAzureLB) {
+            Write-host "`nGetting or creating Azure Load balancer..." -ForegroundColor Cyan
+            $azLoadBalancer = Get-AzLoadBalancer -Name $azure_load_balancer_name -ErrorAction Ignore
+            # Azure starts assigning addresses starting from 10.0.0.4 (assuming network is 10.0.0.0/24) so we start NAT inbound rules from 33804/22004
+            # We pre-create inbound NAT rules for all 10.0.0.0/24 range.
+            $portRange = if ($ImageOs -eq "Windows") {33804..34054} elseif ($ImageOs -eq "Linux") {22004..22254}
+            if(-not $azLoadBalancer) {
+                Write-host "`nGetting or creating public static IP address..." -ForegroundColor Cyan
+                $publicIp = Get-AzPublicIpAddress -Name $azure_public_ip_name -ResourceGroupName $azure_resource_group_name -ErrorAction Ignore
+                if (-not $publicIp) {
+                    $publicIp = New-AzPublicIpAddress -ResourceGroupName $azure_resource_group_name -Name $azure_public_ip_name -Location $Location -AllocationMethod static -SKU Standard
+                }
+                Write-host "Using public static IP address '$azure_public_ip_name', IP: $($publicIp.IpAddress)" -ForegroundColor DarkGray
+
+                $feip = New-AzLoadBalancerFrontendIpConfig -Name $azure_frontend_pool_name -PublicIpAddress $publicIp
+                $bepool = New-AzLoadBalancerBackendAddressPoolConfig -Name $azure_backend_pool_name
+                $outboundRule = New-AzLoadBalancerOutBoundRuleConfig -Name $azure_outbound_rule_name -FrontendIPConfiguration $feip -BackendAddressPool $bepool -Protocol All
+
+                Write-host "Creating inbound NAT rules to allow $remoteaccessname access to VMs behind Azure Load balancer..." -ForegroundColor DarkGray
+                $InboundNatRules = @()
+                $portRange | % {
+                    $natRuleName = "$CommonPrefix-$remoteaccessname-$_"
+                    $InboundNatRules += New-AzLoadBalancerInboundNatRuleConfig `
+                    -Name $natRuleName `
+                    -FrontendIpConfiguration $feip `
+                    -Protocol tcp `
+                    -FrontendPort $_ `
+                    -BackendPort $remoteaccessport
+                    Write-host "." -ForegroundColor DarkGray -NoNewline
+                }
+
+                New-AzLoadBalancer `
+                    -ResourceGroupName $azure_resource_group_name `
+                    -Name $azure_load_balancer_name `
+                    -SKU Standard `
+                    -Location $Location `
+                    -FrontendIpConfiguration $feip `
+                    -BackendAddressPool $bepool `
+                    -OutboundRule $outboundrule `
+                    -InboundNatRule $InboundNatRules | Out-Null
+
+                Write-host "`nAzure Load balancer '$azure_load_balancer_name' has been created." -ForegroundColor DarkGray
+            }
+            else {
+                $feip = Get-AzLoadBalancerFrontendIpConfig -LoadBalancer $azLoadBalancer
+                $publicIp = $feip.PublicIpAddress
+                Write-host "Creating inbound NAT rules to allow $remoteaccessname access to VMs behind Azure Load balancer..." -ForegroundColor DarkGray
+                $portRange | % {
+                    $natRuleName = "$CommonPrefix-$remoteaccessname-$_"
+                    if (-not (Get-AzLoadBalancerInboundNatRuleConfig -LoadBalancer $azLoadBalancer -Name $natRuleName -ErrorAction Ignore)) {
+                         Add-AzLoadBalancerInboundNatRuleConfig `
+                        -LoadBalancer $azLoadBalancer `
+                        -Name $natRuleName `
+                        -FrontendIpConfiguration $feip `
+                        -Protocol tcp `
+                        -FrontendPort $_ `
+                        -BackendPort $remoteaccessport | Out-Null
+                    }
+                    Write-host "." -ForegroundColor DarkGray -NoNewline
+                }
+                Set-AzLoadBalancer -LoadBalancer $azLoadBalancer | Out-Null
+                Write-host "`nUsing existing Azure Load balancer '$azure_load_balancer_name'." -ForegroundColor DarkGray
+            }
+        }
+
         #Run Packer to create an image
         if (-not $VhdFullPath) {
             $packerPath = GetPackerPath
@@ -650,8 +727,10 @@ Function Connect-AppVeyorToAzure {
                             vmResourceGroup = $azure_resource_group_name
                         }
                         networking = @{
-                            assignPublicIPAddress = $true
-                            placeBehindAzureLoadBalancer = $false
+                            assignPublicIPAddress = if ($BehindAzureLB) {$false} else {$true}
+                            placeBehindAzureLoadBalancer = if ($BehindAzureLB) {$true} else {$false}
+                            loadBalancerName = if ($BehindAzureLB) {$azure_load_balancer_name} else {$null}
+                            backendPool = if ($BehindAzureLB) {$azure_backend_pool_name} else {$null}
                             virtualNetworkName = $azure_vnet_name
                             subnetName = $azure_subnet_name
                             securityGroupName = $azure_nsg_name
@@ -697,8 +776,10 @@ Function Connect-AppVeyorToAzure {
             $settings.settings.cloudSettings.vmConfiguration.diskStorageAccountName = $azure_storage_account
             $settings.settings.cloudSettings.vmConfiguration.diskStorageContainer = $azure_storage_container
             $settings.settings.cloudSettings.vmConfiguration.vmResourceGroup = $azure_resource_group_name
-            $settings.settings.cloudSettings.networking.assignPublicIPAddress = $true
-            $settings.settings.cloudSettings.networking.placeBehindAzureLoadBalancer = $false
+            $settings.settings.cloudSettings.networking.assignPublicIPAddress = if ($BehindAzureLB) {$false} else {$true}
+            $settings.settings.cloudSettings.networking.placeBehindAzureLoadBalancer = if ($BehindAzureLB) {$true} else {$false}
+            $settings.settings.cloudSettings.networking.loadBalancerName = if ($BehindAzureLB) {$azure_load_balancer_name} else {$null}
+            $settings.settings.cloudSettings.networking.backendPool = if ($BehindAzureLB) {$azure_backend_pool_name} else {$null}
             $settings.settings.cloudSettings.networking.virtualNetworkName = $azure_vnet_name
             $settings.settings.cloudSettings.networking.subnetName = $azure_subnet_name
             $settings.settings.cloudSettings.networking.securityGroupName = $azure_nsg_name
@@ -726,6 +807,12 @@ Function Connect-AppVeyorToAzure {
         Write-Host "`nCompleted in $completed."
 
         #Report results and next steps
+        if ($BehindAzureLB -and $publicIp)
+        {
+            Write-host "`nBuild VMs will be placed behind Azure Load Balancer, and appear as " -ForegroundColor DarkGray -NoNewline
+            Write-host "$($publicIp.IpAddress) " -NoNewline
+            Write-host "when establishing outbound connections." -ForegroundColor DarkGray 
+        }
         PrintSummary 'Azure VMs' $AppVeyorUrl $cloud.buildCloudId $build_cloud_name $imageName
     }
 
