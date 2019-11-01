@@ -34,6 +34,8 @@ install_cmake
 install_gcc
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
+        $(declare -f install_pip)
+        $(declare -f install_virtualenv)
         $(declare -f install_pythons)
         install_pythons" ||
     _abort $?
