@@ -1,5 +1,6 @@
 #!/bin/bash -eu
 #shellcheck disable=SC2086,SC2015,SC2164
+
 DEBUG=false
 
 if [[ -z "${USER_NAME-}" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; fi
@@ -51,6 +52,7 @@ done
         { echo "[ERROR] Cannot source common.sh script. Aborting." 1>&2; exit 2; }
 
 if [ -f /etc/os-release ]; then
+    # shellcheck disable=SC1091
     OS_CODENAME=$(source /etc/os-release && echo $VERSION_CODENAME)
     if [ -f "${LIB_FOLDER}/${OS_CODENAME}.sh" ]; then
         # shellcheck source=./bionic.sh

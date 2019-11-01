@@ -46,7 +46,7 @@ function init_logging() {
 function chown_logfile() {
     if [[ -n "${USER_NAME-}" && -n "${LOG_FILE-}" ]]; then
         if id -u "${USER_NAME}"; then
-            chown $USER_NAME:$USER_NAME $LOG_FILE
+            chown "$(id -u "${USER_NAME}"):$(id -g "${USER_NAME}")" -R "$LOG_FILE"
         else
             return 1
         fi
@@ -375,7 +375,7 @@ function install_appveyoragent() {
     copy_appveyoragent || return "$?"
 
     if id -u "${USER_NAME}"; then
-        chown -R ${USER_NAME}:${USER_NAME} "${AGENT_DIR}"
+        chown "$(id -u "${USER_NAME}"):$(id -g "${USER_NAME}")" -R "${AGENT_DIR}"
     fi
 
     pushd -- "${AGENT_DIR}" ||
@@ -1297,9 +1297,9 @@ ExecStart=/usr/local/bin/redis-server /etc/redis/redis.conf
 ExecStop=/usr/local/bin/redis-cli shutdown
 Restart=always" > /etc/systemd/system/redis.service
     adduser --system --group --no-create-home redis &&
-    mkdir -p ${WORKING_DIR} &&
-    chown redis:redis ${WORKING_DIR} &&
-    chmod 770 ${WORKING_DIR}
+    mkdir -p "${WORKING_DIR}" &&
+    chown redis:redis "${WORKING_DIR}" &&
+    chmod 770 "${WORKING_DIR}"
 
     systemctl enable redis &&
     systemctl disable redis
@@ -1750,8 +1750,8 @@ function cleanup() {
     # clean bash_history
     [ -f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        [ -f ${USER_HOME}/.bash_history ] && cat /dev/null > ${USER_HOME}/.bash_history
-        chown ${USER_NAME}:${USER_NAME} -R ${USER_HOME}
+        [ -f "${USER_HOME}/.bash_history" ] && cat /dev/null > "${USER_HOME}/.bash_history"
+        chown "$(id -u "${USER_NAME}"):$(id -g "${USER_NAME}")" -R "${USER_HOME}"
     fi
 
     # cleanup script guts
