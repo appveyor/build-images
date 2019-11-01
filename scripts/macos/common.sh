@@ -558,7 +558,7 @@ function install_xcode() {
         export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
         export FASTLANE_DONT_STORE_PASSWORD=1
         xcversion install "$XCODE_VERSION"
-
+        xcversion simulators --install='iOS 12.4'
         # Cleanup
         export XCODE_INSTALL_USER=
         export XCODE_INSTALL_PASSWORD=
