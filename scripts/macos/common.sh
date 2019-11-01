@@ -172,6 +172,7 @@ function install_cvs() {
 }
 
 function configure_svn() {
+    echo "[INFO] Running configure_svn..."
     # this must be executed as appveyor user
     if [ "$(whoami)" != "${USER_NAME}" ]; then
         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
@@ -501,6 +502,7 @@ function install_nvm_nodejs() {
 }
 
 function install_xcode() {
+    echo "[INFO] Running install_xcode..."
     XCODE_VERSION="11.2 beta 2"
     #check fastlane
     if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
@@ -530,6 +532,7 @@ function check_folders() {
 }
 
 function cleanup() {
+    echo "[INFO] Running cleanup..."
     # clean bash_history
     [ -f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
