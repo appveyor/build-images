@@ -1680,6 +1680,7 @@ function add_ssh_known_hosts() {
 }
 
 function configure_path() {
+    echo "[INFO] Running configure_path..."
     echo '
 
 function add2path() {
@@ -1733,6 +1734,7 @@ function check_folders() {
 }
 
 function cleanup() {
+    echo "[INFO] Running cleanup..."
     # remove list of packages.
     # It frees up ~140Mb but it force users to execute `apt-get -y -qq update`
     # prior to install any other packages
