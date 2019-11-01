@@ -40,7 +40,20 @@ su -l ${USER_NAME} -c "
         install_pythons" ||
     _abort $?
 install_xcode
-install_dotnets
+
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        VERSIONS_FILE=${VERSIONS_FILE}
+        $(declare -f log_version)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f write_line)
+        $(declare -f global_json)
+        $(declare -f preheat_dotnet_sdks)
+        $(declare -f install_dotnets)
+        install_dotnets" ||
+    _abort $?
+
 install_gvm_and_golangs
 install_nvm_and_nodejs
 cleanup

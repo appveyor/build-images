@@ -348,9 +348,34 @@ function install_pythons(){
     find "$HOME" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
 }
 
+function global_json() {
+    echo "{
+  \"sdk\": {
+    \"version\": \"$1\"
+  }
+}"
+
+}
+
+function preheat_dotnet_sdks() {
+    for ver in $(dotnet --list-sdks|cut -f1 -d' '); do
+        echo "Preheating .NET SDK version $ver"
+        TMP_DIR=$(mktemp -d)
+        pushd  ${TMP_DIR}
+        global_json ${ver} >global.json
+        dotnet new console
+        popd &&
+        rm -rf "${TMP_DIR}"
+    done
+}
 
 function install_dotnets() {
     echo "[INFO] Running install_dotnets..."
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
     local SCRIPT_URL
     SCRIPT_URL="https://dot.net/v1/dotnet-install.sh"
     curl -fsSL "$SCRIPT_URL" -O ||
@@ -362,11 +387,17 @@ function install_dotnets() {
         ./dotnet-install.sh -channel "$v"
     done
 
-    local DOTNET_CMD
-    DOTNET_CMD="$HOME/.dotnet/dotnet"
-    [ -x "$DOTNET_CMD" ] && (
-        log_version "$DOTNET_CMD" --list-sdks
-        log_version "$DOTNET_CMD" --list-runtimes )
+    #shellcheck disable=SC2016
+    write_line "${HOME}/.profile" 'add2path_suffix $HOME/.dotnet'
+    export PATH="$PATH:$HOME/.dotnet"
+
+    if command -v dotnet; then
+        preheat_dotnet_sdks
+        log_version dotnet --list-sdks
+        log_version dotnet --list-runtimes
+    else
+        echo "[WARNING] Cannot find `dotnet` executable in PATH. .NET not configured properly. "
+    fi
 }
 
 function install_gvm_and_golangs() {
