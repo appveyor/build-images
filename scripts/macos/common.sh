@@ -201,6 +201,16 @@ function install_gpg() {
 
 function install_fastlane() {
     echo "[INFO] Running install_fastlane..."
+
+    # fastlane dependencies requires Ruby version >= 2.4.0.
+    if command -v rvm; then
+        # We take as granted that install_rubies set latest version as default
+        rvm use default
+    else
+        echo "Cannot find rvm. Install rvm first!" 1>&2
+        return 10
+    fi
+
     brew_cask_install fastlane
     if check_user; then
         # shellcheck disable=SC2016
@@ -236,6 +246,9 @@ function install_rubies() {
         rvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
+    local index
+    index=$(( ${#RUBY_VERSIONS[*]} - 1 ))
+    rvm use "${RUBY_VERSIONS[$index]}" --default
     log_version rvm --version
     log_version rvm list
 }
