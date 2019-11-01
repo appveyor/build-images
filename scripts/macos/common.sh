@@ -3,6 +3,7 @@
 
 if [[ -z "${USER_NAME-}" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; fi
 if [[ -z "${USER_HOME-}" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/home/appveyor; fi
+if [[ -z "${VERSIONS_FILE-}" || "${#VERSIONS_FILE}" = "0" ]]; then VERSIONS_FILE=$HOME/versions.log; fi
 HOST_NAME=appveyor-vm
 OSX_VERS=$(sw_vers -productVersion | awk -F "." '{print $2}')
 PlistBuddy="/usr/libexec/PlistBuddy"
@@ -113,6 +114,7 @@ function write_line() {
 
 function configure_path() {
     echo "[INFO] Running configure_path..."
+    # shellcheck disable=SC2016
     echo '
 
 function add2path() {
@@ -554,6 +556,7 @@ function install_xcode() {
         gem install xcode-install
         export XCODE_INSTALL_USER=$APPLEID_USER
         export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
+        export FASTLANE_DONT_STORE_PASSWORD=1
         xcversion install "$XCODE_VERSION"
 
         # Cleanup
@@ -581,7 +584,7 @@ function cleanup() {
     [ -f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         [ -f ${USER_HOME}/.bash_history ] && cat /dev/null > ${USER_HOME}/.bash_history
-        chown ${USER_NAME}:${USER_NAME} -R ${USER_HOME}
+        chown "$(id -u "${USER_NAME}"):$(id -g "${USER_NAME}")" -R "${USER_HOME}"
     fi
 
     # cleanup script guts
