@@ -111,6 +111,26 @@ function write_line() {
     echo "${NEW_TEXT}" > "${FILE}"
 }
 
+function configure_path() {
+    echo "[INFO] Running configure_path..."
+    echo '
+
+function add2path() {
+    case ":$PATH:" in
+        *":$1:"*) :;;
+        *) export PATH="$1:$PATH" ;;
+    esac
+}
+
+function add2path_suffix() {
+    case ":$PATH:" in
+        *":$1:"*) :;;
+        *) export PATH="$PATH:$1" ;;
+    esac
+}
+' >> /etc/profile
+}
+
 function check_user(){
     [ -n "${USER_NAME-}" ] &&
     [ "${#USER_NAME}" -gt "0" ] &&

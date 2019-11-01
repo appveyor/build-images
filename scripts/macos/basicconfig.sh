@@ -25,6 +25,7 @@ if ! command -v brew; then
     fi
 fi
 
+configure_path
 install_cvs
 install_gpg
 install_rvm_and_rubies
