@@ -33,6 +33,7 @@ install_fastlane
 install_cmake
 install_gcc
 su -l ${USER_NAME} -c "
+        PATH=$PATH
         USER_NAME=${USER_NAME}
         $(declare -f install_pip)
         $(declare -f install_virtualenv)
@@ -42,6 +43,7 @@ su -l ${USER_NAME} -c "
 install_xcode
 
 su -l ${USER_NAME} -c "
+        PATH=$PATH
         USER_NAME=${USER_NAME}
         VERSIONS_FILE=${VERSIONS_FILE}
         $(declare -f log_version)
