@@ -265,7 +265,7 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/disable_winupdates.ps1"
+            "{{ template_dir }}/scripts/Windows/disable_windows_background_services.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}",          
