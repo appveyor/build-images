@@ -185,6 +185,7 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.VisualStudio.Component.VC.MFC.ARM64 ' + `
 	'--add Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre ' + `
 	'--add Microsoft.VisualStudio.Component.VC.Redist.14.Latest ' + `
+	'--add Microsoft.VisualStudio.Component.VC.Redist.MSM ' + `
 	'--add Microsoft.VisualStudio.Component.VC.Runtimes.ARM.Spectre ' + `
 	'--add Microsoft.VisualStudio.Component.VC.Runtimes.ARM64.Spectre ' + `
 	'--add Microsoft.VisualStudio.Component.VC.Runtimes.x86.x64.Spectre ' + `
