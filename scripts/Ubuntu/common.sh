@@ -54,7 +54,8 @@ function chown_logfile() {
 }
 
 function log() {
-    local TIMESTAMP=$(date +[%Y%m%d--%H:%M:%S])
+    local TIMESTAMP
+    TIMESTAMP=$(date +[%Y%m%d--%H:%M:%S])
     echo "$TIMESTAMP (${SCRIPT_PID}): $*"
     echo "$TIMESTAMP (${SCRIPT_PID}): $*" >> $LOG_FILE 2>&1
 }
@@ -144,7 +145,8 @@ function write_line() {
 # check_apt_locks waits for LOCK_TIMEOUT seconds for apt locks released
 function check_apt_locks() {
     local LOCK_TIMEOUT=60
-    local START_TIME=$(date +%s)
+    local START_TIME
+    START_TIME=$(date +%s)
     local END_TIME=$(( START_TIME + LOCK_TIMEOUT ))
     if ! command -v lsof >/dev/null; then
         echo "[WARNING] lsof command not found. Are we in docker container?"
@@ -458,8 +460,11 @@ function install_nvm() {
     fi
     #TODO have to figure out latest release version automatically
     curl -fsSLo- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+    #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
+    #shellcheck disable=SC2016
     write_line "${HOME}/.profile" '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'
+    #shellcheck disable=SC2016
     write_line "${HOME}/.profile" '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'
 }
 
@@ -736,15 +741,16 @@ function preheat_dotnet_sdks() {
 }
 
 function prepare_dotnet_packages() {
+    #shellcheck disable=SC2034
     SDK_VERSIONS=( "2.0.0" "2.0.2" "2.0.3" "2.1.2" "2.1.3" "2.1.4" "2.1.101" "2.1.103" "2.1.104" "2.1.105" "2.1.200" "2.1.201" "2.1.202" "2.1" "2.2" "3.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
-
+    #shellcheck disable=SC2034
     declare RUNTIME_VERSIONS=( "2.0.0" "2.0.3" "2.0.4" "2.0.5" "2.0.6" "2.0.7" "2.0.9" "2.1" "2.2" )
     dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
-
+    #shellcheck disable=SC2034
     declare RUNTIME_VERSIONS=( "2.1" "2.2" "3.0" )
     dotnet_packages "aspnetcore-runtime-" RUNTIME_VERSIONS[@]
-
+    #shellcheck disable=SC2034
     declare DEV_VERSIONS=( "1.1.5" "1.1.6" "1.1.7" "1.1.8" "1.1.9" "1.1.10" "1.1.11" "1.1.12" )
     dotnet_packages "dotnet-dev-" DEV_VERSIONS[@]
 }
@@ -948,6 +954,7 @@ function configure_jdk() {
     done
     write_line "${HOME}/.profile" 'export JAVA_HOME=/usr/lib/jvm/java-9-openjdk-amd64'
     write_line "${HOME}/.profile" 'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8'
+    #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
 }
 
@@ -1213,6 +1220,7 @@ function install_mysql() {
     apt-get -y -q install mysql-server ||
         { echo "[ERROR] Cannot install MySQL." 1>&2; return 10;}
     systemctl start mysql
+    #shellcheck disable=SC2016
     mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e 'USE mysql; SELECT Host,User FROM `user`;' ||
         { echo "[ERROR] Cannot connect to MySQL locally." 1>&2; return 20;}
     systemctl disable mysql
@@ -1328,7 +1336,8 @@ function install_rabbitmq() {
 
 function install_p7zip() {
     echo "[INFO] Running install_p7zip..."
-    local TMP_DIR=$(mktemp -d)
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     curl -fsSL -O "https://sourceforge.net/projects/p7zip/files/p7zip/16.02/p7zip_16.02_src_all.tar.bz2" &&
     tar jxf "p7zip_16.02_src_all.tar.bz2" ||
@@ -1421,7 +1430,8 @@ function install_cmake() {
         VERSION=$1
     fi
     local TAR_FILE=cmake-${VERSION}-Linux-x86_64.tar.gz
-    local TMP_DIR=$(mktemp -d)
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     curl -fsSL -O "https://cmake.org/files/v${VERSION%.*}/${TAR_FILE}" &&
     tar -zxf "${TAR_FILE}" ||
@@ -1452,7 +1462,7 @@ function configure_nuget() {
     if [ -f "${NUGET_CONFIG}" ]; then
         echo "[WARNING] ${NUGET_CONFIG} already exists. Taking ownership."
         cat ${NUGET_CONFIG}
-        sudo chown -R $(id -u):$(id -g) "$HOME/.nuget"
+        sudo chown -R "$(id -u):$(id -g)" "$HOME/.nuget"
     else
         echo "[INFO] Creating ${NUGET_CONFIG}"
         mkdir -p "$HOME/.nuget/NuGet" &&
@@ -1513,7 +1523,8 @@ function install_curl() {
         VERSION=$1
     fi
     local TAR_FILE=curl-${VERSION}.tar.gz
-    local TMP_DIR=$(mktemp -d)
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     curl -fsSL -O "https://curl.haxx.se/download/${TAR_FILE}" &&
     tar -zxf "${TAR_FILE}" ||
@@ -1619,7 +1630,8 @@ function install_octo() {
         OCTO_VERSION=$1
     fi
     OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.ubuntu.16.04-x64.tar.gz"
-    local TMP_DIR=$(mktemp -d)
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     curl -fsSL "${OCTO_URL}" -o OctopusTools.tar.gz ||
         { echo "[ERROR] Cannot download OctopusTools." 1>&2; popd; return 10; }
@@ -1681,6 +1693,7 @@ function add_ssh_known_hosts() {
 
 function configure_path() {
     echo "[INFO] Running configure_path..."
+    #shellcheck disable=SC2016
     echo '
 
 function add2path() {
@@ -1705,6 +1718,7 @@ function configure_sshd() {
 
 function configure_motd() {
     chmod -x /etc/update-motd.d/*
+    #shellcheck disable=SC2028,SC2016
     echo '#!/bin/sh
 [ -r /etc/os-release ] && . /etc/os-release
 printf "Appveyor Worker\n"

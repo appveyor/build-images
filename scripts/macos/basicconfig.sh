@@ -42,7 +42,7 @@ install_rvm_and_rubies
 install_fastlane
 install_cmake
 install_gcc
-su -l ${USER_NAME} -c "
+su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
         $(declare -f log_version)
@@ -53,7 +53,7 @@ su -l ${USER_NAME} -c "
     _abort $?
 install_xcode
 
-su -l ${USER_NAME} -c "
+su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
         VERSIONS_FILE=${VERSIONS_FILE}

@@ -273,6 +273,7 @@ function install_rvm_and_rubies() {
                 return $?
         # load RVM into current shell instance
         export PATH="$PATH:$HOME/.rvm/bin"
+        #shellcheck disable=SC1090
         [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
     else
         echo "[WARNING] User '${USER_NAME-}' not found. Cannot install RVM and rubies"
@@ -527,8 +528,11 @@ function install_nvm() {
     fi
     #TODO have to figure out latest release version automatically
     curl -fsSLo- https://raw.githubusercontent.com/creationix/nvm/v0.35.0/install.sh | bash
+    #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
+    #shellcheck disable=SC2016
     write_line "${HOME}/.profile" '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'
+    #shellcheck disable=SC2016
     write_line "${HOME}/.profile" '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'
 }
 
