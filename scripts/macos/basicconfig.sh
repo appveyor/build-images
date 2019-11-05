@@ -25,6 +25,16 @@ if ! command -v brew; then
     fi
 fi
 
+function _abort() {
+    echo "Aborting." 1>&2
+    exit "$1"
+}
+
+function _continue() {
+    echo "Continue installation..." 1>&2
+}
+
+init_logging
 configure_path
 install_cvs
 install_gpg
@@ -35,6 +45,7 @@ install_gcc
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
+        $(declare -f log_version)
         $(declare -f install_pip)
         $(declare -f install_virtualenv)
         $(declare -f install_pythons)
