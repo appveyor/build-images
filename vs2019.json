@@ -268,8 +268,7 @@
             "{{ template_dir }}/scripts/Windows/disable_windows_background_services.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}",          
-        "only": ["hyperv-iso", "hyperv-vmcx"]
+        "elevated_password": "{{user `install_password`}}"
     },    
     {
         "type": "powershell",
