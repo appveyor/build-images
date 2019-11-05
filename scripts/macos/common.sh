@@ -293,7 +293,8 @@ function install_cmake() {
         VERSION=$1
     fi
     local TAR_FILE=cmake-${VERSION}-Darwin-x86_64.tar.gz
-    local TMP_DIR=$(mktemp -d)
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     curl -fsSL -O "https://cmake.org/files/v${VERSION%.*}/${TAR_FILE}" &&
     tar -zxf "${TAR_FILE}" ||
@@ -334,6 +335,16 @@ function install_pip() {
 
 function install_pythons(){
     echo "[INFO] Running install_pythons..."
+    find /Library/Developer/CommandLineTools/Packages/ -name 'macOS_SDK_headers_*.pkg' |
+        xargs -I {} sudo installer -pkg {} -target /
+
+    brew install openssl sqilte3
+    SSL_PATH=$(brew --prefix openssl)
+    SQLITE_PATH=$(brew --prefix sqlite3)
+
+    CPPFLAGS="-I${SSL_PATH}/include:${SQLITE_PATH}/include:"
+    LDFLAGS="-L${SSL_PATH}/lib:${SQLITE_PATH}/lib:"
+
     command -v virtualenv || install_virtualenv
     # declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0" )
     declare PY_VERSIONS=( "2.7.16" "3.8.0" )
@@ -347,7 +358,7 @@ function install_pythons(){
             { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
         PY_PATH=${HOME}/.localpython${i}
         mkdir -p "${PY_PATH}"
-        ./configure --silent "--prefix=${PY_PATH}" &&
+        ./configure --silent "--prefix=${PY_PATH}" "CPPFLAGS=${CPPFLAGS}" "LDFLAGS=${LDFLAGS}" &&
         make --silent &&
         make install --silent >/dev/null ||
             { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
@@ -412,7 +423,7 @@ function install_dotnets() {
         log_version dotnet --list-sdks
         log_version dotnet --list-runtimes
     else
-        echo "[WARNING] Cannot find `dotnet` executable in PATH. .NET not configured properly. "
+        echo "[WARNING] Cannot find 'dotnet' executable in PATH. .NET not configured properly."
     fi
 }
 
