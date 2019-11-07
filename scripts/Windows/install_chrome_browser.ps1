@@ -1,6 +1,6 @@
 ﻿Write-Host "Installing Chrome..." -ForegroundColor Cyan
 
-choco install googlechrome --version=78.0.3904.87
+choco install googlechrome --ignore-checksums
 
 Set-Service gupdate -StartupType Manual
 
