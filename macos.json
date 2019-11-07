@@ -19,12 +19,11 @@
     {
       "type": "shell",
       "environment_vars": [
-        "HOMEBREW_APPVEYOR_URL={{user `appVeyorUrl`}}",
-        "HOMEBREW_HOST_AUTH_TKN={{user `hostAuthorizationToken`}}"
+        "HOMEBREW_BUILD_AGENT_MODE=Parallels"
       ],
       "inline": [
-        "brew install appveyor/brew/appveyor-host-agent",
-        "brew services restart appveyor/brew/appveyor-host-agent"
+        "brew install appveyor/brew/appveyor-build-agent",
+        "brew services restart appveyor/brew/appveyor-build-agent"
       ]
     },
     {
