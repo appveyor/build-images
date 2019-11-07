@@ -343,8 +343,8 @@ function install_pythons(){
     SSL_PATH=$(brew --prefix openssl)
     SQLITE_PATH=$(brew --prefix sqlite3)
 
-    CPPFLAGS="-I${SSL_PATH}/include:${SQLITE_PATH}/include:"
-    LDFLAGS="-L${SSL_PATH}/lib:${SQLITE_PATH}/lib:"
+    CPPFLAGS="-I${SSL_PATH}/include -I${SQLITE_PATH}/include -I$(xcrun --show-sdk-path)/usr/include"
+    LDFLAGS="-L${SSL_PATH}/lib -L${SQLITE_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
     # declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0" )
