@@ -434,6 +434,7 @@ function install_gvm_and_golangs() {
     brew_install go
     if check_user; then
         su -l ${USER_NAME} -c "
+            PATH=$PATH
             USER_NAME=${USER_NAME}
             $(declare -f install_gvm)
             $(declare -f write_line)
@@ -441,6 +442,7 @@ function install_gvm_and_golangs() {
             $(declare -f replace_line)
             install_gvm" &&
         su -l ${USER_NAME} -c "
+            PATH=$PATH
             USER_NAME=${USER_NAME}
             source \"${HOME}/.gvm/scripts/gvm\"
             $(declare -f log_version)
