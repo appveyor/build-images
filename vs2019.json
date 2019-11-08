@@ -85,7 +85,6 @@
         "type": "powershell",
         "scripts":[
             "{{ template_dir }}/scripts/Windows/install_path_utils.ps1",
-            "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1",
             "{{ template_dir }}/scripts/Windows/install_powershell_get.ps1",
             "{{ template_dir }}/scripts/Windows/install_7zip.ps1",
             "{{ template_dir }}/scripts/Windows/install_chocolatey.ps1",
@@ -111,6 +110,7 @@
     {
         "type": "powershell",
         "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1",
             "{{ template_dir }}/scripts/Windows/install_docker_hyperv_wsl_features.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
