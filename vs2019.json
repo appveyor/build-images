@@ -98,6 +98,14 @@
     {
         "type": "powershell",
         "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "powershell",
+        "scripts":[
             "{{ template_dir }}/scripts/Windows/install_git.ps1",
             "{{ template_dir }}/scripts/Windows/install_git_lfs.ps1",
             "{{ template_dir }}/scripts/Windows/install_mercurial.ps1",
@@ -110,7 +118,6 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1",
             "{{ template_dir }}/scripts/Windows/install_docker_hyperv_wsl_features.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
