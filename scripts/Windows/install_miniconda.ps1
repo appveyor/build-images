@@ -30,6 +30,8 @@ UninstallMiniconda "Python 2.7.15 (Miniconda2 4.5.11 32-bit)"
 UninstallMiniconda "Python 2.7.15 (Miniconda2 4.5.11 64-bit)"
 UninstallMiniconda "Python 2.7.15 (Miniconda2 4.5.12 32-bit)"
 UninstallMiniconda "Python 2.7.15 (Miniconda2 4.5.12 64-bit)"
+UninstallMiniconda "Miniconda2 4.7.12 (Python 2.7.16 32-bit)"
+UninstallMiniconda "Miniconda2 4.7.12 (Python 2.7.16 64-bit)"
 
 UninstallMiniconda "Python 3.4.3 (Miniconda3 3.16.0 32-bit)"
 UninstallMiniconda "Python 3.4.3 (Miniconda3 3.16.0 64-bit)"
@@ -44,24 +46,26 @@ UninstallMiniconda "Python 3.7.0 (Miniconda3 4.5.11 32-bit)"
 UninstallMiniconda "Python 3.7.0 (Miniconda3 4.5.11 64-bit)"
 UninstallMiniconda "Python 3.7.1 (Miniconda3 4.5.12 32-bit)"
 UninstallMiniconda "Python 3.7.1 (Miniconda3 4.5.12 64-bit)"
+UninstallMiniconda "Miniconda3 4.7.12 (Python 3.7.4 32-bit)"
+UninstallMiniconda "Miniconda3 4.7.12 (Python 3.7.4 64-bit)"
 
 Start-Sleep -Seconds 30
 
 Remove-Item C:\Miniconda3 -Force -Recurse
 Remove-Item C:\Miniconda3-x64 -Force -Recurse
 
-Write-Host "Installing Miniconda2 4.5.12 Python 2.7.15 x64..." -ForegroundColor Cyan
+Write-Host "Installing Miniconda2 4.7.12 (Python 2.7.16 64-bit)..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$exePath = "$env:TEMP\Miniconda2-4.5.12-Windows-x86_64.exe"
-(New-Object Net.WebClient).DownloadFile('https://repo.continuum.io/miniconda/Miniconda2-4.5.12-Windows-x86_64.exe', $exePath)
+$exePath = "$env:TEMP\Miniconda2-4.7.12.1-Windows-x86_64.exe"
+(New-Object Net.WebClient).DownloadFile('https://repo.continuum.io/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe', $exePath)
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda-x64
 del $exePath
 
-Write-Host "Installing Miniconda2 4.5.12 Python 2.7.15 x86..." -ForegroundColor Cyan
+Write-Host "Installing Miniconda2 4.7.12 (Python 2.7.16 32-bit)..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$exePath = "$env:TEMP\Miniconda2-4.5.12-Windows-x86.exe"
-(New-Object Net.WebClient).DownloadFile('https://repo.continuum.io/miniconda/Miniconda2-4.5.12-Windows-x86.exe', $exePath)
+$exePath = "$env:TEMP\Miniconda2-4.7.12.1-Windows-x86.exe"
+(New-Object Net.WebClient).DownloadFile('https://repo.continuum.io/miniconda/Miniconda2-4.7.12.1-Windows-x86.exe', $exePath)
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda
 del $exePath
@@ -122,18 +126,18 @@ del $exePath
 
 
 
-Write-Host "Installing Miniconda3 4.5.12 Python 3.7.1 x64..." -ForegroundColor Cyan
+Write-Host "Installing Miniconda3 4.7.12 (Python 3.7.4 64-bit)..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$exePath = "$env:TEMP\Miniconda3-4.5.12-Windows-x86_64.exe"
-(New-Object Net.WebClient).DownloadFile('https://repo.continuum.io/miniconda/Miniconda3-4.5.12-Windows-x86_64.exe', $exePath)
+$exePath = "$env:TEMP\Miniconda3-4.7.12.1-Windows-x86_64.exe"
+(New-Object Net.WebClient).DownloadFile('https://repo.continuum.io/miniconda/Miniconda3-4.7.12.1-Windows-x86_64.exe', $exePath)
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda37-x64
 del $exePath
 
-Write-Host "Installing Miniconda3 4.5.12 Python 3.7.1 x86..." -ForegroundColor Cyan
+Write-Host "Installing Miniconda3 4.7.12 (Python 3.7.4 32-bit)..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$exePath = "$env:TEMP\Miniconda3-4.5.12-Windows-x86.exe"
-(New-Object Net.WebClient).DownloadFile('https://repo.continuum.io/miniconda/Miniconda3-4.5.12-Windows-x86.exe', $exePath)
+$exePath = "$env:TEMP\Miniconda3-4.7.12.1-Windows-x86.exe"
+(New-Object Net.WebClient).DownloadFile('https://repo.continuum.io/miniconda/Miniconda3-4.7.12.1-Windows-x86.exe', $exePath)
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda37
 del $exePath

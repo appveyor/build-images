@@ -14,8 +14,8 @@ cmd /c "$exePath" --verbose --script "$qsPath"
 Remove-Item $exePath
 
 # set aliases
-cmd /c mklink /J C:\Qt\latest C:\Qt\5.13.1
-cmd /c mklink /J C:\Qt\5.13 C:\Qt\5.13.1
+cmd /c mklink /J C:\Qt\latest C:\Qt\5.13.2
+cmd /c mklink /J C:\Qt\5.13 C:\Qt\5.13.2
 cmd /c mklink /J C:\Qt\5.12 C:\Qt\5.12.5
 cmd /c mklink /J C:\Qt\5.9 C:\Qt\5.9.8
 

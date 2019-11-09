@@ -25,4 +25,11 @@ New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "Run" -Force | 
 Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "AppVeyor.BuildAgent" `
 	-Value "powershell -File `"${env:ProgramFiles}\AppVeyor\BuildAgent\update-appveyor-agent.ps1`""
 
+# Make PS modules visible to external PS sessions
+$AppVeyorModulesPath = "$destPath\Modules"
+$PSModulePath = [Environment]::GetEnvironmentVariable('PSModulePath', 'Machine')
+if(-not $PSModulePath.contains($AppVeyorModulesPath)) {
+    [Environment]::SetEnvironmentVariable('PSModulePath', "$PSModulePath;$AppVeyorModulesPath", 'Machine')
+}
+
 Write-Host "AppVeyor Build Agent installed"

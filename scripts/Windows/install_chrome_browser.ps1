@@ -1,6 +1,6 @@
 ﻿Write-Host "Installing Chrome..." -ForegroundColor Cyan
 
-choco install googlechrome
+choco install googlechrome --ignore-checksums
 
 Set-Service gupdate -StartupType Manual
 

@@ -265,11 +265,10 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/disable_winupdates.ps1"
+            "{{ template_dir }}/scripts/Windows/disable_windows_background_services.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}",          
-        "only": ["hyperv-iso"]
+        "elevated_password": "{{user `install_password`}}"
     },    
     {
         "type": "powershell",
@@ -398,7 +397,7 @@
       "winrm_timeout" : "1h",
       "winrm_username": "{{ user `install_user` }}",
       "winrm_password": "{{ user `install_password` }}",
-      "shutdown_command": "powershell -command Disable-NetFirewallRule -Direction Inbound; Stop-Computer",
+      "shutdown_command": "shutdown /s /t 1",
       "output_directory": "{{user `output_directory`}}",
       "cpus": "{{user `cpus`}}",
       "memory": "{{user `memory`}}",
@@ -427,7 +426,7 @@
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "memory": "{{user `memory`}}",
-      "shutdown_command": "powershell -command Disable-NetFirewallRule -Direction Inbound; Stop-Computer",
+      "shutdown_command": "shutdown /s /t 1",
       "output_directory": "{{user `output_directory`}}",
       "switch_name": "{{user `hyperv_switchname`}}",
       "vm_name": "windows-server-2019-{{user `datemark`}}",

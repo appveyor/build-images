@@ -1,8 +1,8 @@
 ﻿Write-Host "Installing 7-Zip"
 Write-Host "================"
 
-$exePath = "$env:TEMP\7z1805-x64.exe"
-Invoke-WebRequest https://www.7-zip.org/a/7z1805-x64.exe -OutFile $exePath
+$exePath = "$env:TEMP\7z1900-x64.exe"
+Invoke-WebRequest https://www.7-zip.org/a/7z1900-x64.exe -OutFile $exePath
 cmd /c start /wait $exePath /S
 del $exePath
 
