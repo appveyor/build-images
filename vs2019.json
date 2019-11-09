@@ -86,19 +86,12 @@
         "scripts":[
             "{{ template_dir }}/scripts/Windows/install_path_utils.ps1",
             "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1",
+            "{{ template_dir }}/scripts/Windows/install_powershell_get.ps1",
             "{{ template_dir }}/scripts/Windows/install_7zip.ps1",
             "{{ template_dir }}/scripts/Windows/install_chocolatey.ps1",
             "{{ template_dir }}/scripts/Windows/install_webpi.ps1",
             "{{ template_dir }}/scripts/Windows/install_nuget.ps1",
             "{{ template_dir }}/scripts/Windows/install_pstools.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}" 
-    },
-    {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_powershell_get.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}" 
