@@ -1636,6 +1636,37 @@ function install_octo() {
     rm -rf "${TMP_DIR}"
 }
 
+function install_vcpkg() {
+    echo "[INFO] Running install_vcpkg..."
+
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}' user. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    pushd "${HOME}"
+    command -v git ||
+        { echo "[ERROR] Cannot find git. Please install git first." 1>&2; return 10; }
+    local TOOL
+    for TOOL in curl unzip tar; do
+        command -v "${TOOL}" ||
+            { echo "[ERROR] Cannot find '${TOOL}'. Please install '${TOOL}' first." 1>&2; return 10; }
+    done
+
+    git clone --depth 1 https://github.com/Microsoft/vcpkg.git &&
+    pushd vcpkg
+    ./bootstrap-vcpkg.sh ||
+        { echo "[ERROR] Cannot bootstrap vcpkg." 1>&2; popd; return 10; }
+
+    vcpkg integrate install
+    write_line "${HOME}/.profile" 'add2path_suffix ${HOME}/vcpkg'
+    export PATH="$PATH:${HOME}/vcpkg"
+
+    popd
+    popd
+    log_version vcpkg version
+}
+
 function add_ssh_known_hosts() {
     if [ -f "add_ssh_known_hosts.ps1" ] && command -v pwsh; then
         pwsh ./add_ssh_known_hosts.ps1
