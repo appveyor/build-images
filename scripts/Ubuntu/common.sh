@@ -479,7 +479,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -492,7 +492,7 @@ function install_nvm_nodejs() {
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        GIT_VERSION=2.23.0
+        GIT_VERSION=2.24.0
     else
         GIT_VERSION=$1
     fi
@@ -616,7 +616,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0b4" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
@@ -881,9 +881,9 @@ function install_jdks() {
         return $?
     install_jdk 12 https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 13 https://download.java.net/java/GA/jdk13/5b8a42f3905b406298b72d750b6919f6/33/GPL/openjdk-13_linux-x64_bin.tar.gz ||
+    install_jdk 13 https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 14 https://download.java.net/java/early_access/jdk14/15/GPL/openjdk-14-ea+15_linux-x64_bin.tar.gz ||
+    install_jdk 14 https://download.java.net/java/early_access/jdk14/22/GPL/openjdk-14-ea+22_linux-x64_bin.tar.gz ||
         return $?
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
@@ -1079,7 +1079,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.10" "go1.13.1" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.13" "go1.13.4" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1343,7 +1343,7 @@ function install_packer() {
     echo "[INFO] Running install_packer..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=1.4.3
+        VERSION=1.4.5
     else
         VERSION=$1
     fi
@@ -1506,7 +1506,7 @@ function install_curl() {
     echo "[INFO] Running install_curl..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=7.65.3
+        VERSION=7.67.0
     else
         VERSION=$1
     fi
@@ -1557,7 +1557,7 @@ function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=6.0.12
+        VERSION=6.0.14
     else
         VERSION=$1
     fi
@@ -1612,7 +1612,7 @@ function install_octo() {
     echo "[INFO] Running install_octo..."
     local OCTO_VERSION, OCTO_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        OCTO_VERSION=6.12.0
+        OCTO_VERSION=6.14.2
     else
         OCTO_VERSION=$1
     fi
