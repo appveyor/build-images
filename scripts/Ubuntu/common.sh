@@ -1414,7 +1414,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.15.3
+        VERSION=3.16.0-rc3
     else
         VERSION=$1
     fi
@@ -1658,9 +1658,10 @@ function install_vcpkg() {
     ./bootstrap-vcpkg.sh ||
         { echo "[ERROR] Cannot bootstrap vcpkg." 1>&2; popd; return 10; }
 
-    vcpkg integrate install
     write_line "${HOME}/.profile" 'add2path_suffix ${HOME}/vcpkg'
     export PATH="$PATH:${HOME}/vcpkg"
+    vcpkg integrate install ||
+        { echo "[WARNING] 'vcpkg integrate install' Failed." 1>&2; }
 
     popd
     popd
