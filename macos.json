@@ -13,7 +13,8 @@
         "echo 'export PATH=\"$PATH:/usr/local/bin\"' >> $HOME/.bashrc",
         "echo '{{ user `install_password` }}' | sudo systemsetup -setcomputersleep Never",
         "echo '{{ user `install_password` }}' | CI=1 /usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\"",
-        "/usr/local/bin/brew cask install powershell coreutils zlib"
+        "/usr/local/bin/brew cask install powershell",
+        "/usr/local/bin/brew install coreutils zlib"
       ]
     },
     {
