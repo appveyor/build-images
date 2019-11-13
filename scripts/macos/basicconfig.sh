@@ -42,6 +42,7 @@ install_rvm_and_rubies
 install_fastlane
 install_cmake
 install_gcc
+install_openjdk
 su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}

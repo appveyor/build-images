@@ -586,6 +586,20 @@ function install_xcode() {
     fi
 }
 
+function install_openjdk() {
+    [ -x "${BREW_CMD-}" ] ||
+        { echo "[ERROR] Cannot find brew. Install Homebrew first!" 1>&2; return 1; }
+    if check_user; then
+        su -l ${USER_NAME} -c "
+            $BREW_CMD tap AdoptOpenJDK/openjdk
+            $BREW_CMD cask install adoptopenjdk8 adoptopenjdk9 adoptopenjdk10 adoptopenjdk11 adoptopenjdk12 adoptopenjdk13
+        " ||
+            { echo "[ERROR] Cannot install '$*' with Homebrew." 1>&2; return 20; }
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
+    fi
+}
+
 function check_folders() {
     if [ "$#" -gt 0 ]; then
         while [[ "$#" -gt 0 ]]; do
