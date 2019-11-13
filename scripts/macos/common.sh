@@ -289,7 +289,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.15.4
+        VERSION=3.16.0-rc3
     else
         VERSION=$1
     fi
@@ -347,7 +347,7 @@ function install_pythons(){
     LDFLAGS="-L${SSL_PATH}/lib -L${SQLITE_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
-    # declare PY_VERSIONS=( "2.6.9" "2.7.16" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0" )
+    # declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0" )
     declare PY_VERSIONS=( "2.7.16" "3.8.0" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%[abrcf]*}
@@ -484,7 +484,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    # declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.10" "go1.13.1" )
+    # declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.13" "go1.13.4" )
     declare GO_VERSIONS=( "go1.13.1" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install "${v}" ||
@@ -547,14 +547,14 @@ function install_nvm_nodejs() {
     fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        CURRENT_NODEJS=8
+        CURRENT_NODEJS=12
     else
         CURRENT_NODEJS=$1
     fi
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    # declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" )
+    # declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
     declare NVM_VERSIONS=( "8"  "12" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install "${v}" ||
