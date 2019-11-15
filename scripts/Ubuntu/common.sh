@@ -338,7 +338,7 @@ function install_KVP_packages(){
 
 function copy_appveyoragent() {
     if [[ -z "${APPVEYOR_BUILD_AGENT_VERSION-}" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
-        APPVEYOR_BUILD_AGENT_VERSION=7.0.2417;
+        APPVEYOR_BUILD_AGENT_VERSION=7.0.2562;
     fi
 
     echo "[INFO] Installing AppVeyor Build Agent v${APPVEYOR_BUILD_AGENT_VERSION}"
@@ -621,7 +621,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.9" "3.5.7" "3.6.8" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.8.0" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.9" "3.5.9" "3.6.9" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.8.0" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
