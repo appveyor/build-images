@@ -1018,6 +1018,8 @@ function install_rubies() {
         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
+    local DEFAULT_RUBY
+    DEFAULT_RUBY="ruby-2.6"
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
@@ -1026,6 +1028,8 @@ function install_rubies() {
         rvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
+
+    rvm use "$DEFAULT_RUBY" --default
     log_version rvm --version
     log_version rvm list
 }
