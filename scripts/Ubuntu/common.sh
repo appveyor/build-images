@@ -489,9 +489,12 @@ function install_nvm_nodejs() {
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
+
+    nvm alias default ${CURRENT_NODEJS}
+
     log_version nvm --version
     log_version nvm list
-    nvm use ${CURRENT_NODEJS}
+
 }
 
 function make_git() {
