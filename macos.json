@@ -1,5 +1,6 @@
 {
   "variables": {
+    "macos_version": "catalina",
     "pvm_path": "iso/template1.pvm",
     "install_user": "appveyor",
     "install_password": "appveyor",
@@ -64,7 +65,7 @@
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout": "30s",
       "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
-      "vm_name": "packer-macos",
+      "vm_name": "packer-{{user `macos_version`}}-{{timestamp}}",
       "skip_compaction": "true"
     },
     {
