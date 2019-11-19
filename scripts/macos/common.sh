@@ -576,7 +576,7 @@ function install_xcode() {
         export XCODE_INSTALL_USER=$APPLEID_USER
         export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
         export FASTLANE_DONT_STORE_PASSWORD=1
-        xcversion install "$XCODE_VERSION"
+        xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
         xcversion simulators --install='iOS 12.4'
         xcversion simulators --install='tvOS 12.4'
         xcversion simulators --install='watchOS 5.3'
