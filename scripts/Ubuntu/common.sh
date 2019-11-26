@@ -1160,7 +1160,8 @@ function install_MSSQLServer() {
 function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - &&
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2017.list)" ||
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2019.list)" &&
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/prod.list)" ||
         { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install mssql-server ||
@@ -1171,6 +1172,11 @@ function install_sqlserver() {
         { echo "[ERROR] Cannot configure mssql-server." 1>&2; return 30; }
 
     ACCEPT_EULA=Y apt-get -y -q install mssql-tools unixodbc-dev
+
+    if type -t fix_sqlserver; then
+        fix_sqlserver
+    fi
+
     systemctl restart mssql-server
     systemctl is-active mssql-server ||
         { echo "[ERROR] mssql-server service failed to start." 1>&2; return 40; }

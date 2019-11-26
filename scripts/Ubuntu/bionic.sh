@@ -142,7 +142,8 @@ function install_jdks_from_repository() {
     fi
 }
 
-function install_sqlserver() {
+#this function deprecated
+function install_sqlserver_deprecated() {
     echo "[INFO] Running install_sqlserver..."
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
@@ -182,6 +183,16 @@ function install_sqlserver() {
     systemctl is-active mssql-server ||
         { echo "[ERROR] mssql-server service failed to start." 1>&2; popd; return 40; }
 
+
+
+    popd &&
+    rm -rf "${TMP_DIR}"
+    log_version dpkg -l mssql-server
+}
+
+function fix_sqlserver() {
+    echo "[INFO] Running fix_sqlserver..."
+
     # disable updates of the SQL Server
     apt-mark hold mssql-server
 
@@ -195,9 +206,6 @@ function install_sqlserver() {
     ) > /etc/systemd/system/mssql-server.service.d/override.conf ||
         { echo "[ERROR] Cannot configure workaround for mssql-server." 1>&2; return 45; }
 
-    popd &&
-    rm -rf "${TMP_DIR}"
-    log_version dpkg -l mssql-server
 }
 
 function install_azurecli() {
