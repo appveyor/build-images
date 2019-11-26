@@ -589,6 +589,13 @@ function install_xcode() {
     fi
 }
 
+function install_mono() {
+    brew_cask_install mono-mdk
+    write_line "${HOME}/.profile" 'export MONO_HOME=/Library/Frameworks/Mono.framework/Home'
+    write_line "${HOME}/.profile" 'export PATH=$MONO_HOME/bin:$PATH'
+    log_version mono --version
+}
+
 function install_openjdk() {
     [ -x "${BREW_CMD-}" ] ||
         { echo "[ERROR] Cannot find brew. Install Homebrew first!" 1>&2; return 1; }
