@@ -70,4 +70,5 @@ su -l "${USER_NAME}" -c "
 
 install_gvm_and_golangs
 install_nvm_and_nodejs
+configure_term
 cleanup

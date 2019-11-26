@@ -603,6 +603,10 @@ function install_openjdk() {
     fi
 }
 
+function configure_term() {
+    write_line "${HOME}/.profile" 'export TERM=xterm-256color'
+}
+
 function check_folders() {
     if [ "$#" -gt 0 ]; then
         while [[ "$#" -gt 0 ]]; do
