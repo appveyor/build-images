@@ -624,7 +624,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.9" "3.5.9" "3.6.9" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.8.0" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.9" "3.5.9" "3.6.9" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.8.0" "3.9.0a1" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
@@ -892,7 +892,7 @@ function install_jdks() {
         return $?
     install_jdk 13 https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 14 https://download.java.net/java/early_access/jdk14/22/GPL/openjdk-14-ea+22_linux-x64_bin.tar.gz ||
+    install_jdk 14 https://download.java.net/java/early_access/jdk14/24/GPL/openjdk-14-ea+24_linux-x64_bin.tar.gz ||
         return $?
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
@@ -1160,7 +1160,8 @@ function install_MSSQLServer() {
 function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - &&
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2017.list)" ||
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2019.list)" &&
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/prod.list)" ||
         { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install mssql-server ||
@@ -1171,6 +1172,11 @@ function install_sqlserver() {
         { echo "[ERROR] Cannot configure mssql-server." 1>&2; return 30; }
 
     ACCEPT_EULA=Y apt-get -y -q install mssql-tools unixodbc-dev
+
+    if type -t fix_sqlserver; then
+        fix_sqlserver
+    fi
+
     systemctl restart mssql-server
     systemctl is-active mssql-server ||
         { echo "[ERROR] mssql-server service failed to start." 1>&2; return 40; }
@@ -1432,7 +1438,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.16.0-rc3
+        VERSION=3.16.0-rc4
     else
         VERSION=$1
     fi
