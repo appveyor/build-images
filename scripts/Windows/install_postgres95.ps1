@@ -2,7 +2,7 @@
 
 Write-Host "Downloading..."
 # http://www.enterprisedb.com/products-services-training/pgdownload#windows
-$exePath = "$($env:USERPROFILE)\postgresql-9.5.2-1-windows-x64.exe"
+$exePath = "$env:TEMP\postgresql-9.5.2-1-windows-x64.exe"
 (New-Object Net.WebClient).DownloadFile('https://storage.googleapis.com/appveyor-download-cache/postgresql/postgresql-9.5.2-1-windows-x64.exe', $exePath)
 
 Write-Host "Installing..."

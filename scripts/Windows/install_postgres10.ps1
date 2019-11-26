@@ -5,7 +5,7 @@ Write-Host "Installing PostgreSQL 10.6..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
 # http://www.enterprisedb.com/products-services-training/pgdownload#windows
-$exePath = "$($env:USERPROFILE)\postgresql-10.6-1-windows-x64.exe"
+$exePath = "$env:TEMP\postgresql-10.6-1-windows-x64.exe"
 (New-Object Net.WebClient).DownloadFile('https://get.enterprisedb.com/postgresql/postgresql-10.6-1-windows-x64.exe', $exePath)
 
 Write-Host "Installing..."
