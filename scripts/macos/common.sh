@@ -593,6 +593,8 @@ function install_mono() {
     brew_cask_install mono-mdk
     write_line "${HOME}/.profile" 'export MONO_HOME=/Library/Frameworks/Mono.framework/Home'
     write_line "${HOME}/.profile" 'export PATH=$MONO_HOME/bin:$PATH'
+    export MONO_HOME=/Library/Frameworks/Mono.framework/Home
+    export PATH=$MONO_HOME/bin:$PATH
     log_version mono --version
 }
 
