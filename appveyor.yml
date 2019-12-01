@@ -18,10 +18,10 @@ environment:
       CLOUD: GCE
     - TEMPLATE: ubuntu1804
       CLOUD: GCE
-      gce_source_image: ubuntu-1804-bionic-v20191008
+      gce_source_image: ubuntu-1804-bionic-v20191113
     - TEMPLATE: ubuntu1604
       CLOUD: GCE
-      gce_source_image: ubuntu-1604-xenial-v20191010
+      gce_source_image: ubuntu-1604-xenial-v20191113
 
     - TEMPLATE: ws2019
       CLOUD: AWS
