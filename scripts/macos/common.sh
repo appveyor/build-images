@@ -596,6 +596,18 @@ function install_mono() {
     log_version mono --version
 }
 
+function install_cocoapods() {
+    if check_user; then
+        su -l ${USER_NAME} -c "
+            gem install cocoapods
+            log_version pod --version
+        " ||
+            { echo "[ERROR] Cannot install cocoapods." 1>&2; return 20; }
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
+    fi
+}
+
 function install_openjdk() {
     [ -x "${BREW_CMD-}" ] ||
         { echo "[ERROR] Cannot find brew. Install Homebrew first!" 1>&2; return 1; }
@@ -604,7 +616,7 @@ function install_openjdk() {
             $BREW_CMD tap AdoptOpenJDK/openjdk
             $BREW_CMD cask install adoptopenjdk8 adoptopenjdk9 adoptopenjdk10 adoptopenjdk11 adoptopenjdk12 adoptopenjdk13
         " ||
-            { echo "[ERROR] Cannot install '$*' with Homebrew." 1>&2; return 20; }
+            { echo "[ERROR] Cannot install adoptopenjdk with Homebrew." 1>&2; return 20; }
     else
         echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
     fi
