@@ -32,4 +32,13 @@ if(-not $PSModulePath.contains($AppVeyorModulesPath)) {
     [Environment]::SetEnvironmentVariable('PSModulePath', "$PSModulePath;$AppVeyorModulesPath", 'Machine')
 }
 
+# Make AppVeyor cmdlets visible in external PowerShell Core sessions
+$pwshProfilePath = "$env:USERPROFILE\Documents\PowerShell"
+if (-not (Test-Path $pwshProfilePath)) {
+    New-Item $pwshProfilePath -ItemType Directory -Force | Out-Null
+}
+
+$pwshProfileFilename = "$pwshProfilePath\Microsoft.PowerShell_profile.ps1"
+Add-Content $pwshProfileFilename "`nImport-Module '$destPath\dotnetcore\AppVeyor.BuildAgent.PowerShell.dll'"
+
 Write-Host "AppVeyor Build Agent installed"
