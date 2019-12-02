@@ -68,7 +68,8 @@ su -l "${USER_NAME}" -c "
         $(declare -f install_dotnets)
         install_dotnets" ||
     _abort $?
-
+install_cocoapods
+install_mono
 install_gvm_and_golangs
 install_nvm_and_nodejs
 configure_term
