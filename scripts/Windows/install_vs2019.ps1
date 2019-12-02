@@ -119,6 +119,7 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.VisualStudio.Component.MonoDebugger ' + `
 	'--add Microsoft.VisualStudio.Component.MSODBC.SQL ' + `
 	'--add Microsoft.VisualStudio.Component.MSSQL.CMDLnUtils ' + `
+	'--add Microsoft.VisualStudio.Component.Node.Tools ' + `
 	'--add Microsoft.VisualStudio.Component.NuGet ' + `
 	'--add Microsoft.VisualStudio.Component.PortableLibrary ' + `
 	'--add Microsoft.VisualStudio.Component.Roslyn.Compiler ' + `
