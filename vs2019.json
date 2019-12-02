@@ -186,6 +186,7 @@
             "{{ template_dir }}/scripts/Windows/install_postgres11.ps1",
             "{{ template_dir }}/scripts/Windows/install_mysql.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
+            "{{ template_dir }}/scripts/Windows/install_aws_powershell.ps1",
             "{{ template_dir }}/scripts/Windows/install_azure_cli.ps1",
             "{{ template_dir }}/scripts/Windows/install_azure_cosmosdb_emulator.ps1",
             "{{ template_dir }}/scripts/Windows/install_azure_powershell.ps1",
