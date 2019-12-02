@@ -178,6 +178,7 @@
             "{{ template_dir }}/scripts/Windows/install_ruby.ps1",
             "{{ template_dir }}/scripts/Windows/install_miniconda.ps1",
             "{{ template_dir }}/scripts/Windows/install_python.ps1",
+            "{{ template_dir }}/scripts/Windows/install_go.ps1",
             "{{ template_dir }}/scripts/Windows/install_openssl.ps1",
             "{{ template_dir }}/scripts/Windows/install_cmake.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres96.ps1",
