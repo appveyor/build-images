@@ -267,6 +267,7 @@ function install_rvm_and_rubies() {
         su -l ${USER_NAME} -c "
             PATH=$PATH
             USER_NAME=${USER_NAME}
+            VERSIONS_FILE=${VERSIONS_FILE}
             [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
             $(declare -f log_version)
             $(declare -f install_rubies)
@@ -444,6 +445,7 @@ function install_gvm_and_golangs() {
         su -l ${USER_NAME} -c "
             PATH=$PATH
             USER_NAME=${USER_NAME}
+            VERSIONS_FILE=${VERSIONS_FILE}
             source \"${HOME}/.gvm/scripts/gvm\"
             $(declare -f log_version)
             $(declare -f install_golangs)
@@ -511,6 +513,7 @@ function install_nvm_and_nodejs() {
             PATH=$PATH
             [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
             USER_NAME=${USER_NAME}
+            VERSIONS_FILE=${VERSIONS_FILE}
             $(declare -f log_version)
             $(declare -f install_nvm_nodejs)
             install_nvm_nodejs ${CURRENT_NODEJS}" ||
@@ -602,6 +605,8 @@ function install_cocoapods() {
     if check_user; then
         su -l ${USER_NAME} -c "
             gem install cocoapods
+            VERSIONS_FILE=${VERSIONS_FILE}
+            $(declare -f log_version)
             log_version pod --version
         " ||
             { echo "[ERROR] Cannot install cocoapods." 1>&2; return 20; }
