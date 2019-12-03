@@ -1,13 +1,13 @@
-﻿Write-Host "Installing GitVersion 4.x..." -ForegroundColor Cyan
+﻿Write-Host "Installing GitVersion..." -ForegroundColor Cyan
 $gvPath = "$env:SYSTEMDRIVE\Tools\GitVersion"
 if(Test-Path $gvPath) {
     del $gvPath -Recurse -Force
 }
 
 $tempPath = "$env:USERPROFILE\GitVersion"
-nuget install gitversion.commandline -excludeversion -outputdirectory $tempPath
+nuget install gitversion.commandline -Version 5.1.1 -ExcludeVersion -OutputDirectory $tempPath
 
 [IO.Directory]::Move("$tempPath\gitversion.commandline\tools", $gvPath)
 del $tempPath -Recurse -Force
 Add-Path $gvPath
-Write-Host "GitVersion 4.x installed" -ForegroundColor Green
+Write-Host "GitVersion installed" -ForegroundColor Green

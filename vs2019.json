@@ -217,6 +217,7 @@
             "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk13.ps1",
             "{{ template_dir }}/scripts/Windows/install_maven.ps1",
+            "{{ template_dir }}/scripts/Windows/install_gitversion.ps1",
             "{{ template_dir }}/scripts/Windows/install_android_sdk.ps1",
             "{{ template_dir }}/scripts/Windows/install_msys64.ps1",
             "{{ template_dir }}/scripts/Windows/install_boost_1.71.0_vs2019.ps1"
