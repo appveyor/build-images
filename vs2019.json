@@ -121,23 +121,43 @@
         "restart_timeout": "10m"
     },
     {
+        "type": "file",
+        "source": "{{ template_dir }}/scripts/Windows/docker-appveyor.psm1",
+        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/docker-appveyor.psm1"
+    },
+    {
+        "type": "file",
+        "source": "{{ template_dir }}/scripts/Windows/prepare-docker.ps1",
+        "destination": "C:/Users/{{user `install_user`}}/prepare-docker.ps1"
+    },
+    {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/noop-plug.ps1",
+            "{{ template_dir }}/scripts/Windows/install_docker_desktop.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "windows-restart",
+        "restart_timeout": "10m"
+    },
+    {
+        "type": "powershell",
+        "scripts":[            
+            "{{ template_dir }}/scripts/Windows/install_docker_desktop_after_reboot.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "powershell",
+        "scripts":[
             "{{ template_dir }}/scripts/Windows/install_wsl.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}" 
     },    
-    {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_docker.ps1",
-            "{{ template_dir }}/scripts/Windows/install_docker_images.ps1"
-        ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}" 
-    },
     {
         "type": "powershell",
         "scripts":[

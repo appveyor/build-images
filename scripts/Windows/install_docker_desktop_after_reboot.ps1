@@ -7,7 +7,7 @@ while ($i -lt (300)) {
   $finished = Test-Path $env:SystemDrive\prepare-docker-finished.txt
   if ($finished) {
     Remove-Item -Path $env:SystemDrive\prepare-docker-finished.txt
-    Remove-Item -Path "$env:ProgramFiles\AppVeyor\prepare-docker.ps1"
+    Remove-Item -Path "$env:USERPROFILE\prepare-docker.ps1"
     Write-Host "`nDocker peparation finished OK"
     break
   }
