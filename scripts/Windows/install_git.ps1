@@ -19,7 +19,7 @@ Add-SessionPath $gitCmdPath
 
 $gitUsrBinPath = "$env:ProgramFiles\Git\usr\bin"
 Remove-Path $gitUsrBinPath
-Add-Path $gitUsrBinPath -before
+Add-Path $gitUsrBinPath
 Add-SessionPath $gitUsrBinPath
 
 git config --global core.autocrlf input

@@ -157,6 +157,7 @@
         "type": "powershell",
         "scripts":[
             "{{ template_dir }}/scripts/Windows/update_msbuild_path.ps1",
+            "{{ template_dir }}/scripts/Windows/install_xunit_192.ps1",
             "{{ template_dir }}/scripts/Windows/install_xunit_20.ps1",
             "{{ template_dir }}/scripts/Windows/install_nunit.ps1",
             "{{ template_dir }}/scripts/Windows/install_nunit3.ps1",
@@ -220,6 +221,7 @@
             "{{ template_dir }}/scripts/Windows/install_gitversion.ps1",
             "{{ template_dir }}/scripts/Windows/install_android_sdk.ps1",
             "{{ template_dir }}/scripts/Windows/install_msys64.ps1",
+            "{{ template_dir }}/scripts/Windows/install_cygwin.ps1",
             "{{ template_dir }}/scripts/Windows/install_boost_1.71.0_vs2019.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",

@@ -98,3 +98,10 @@ wsl lsb_release -a
 
 wslconfig /setdefault ubuntu-18.04
 wsl lsb_release -a
+
+# Rename C:\Windows\System32\bash.exe to avoid conflicts with default Git's bash
+# ===========
+
+takeown /F "$env:SystemRoot\System32\bash.exe"
+icacls "$env:SystemRoot\System32\bash.exe" /grant administrators:F
+ren "$env:SystemRoot\System32\bash.exe" wsl-bash.exe
