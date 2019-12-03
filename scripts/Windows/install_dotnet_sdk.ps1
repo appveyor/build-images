@@ -31,13 +31,17 @@ Install-SDK "2.2.103"
 Install-SDK "2.2.107"
 Install-SDK "2.2.108"
 Install-SDK "2.2.109"
+Install-SDK "2.2.110"
 Install-SDK "2.2.203"
 Install-SDK "2.2.204"
 Install-SDK "2.2.206"
+Install-SDK "2.2.207"
 Install-SDK "2.2.301"
 Install-SDK "2.2.402"
 
 # VS 2019 images only
 if (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019") {
     Install-SDK "3.0.100"
+    Install-SDK "3.0.101"
+    Install-SDK "3.1.100"
 }
