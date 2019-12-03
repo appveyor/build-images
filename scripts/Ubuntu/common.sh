@@ -745,7 +745,7 @@ function preheat_dotnet_sdks() {
 
 function prepare_dotnet_packages() {
     #shellcheck disable=SC2034
-    SDK_VERSIONS=( "2.0.0" "2.0.2" "2.0.3" "2.1.2" "2.1.3" "2.1.4" "2.1.101" "2.1.103" "2.1.104" "2.1.105" "2.1.200" "2.1.201" "2.1.202" "2.1" "2.2" "3.0" )
+    SDK_VERSIONS=( "2.0.0" "2.0.2" "2.0.3" "2.1.2" "2.1.3" "2.1.4" "2.1.101" "2.1.103" "2.1.104" "2.1.105" "2.1.200" "2.1.201" "2.1.202" "2.1" "2.2" "3.0" "3.1" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
     #shellcheck disable=SC2034
     declare RUNTIME_VERSIONS=( "2.0.0" "2.0.3" "2.0.4" "2.0.5" "2.0.6" "2.0.7" "2.0.9" "2.1" "2.2" )
