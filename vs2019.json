@@ -302,7 +302,8 @@
         "type": "powershell",
         "scripts":[
             "{{ template_dir }}/scripts/Windows/install_appveyor_build_agent.ps1",
-            "{{ template_dir }}/scripts/Windows/enable_autologon.ps1"
+            "{{ template_dir }}/scripts/Windows/enable_autologon.ps1",
+            "{{ template_dir }}/scripts/Windows/cleanup_windows.ps1"
         ],
         "environment_vars": [
             "appveyor_user={{user `install_user`}}",
@@ -332,7 +333,7 @@
         "image_offer": "WindowsServer",
         "image_sku": "2019-Datacenter",
         "vm_size": "{{user `azure_vm_size`}}",
-        "os_disk_size_gb": 250,
+        "os_disk_size_gb": 270,
 
         "capture_container_name": "appveyor-images-vs2019",
         "capture_name_prefix": "vs2019-{{user `datemark`}}",
@@ -378,7 +379,7 @@
       "instance_name": "packer-vs2017-{{uuid}}",
       "image_name": "packer-vs2017-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
-      "disk_size": 250,
+      "disk_size": 270,
       "metadata": {
         "windows-startup-script-cmd": "winrm quickconfig -quiet & net user /add packer_user & net localgroup administrators packer_user /add & winrm set winrm/config/service/auth @{Basic=\"true\"}"
       }
