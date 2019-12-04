@@ -89,4 +89,9 @@ PullRunDockerImages 14393 'ltsc2016' 'sac2016'
 PullRunDockerImages 17134 '1803' '1803'
 PullRunDockerImages 17763 'ltsc2019' '1809'
 
+Write-Host "Disable SMB share for disk C:"
+Remove-SmbShare -Name C -ErrorAction SilentlyContinue -Force
+
+Write-Host "Docker CE installed and configured"
+
 #Switch-DockerLinux

@@ -270,9 +270,9 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_dotnet_sdk.ps1",
-            "{{ template_dir }}/scripts/Windows/install_dotnet_devpack.ps1",
-            "{{ template_dir }}/scripts/Windows/install_dotnet_runtime.ps1"
+            "{{ template_dir }}/scripts/Windows/install_dotnet_core_sdks.ps1",
+            "{{ template_dir }}/scripts/Windows/install_dotnet_devpacks.ps1",
+            "{{ template_dir }}/scripts/Windows/install_dotnet_runtimes.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}" 
@@ -284,7 +284,7 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/prepare_dotnet_runtime.ps1"
+            "{{ template_dir }}/scripts/Windows/optimize_dotnet_runtime.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}" 
@@ -292,7 +292,8 @@
     {
         "type": "powershell",
         "scripts":[
-            "{{ template_dir }}/scripts/Windows/disable_windows_background_services.ps1"
+            "{{ template_dir }}/scripts/Windows/disable_windows_background_services.ps1",
+            "{{ template_dir }}/scripts/Windows/enforce_windows_firewall.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
