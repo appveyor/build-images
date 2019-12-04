@@ -126,11 +126,6 @@
         "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/docker-appveyor.psm1"
     },
     {
-        "type": "file",
-        "source": "{{ template_dir }}/scripts/Windows/prepare-docker.ps1",
-        "destination": "C:/Users/{{user `install_user`}}/prepare-docker.ps1"
-    },
-    {
         "type": "powershell",
         "scripts":[
             "{{ template_dir }}/scripts/Windows/install_docker_desktop.ps1"

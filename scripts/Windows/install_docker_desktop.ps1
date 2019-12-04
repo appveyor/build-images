@@ -33,13 +33,4 @@ Write-Host "Mapping docker-switch-linux.cmd to Switch-DockerLinux..."
 powershell -command "Switch-DockerLinux"
 "@ | Set-Content -Path "$env:ProgramFiles\Docker\Docker\resources\bin\docker-switch-linux.cmd"
 
-Write-Host "Done"
-
-Write-Host "Setting up final docker steps to run at RunOnce"
-
-# Prepare docker on the next start
-New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "RunOnce" -Force | Out-Null
-
-Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name "!prepare-docker" -Value "powershell -File `"$env:USERPROFILE\prepare-docker.ps1`""
-
-Write-Host "Done"
+Write-Host "Finished the installation of Docker for Desktop"
