@@ -2,14 +2,20 @@ Write-Host "Completing the configuration of Docker for Desktop..."
 
 $ErrorActionPreference = "Stop"
 
+# start Docker Desktop
+
+& "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
+
 $i = 0
 $finished = $false
 
 Write-Host "Waiting for Docker to start..."
 
 while ($i -lt (300)) {
-  $i +=1  
-  if ((Get-Process 'Docker Desktop' -ErrorAction SilentlyContinue) -and (Get-Process 'dockerd' -ErrorAction SilentlyContinue)) {
+  $i +=1
+  
+  $dockerSvc = (Get-Service com.docker.service -ErrorAction SilentlyContinue)
+  if ((Get-Process 'Docker Desktop' -ErrorAction SilentlyContinue) -and $dockerSvc -and $dockerSvc.status -eq 'Running') {
     $finished = $true
     Write-Host "Docker started!"
     break
@@ -58,11 +64,27 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 	}
 }
 
+Write-Host "Setting experimental mode"
+$configPath = "$env:programdata\docker\config\daemon.json"
+if (Test-Path $configPath) {
+  $daemonConfig = Get-Content $configPath | ConvertFrom-Json
+  $daemonConfig | Add-Member NoteProperty "experimental" $true -force
+  $daemonConfig | ConvertTo-Json -Depth 20 | Set-Content -Path $configPath
+} else {
+  New-Item "$env:programdata\docker\config" -ItemType Directory -Force | Out-Null
+  Set-Content -Path $configPath -Value '{ "experimental": true }'
+}
+
+Write-Host "Switching Docker to Linux mode..."
 Switch-DockerLinux
-docker run --rm busybox echo hello_world
+docker version
+docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
 docker run --rm alpine echo hello_world
 
+Write-Host "Switching Docker to Windows mode..."
 Switch-DockerWindows
+docker version
+docker run --rm -v "$env:USERPROFILE`:/user-profile" busybox ls /user-profile
 PullRunDockerImages 14393 'ltsc2016' 'sac2016'
 PullRunDockerImages 17134 '1803' '1803'
 PullRunDockerImages 17763 'ltsc2019' '1809'
