@@ -1,6 +1,6 @@
 function Switch-DockerLinux
 {
-    Remove-SmbShare -Name D -ErrorAction SilentlyContinue -Force
+    Remove-SmbShare -Name C -ErrorAction SilentlyContinue -Force
     $deUsername = 'DockerExchange'
     $dePsw = "ABC" + [guid]::NewGuid().ToString() + "!"
     $secDePsw = ConvertTo-SecureString $dePsw -AsPlainText -Force
