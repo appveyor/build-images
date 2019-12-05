@@ -107,7 +107,9 @@ go version
 C:\go\bin\go.exe version
 C:\go-x86\bin\go.exe version
 
+<#
 for($i = 0; $i -lt $go_versions.Count; $i++) {
     & "C:\$($go_versions[$i].folder)\bin\go.exe" version
     & "C:\$($go_versions[$i].folder)-x86\bin\go.exe" version
 }
+#>
