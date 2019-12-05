@@ -1706,7 +1706,7 @@ function add_ssh_known_hosts() {
 
 function configure_path() {
     echo "[INFO] Running configure_path..."
-    #shellcheck disable=SC2016
+    #shellcheck disable=SC2016,SC2028
     echo '
 
 function add2path() {
@@ -1731,7 +1731,7 @@ function configure_sshd() {
 
 function configure_motd() {
     chmod -x /etc/update-motd.d/*
-    #shellcheck disable=SC2028,SC2016
+    #shellcheck disable=SC2016,SC2028
     echo '#!/bin/sh
 [ -r /etc/os-release ] && . /etc/os-release
 printf "Appveyor Worker\n"
