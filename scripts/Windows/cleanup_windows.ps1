@@ -11,6 +11,7 @@ function DisplayDiskInfo() {
 
 DisplayDiskInfo
 
+<#
 Write-Host "Running Cleanup Manager..."
 $strKeyPath = "SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches"
 $strValueName = "StateFlags0065"
@@ -25,6 +26,7 @@ Start-Process cleanmgr -ArgumentList "/sagerun:65" -Wait -NoNewWindow -ErrorActi
 ForEach ($subkey in $subkeys) {
     Remove-ItemProperty -Path "HKLM:\$strKeyPath\$subkey" -Name $strValueName | Out-Null
 }
+#>
 
 ###
 
