@@ -81,7 +81,7 @@
       "instance_name": "packer-ubuntu1604-{{uuid}}",
       "image_name": "packer-ubuntu1604-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
-      "disk_size": 40,
+      "disk_size": 60,
       "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"]
     },
     {
