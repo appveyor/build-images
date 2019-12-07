@@ -52,6 +52,12 @@ Get-ChildItem "$env:SystemDrive\Users\*\Downloads\*" -Recurse -Force -ErrorActio
 Write-Host "Removing IE history..."
 cmd /c start /wait RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255
 
+# enable protected mode for all IE security zones
+Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\1' -Name "2500" -Value 0
+Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\2' -Name "2500" -Value 0
+Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3' -Name "2500" -Value 0
+Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\4' -Name "2500" -Value 0
+
 Write-Host "Removing contents of Recycle Bin..."
 $objShell = New-Object -ComObject Shell.Application  
 $objFolder = $objShell.Namespace(0xA)
