@@ -82,6 +82,18 @@
         "only": ["hyperv-iso"]
     },
     {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/enable_autologon.ps1"
+        ],
+        "environment_vars": [
+            "appveyor_user={{user `install_user`}}",
+            "appveyor_password={{user `install_password`}}"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },
+    {
         "type": "file",
         "source": "{{ template_dir }}/scripts/Windows/path-utils.psm1",
         "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/path-utils.psm1"
@@ -303,12 +315,9 @@
         "type": "powershell",
         "scripts":[
             "{{ template_dir }}/scripts/Windows/install_appveyor_build_agent.ps1",
-            "{{ template_dir }}/scripts/Windows/enable_autologon.ps1",
             "{{ template_dir }}/scripts/Windows/cleanup_windows.ps1"
         ],
         "environment_vars": [
-            "appveyor_user={{user `install_user`}}",
-            "appveyor_password={{user `install_password`}}",
             "build_agent_mode={{user `build_agent_mode`}}"
         ],
         "elevated_user": "{{user `install_user`}}",
