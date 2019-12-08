@@ -20,7 +20,9 @@ Set-ItemProperty "HKLM:\Software\AppVeyor\Build Agent" -Name "AppVeyorUrl" -Valu
 Set-ItemProperty "HKLM:\Software\AppVeyor\Build Agent" -Name "Mode" -Value $env:build_agent_mode
 
 # Enable auto load on system start
-New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "Run" -Force | Out-Null
+if (-not (Test-Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run')) {
+    New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "Run" -Force | Out-Null
+}
 
 Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "AppVeyor.BuildAgent" `
 	-Value "powershell -File `"${env:ProgramFiles}\AppVeyor\BuildAgent\update-appveyor-agent.ps1`""
