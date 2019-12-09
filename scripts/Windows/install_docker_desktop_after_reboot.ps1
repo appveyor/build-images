@@ -2,6 +2,9 @@ Write-Host "Completing the configuration of Docker for Desktop..."
 
 $ErrorActionPreference = "Stop"
 
+# start Docker
+& "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
+
 # wait while  Docker Desktop is started
 
 $i = 0
@@ -89,6 +92,10 @@ PullRunDockerImages 17763 'ltsc2019' '1809'
 
 Write-Host "Disable SMB share for disk C:"
 Remove-SmbShare -Name C -ErrorAction SilentlyContinue -Force
+
+# enable Docker auto run
+Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Docker Desktop" `
+	-Value "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
 
 # enable Docker auto run
 Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Docker Desktop" `
