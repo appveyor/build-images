@@ -500,7 +500,7 @@ function install_nvm_nodejs() {
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        GIT_VERSION=2.24.0
+        GIT_VERSION=2.24.1
     else
         GIT_VERSION=$1
     fi
@@ -624,7 +624,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.9" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.8.0" "3.9.0a1" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.9" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.8.0" "3.8.1rc1" "3.9.0a1" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
@@ -1438,7 +1438,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.16.0
+        VERSION=3.16.1
     else
         VERSION=$1
     fi
@@ -1583,7 +1583,7 @@ function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=6.0.14
+        VERSION=6.1.0
     else
         VERSION=$1
     fi
