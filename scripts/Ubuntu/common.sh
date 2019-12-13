@@ -556,6 +556,22 @@ function configure_gitlfs() {
         { echo "Failed to configure git lfs." 1>&2; return 10; }
 }
 
+function install_gitversion() {
+    echo "[INFO] Running install_gitversion..."
+    local VERSION
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        VERSION=5.1.2
+    else
+        VERSION=$1
+    fi
+
+    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-${VERSION}.tar.gz
+    tar -zxf gitversion-linux-${VERSION}.tar.gz -C /usr/local/bin
+    chmod a+rx /usr/local/bin/GitVersion*
+
+    log_version GitVersion /version
+}
+
 function install_cvs() {
     echo "[INFO] Running install_cvs..."
     # install git
