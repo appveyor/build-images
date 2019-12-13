@@ -1,0 +1,477 @@
+{
+  "variables": {
+    "azure_client_id": "",
+    "azure_client_secret": "",
+    "azure_location": "",
+    "azure_resource_group_name": "",
+    "azure_storage_account": "",
+    "azure_subscription_id": "",
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "aws_region": "",
+    "gce_account_file": "",
+    "gce_zone": "",
+    "gce_project": "",
+    "gce_source_image": "windows-server-2016-dc-v20190108",
+    "gce_source_image_family": "windows-2016",
+    "azure_vm_size": "Standard_D4s_v3",
+
+    "install_user": "",
+    "install_password": "",
+    "build_agent_mode": "",
+    "image_description": "",
+    "deploy_parts": "",
+
+    "iso_url": "https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso",
+    "iso_checksum": "221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562",
+    "iso_checksum_type": "sha256",
+
+    "helper_script_folder": "C:\\Program Files\\WindowsPowerShell\\Modules\\"
+  },
+  "provisioners": [
+    {
+        "type": "powershell",
+        "scripts": [
+            "{{ template_dir }}/scripts/Windows/create_appveyor_user.ps1"
+        ],
+        "environment_vars": [
+            "appveyor_user={{user `install_user`}}",
+            "appveyor_password={{user `install_password`}}"
+        ],
+        "except": ["hyperv-vmcx"]
+    },
+    {
+        "type": "powershell",
+        "inline":[
+            "Write-Host \"Current user: $(whoami)\""
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/init_server.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/extend_system_volume.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}",
+        "only": ["azure-arm"]
+    },    
+    {
+        "type": "windows-restart",
+        "restart_timeout": "10m"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/activate_avma.ps1"
+        ],
+        "environment_vars": [
+            "avma_key={{user `avma_key`}}"
+        ],        
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}",
+        "only": ["hyperv-iso"]
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/enable_autologon.ps1"
+        ],
+        "environment_vars": [
+            "appveyor_user={{user `install_user`}}",
+            "appveyor_password={{user `install_password`}}"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },
+    {
+        "type": "file",
+        "source": "{{ template_dir }}/scripts/Windows/path-utils.psm1",
+        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/path-utils.psm1"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_path_utils.ps1",
+            "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1",
+            "{{ template_dir }}/scripts/Windows/install_powershell_get.ps1",
+            "{{ template_dir }}/scripts/Windows/install_7zip.ps1",
+            "{{ template_dir }}/scripts/Windows/install_chocolatey.ps1",
+            "{{ template_dir }}/scripts/Windows/install_webpi.ps1",
+            "{{ template_dir }}/scripts/Windows/install_nuget.ps1",
+            "{{ template_dir }}/scripts/Windows/install_pstools.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_git.ps1",
+            "{{ template_dir }}/scripts/Windows/install_git_lfs.ps1",
+            "{{ template_dir }}/scripts/Windows/install_mercurial.ps1",
+            "{{ template_dir }}/scripts/Windows/install_subversion.ps1",
+            "{{ template_dir }}/scripts/Windows/add_ssh_known_hosts.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_docker_hyperv_wsl_features.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },
+    {
+        "type": "windows-restart",
+        "restart_timeout": "10m"
+    },
+    {
+        "type": "file",
+        "source": "{{ template_dir }}/scripts/Windows/docker-appveyor.psm1",
+        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/docker-appveyor.psm1"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_docker_desktop.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "windows-restart",
+        "restart_timeout": "10m"
+    },
+    {
+        "type": "powershell",
+        "scripts":[            
+            "{{ template_dir }}/scripts/Windows/install_docker_desktop_after_reboot.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },  
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_vs2019.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}",
+        "environment_vars": [
+            "install_vs2019_preview={{user `install_vs2019_preview`}}"
+        ]        
+    },
+    {
+        "type": "windows-restart",
+        "restart_timeout": "10m"
+    },    
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/update_msbuild_path.ps1",
+            "{{ template_dir }}/scripts/Windows/install_xunit_192.ps1",
+            "{{ template_dir }}/scripts/Windows/install_xunit_20.ps1",
+            "{{ template_dir }}/scripts/Windows/install_nunit.ps1",
+            "{{ template_dir }}/scripts/Windows/install_nunit3.ps1",
+            "{{ template_dir }}/scripts/Windows/install_vstest_console_logger.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "file",
+        "source": "{{ template_dir }}/scripts/Windows/qt-installer-windows.qs",
+        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/qt-installer-windows.qs"
+    },    
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_qt.ps1",
+            "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
+            "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
+            "{{ template_dir }}/scripts/Windows/install_ruby.ps1",
+            "{{ template_dir }}/scripts/Windows/install_miniconda.ps1",
+            "{{ template_dir }}/scripts/Windows/install_python.ps1",
+            "{{ template_dir }}/scripts/Windows/install_go.ps1",
+            "{{ template_dir }}/scripts/Windows/install_openssl.ps1",
+            "{{ template_dir }}/scripts/Windows/install_cmake.ps1",
+            "{{ template_dir }}/scripts/Windows/install_postgres96.ps1",
+            "{{ template_dir }}/scripts/Windows/install_postgres10.ps1",
+            "{{ template_dir }}/scripts/Windows/install_postgres11.ps1",
+            "{{ template_dir }}/scripts/Windows/install_mysql.ps1",
+            "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
+            "{{ template_dir }}/scripts/Windows/install_aws_powershell.ps1",
+            "{{ template_dir }}/scripts/Windows/install_azure_cli.ps1",
+            "{{ template_dir }}/scripts/Windows/install_azure_cosmosdb_emulator.ps1",
+            "{{ template_dir }}/scripts/Windows/install_azure_powershell.ps1",
+            "{{ template_dir }}/scripts/Windows/install_gcloud_sdk.ps1",
+            "{{ template_dir }}/scripts/Windows/install_erlang.ps1",
+            "{{ template_dir }}/scripts/Windows/install_mongo.ps1",
+            "{{ template_dir }}/scripts/Windows/install_winsdk_81.ps1",
+            "{{ template_dir }}/scripts/Windows/install_wdk_1809.ps1",
+            "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1",
+            "{{ template_dir }}/scripts/Windows/install_dxsdk.ps1",
+            "{{ template_dir }}/scripts/Windows/install_vdproj_vs2019.ps1",
+            "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
+            "{{ template_dir }}/scripts/Windows/install_wix311.ps1",
+            "{{ template_dir }}/scripts/Windows/install_wix_toolset_vs2019.ps1",
+            "{{ template_dir }}/scripts/Windows/install_chrome_browser.ps1",
+            "{{ template_dir }}/scripts/Windows/install_firefox_browser.ps1",
+            "{{ template_dir }}/scripts/Windows/install_selenium_drivers.ps1",
+            "{{ template_dir }}/scripts/Windows/install_llvm.ps1",
+            "{{ template_dir }}/scripts/Windows/install_llvm_extension_vs2019.ps1",
+            "{{ template_dir }}/scripts/Windows/install_vcpkg.ps1",
+            "{{ template_dir }}/scripts/Windows/install_innosetup.ps1",
+            "{{ template_dir }}/scripts/Windows/install_coverity.ps1",
+            "{{ template_dir }}/scripts/Windows/install_iis_win2019.ps1",
+            "{{ template_dir }}/scripts/Windows/install_nsis.ps1",
+            "{{ template_dir }}/scripts/Windows/install_octo.ps1",
+            "{{ template_dir }}/scripts/Windows/install_java_7_8.ps1",
+            "{{ template_dir }}/scripts/Windows/install_jdk11.ps1",
+            "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
+            "{{ template_dir }}/scripts/Windows/install_jdk13.ps1",
+            "{{ template_dir }}/scripts/Windows/install_maven.ps1",
+            "{{ template_dir }}/scripts/Windows/install_gitversion.ps1",
+            "{{ template_dir }}/scripts/Windows/install_android_sdk.ps1",
+            "{{ template_dir }}/scripts/Windows/install_msys64.ps1",
+            "{{ template_dir }}/scripts/Windows/install_cygwin.ps1",
+            "{{ template_dir }}/scripts/Windows/install_boost_1.71.0_vs2019.ps1"
+        ],
+        "environment_vars": [
+            "INSTALL_LATEST_ONLY=true"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_sql_server_2017.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "windows-restart",
+        "restart_timeout": "10m"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/sql_server_2017_after_reboot.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_dotnet_core_sdks.ps1",
+            "{{ template_dir }}/scripts/Windows/install_dotnet_devpacks.ps1",
+            "{{ template_dir }}/scripts/Windows/install_dotnet_runtimes.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "windows-restart",
+        "restart_timeout": "10m"
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/optimize_dotnet_runtime.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}" 
+    },
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/disable_windows_background_services.ps1",
+            "{{ template_dir }}/scripts/Windows/enforce_windows_firewall.ps1"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },    
+    {
+        "type": "powershell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Windows/install_appveyor_build_agent.ps1",
+            "{{ template_dir }}/scripts/Windows/cleanup_windows.ps1"
+        ],
+        "environment_vars": [
+            "build_agent_mode={{user `build_agent_mode`}}"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    }
+  ],
+  "builders": [
+    {
+        "type": "azure-arm",
+        "subscription_id": "{{ user `azure_subscription_id` }}",
+        "client_id": "{{ user `azure_client_id` }}",
+        "client_secret": "{{ user `azure_client_secret` }}",
+        "location": "{{ user `azure_location` }}",
+
+        "temp_resource_group_name": "packer-RG-vs2019-{{uuid}}",
+
+        "os_type": "Windows",
+        "image_publisher": "MicrosoftWindowsServer",
+        "image_offer": "WindowsServer",
+        "image_sku": "2019-Datacenter",
+        "vm_size": "{{user `azure_vm_size`}}",
+        "os_disk_size_gb": 128,
+
+        "capture_container_name": "appveyor-images-vs2019",
+        "capture_name_prefix": "vs2019-{{user `datemark`}}",
+        "resource_group_name": "{{ user `azure_resource_group_name` }}",
+        "storage_account": "{{ user `azure_storage_account` }}",
+
+        "communicator": "winrm",
+        "winrm_use_ssl": "true",
+        "winrm_insecure": "true",
+        "winrm_timeout": "30m",
+        "winrm_username": "packer",
+
+        "azure_tags": {
+          "automation": "packer",
+          "OS": "WindowsServer 2019-Datacenter",
+          "description": "{{user `image_description`}}",
+          "date": "{{user `datemark`}}"
+        }
+    },
+    {
+      "type": "googlecompute",
+      "account_file": "{{user `gce_account_file`}}",
+      "project_id": "{{ user `gce_project` }}",
+      "zone": "{{ user `gce_zone` }}",
+      "source_image": "{{ user `gce_source_image` }}",
+      "state_timeout" : "15m",
+      "scopes": [
+          "https://www.googleapis.com/auth/userinfo.email",
+          "https://www.googleapis.com/auth/compute",
+          "https://www.googleapis.com/auth/devstorage.full_control",
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring.write",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/trace.append" 
+        ],
+      "machine_type": "n1-standard-2",
+      "communicator": "winrm",
+      "winrm_username": "packer_user",
+      "winrm_insecure": true,
+      "winrm_use_ssl": true,
+      "instance_name": "packer-vs2017-{{uuid}}",
+      "image_name": "packer-vs2017-{{timestamp}}",
+      "image_description": "{{ user `image_description` }}",
+      "disk_size": 270,
+      "metadata": {
+        "windows-startup-script-cmd": "winrm quickconfig -quiet & net user /add packer_user & net localgroup administrators packer_user /add & winrm set winrm/config/service/auth @{Basic=\"true\"}"
+      }
+    },
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "{{user `aws_region`}}",
+      "source_ami_filter": {
+        "filters": {
+        "virtualization-type": "hvm",
+        "name": "Windows_Server-1809-English-Core-Containers*",
+        "root-device-type": "ebs"
+        },
+        "owners": ["801119661308"],
+        "most_recent": true
+      },
+      "instance_type": "t2.medium",
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+      "winrm_use_ssl": true,
+      "winrm_insecure": true,
+      "ami_name": "Appveyor Worker Windows2019 {{uuid}}",
+      "ami_description": "{{user `image_description`}}",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_size": 400,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ]
+    },
+    {
+      "type": "hyperv-vmcx",
+      "clone_from_vm_name": "{{ user `clone_vm_name` }}",
+      "vm_name": "master-vs2019-{{ user `datemark` }}",
+      "switch_name": "{{user `hyperv_switchname`}}",
+      "enable_secure_boot": true,
+      "enable_virtualization_extensions": true,
+      "generation": 2,      
+      "communicator":"winrm",
+      "winrm_timeout" : "1h",
+      "winrm_username": "{{ user `install_user` }}",
+      "winrm_password": "{{ user `install_password` }}",
+      "shutdown_command": "shutdown /s /t 1",
+      "output_directory": "{{user `output_directory`}}",
+      "cpus": "{{user `cpus`}}",
+      "memory": "{{user `memory`}}",
+      "temp_path": "{{user `packer_temp_dir`}}"
+    },
+    {
+      "type": "hyperv-iso",
+      "boot_wait": "0s",
+      "boot_command": [
+        "<esc>",
+        "<enter>",
+        "<enter>",
+        "<enter>"
+      ],
+      "communicator": "winrm",
+      "cpus": "{{user `cpus`}}",
+      "disk_size": "{{user `disk_size`}}",
+      "enable_secure_boot": true,
+      "enable_virtualization_extensions": true,
+      "generation": 2,
+      "secondary_iso_images": [
+        "{{ template_dir }}/iso/minimal-windows-server.iso"
+      ],
+      "guest_additions_mode": "disable",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "memory": "{{user `memory`}}",
+      "shutdown_command": "shutdown /s /t 1",
+      "output_directory": "{{user `output_directory`}}",
+      "switch_name": "{{user `hyperv_switchname`}}",
+      "vm_name": "windows-server-2019-{{user `datemark`}}",
+      "winrm_timeout": "2h",
+      "winrm_password": "{{user `install_password`}}",
+      "winrm_username": "{{user `install_user`}}",
+      "temp_path": "{{user `packer_temp_dir`}}"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "{{user `packer_manifest`}}",
+      "strip_path": true
+    }
+  ]
+}
+

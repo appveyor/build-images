@@ -36,7 +36,7 @@
 //   Qt Installer Framework 2.0
 //   Qt Installer Framework 3.1
 
-var INSTALL_COMPONENTS = [
+var LATEST_COMPONENTS = [
     // 5.13.2
     "qt.qt5.5132.win32_msvc2017",
     "qt.qt5.5132.win64_msvc2017_64",
@@ -87,8 +87,10 @@ var INSTALL_COMPONENTS = [
     "qt.qt5.5132.qtwebglplugin.win32_mingw73",
     "qt.qt5.5132.qtwebglplugin.win32_msvc2017",
     "qt.qt5.5132.qtwebglplugin.win64_mingw73",
-    "qt.qt5.5132.qtwebglplugin.win64_msvc2017_64",
+    "qt.qt5.5132.qtwebglplugin.win64_msvc2017_64"
+];
 
+var PREVIOUS_COMPONENTS = [
     // 5.12.5
     "qt.qt5.5125.win32_mingw73",
     "qt.qt5.5125.win32_msvc2017",
@@ -184,6 +186,11 @@ var INSTALL_COMPONENTS = [
     "qt.tools.ifw.30",
     "qt.tools.ifw.31"
 ];
+
+var INSTALL_COMPONENTS = LATEST_COMPONENTS;
+if (!installer.environmentVariable("INSTALL_LATEST_ONLY")) {
+    INSTALL_COMPONENTS = LATEST_COMPONENTS.concat(PREVIOUS_COMPONENTS);
+}
 
 function Controller() {
     installer.autoRejectMessageBoxes();
