@@ -159,6 +159,9 @@
         "scripts":[            
             "{{ template_dir }}/scripts/Windows/install_docker_desktop_after_reboot.ps1"
         ],
+        "environment_vars": [
+            "INSTALL_LATEST_ONLY=true"
+        ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}" 
     },  
@@ -202,7 +205,6 @@
             "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
             "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
             "{{ template_dir }}/scripts/Windows/install_ruby.ps1",
-            "{{ template_dir }}/scripts/Windows/install_miniconda.ps1",
             "{{ template_dir }}/scripts/Windows/install_python.ps1",
             "{{ template_dir }}/scripts/Windows/install_go.ps1",
             "{{ template_dir }}/scripts/Windows/install_openssl.ps1",

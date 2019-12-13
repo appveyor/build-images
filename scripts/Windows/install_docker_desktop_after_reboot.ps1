@@ -86,8 +86,11 @@ Write-Host "Switching Docker to Windows mode..."
 Switch-DockerWindows
 docker version
 docker run --rm -v "$env:USERPROFILE`:/user-profile" busybox ls /user-profile
-PullRunDockerImages 14393 'ltsc2016' 'sac2016'
-PullRunDockerImages 17134 '1803' '1803'
+
+if (-not $env:INSTALL_LATEST_ONLY) {
+	PullRunDockerImages 14393 'ltsc2016' 'sac2016'
+	PullRunDockerImages 17134 '1803' '1803'
+}
 PullRunDockerImages 17763 'ltsc2019' '1809'
 
 Write-Host "Disable SMB share for disk C:"
