@@ -20,7 +20,9 @@ Set-ItemProperty "HKLM:\Software\AppVeyor\Build Agent" -Name "AppVeyorUrl" -Valu
 Set-ItemProperty "HKLM:\Software\AppVeyor\Build Agent" -Name "Mode" -Value $env:build_agent_mode
 
 # Enable auto load on system start
-New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "Run" -Force | Out-Null
+if (-not (Test-Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run')) {
+    New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "Run" -Force | Out-Null
+}
 
 Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "AppVeyor.BuildAgent" `
 	-Value "powershell -File `"${env:ProgramFiles}\AppVeyor\BuildAgent\update-appveyor-agent.ps1`""
@@ -31,5 +33,14 @@ $PSModulePath = [Environment]::GetEnvironmentVariable('PSModulePath', 'Machine')
 if(-not $PSModulePath.contains($AppVeyorModulesPath)) {
     [Environment]::SetEnvironmentVariable('PSModulePath', "$PSModulePath;$AppVeyorModulesPath", 'Machine')
 }
+
+# Make AppVeyor cmdlets visible in external PowerShell Core sessions
+$pwshProfilePath = "$env:USERPROFILE\Documents\PowerShell"
+if (-not (Test-Path $pwshProfilePath)) {
+    New-Item $pwshProfilePath -ItemType Directory -Force | Out-Null
+}
+
+$pwshProfileFilename = "$pwshProfilePath\Microsoft.PowerShell_profile.ps1"
+Add-Content $pwshProfileFilename "`nImport-Module '$destPath\dotnetcore\AppVeyor.BuildAgent.PowerShell.dll'"
 
 Write-Host "AppVeyor Build Agent installed"

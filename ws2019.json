@@ -168,7 +168,6 @@
       {
           "type": "powershell",
           "scripts":[
-              "{{ template_dir }}/scripts/Windows/noop-plug.ps1",
               "{{ template_dir }}/scripts/Windows/install_wsl.ps1"
           ],
           "elevated_user": "{{user `install_user`}}",
