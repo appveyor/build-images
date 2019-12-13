@@ -3,43 +3,48 @@
         "version" = "1.13.3"
         "folder" = "go113"
     }
-    @{
-        "version" = "1.12.12"
-        "folder" = "go112"
-    }
-    @{
-        "version" = "1.11.13"
-        "folder" = "go111"
-    }
-    @{
-        "version" = "1.10.8"
-        "folder" = "go110"
-    }
-    @{
-        "version" = "1.9.7"
-        "folder" = "go19"
-    }
-    @{
-        "version" = "1.8.7"
-        "folder" = "go18"
-    }
-    @{
-        "version" = "1.7.6"
-        "folder" = "go17"
-    }
-    @{
-        "version" = "1.6.4"
-        "folder" = "go16"
-    }
-    @{
-        "version" = "1.5.4"
-        "folder" = "go15"
-    }
-    @{
-        "version" = "1.4.3"
-        "folder" = "go14"
-    }
 )
+
+if (-not $env:INSTALL_LATEST_ONLY) {
+    $go_versions = $go_versions + @(
+        @{
+            "version" = "1.12.12"
+            "folder" = "go112"
+        }
+        @{
+            "version" = "1.11.13"
+            "folder" = "go111"
+        }
+        @{
+            "version" = "1.10.8"
+            "folder" = "go110"
+        }
+        @{
+            "version" = "1.9.7"
+            "folder" = "go19"
+        }
+        @{
+            "version" = "1.8.7"
+            "folder" = "go18"
+        }
+        @{
+            "version" = "1.7.6"
+            "folder" = "go17"
+        }
+        @{
+            "version" = "1.6.4"
+            "folder" = "go16"
+        }
+        @{
+            "version" = "1.5.4"
+            "folder" = "go15"
+        }
+        @{
+            "version" = "1.4.3"
+            "folder" = "go14"
+        }
+    )    
+}
 
 function InstallGo ($go_version, $folder_name) {
 

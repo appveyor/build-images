@@ -209,8 +209,6 @@
             "{{ template_dir }}/scripts/Windows/install_go.ps1",
             "{{ template_dir }}/scripts/Windows/install_openssl.ps1",
             "{{ template_dir }}/scripts/Windows/install_cmake.ps1",
-            "{{ template_dir }}/scripts/Windows/install_postgres96.ps1",
-            "{{ template_dir }}/scripts/Windows/install_postgres10.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres11.ps1",
             "{{ template_dir }}/scripts/Windows/install_mysql.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
@@ -220,13 +218,6 @@
             "{{ template_dir }}/scripts/Windows/install_azure_powershell.ps1",
             "{{ template_dir }}/scripts/Windows/install_gcloud_sdk.ps1",
             "{{ template_dir }}/scripts/Windows/install_erlang.ps1",
-            "{{ template_dir }}/scripts/Windows/install_mongo.ps1",
-            "{{ template_dir }}/scripts/Windows/install_winsdk_81.ps1",
-            "{{ template_dir }}/scripts/Windows/install_wdk_1809.ps1",
-            "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1",
-            "{{ template_dir }}/scripts/Windows/install_dxsdk.ps1",
-            "{{ template_dir }}/scripts/Windows/install_vdproj_vs2019.ps1",
-            "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix311.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix_toolset_vs2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_chrome_browser.ps1",
@@ -235,21 +226,14 @@
             "{{ template_dir }}/scripts/Windows/install_llvm.ps1",
             "{{ template_dir }}/scripts/Windows/install_llvm_extension_vs2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_vcpkg.ps1",
-            "{{ template_dir }}/scripts/Windows/install_innosetup.ps1",
             "{{ template_dir }}/scripts/Windows/install_coverity.ps1",
             "{{ template_dir }}/scripts/Windows/install_iis_win2019.ps1",
-            "{{ template_dir }}/scripts/Windows/install_nsis.ps1",
             "{{ template_dir }}/scripts/Windows/install_octo.ps1",
-            "{{ template_dir }}/scripts/Windows/install_java_7_8.ps1",
-            "{{ template_dir }}/scripts/Windows/install_jdk11.ps1",
-            "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk13.ps1",
             "{{ template_dir }}/scripts/Windows/install_maven.ps1",
             "{{ template_dir }}/scripts/Windows/install_gitversion.ps1",
             "{{ template_dir }}/scripts/Windows/install_android_sdk.ps1",
-            "{{ template_dir }}/scripts/Windows/install_msys64.ps1",
-            "{{ template_dir }}/scripts/Windows/install_cygwin.ps1",
-            "{{ template_dir }}/scripts/Windows/install_boost_1.71.0_vs2019.ps1"
+            "{{ template_dir }}/scripts/Windows/install_msys64.ps1"
         ],
         "environment_vars": [
             "INSTALL_LATEST_ONLY=true"
@@ -283,6 +267,9 @@
             "{{ template_dir }}/scripts/Windows/install_dotnet_core_sdks.ps1",
             "{{ template_dir }}/scripts/Windows/install_dotnet_devpacks.ps1",
             "{{ template_dir }}/scripts/Windows/install_dotnet_runtimes.ps1"
+        ],
+        "environment_vars": [
+            "INSTALL_LATEST_ONLY=true"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}" 

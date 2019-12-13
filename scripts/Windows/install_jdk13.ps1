@@ -18,4 +18,8 @@ del $zipPath
 
 cmd /c "`"$jdkPath\bin\java`" --version"
 
+if ($env:INSTALL_LATEST_ONLY) {
+    Add-Path "$jdkPath\bin"
+}
+
 Write-Host "JDK 13 installed" -ForegroundColor Green
