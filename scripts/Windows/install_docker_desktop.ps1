@@ -1,4 +1,4 @@
-choco install docker-desktop
+choco install docker-desktop -y -v
 
 Write-Host "Creating DockerExchange user..."
 net user DockerExchange /add
