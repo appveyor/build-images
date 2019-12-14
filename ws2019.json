@@ -323,12 +323,10 @@
         "image_offer": "WindowsServer",
         "image_sku": "2019-Datacenter",
         "vm_size": "{{user `azure_vm_size`}}",
-        "os_disk_size_gb": 128,
+        "os_disk_size_gb": 256,
 
-        "capture_container_name": "appveyor-images-vs2019",
-        "capture_name_prefix": "vs2019-{{user `datemark`}}",
-        "resource_group_name": "{{ user `azure_resource_group_name` }}",
-        "storage_account": "{{ user `azure_storage_account` }}",
+        "managed_image_name": "ws2019-{{user `datemark`}}",
+        "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
 
         "communicator": "winrm",
         "winrm_use_ssl": "true",
