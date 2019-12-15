@@ -1,4 +1,14 @@
-choco install docker-desktop -y -v
+Write-Host "Installing Docker Desktop 2.1.0.5"
+
+Write-Host "Downloading..."
+$exePath = "$env:TEMP\Docker-Desktop-Installer.exe"
+(New-Object Net.WebClient).DownloadFile('https://download.docker.com/win/stable/40693/Docker%20Desktop%20Installer.exe', $exePath)
+
+Write-Host "Installing..."
+cmd /c start /wait $exePath install --quiet
+del $exePath
+
+Write-Host "Docker Desktop installed" -ForegroundColor Green
 
 Write-Host "Creating DockerExchange user..."
 net user DockerExchange /add
