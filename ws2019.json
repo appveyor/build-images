@@ -209,7 +209,7 @@
             "{{ template_dir }}/scripts/Windows/install_go.ps1",
             "{{ template_dir }}/scripts/Windows/install_openssl.ps1",
             "{{ template_dir }}/scripts/Windows/install_cmake.ps1",
-            "{{ template_dir }}/scripts/Windows/install_postgres11.ps1",
+            "{{ template_dir }}/scripts/Windows/install_postgres12.ps1",
             "{{ template_dir }}/scripts/Windows/install_mysql.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_powershell.ps1",
