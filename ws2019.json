@@ -316,7 +316,7 @@
         "client_secret": "{{ user `azure_client_secret` }}",
         "location": "{{ user `azure_location` }}",
 
-        "temp_resource_group_name": "packer-RG-vs2019-{{uuid}}",
+        "temp_resource_group_name": "packer-RG-ws2019-{{uuid}}",
 
         "os_type": "Windows",
         "image_publisher": "MicrosoftWindowsServer",
