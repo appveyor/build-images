@@ -1,5 +1,7 @@
 Write-Host "Completing the configuration of Docker for Desktop..." 
 
+Start-Sleep -s 3600
+
 $ErrorActionPreference = "Stop"
 
 # start Docker
