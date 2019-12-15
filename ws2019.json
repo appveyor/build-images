@@ -134,10 +134,6 @@
         "elevated_password": "{{user `install_password`}}"
     },
     {
-        "type": "windows-restart",
-        "restart_timeout": "10m"
-    },
-    {
         "type": "file",
         "source": "{{ template_dir }}/scripts/Windows/docker-appveyor.psm1",
         "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/docker-appveyor.psm1"
