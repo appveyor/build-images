@@ -155,8 +155,10 @@
         "vm_size": "{{user `azure_vm_size`}}",
         "os_disk_size_gb": 128,
 
-        "managed_image_name": "ws2019-bootstrap-{{user `datemark`}}",
-        "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
+        "capture_container_name": "appveyor-images-ws2019",
+        "capture_name_prefix": "ws2019-bootstrap-{{user `datemark`}}",
+        "resource_group_name": "{{ user `azure_resource_group_name` }}",
+        "storage_account": "{{ user `azure_storage_account` }}",
 
         "communicator": "winrm",
         "winrm_use_ssl": "true",
