@@ -73,6 +73,9 @@ build_script:
       ws2019 )
         azure_storage_account=${azure_storage_account_prem}
         ;;
+      ws2019-bootstrap )
+        azure_storage_account=${azure_storage_account_prem}
+        ;;
       vs2019 )
         azure_storage_account=${azure_storage_account_prem}
         ;;
