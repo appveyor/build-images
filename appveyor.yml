@@ -3,7 +3,7 @@ image: ubuntu
 
 environment:
   matrix:
-    - TEMPLATE: ws2019
+    - TEMPLATE: ws2019-bootstrap
       CLOUD: Azure
     # - TEMPLATE: vs2019
     #   CLOUD: Azure
