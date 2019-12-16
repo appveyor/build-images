@@ -156,7 +156,7 @@
         "os_disk_size_gb": 128,
 
         "capture_container_name": "appveyor-images-ws2019",
-        "capture_name_prefix": "ws2019-bootstrap-{{user `datemark`}}",
+        "capture_name_prefix": "ws2019-{{user `datemark`}}",
         "resource_group_name": "{{ user `azure_resource_group_name` }}",
         "storage_account": "{{ user `azure_storage_account` }}",
 
