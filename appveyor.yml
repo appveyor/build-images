@@ -5,8 +5,8 @@ environment:
   matrix:
     - TEMPLATE: ws2019-bootstrap
       CLOUD: Azure
-    # - TEMPLATE: vs2019
-    #   CLOUD: Azure
+    - TEMPLATE: vs2019
+      CLOUD: Azure
     # - TEMPLATE: ubuntu1804
     #   CLOUD: Azure
     # - TEMPLATE: ubuntu1604
