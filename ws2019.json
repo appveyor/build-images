@@ -191,8 +191,8 @@
     },
     {
         "type": "file",
-        "source": "{{ template_dir }}/scripts/Windows/qt-installer-windows.qs",
-        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/qt-installer-windows.qs"
+        "source": "{{ template_dir }}/scripts/Windows/install_qt.qs",
+        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/install_qt.qs"
     },    
     {
         "type": "powershell",
@@ -320,8 +320,10 @@
         "vm_size": "{{user `azure_vm_size`}}",
         "os_disk_size_gb": 128,
 
-        "managed_image_name": "ws2019-{{user `datemark`}}",
+        "managed_image_name": "ws2019_{{user `datemark`}}",
+        "managed_image_os_disk_snapshot_name": "ws2019_{{user `datemark`}}",
         "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
+        "managed_image_storage_account_type": "Premium_LRS",
 
         "communicator": "winrm",
         "winrm_use_ssl": "true",

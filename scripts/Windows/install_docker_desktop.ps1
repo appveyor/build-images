@@ -1,5 +1,7 @@
 Write-Host "Installing Docker Desktop 2.1.0.5"
 
+#choco install docker-desktop
+
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Docker-Desktop-Installer.exe"
 (New-Object Net.WebClient).DownloadFile('https://download.docker.com/win/stable/40693/Docker%20Desktop%20Installer.exe', $exePath)

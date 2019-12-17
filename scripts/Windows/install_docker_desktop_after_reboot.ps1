@@ -3,7 +3,7 @@ Write-Host "Completing the configuration of Docker for Desktop..."
 $ErrorActionPreference = "Stop"
 
 # start Docker
-& "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
+#& "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
 
 # wait while  Docker Desktop is started
 
