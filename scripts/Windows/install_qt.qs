@@ -164,7 +164,7 @@ var PREVIOUS_COMPONENTS = [
     "qt.qt5.5132.qtwebglplugin.win32_mingw73",
     "qt.qt5.5132.qtwebglplugin.win32_msvc2017",
     "qt.qt5.5132.qtwebglplugin.win64_mingw73",
-    "qt.qt5.5132.qtwebglplugin.win64_msvc2017_64"
+    "qt.qt5.5132.qtwebglplugin.win64_msvc2017_64",
 
     // 5.12.6
     "qt.qt5.5126.win32_mingw73",
