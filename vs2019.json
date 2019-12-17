@@ -338,8 +338,8 @@
         "vm_size": "{{user `azure_vm_size`}}",
         "os_disk_size_gb": 256,
 
-        "managed_image_name": "vs2019-{{user `datemark`}}",
-        "managed_image_os_disk_snapshot_name": "vs2019-{{user `datemark`}}",
+        "managed_image_name": "vs2019_{{user `datemark`}}",
+        "managed_image_os_disk_snapshot_name": "vs2019_{{user `datemark`}}",
         "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
         "managed_image_storage_account_type": "Premium_LRS",
 
