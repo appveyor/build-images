@@ -200,8 +200,8 @@
     },
     {
         "type": "file",
-        "source": "{{ template_dir }}/scripts/Windows/qt-installer-windows.qs",
-        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/qt-installer-windows.qs"
+        "source": "{{ template_dir }}/scripts/Windows/install_qt.qs",
+        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/install_qt.qs"
     },    
     {
         "type": "powershell",
@@ -218,6 +218,7 @@
             "{{ template_dir }}/scripts/Windows/install_postgres96.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres10.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres11.ps1",
+            "{{ template_dir }}/scripts/Windows/install_postgres12.ps1",
             "{{ template_dir }}/scripts/Windows/install_mysql.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_powershell.ps1",
@@ -245,7 +246,7 @@
             "{{ template_dir }}/scripts/Windows/install_iis_win2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_nsis.ps1",
             "{{ template_dir }}/scripts/Windows/install_octo.ps1",
-            "{{ template_dir }}/scripts/Windows/install_ninja.ps1",
+            "{{ template_dir }}/scripts/Windows/install_meson_and_ninja.ps1",
             "{{ template_dir }}/scripts/Windows/install_java_7_8.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk11.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
