@@ -245,6 +245,7 @@
             "{{ template_dir }}/scripts/Windows/install_iis_win2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_nsis.ps1",
             "{{ template_dir }}/scripts/Windows/install_octo.ps1",
+            "{{ template_dir }}/scripts/Windows/install_ninja.ps1",
             "{{ template_dir }}/scripts/Windows/install_java_7_8.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk11.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
