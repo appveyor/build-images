@@ -134,6 +134,22 @@
         "elevated_password": "{{user `install_password`}}"
     },
     {
+        "type": "windows-restart",
+        "restart_timeout": "5m"
+    },
+    {
+        "type": "powershell",
+        "inline":[
+            "Write-Host 'Waiting for 5 seconds and then restart again...'; Start-Sleep -s 5"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },    
+    {
+        "type": "windows-restart",
+        "restart_timeout": "5m"
+    },
+    {
         "type": "file",
         "source": "{{ template_dir }}/scripts/Windows/docker-appveyor.psm1",
         "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/docker-appveyor.psm1"
@@ -148,7 +164,7 @@
     },
     {
         "type": "windows-restart",
-        "restart_timeout": "10m"
+        "restart_timeout": "5m"
     },
     {
         "type": "powershell",
