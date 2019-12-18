@@ -282,7 +282,7 @@ function install_tools() {
     echo "[INFO] Running install_tools..."
     declare tools_array
     # utilities
-    tools_array=( "zip" "unzip" "wget" "curl" "time" "tree" "telnet" "dnsutils" "file" "ftp" "lftp" )
+    tools_array=( "zip" "unzip" "wget" "curl" "time" "tree" "telnet" "dnsutils" "net-tools" "file" "ftp" "lftp" )
     tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
     # build tools
     tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" )
