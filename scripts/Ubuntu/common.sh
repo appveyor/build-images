@@ -642,9 +642,9 @@ function install_pythons(){
     command -v virtualenv || install_virtualenv
     declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.9" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.8.0" "3.8.1rc1" "3.9.0a1" )
     for i in "${PY_VERSIONS[@]}"; do
-        VENV_PATH=${HOME}/venv${i%[abrcf]*}
+        VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
-        curl -fsSL -O http://www.python.org/ftp/python/${i%[abrcf]*}/Python-${i}.tgz ||
+        curl -fsSL -O http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz ||
             { echo "[WARNING] Cannot download Python ${i}."; continue; }
         tar -zxf Python-${i}.tgz &&
         pushd "Python-${i}" ||
