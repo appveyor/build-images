@@ -202,6 +202,9 @@ make_git ||
 install_gitlfs ||
     _abort $?
 
+install_gitversion ||
+    _abort $?
+
 su -l ${USER_NAME} -c "
         curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
     _abort $?
