@@ -570,6 +570,7 @@ function install_gitversion() {
     chmod a+rx /usr/local/bin/GitVersion*
 
     log_version GitVersion /version
+    chown -R ${USER_NAME}:${USER_NAME} /var/tmp/.net/
 }
 
 function install_cvs() {
