@@ -565,12 +565,18 @@ function install_gitversion() {
         VERSION=$1
     fi
 
-    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-${VERSION}.tar.gz
-    tar -zxf gitversion-linux-${VERSION}.tar.gz -C /usr/local/bin
-    chmod a+rx /usr/local/bin/GitVersion*
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
 
+    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-${VERSION}.tar.gz &&
+    tar -zxf gitversion-linux-${VERSION}.tar.gz -C /usr/local/bin &&
+    chmod a+rx /usr/local/bin/GitVersion* ||
+        { echo "[ERROR] Cannot install GitVersion ${VERSION}." 1>&2; popd; return 10; }
+
+    popd
     log_version GitVersion /version
-    chown -R ${USER_NAME}:${USER_NAME} /var/tmp/.net/
+    [ -d /var/tmp/.net/ ] && rm -rf /var/tmp/.net/
 }
 
 function install_cvs() {
