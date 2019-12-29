@@ -708,35 +708,6 @@ function configure_powershell() {
     pwsh -c 'Install-Module Pester -Force'
 }
 
-# This module was deprecated
-function add_appveyor_module() {
-    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
-    if [[ -z "${USER_HOME-}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
-    local MODULES_PATH=${USER_HOME}/.local/share/powershell/Modules/Appveyor/
-    mkdir -p "${MODULES_PATH}" &&
-    for file in "Appveyor.BuildAgent.Api.dll" "Appveyor.BuildAgent.Models.dll" "Appveyor.BuildAgent.PowerShell.dll"; do
-        cp "${AGENT_DIR}/${file}" "${MODULES_PATH}" ||
-            { echo "[ERROR] Cannot copy '${AGENT_DIR}/${file}' to '${MODULES_PATH}'." 1>&2; return 30; }
-    done
-    echo "@{
-RootModule = 'Appveyor.BuildAgent.PowerShell.dll'
-ModuleVersion = '1.0'
-GUID = '1a9a19d4-28de-4d1f-aa44-aecf16b423cb'
-Author = 'Vasily Pleshakov'
-CompanyName = 'Appveyor Systems Inc.'
-Copyright = '(c) Appveyor Systems Inc. All rights reserved.'
-FunctionsToExport = '*'
-CmdletsToExport = '*'
-VariablesToExport = '*'
-AliasesToExport = '*'
-PrivateData = @{
-    PSData = @{
-    }
-}
-}
-" > "${MODULES_PATH}/Appveyor.psd1"
-}
-
 function dotnet_packages() {
     local PREFIX=$1
     declare -a VERSIONS=("${!2}")
