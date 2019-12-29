@@ -1644,14 +1644,14 @@ function install_virtualbox() {
 function install_clang() {
     echo "[INFO] Running install_clang..."
     curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&
-    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-6.0 main" ||
+    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-9 main" ||
         { echo "[ERROR] Cannot add llvm repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
-    apt-get -y -q install clang-6.0 ||
+    apt-get -y -q install clang-9 ||
         { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 20; }
 
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-6.0 1000
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 1000
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-9 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-9 1000
     update-alternatives --config clang
     update-alternatives --config clang++
 
