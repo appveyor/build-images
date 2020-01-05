@@ -286,7 +286,7 @@ function install_tools() {
     tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
     # build tools
     tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" )
-    tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" )
+    tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
     # python packages
     tools_array+=( "python" "python-dev" "python3" )
     tools_array+=( "python-setuptools" )
@@ -1595,6 +1595,7 @@ function install_virtualbox() {
         usermod -aG vboxusers "${USER_NAME}"
     fi
 
+    local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     curl -fsSL -O "${VBE_URL}" ||
@@ -1688,6 +1689,27 @@ function install_vcpkg() {
     popd
     popd
     log_version vcpkg version
+}
+
+function install_doxygen() {
+    echo "[INFO] Running ${FUNCNAME[0]}..."
+    local DOXYGEN_VERSION
+    local DOXYGEN_URL
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        DOXYGEN_VERSION=1.8.17
+    else
+        DOXYGEN_VERSION=$1
+    fi
+    DOXYGEN_URL=http://doxygen.nl/files/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+    curl -fsSL -o doxygen.tar.gz "$DOXYGEN_URL" &&
+    tar -xzf doxygen.tar.gz ||
+        { echo "[ERROR] Cannot download and unpack doxygen from '$DOXYGEN_URL'." 1>&2; popd; return 10; }
+    cp -a doxygen-${DOXYGEN_VERSION}/bin/doxy* /usr/local/bin
+    popd
+    log_version doxygen --version
 }
 
 function add_ssh_known_hosts() {
