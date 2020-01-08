@@ -291,7 +291,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.16.0-rc4
+        VERSION=3.16.2
     else
         VERSION=$1
     fi
@@ -349,7 +349,7 @@ function install_pythons(){
     LDFLAGS="-L${SSL_PATH}/lib -L${SQLITE_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.9" "3.5.9" "3.6.9"  "3.7.5" "3.8.0" "3.9.0a1" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.9" "3.7.5" "3.8.0" "3.8.1" "3.9.0a2" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
@@ -486,7 +486,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.13" "go1.13.4" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.14" "go1.13.5" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
