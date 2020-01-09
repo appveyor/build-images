@@ -624,6 +624,13 @@ function install_openjdk() {
             $BREW_CMD cask install adoptopenjdk8 adoptopenjdk9 adoptopenjdk10 adoptopenjdk11 adoptopenjdk12 adoptopenjdk13
         " ||
             { echo "[ERROR] Cannot install adoptopenjdk with Homebrew." 1>&2; return 20; }
+
+        JDK_PATH=$(/usr/libexec/java_home -v $i)
+        write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64='${JDK_PATH}
+        for i in 9 10 11 12 13; do
+            JDK_PATH=$(/usr/libexec/java_home -v $i)
+            write_line "${HOME}/.profile" "export JAVA_HOME_${i}_X64=${JDK_PATH}"
+        done
     else
         echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
     fi
