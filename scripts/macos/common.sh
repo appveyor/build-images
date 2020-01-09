@@ -633,6 +633,26 @@ function configure_term() {
     write_line "${HOME}/.profile" 'export TERM=xterm-256color'
 }
 
+function enable_vnc() {
+    defaults write /var/db/launchd.db/com.apple.launchd/overrides.plist com.apple.screensharing -dict Disabled -bool false
+    launchctl load -w /System/Library/LaunchDaemons/com.apple.screensharing.plist
+}
+
+function configure_updates() {
+    softwareupdate --schedule off
+    defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -boolean FALSE
+    defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -boolean FALSE
+}
+
+function configure_sshd() {
+    systemsetup -setremotelogin on
+    write_line /private/etc/ssh/sshd_config 'Protocol 2' '^Protocol '
+    write_line /private/etc/ssh/sshd_config 'PasswordAuthentication no' '^PasswordAuthentication '
+    write_line /private/etc/ssh/sshd_config 'ChallengeResponseAuthentication no' '^ChallengeResponseAuthentication '
+    write_line /private/etc/ssh/sshd_config 'DenyUsers root' '^DenyUsers '
+    write_line /private/etc/ssh/sshd_config 'PrintMotd /etc/appveyor.motd' '^PrintMotd '
+}
+
 function check_folders() {
     if [ "$#" -gt 0 ]; then
         while [[ "$#" -gt 0 ]]; do

@@ -36,6 +36,8 @@ function _continue() {
 
 init_logging
 configure_path
+configure_updates
+configure_sshd
 install_cvs
 install_gpg
 install_rvm_and_rubies
