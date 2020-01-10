@@ -7,7 +7,7 @@ $destPath = "$env:ProgramFiles\AppVeyor\BuildAgent"
 
 Write-Host "Downloading..."
 $zipPath = "$env:TEMP\appveyor-build-agent.zip"
-(New-Object Net.WebClient).DownloadFile('https://github.com/appveyor/ci/releases/download/build-agent-v6.1.0%2B1300/AppveyorBuildAgent.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://github.com/appveyor/ci/releases/download/build-agent-v6.3.2%2B2606/AppveyorBuildAgent.zip', $zipPath)
 
 Write-Host "Unpacking..."
 7z x $zipPath -o"$destPath" | Out-Null
