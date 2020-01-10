@@ -317,7 +317,8 @@ install_yarn ||
     _abort $?
 install_packer ||
     _abort $?
-
+install_doxygen ||
+    _abort $?
 install_awscli ||
     _abort $?
 install_localstack || _continue
