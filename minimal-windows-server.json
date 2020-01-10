@@ -61,6 +61,11 @@
       ]
     },
     {
+      "type": "file",
+      "source": "{{ template_dir }}/scripts/Windows/path-utils.psm1",
+      "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/path-utils.psm1"
+    },
+    {
       "type": "powershell",
       "scripts": [
         "{{ template_dir }}/scripts/Windows/install_path_utils.ps1",

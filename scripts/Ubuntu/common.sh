@@ -286,7 +286,7 @@ function install_tools() {
     tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
     # build tools
     tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" )
-    tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" )
+    tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
     # python packages
     tools_array+=( "python" "python-dev" "python3" )
     tools_array+=( "python-setuptools" )
@@ -565,11 +565,18 @@ function install_gitversion() {
         VERSION=$1
     fi
 
-    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-${VERSION}.tar.gz
-    tar -zxf gitversion-linux-${VERSION}.tar.gz -C /usr/local/bin
-    chmod a+rx /usr/local/bin/GitVersion*
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
 
+    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-${VERSION}.tar.gz &&
+    tar -zxf gitversion-linux-${VERSION}.tar.gz -C /usr/local/bin &&
+    chmod a+rx /usr/local/bin/GitVersion* ||
+        { echo "[ERROR] Cannot install GitVersion ${VERSION}." 1>&2; popd; return 10; }
+
+    popd
     log_version GitVersion /version
+    [ -d /var/tmp/.net/ ] && rm -rf /var/tmp/.net/
 }
 
 function install_cvs() {
@@ -640,13 +647,13 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.9" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.8.0" "3.8.1rc1" "3.9.0a1" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.9" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.8.0" "3.8.1" "3.9.0a2" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
-        curl -fsSL -O http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz ||
+        curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
             { echo "[WARNING] Cannot download Python ${i}."; continue; }
-        tar -zxf Python-${i}.tgz &&
+        tar -zxf "Python-${i}.tgz" &&
         pushd "Python-${i}" ||
             { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
         PY_PATH=${HOME}/.localpython${i}
@@ -665,7 +672,8 @@ function install_pythons(){
         popd
         fi
     done
-    find "$HOME" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
+    find "${HOME}" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
+    rm "${HOME}/Python-*.tgz"
 }
 
 function install_powershell() {
@@ -698,35 +706,6 @@ function configure_powershell() {
         { echo "[ERROR] Cannot create and change PWSH profile ${PROFILE_PATH}/${PROFILE_NAME}." 1>&2; return 30; }
 
     pwsh -c 'Install-Module Pester -Force'
-}
-
-# This module was deprecated
-function add_appveyor_module() {
-    if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
-    if [[ -z "${USER_HOME-}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
-    local MODULES_PATH=${USER_HOME}/.local/share/powershell/Modules/Appveyor/
-    mkdir -p "${MODULES_PATH}" &&
-    for file in "Appveyor.BuildAgent.Api.dll" "Appveyor.BuildAgent.Models.dll" "Appveyor.BuildAgent.PowerShell.dll"; do
-        cp "${AGENT_DIR}/${file}" "${MODULES_PATH}" ||
-            { echo "[ERROR] Cannot copy '${AGENT_DIR}/${file}' to '${MODULES_PATH}'." 1>&2; return 30; }
-    done
-    echo "@{
-RootModule = 'Appveyor.BuildAgent.PowerShell.dll'
-ModuleVersion = '1.0'
-GUID = '1a9a19d4-28de-4d1f-aa44-aecf16b423cb'
-Author = 'Vasily Pleshakov'
-CompanyName = 'Appveyor Systems Inc.'
-Copyright = '(c) Appveyor Systems Inc. All rights reserved.'
-FunctionsToExport = '*'
-CmdletsToExport = '*'
-VariablesToExport = '*'
-AliasesToExport = '*'
-PrivateData = @{
-    PSData = @{
-    }
-}
-}
-" > "${MODULES_PATH}/Appveyor.psd1"
 }
 
 function dotnet_packages() {
@@ -1109,7 +1088,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.13" "go1.13.4" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.14" "go1.13.5" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1383,7 +1362,7 @@ function install_packer() {
     echo "[INFO] Running install_packer..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=1.4.5
+        VERSION=1.5.1
     else
         VERSION=$1
     fi
@@ -1454,7 +1433,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.16.1
+        VERSION=3.16.2
     else
         VERSION=$1
     fi
@@ -1616,6 +1595,7 @@ function install_virtualbox() {
         usermod -aG vboxusers "${USER_NAME}"
     fi
 
+    local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     curl -fsSL -O "${VBE_URL}" ||
@@ -1636,14 +1616,14 @@ function install_virtualbox() {
 function install_clang() {
     echo "[INFO] Running install_clang..."
     curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&
-    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-6.0 main" ||
+    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-9 main" ||
         { echo "[ERROR] Cannot add llvm repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
-    apt-get -y -q install clang-6.0 ||
+    apt-get -y -q install clang-9 ||
         { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 20; }
 
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-6.0 1000
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 1000
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-9 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-9 1000
     update-alternatives --config clang
     update-alternatives --config clang++
 
@@ -1654,7 +1634,7 @@ function install_octo() {
     echo "[INFO] Running install_octo..."
     local OCTO_VERSION, OCTO_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        OCTO_VERSION=6.14.2
+        OCTO_VERSION=6.17.0
     else
         OCTO_VERSION=$1
     fi
@@ -1709,6 +1689,27 @@ function install_vcpkg() {
     popd
     popd
     log_version vcpkg version
+}
+
+function install_doxygen() {
+    echo "[INFO] Running ${FUNCNAME[0]}..."
+    local DOXYGEN_VERSION
+    local DOXYGEN_URL
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        DOXYGEN_VERSION=1.8.17
+    else
+        DOXYGEN_VERSION=$1
+    fi
+    DOXYGEN_URL=http://doxygen.nl/files/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+    curl -fsSL -o doxygen.tar.gz "$DOXYGEN_URL" &&
+    tar -xzf doxygen.tar.gz ||
+        { echo "[ERROR] Cannot download and unpack doxygen from '$DOXYGEN_URL'." 1>&2; popd; return 10; }
+    cp -a doxygen-${DOXYGEN_VERSION}/bin/doxy* /usr/local/bin
+    popd
+    log_version doxygen --version
 }
 
 function add_ssh_known_hosts() {

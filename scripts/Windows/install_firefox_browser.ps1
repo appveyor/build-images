@@ -1,5 +1,11 @@
 ﻿Write-Host "Installing FireFox..." -ForegroundColor Cyan
 
-choco install firefox --version=70.0.1
+Write-Host "Downloading..."
+$exePath = "$env:TEMP\firefox-installer.exe"
+(New-Object Net.WebClient).DownloadFile('https://download.mozilla.org/?product=firefox-71.0-ssl&os=win64&lang=en-US', $exePath)
+
+Write-Host "Installing..."
+cmd /c start /wait $exePath -ms
+del $exePath
 
 Write-Host "Installed FireFox" -ForegroundColor Green

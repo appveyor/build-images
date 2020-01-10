@@ -36,6 +36,8 @@ function _continue() {
 
 init_logging
 configure_path
+configure_updates
+configure_sshd
 install_cvs
 install_gpg
 install_rvm_and_rubies
@@ -43,6 +45,7 @@ install_fastlane
 install_cmake
 install_gcc
 install_openjdk
+install_virtualenv
 su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -67,7 +70,9 @@ su -l "${USER_NAME}" -c "
         $(declare -f install_dotnets)
         install_dotnets" ||
     _abort $?
-
+install_cocoapods
+install_mono
 install_gvm_and_golangs
 install_nvm_and_nodejs
+configure_term
 cleanup

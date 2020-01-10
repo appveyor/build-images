@@ -267,6 +267,7 @@ function install_rvm_and_rubies() {
         su -l ${USER_NAME} -c "
             PATH=$PATH
             USER_NAME=${USER_NAME}
+            VERSIONS_FILE=${VERSIONS_FILE}
             [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
             $(declare -f log_version)
             $(declare -f install_rubies)
@@ -290,7 +291,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.16.0-rc4
+        VERSION=3.16.2
     else
         VERSION=$1
     fi
@@ -348,11 +349,11 @@ function install_pythons(){
     LDFLAGS="-L${SSL_PATH}/lib -L${SQLITE_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.9" "3.5.9" "3.6.9"  "3.7.5" "3.8.0" "3.9.0a1" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.9" "3.7.5" "3.8.0" "3.8.1" "3.9.0a2" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
-        curl -fsSL -O http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz ||
+        curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
             { echo "[WARNING] Cannot download Python ${i}."; continue; }
         tar -zxf Python-${i}.tgz &&
         pushd "Python-${i}" ||
@@ -409,7 +410,7 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" )
+    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" )
     for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
         ./dotnet-install.sh -channel "$v"
@@ -444,6 +445,7 @@ function install_gvm_and_golangs() {
         su -l ${USER_NAME} -c "
             PATH=$PATH
             USER_NAME=${USER_NAME}
+            VERSIONS_FILE=${VERSIONS_FILE}
             source \"${HOME}/.gvm/scripts/gvm\"
             $(declare -f log_version)
             $(declare -f install_golangs)
@@ -484,7 +486,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.13" "go1.13.4" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.14" "go1.13.5" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -511,6 +513,7 @@ function install_nvm_and_nodejs() {
             PATH=$PATH
             [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
             USER_NAME=${USER_NAME}
+            VERSIONS_FILE=${VERSIONS_FILE}
             $(declare -f log_version)
             $(declare -f install_nvm_nodejs)
             install_nvm_nodejs ${CURRENT_NODEJS}" ||
@@ -589,6 +592,29 @@ function install_xcode() {
     fi
 }
 
+function install_mono() {
+    brew_cask_install mono-mdk
+    write_line "${HOME}/.profile" 'export MONO_HOME=/Library/Frameworks/Mono.framework/Home'
+    write_line "${HOME}/.profile" 'export PATH=$MONO_HOME/bin:$PATH'
+    export MONO_HOME=/Library/Frameworks/Mono.framework/Home
+    export PATH=$MONO_HOME/bin:$PATH
+    log_version mono --version
+}
+
+function install_cocoapods() {
+    if check_user; then
+        su -l ${USER_NAME} -c "
+            gem install cocoapods
+            VERSIONS_FILE=${VERSIONS_FILE}
+            $(declare -f log_version)
+            log_version pod --version
+        " ||
+            { echo "[ERROR] Cannot install cocoapods." 1>&2; return 20; }
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
+    fi
+}
+
 function install_openjdk() {
     [ -x "${BREW_CMD-}" ] ||
         { echo "[ERROR] Cannot find brew. Install Homebrew first!" 1>&2; return 1; }
@@ -597,10 +623,41 @@ function install_openjdk() {
             $BREW_CMD tap AdoptOpenJDK/openjdk
             $BREW_CMD cask install adoptopenjdk8 adoptopenjdk9 adoptopenjdk10 adoptopenjdk11 adoptopenjdk12 adoptopenjdk13
         " ||
-            { echo "[ERROR] Cannot install '$*' with Homebrew." 1>&2; return 20; }
+            { echo "[ERROR] Cannot install adoptopenjdk with Homebrew." 1>&2; return 20; }
+
+        JDK_PATH=$(/usr/libexec/java_home -v $i)
+        write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64='${JDK_PATH}
+        for i in 9 10 11 12 13; do
+            JDK_PATH=$(/usr/libexec/java_home -v $i)
+            write_line "${HOME}/.profile" "export JAVA_HOME_${i}_X64=${JDK_PATH}"
+        done
     else
         echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
     fi
+}
+
+function configure_term() {
+    write_line "${HOME}/.profile" 'export TERM=xterm-256color'
+}
+
+function enable_vnc() {
+    defaults write /var/db/launchd.db/com.apple.launchd/overrides.plist com.apple.screensharing -dict Disabled -bool false
+    launchctl load -w /System/Library/LaunchDaemons/com.apple.screensharing.plist
+}
+
+function configure_updates() {
+    softwareupdate --schedule off
+    defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -boolean FALSE
+    defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -boolean FALSE
+}
+
+function configure_sshd() {
+    systemsetup -setremotelogin on
+    write_line /private/etc/ssh/sshd_config 'Protocol 2' '^Protocol '
+    write_line /private/etc/ssh/sshd_config 'PasswordAuthentication no' '^PasswordAuthentication '
+    write_line /private/etc/ssh/sshd_config 'ChallengeResponseAuthentication no' '^ChallengeResponseAuthentication '
+    write_line /private/etc/ssh/sshd_config 'DenyUsers root' '^DenyUsers '
+    write_line /private/etc/ssh/sshd_config 'PrintMotd /etc/appveyor.motd' '^PrintMotd '
 }
 
 function check_folders() {
