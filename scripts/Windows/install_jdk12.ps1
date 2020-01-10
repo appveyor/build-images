@@ -1,5 +1,7 @@
 ﻿Write-Host "Installing JDK 12 ..." -ForegroundColor Cyan
 
+New-Item "${env:ProgramFiles}\Java" -ItemType Directory -Force | Out-Null
+
 $jdkPath = "${env:ProgramFiles}\Java\jdk12"
 
 if(Test-Path $jdkPath) {

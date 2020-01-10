@@ -135,7 +135,19 @@
     },
     {
         "type": "windows-restart",
-        "restart_timeout": "10m"
+        "restart_timeout": "5m"
+    },
+    {
+        "type": "powershell",
+        "inline":[
+            "Write-Host 'Waiting for 5 seconds and then restart again...'; Start-Sleep -s 5"
+        ],
+        "elevated_user": "{{user `install_user`}}",
+        "elevated_password": "{{user `install_password`}}"
+    },    
+    {
+        "type": "windows-restart",
+        "restart_timeout": "5m"
     },
     {
         "type": "file",
@@ -152,7 +164,7 @@
     },
     {
         "type": "windows-restart",
-        "restart_timeout": "10m"
+        "restart_timeout": "5m"
     },
     {
         "type": "powershell",
@@ -200,8 +212,8 @@
     },
     {
         "type": "file",
-        "source": "{{ template_dir }}/scripts/Windows/qt-installer-windows.qs",
-        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/qt-installer-windows.qs"
+        "source": "{{ template_dir }}/scripts/Windows/install_qt.qs",
+        "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/install_qt.qs"
     },    
     {
         "type": "powershell",
@@ -218,6 +230,7 @@
             "{{ template_dir }}/scripts/Windows/install_postgres96.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres10.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres11.ps1",
+            "{{ template_dir }}/scripts/Windows/install_postgres12.ps1",
             "{{ template_dir }}/scripts/Windows/install_mysql.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_powershell.ps1",
@@ -232,7 +245,6 @@
             "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1",
             "{{ template_dir }}/scripts/Windows/install_dxsdk.ps1",
             "{{ template_dir }}/scripts/Windows/install_vdproj_vs2019.ps1",
-            "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix311.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix_toolset_vs2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_chrome_browser.ps1",
@@ -246,6 +258,7 @@
             "{{ template_dir }}/scripts/Windows/install_iis_win2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_nsis.ps1",
             "{{ template_dir }}/scripts/Windows/install_octo.ps1",
+            "{{ template_dir }}/scripts/Windows/install_meson_and_ninja.ps1",
             "{{ template_dir }}/scripts/Windows/install_java_7_8.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk11.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
@@ -255,6 +268,7 @@
             "{{ template_dir }}/scripts/Windows/install_android_sdk.ps1",
             "{{ template_dir }}/scripts/Windows/install_msys64.ps1",
             "{{ template_dir }}/scripts/Windows/install_cygwin.ps1",
+            "{{ template_dir }}/scripts/Windows/install_mingw-w64.ps1",
             "{{ template_dir }}/scripts/Windows/install_boost_1.71.0_vs2019.ps1"
         ],
         "elevated_user": "{{user `install_user`}}",

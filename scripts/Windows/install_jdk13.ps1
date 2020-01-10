@@ -1,5 +1,7 @@
 ﻿Write-Host "Installing JDK 13 ..." -ForegroundColor Cyan
 
+New-Item "${env:ProgramFiles}\Java" -ItemType Directory -Force | Out-Null
+
 $jdkPath = "${env:ProgramFiles}\Java\jdk13"
 
 if(Test-Path $jdkPath) {
@@ -17,5 +19,9 @@ Remove-Item 'C:\jdk13_temp' -Recurse -Force
 del $zipPath
 
 cmd /c "`"$jdkPath\bin\java`" --version"
+
+if ($env:INSTALL_LATEST_ONLY) {
+    Add-Path "$jdkPath\bin"
+}
 
 Write-Host "JDK 13 installed" -ForegroundColor Green

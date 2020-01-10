@@ -530,6 +530,12 @@ function New-IsoFile
   )
 
   Begin {
+
+    # Adding Server Core App Compatibility Feature on Demand (FOD) to fix https://github.com/appveyor/ci/issues/3268
+    if ((Get-ItemProperty "HKLM:\Software\Microsoft\Windows NT\CurrentVersion").InstallationType -eq 'Server Core') {
+        Add-WindowsCapability -Online -Name ServerCore.AppCompatibility~~~~0.0.1.0
+    }
+
     ($cp = new-object System.CodeDom.Compiler.CompilerParameters).CompilerOptions = '/unsafe'
     if (!('ISOFile' -as [type])) {
       Add-Type -CompilerParameters $cp -TypeDefinition @'

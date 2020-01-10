@@ -255,6 +255,10 @@ $ErrorActionPreference = 'Stop'
 # Install VS
 $exitCode = InstallVS -WorkLoads $WorkLoads -Sku $Sku -VSBootstrapperURL $VSBootstrapperURL
 
+Write-Host "Initializing Visual Studio Experimental Instance"
+& "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\devenv.exe" /RootSuffix Exp /ResetSettings General.vssettings /Command File.Exit
+
+Write-Host "Disabling VS-related services"
 if (get-Service SQLWriterw -ErrorAction Ignore) {
   Stop-Service SQLWriter
   Set-Service SQLWriter -StartupType Manual
