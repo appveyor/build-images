@@ -2,6 +2,7 @@
   "variables": {
     "macos_version": "catalina",
     "pvm_path": "iso/template1.pvm",
+    "datemark": "{{timestamp}}",
     "install_user": "appveyor",
     "install_password": "appveyor",
     "appVeyorUrl": "https://ci.appveyor.com",
@@ -65,7 +66,7 @@
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout": "30s",
       "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
-      "vm_name": "packer-{{user `macos_version`}}-{{timestamp}}",
+      "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "skip_compaction": "true"
     },
     {
@@ -85,7 +86,7 @@
       "ssh_port": 22,
       "ssh_wait_timeout": "10000s",
       "shutdown_command": "echo '{{ user `install_password` }}'|sudo -S shutdown -h now",
-      "vm_name": "packer-macos",
+      "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "prlctl": [
         ["set", "{{.Name}}", "--memsize", "2048"],
         ["set", "{{.Name}}", "--memquota", "512:2048"],
