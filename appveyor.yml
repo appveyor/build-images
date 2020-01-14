@@ -7,30 +7,30 @@ environment:
       CLOUD: Azure
     - TEMPLATE: vs2019
       CLOUD: Azure
-    # - TEMPLATE: ubuntu1804
-    #   CLOUD: Azure
-    # - TEMPLATE: ubuntu1604
-    #   CLOUD: Azure
+    - TEMPLATE: ubuntu1804
+      CLOUD: Azure
+    - TEMPLATE: ubuntu1604
+      CLOUD: Azure
 
-    # - TEMPLATE: ws2019
-    #   CLOUD: GCE
-    # - TEMPLATE: vs2019
-    #   CLOUD: GCE
-    # - TEMPLATE: ubuntu1804
-    #   CLOUD: GCE
-    #   gce_source_image: ubuntu-1804-bionic-v20191113
-    # - TEMPLATE: ubuntu1604
-    #   CLOUD: GCE
-    #   gce_source_image: ubuntu-1604-xenial-v20191113
+    - TEMPLATE: ws2019
+      CLOUD: GCE
+    - TEMPLATE: vs2019
+      CLOUD: GCE
+    - TEMPLATE: ubuntu1804
+      CLOUD: GCE
+      gce_source_image: ubuntu-1804-bionic-v20191113
+    - TEMPLATE: ubuntu1604
+      CLOUD: GCE
+      gce_source_image: ubuntu-1604-xenial-v20191113
 
-    # - TEMPLATE: ws2019
-    #   CLOUD: AWS
-    # - TEMPLATE: vs2019
-    #   CLOUD: AWS
-    # - TEMPLATE: ubuntu1804
-    #   CLOUD: AWS
-    # - TEMPLATE: ubuntu1604
-    #   CLOUD: AWS
+    - TEMPLATE: ws2019
+      CLOUD: AWS
+    - TEMPLATE: vs2019
+      CLOUD: AWS
+    - TEMPLATE: ubuntu1804
+      CLOUD: AWS
+    - TEMPLATE: ubuntu1604
+      CLOUD: AWS
 
 init:
 - appveyor version
