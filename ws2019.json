@@ -167,7 +167,7 @@
         "managed_image_name": "ws2019_minimal_{{user `datemark`}}",
         "managed_image_os_disk_snapshot_name": "ws2019_minimal_{{user `datemark`}}",
         "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
-        "managed_image_storage_account_type": "Standard_LRS",
+        "managed_image_storage_account_type": "Premium_LRS",
 
         "communicator": "winrm",
         "winrm_use_ssl": "true",
