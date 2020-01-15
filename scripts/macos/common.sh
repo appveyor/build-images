@@ -375,6 +375,7 @@ function install_pythons(){
         fi
     done
     find "$HOME" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
+    rm ${HOME}/Python-*.tgz
 }
 
 function global_json() {
