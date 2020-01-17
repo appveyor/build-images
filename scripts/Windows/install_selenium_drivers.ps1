@@ -10,7 +10,7 @@ if(-not (Test-Path $destPath)) {
 }
 
 $zipPath = "$env:TEMP\chromedriver_win32.zip"
-(New-Object Net.WebClient).DownloadFile('http://chromedriver.storage.googleapis.com/78.0.3904.70/chromedriver_win32.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('http://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_win32.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 del $zipPath
 
