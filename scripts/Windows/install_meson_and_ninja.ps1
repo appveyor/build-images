@@ -6,7 +6,7 @@ $msiPath = "$env:TEMP\meson.msi"
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i "$msiPath" /quiet
-del $msiPath
+Remove-Item $msiPath
 
 Write-Host "Ninja version:"
 & "$env:ProgramFiles\Meson\ninja.EXE" --version
