@@ -11,7 +11,7 @@ if(-not (Test-Path $destPath)) {
 $zipPath = "$env:TEMP\OctopusTools.zip"
 (New-Object Net.WebClient).DownloadFile('https://download.octopusdeploy.com/octopus-tools/6.17.0/OctopusTools.6.17.0.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
-del $zipPath
+Remove-Item $zipPath
 
 Add-Path $destPath
 Add-SessionPath $destPath

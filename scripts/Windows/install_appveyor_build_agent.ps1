@@ -5,9 +5,13 @@ Write-Host "==============================="
 
 $destPath = "$env:ProgramFiles\AppVeyor\BuildAgent"
 
+Write-Host "Querying for the latest version of Build Agent"
+$versionInfo = (New-Object Net.WebClient).DownloadString('https://appveyordownloads.blob.core.windows.net/build-agent/appveyor-build-agent-windows-version-6.0.txt').split(' ')
+Write-Host "Installing Build Agent version $($versionInfo[0])"
+
 Write-Host "Downloading..."
 $zipPath = "$env:TEMP\appveyor-build-agent.zip"
-(New-Object Net.WebClient).DownloadFile('https://github.com/appveyor/ci/releases/download/build-agent-v6.1.0%2B1300/AppveyorBuildAgent.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile($versionInfo[1], $zipPath)
 
 Write-Host "Unpacking..."
 7z x $zipPath -o"$destPath" | Out-Null

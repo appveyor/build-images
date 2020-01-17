@@ -6,7 +6,7 @@ $msiPath = "$($env:USERPROFILE)\AWSCLI64.msi"
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i $msiPath /quiet
-del $msiPath
+Remove-Item $msiPath
 
 Add-SessionPath "$env:ProgramFiles\Amazon\AWSCLI"
 Add-Path "$env:ProgramFiles\Amazon\AWSCLI"

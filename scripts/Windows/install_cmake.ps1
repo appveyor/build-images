@@ -6,7 +6,7 @@ if([IO.File]::Exists($cmakeUninstallPath)) {
     # uninstall existent
     "`"$cmakeUninstallPath`" /S" | out-file ".\uninstall-cmake.cmd" -Encoding ASCII
     & .\uninstall-cmake.cmd
-    del .\uninstall-cmake.cmd
+    Remove-Item .\uninstall-cmake.cmd
     Start-Sleep -s 10
 }
 
@@ -19,7 +19,7 @@ Write-Host "Downloading..."
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i $msiPath /quiet
-del $msiPath
+Remove-Item $msiPath
 
 Add-Path "${env:ProgramFiles(x86)}\CMake\bin"
 

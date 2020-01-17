@@ -171,17 +171,12 @@
         "scripts":[            
             "{{ template_dir }}/scripts/Windows/install_docker_desktop_after_reboot.ps1"
         ],
-        "elevated_user": "{{user `install_user`}}",
-        "elevated_password": "{{user `install_password`}}" 
-    },
-    {
-        "type": "powershell",
-        "scripts":[
-            "{{ template_dir }}/scripts/Windows/install_wsl.ps1"
+        "environment_vars": [
+            "INSTALL_LATEST_ONLY=true"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}" 
-    },    
+    },  
     {
         "type": "powershell",
         "scripts":[
@@ -222,14 +217,10 @@
             "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
             "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
             "{{ template_dir }}/scripts/Windows/install_ruby.ps1",
-            "{{ template_dir }}/scripts/Windows/install_miniconda.ps1",
             "{{ template_dir }}/scripts/Windows/install_python.ps1",
             "{{ template_dir }}/scripts/Windows/install_go.ps1",
             "{{ template_dir }}/scripts/Windows/install_openssl.ps1",
             "{{ template_dir }}/scripts/Windows/install_cmake.ps1",
-            "{{ template_dir }}/scripts/Windows/install_postgres96.ps1",
-            "{{ template_dir }}/scripts/Windows/install_postgres10.ps1",
-            "{{ template_dir }}/scripts/Windows/install_postgres11.ps1",
             "{{ template_dir }}/scripts/Windows/install_postgres12.ps1",
             "{{ template_dir }}/scripts/Windows/install_mysql.ps1",
             "{{ template_dir }}/scripts/Windows/install_aws_cli.ps1",
@@ -239,38 +230,24 @@
             "{{ template_dir }}/scripts/Windows/install_azure_powershell.ps1",
             "{{ template_dir }}/scripts/Windows/install_gcloud_sdk.ps1",
             "{{ template_dir }}/scripts/Windows/install_erlang.ps1",
-            "{{ template_dir }}/scripts/Windows/install_mongo.ps1",
-            "{{ template_dir }}/scripts/Windows/install_winsdk_81.ps1",
-            "{{ template_dir }}/scripts/Windows/install_wdk_1809.ps1",
-            "{{ template_dir }}/scripts/Windows/install_wdk_1903.ps1",
-            "{{ template_dir }}/scripts/Windows/install_dxsdk.ps1",
-            "{{ template_dir }}/scripts/Windows/install_vdproj_vs2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix311.ps1",
             "{{ template_dir }}/scripts/Windows/install_wix_toolset_vs2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_chrome_browser.ps1",
             "{{ template_dir }}/scripts/Windows/install_firefox_browser.ps1",
-            "{{ template_dir }}/scripts/Windows/install_edge_browser.ps1",
             "{{ template_dir }}/scripts/Windows/install_selenium_drivers.ps1",
             "{{ template_dir }}/scripts/Windows/install_llvm.ps1",
             "{{ template_dir }}/scripts/Windows/install_llvm_extension_vs2019.ps1",
             "{{ template_dir }}/scripts/Windows/install_vcpkg.ps1",
-            "{{ template_dir }}/scripts/Windows/install_innosetup.ps1",
             "{{ template_dir }}/scripts/Windows/install_coverity.ps1",
             "{{ template_dir }}/scripts/Windows/install_iis_win2019.ps1",
-            "{{ template_dir }}/scripts/Windows/install_nsis.ps1",
             "{{ template_dir }}/scripts/Windows/install_octo.ps1",
-            "{{ template_dir }}/scripts/Windows/install_meson_and_ninja.ps1",
-            "{{ template_dir }}/scripts/Windows/install_java_7_8.ps1",
-            "{{ template_dir }}/scripts/Windows/install_jdk11.ps1",
-            "{{ template_dir }}/scripts/Windows/install_jdk12.ps1",
             "{{ template_dir }}/scripts/Windows/install_jdk13.ps1",
             "{{ template_dir }}/scripts/Windows/install_maven.ps1",
-            "{{ template_dir }}/scripts/Windows/install_gitversion.ps1",
             "{{ template_dir }}/scripts/Windows/install_android_sdk.ps1",
-            "{{ template_dir }}/scripts/Windows/install_msys64.ps1",
-            "{{ template_dir }}/scripts/Windows/install_cygwin.ps1",
-            "{{ template_dir }}/scripts/Windows/install_mingw-w64.ps1",
-            "{{ template_dir }}/scripts/Windows/install_boost_1.71.0_vs2019.ps1"
+            "{{ template_dir }}/scripts/Windows/install_msys64.ps1"
+        ],
+        "environment_vars": [
+            "INSTALL_LATEST_ONLY=true"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
@@ -301,6 +278,9 @@
             "{{ template_dir }}/scripts/Windows/install_dotnet_core_sdks.ps1",
             "{{ template_dir }}/scripts/Windows/install_dotnet_devpacks.ps1",
             "{{ template_dir }}/scripts/Windows/install_dotnet_runtimes.ps1"
+        ],
+        "environment_vars": [
+            "INSTALL_LATEST_ONLY=true"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}" 
@@ -347,19 +327,19 @@
         "client_secret": "{{ user `azure_client_secret` }}",
         "location": "{{ user `azure_location` }}",
 
-        "temp_resource_group_name": "packer-RG-vs2019-{{uuid}}",
+        "temp_resource_group_name": "packer-RG-ws2019-{{uuid}}",
 
         "os_type": "Windows",
         "image_publisher": "MicrosoftWindowsServer",
         "image_offer": "WindowsServer",
         "image_sku": "2019-Datacenter",
         "vm_size": "{{user `azure_vm_size`}}",
-        "os_disk_size_gb": 256,
+        "os_disk_size_gb": 128,
 
-        "capture_container_name": "appveyor-images-vs2019",
-        "capture_name_prefix": "vs2019-{{user `datemark`}}",
-        "resource_group_name": "{{ user `azure_resource_group_name` }}",
-        "storage_account": "{{ user `azure_storage_account` }}",
+        "managed_image_name": "ws2019_{{user `datemark`}}",
+        "managed_image_os_disk_snapshot_name": "ws2019_{{user `datemark`}}",
+        "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
+        "managed_image_storage_account_type": "Premium_LRS",
 
         "communicator": "winrm",
         "winrm_use_ssl": "true",
@@ -494,4 +474,3 @@
     }
   ]
 }
-

@@ -28,6 +28,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     Install-SDK "2.1.603"
     Install-SDK "2.1.604"
     Install-SDK "2.1.701"
+    Install-SDK "2.1.803"
     Install-SDK "2.2.103"
     Install-SDK "2.2.107"
     Install-SDK "2.2.108"
@@ -46,6 +47,6 @@ if (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019") {
     if (-not $env:INSTALL_LATEST_ONLY) {
         Install-SDK "3.0.100"
     }
-    Install-SDK "3.0.101"
-    Install-SDK "3.1.100"
+    Install-SDK "3.0.102"
+    Install-SDK "3.1.101"
 }

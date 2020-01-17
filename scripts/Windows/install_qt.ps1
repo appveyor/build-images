@@ -23,6 +23,6 @@ cmd /c mklink /J C:\Qt\latest C:\Qt\5.14.0
 cmd /c mklink /J C:\Qt\5.14 C:\Qt\5.14.0
 cmd /c mklink /J C:\Qt\5.13 C:\Qt\5.13.2
 cmd /c mklink /J C:\Qt\5.12 C:\Qt\5.12.6
-cmd /c mklink /J C:\Qt\5.9 C:\Qt\5.9.8
+cmd /c mklink /J C:\Qt\5.9 C:\Qt\5.9.9
 
 Write-Host "Qt 5.x installed" -ForegroundColor Green
