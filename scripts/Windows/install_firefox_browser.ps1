@@ -2,7 +2,7 @@
 
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\firefox-installer.exe"
-(New-Object Net.WebClient).DownloadFile('https://download.mozilla.org/?product=firefox-71.0-ssl&os=win64&lang=en-US', $exePath)
+(New-Object Net.WebClient).DownloadFile('https://download.mozilla.org/?product=firefox-72.0-ssl&os=win64&lang=en-US', $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath -ms
