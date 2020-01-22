@@ -5,8 +5,14 @@ Write-Host "==============================="
 
 $destPath = "$env:ProgramFiles\AppVeyor\BuildAgent"
 
-Write-Host "Querying for the latest version of Build Agent"
-$versionInfo = (New-Object Net.WebClient).DownloadString('https://appveyordownloads.blob.core.windows.net/build-agent/appveyor-build-agent-windows-version-6.0.txt').split(' ')
+$versionFeedUrl = 'https://appveyordownloads.blob.core.windows.net/build-agent/appveyor-build-agent-windows-version-6.0.txt'
+
+if ($env:build_agent_version_feed_url) {
+    $versionFeedUrl = $env:build_agent_version_feed_url
+}
+
+Write-Host "Querying for the latest version of Build Agent from $versionFeedUrl"
+$versionInfo = (New-Object Net.WebClient).DownloadString($versionFeedUrl).split(' ')
 Write-Host "Installing Build Agent version $($versionInfo[0])"
 
 Write-Host "Downloading..."

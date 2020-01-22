@@ -12,8 +12,8 @@
     "gce_account_file": "",
     "gce_zone": "",
     "gce_project": "",
-    "gce_source_image": "windows-server-2016-dc-v20190108",
-    "gce_source_image_family": "windows-2016",
+    "gce_source_image": "windows-server-2019-dc-v20200114",
+    "gce_source_image_family": "windows-2019",
     "azure_vm_size": "Standard_D4s_v3",
 
     "install_user": "",
@@ -141,7 +141,8 @@
             "{{ template_dir }}/scripts/Windows/cleanup_windows.ps1"
         ],
         "environment_vars": [
-            "build_agent_mode={{user `build_agent_mode`}}"
+            "build_agent_mode={{user `build_agent_mode`}}",
+            "build_agent_version_feed_url=https://appveyordownloads.blob.core.windows.net/build-agent/appveyor-build-agent-windows-version-6.0-custom-images.txt"
         ],
         "elevated_user": "{{user `install_user`}}",
         "elevated_password": "{{user `install_password`}}"
@@ -201,14 +202,16 @@
           "https://www.googleapis.com/auth/trace.append" 
         ],
       "machine_type": "n1-standard-2",
+
       "communicator": "winrm",
       "winrm_username": "packer_user",
       "winrm_insecure": true,
       "winrm_use_ssl": true,
-      "instance_name": "packer-vs2017-{{uuid}}",
-      "image_name": "packer-vs2017-{{timestamp}}",
+
+      "instance_name": "packer-vs2019-{{uuid}}",
+      "image_name": "packer-vs2019-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
-      "disk_size": 270,
+      "disk_size": 256,
       "metadata": {
         "windows-startup-script-cmd": "winrm quickconfig -quiet & net user /add packer_user & net localgroup administrators packer_user /add & winrm set winrm/config/service/auth @{Basic=\"true\"}"
       }
