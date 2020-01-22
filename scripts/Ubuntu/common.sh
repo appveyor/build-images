@@ -285,7 +285,7 @@ function install_tools() {
     tools_array=( "zip" "unzip" "wget" "curl" "time" "tree" "telnet" "dnsutils" "net-tools" "file" "ftp" "lftp" )
     tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
     # build tools
-    tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" )
+    tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" "ninja-build" )
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
     # python packages
     tools_array+=( "python" "python-dev" "python3" )
