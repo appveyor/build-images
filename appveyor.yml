@@ -88,6 +88,7 @@ build_script:
     case "${CLOUD}" in
       Azure )
         builders=azure-arm
+        build_agent_mode=Azure
         CONTAINER_ENVS+=( "azure_location=${azure_location}" )
         CONTAINER_ENVS+=( "azure_resource_group_name=${azure_resource_group_name}" )
         CONTAINER_ENVS+=( "azure_storage_account=${azure_storage_account}" )
@@ -97,6 +98,7 @@ build_script:
         ;;
       GCE )
         builders=googlecompute
+        build_agent_mode=GCE
         CONTAINER_ENVS+=( "gce_zone=${gce_zone}" )
         CONTAINER_ENVS+=( "gce_project=${gce_project}" )
         CONTAINER_ENVS+=( "gce_source_image=${gce_source_image}" )
@@ -104,6 +106,7 @@ build_script:
         ;;
       AWS )
         builders=amazon-ebs
+        build_agent_mode=AmazonEC2
         CONTAINER_SECURE_ENVS+=( "aws_access_key=${aws_access_key}" )
         CONTAINER_SECURE_ENVS+=( "aws_secret_key=${aws_secret_key}" )
         CONTAINER_SECURE_ENVS+=( "aws_region=${aws_region}" )
