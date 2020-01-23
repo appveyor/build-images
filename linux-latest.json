@@ -144,10 +144,10 @@
       "image_sku": "18.04-LTS",
       "vm_size": "{{user `azure_vm_size`}}",
 
-      "capture_container_name": "appveyor-images-u18",
-      "capture_name_prefix": "u18-{{user `datemark`}}",
-      "resource_group_name": "{{ user `azure_resource_group_name` }}",
-      "storage_account": "{{ user `azure_storage_account` }}",
+      "managed_image_name": "linux_latest_{{user `datemark`}}",
+      "managed_image_os_disk_snapshot_name": "linux_latest_{{user `datemark`}}",
+      "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
+      "managed_image_storage_account_type": "Premium_LRS",
 
       "communicator": "ssh",
 
