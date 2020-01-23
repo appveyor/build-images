@@ -103,7 +103,7 @@
         "most_recent": true
       },
       "instance_type": "m5.large",
-      "ssh_username": "{{ user `install_user` }}",
+      "ssh_username": "ubuntu",
       "ami_name": "packer-linux-latest-{{timestamp}}",
       "ami_description": "{{user `image_description`}}",
       "launch_block_device_mappings": [
