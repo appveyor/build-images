@@ -54,7 +54,7 @@ case "${builders}" in
     ;;
   amazon-* )
     # prepare ssh private key file, if exist
-    if [[ -n "${aws_ssh_private_key_file}" ]] && [[ -n "${aws_ssh_private_key_base64}" ]]; then
+    if [[ -n "${aws_ssh_private_key_file-}" ]] && [[ -n "${aws_ssh_private_key_base64-}" ]]; then
         echo "${aws_ssh_private_key_base64}" | base64 -d > "${aws_ssh_private_key_file}"
     fi
     make_params "aws_region"
