@@ -235,7 +235,7 @@
           "801119661308"
         ]
       },
-      "user_data_file": "{{ template_dir }}/hyper-v/scripts/enable-winrm.ps1",
+      "user_data_file": "{{ template_dir }}/hyper-v/Windows/scripts/enable-winrm.ps1",
       "communicator": "winrm",
       "winrm_username": "Administrator",
       "winrm_use_ssl": true,
