@@ -234,12 +234,20 @@
           "801119661308"
         ]
       },
-      "user_data_file": "{{ template_dir }}/hyper-v/Windows/scripts/enable-winrm.ps1",
+      "user_data_file": "{{ template_dir }}/scripts/Windows/aws/enable-winrm.ps1",
       "communicator": "winrm",
       "winrm_username": "Administrator",
       "winrm_use_ssl": true,
       "winrm_insecure": true,
-      "ami_name": "packer-ws2019-{{timestamp}}"
+      "ami_name": "packer-ws2019-{{timestamp}}",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_size": 256,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ]      
     },
     {
       "type": "hyperv-vmcx",
