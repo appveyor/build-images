@@ -92,6 +92,7 @@
       "region": "{{user `aws_region`}}",
       "security_group_id": "{{user `aws_security_group_id`}}",
       "subnet_id": "{{user `aws_subnet_id`}}",      
+      "associate_public_ip_address": true,
       "source_ami_filter": {
         "filters": {
         "virtualization-type": "hvm",
