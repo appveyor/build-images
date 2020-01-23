@@ -237,6 +237,7 @@
       "user_data_file": "{{ template_dir }}/scripts/Windows/aws/enable-winrm.ps1",
       "communicator": "winrm",
       "winrm_username": "Administrator",
+      "winrm_port": 5986,
       "winrm_use_ssl": true,
       "winrm_insecure": true,
       "ami_name": "packer-ws2019-{{timestamp}}",
