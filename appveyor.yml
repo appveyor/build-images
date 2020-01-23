@@ -110,6 +110,8 @@ build_script:
         CONTAINER_SECURE_ENVS+=( "aws_access_key=${aws_access_key}" )
         CONTAINER_SECURE_ENVS+=( "aws_secret_key=${aws_secret_key}" )
         CONTAINER_SECURE_ENVS+=( "aws_region=${aws_region}" )
+        CONTAINER_SECURE_ENVS+=( "aws_security_group_id=${aws_security_group_id}" )
+        CONTAINER_SECURE_ENVS+=( "aws_subnet_id=${aws_subnet_id}" )
         ;;
     esac
 - sh: |

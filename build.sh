@@ -11,7 +11,7 @@
 
 readonly AZURE_VARS="azure_client_id azure_client_secret azure_location azure_resource_group_name azure_storage_account azure_subscription_id"
 readonly GCE_VARS="gce_account_file gce_project gce_zone gce_source_image"
-readonly AWS_VARS="aws_access_key aws_secret_key aws_region"
+readonly AWS_VARS="aws_access_key aws_secret_key aws_region aws_security_group_id aws_subnet_id"
 readonly AWS_OPT_VARS="aws_ssh_keypair_name aws_ssh_private_key_file"
 readonly VIRTUALBOX_VARS="host_ip_addr host_ip_mask host_ip_gw"
 readonly APPVEYOR_CREDENTIALS="install_user install_password"

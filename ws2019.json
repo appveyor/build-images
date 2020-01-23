@@ -6,9 +6,13 @@
     "azure_resource_group_name": "",
     "azure_storage_account": "",
     "azure_subscription_id": "",
+    
     "aws_access_key": "",
     "aws_secret_key": "",
     "aws_region": "",
+    "aws_security_group_id": "",
+    "aws_subnet_id": "",
+
     "gce_account_file": "",
     "gce_zone": "",
     "gce_project": "",
@@ -223,6 +227,8 @@
       "region": "{{user `aws_region`}}",
       "source_ami": "ami-0a1d405ce719bebfd",
       "instance_type": "m5.large",
+      "security_group_id": "{{user `aws_security_group_id`}}",
+      "subnet_id": "{{user `aws_subnet_id`}}",
       "communicator": "winrm",
       "winrm_username": "packer_user",
       "winrm_use_ssl": true,
