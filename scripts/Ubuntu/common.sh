@@ -341,6 +341,7 @@ function install_azure_linux_agent(){
     echo "[INFO] Running install_azure_linux_agent..."
 
     apt-get -y install walinuxagent
+    systemctl restart walinuxagent.service
 }
 
 function copy_appveyoragent() {
