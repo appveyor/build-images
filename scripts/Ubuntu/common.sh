@@ -336,6 +336,13 @@ function install_KVP_packages(){
     fi
 }
 
+# this package is required to communicate with Azure
+function install_azure_linux_agent(){
+    echo "[INFO] Running install_azure_linux_agent..."
+
+    apt-get -y install walinuxagent
+}
+
 function copy_appveyoragent() {
     if [[ -z "${APPVEYOR_BUILD_AGENT_VERSION-}" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
         APPVEYOR_BUILD_AGENT_VERSION=7.0.2572;
