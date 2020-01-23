@@ -11,8 +11,8 @@ environment:
     #   CLOUD: Azure
     # - TEMPLATE: ubuntu1604
     #   CLOUD: Azure
-    - TEMPLATE: linux-latest
-      CLOUD: Azure
+    #- TEMPLATE: linux-latest
+    #  CLOUD: Azure
 
     # - TEMPLATE: ws2019
     #   CLOUD: GCE
@@ -24,6 +24,9 @@ environment:
     # - TEMPLATE: ubuntu1604
     #   CLOUD: GCE
     #   gce_source_image: ubuntu-1604-xenial-v20200108
+    - TEMPLATE: linux-latest
+      CLOUD: GCE
+      gce_source_image: ubuntu-1604-xenial-v20200108
 
     # - TEMPLATE: ws2019
     #   CLOUD: AWS
