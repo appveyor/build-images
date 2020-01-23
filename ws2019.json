@@ -219,7 +219,6 @@
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
       "region": "{{user `aws_region`}}",
-      "source_ami": "ami-0a1d405ce719bebfd",
       "instance_type": "m5.large",
       "security_group_id": "{{user `aws_security_group_id`}}",
       "subnet_id": "{{user `aws_subnet_id`}}",
