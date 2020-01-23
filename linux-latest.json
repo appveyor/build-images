@@ -1,0 +1,210 @@
+{
+  "variables": {
+    "iso_url": "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso",
+    "iso_checksum": "7d8e0055d663bffa27c1718685085626cb59346e7626ba3d3f476322271f573e",
+    "iso_checksum_type": "sha256"
+  },
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "{{ template_dir }}/scripts/Ubuntu/custom-scripts",
+      "destination": "./custom-scripts"
+    },
+    {
+      "type": "file",
+      "source": "{{ template_dir }}/scripts/Ubuntu/",
+      "destination": "./"
+    },
+    {
+      "type": "shell",
+      "environment_vars": [
+        "USER_NAME={{ user `install_user` }}",
+        "USER_PASSWORD={{ user `install_password` }}",
+        "USER_HOME={{ user `install_home` }}",
+        "APPVEYOR_BUILD_AGENT_VERSION={{user `APPVEYOR_BUILD_AGENT_VERSION` }}",
+        "DATEMARK={{ user `datemark` }}",
+        "OPT_FEATURES={{ user `opt_features` }}"
+      ],
+      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eu '{{.Path}}' {{user `deploy_parts`}}",
+      "scripts": [
+        "{{ template_dir }}/scripts/Ubuntu/minimalconfig.sh"
+      ]
+    },
+    {
+        "type": "shell",
+        "scripts":[
+            "{{ template_dir }}/scripts/Ubuntu/run_custom_scripts.sh"
+        ]
+    },
+    {
+      "type": "file",
+      "direction": "download",
+      "source": "versions-{{ user `datemark` }}.log",
+      "destination": "./"
+    },
+    {
+      "type": "file",
+      "direction": "download",
+      "source": "pwd-{{ user `datemark` }}.log",
+      "destination": "./"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "if [ -f pwd-{{ user `datemark` }}.log ]; then rm pwd-{{ user `datemark` }}.log; fi",
+        "if [ -f .ssh/authorized_keys ]; then rm .ssh/authorized_keys; fi"
+       ]
+    }
+  ],
+  "builders": [
+    {
+      "type": "googlecompute",
+      "account_file": "{{user `gce_account_file`}}",
+      "project_id": "{{ user `gce_project` }}",
+      "zone": "{{ user `gce_zone` }}",
+      "source_image_family": "ubuntu-1804-lts",
+      "state_timeout" : "15m",
+      "scopes": [
+          "https://www.googleapis.com/auth/userinfo.email",
+          "https://www.googleapis.com/auth/compute",
+          "https://www.googleapis.com/auth/devstorage.full_control",
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring.write",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/trace.append" 
+        ],
+      "machine_type": "n1-standard-1",
+      "ssh_username": "{{ user `install_user` }}",
+      "instance_name": "packer-ubuntu1804-{{uuid}}",
+      "image_name": "packer-ubuntu1804-{{timestamp}}",
+      "image_description": "{{ user `image_description` }}",
+      "disk_size": 40,
+      "disk_type": "pd-ssd",
+      "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"]
+    },
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "{{user `aws_region`}}",
+      "source_ami_filter": {
+        "filters": {
+        "virtualization-type": "hvm",
+        "name": "ubuntu/images/*ubuntu-bionic-18.04-amd64-server-*",
+        "root-device-type": "ebs"
+        },
+        "owners": ["099720109477"],
+        "most_recent": true
+      },
+      "instance_type": "{{user `aws_instance_type`}}",
+      "ssh_username": "ubuntu",
+      "ssh_keypair_name": "{{user `aws_ssh_keypair_name`}}",
+      "ssh_private_key_file": "{{user `aws_ssh_private_key_file`}}",
+      "ssh_timeout": "1000s",
+      "ami_name": "Appveyor Worker Ubuntu1804 {{timestamp}}",
+      "ami_description": "{{user `image_description`}}",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_size": 40,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ],
+      "run_tags": {
+        "OS_Version": "Ubuntu1804",
+        "datemark": "{{user `datemark`}}",
+        "description": "{{user `image_description`}}",
+        "Base_AMI_Name": "{{ .SourceAMIName }}",
+        "Extra": "{{ .SourceAMITags.TagName }}"
+      },
+      "tags": {
+        "OS_Version": "Ubuntu1804",
+        "datemark": "{{user `datemark`}}",
+        "description": "{{user `image_description`}}",
+        "Base_AMI_Name": "{{ .SourceAMIName }}",
+        "Extra": "{{ .SourceAMITags.TagName }}"
+      }
+    },
+    {
+      "type": "azure-arm",
+      "subscription_id": "{{ user `azure_subscription_id` }}",
+      "client_id": "{{ user `azure_client_id` }}",
+      "client_secret": "{{ user `azure_client_secret` }}",
+      "location": "{{ user `azure_location` }}",
+
+      "temp_resource_group_name": "packer-RG-u18-{{uuid}}",
+      "temp_compute_name": "packer-u18-{{uuid}}",
+
+      "os_type": "Linux",
+      "image_publisher": "Canonical",
+      "image_offer": "UbuntuServer",
+      "image_sku": "18.04-LTS",
+      "vm_size": "{{user `azure_vm_size`}}",
+
+      "capture_container_name": "appveyor-images-u18",
+      "capture_name_prefix": "u18-{{user `datemark`}}",
+      "resource_group_name": "{{ user `azure_resource_group_name` }}",
+      "storage_account": "{{ user `azure_storage_account` }}",
+
+      "communicator": "ssh",
+
+      "azure_tags": {
+        "automation": "packer",
+        "OS": "ubuntu1804",
+        "description": "{{user `image_description`}}",
+        "date": "{{user `datemark`}}"
+      }
+    },
+    {
+      "type": "hyperv-iso",
+      "boot_command": [
+        "<esc><wait10><esc><esc><enter><wait>",
+        "linux /install/vmlinuz ",
+        " netcfg/disable_autoconfig=true<wait>",
+        " netcfg/get_ipaddress={{ user `host_ip_addr` }}<wait>",
+        " netcfg/get_netmask={{ user `host_ip_mask` }}<wait>",
+        " netcfg/get_gateway={{ user `host_ip_gw` }}<wait>",
+        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed18.cfg<wait>",
+        " netcfg/get_nameservers=8.8.8.8",
+        " debian-installer=en_US.UTF-8 auto locale=en_US.UTF-8 kbd-chooser/method=us",
+        " hostname={{.Name}} domain= ",
+        " fb=false debconf/frontend=noninteractive",
+        " keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA",
+        " keyboard-configuration/variant=USA console-setup/ask_detect=false<enter>",
+        "initrd /install/initrd.gz<enter>",
+        "boot<enter>"
+      ],
+      "boot_wait": "10s",
+      "http_directory": "{{ template_dir }}/http",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "ssh_host": "{{ user `host_ip_addr` }}",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
+      "ssh_timeout" : "1h",
+      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -P now",
+      "output_directory":  "{{user `output_directory`}}",
+      "switch_name": "{{user `hyperv_switchname`}}",
+      "http_port_min": "{{user `http_port_min`}}",
+      "http_port_max": "{{user `http_port_max`}}",
+      "cpus": "{{user `cpus`}}",
+      "memory": "{{user `memory`}}",
+      "disk_size": "{{user `disk_size`}}",
+      "enable_secure_boot": false,
+      "disk_block_size": "1",
+      "generation": 2,
+      "temp_path": "{{user `packer_temp_dir`}}"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "{{user `packer_manifest`}}",
+      "strip_path": true
+    }
+  ]
+}

@@ -3,34 +3,36 @@ image: ubuntu
 
 environment:
   matrix:
-    - TEMPLATE: ws2019
-      CLOUD: Azure
-    - TEMPLATE: vs2019
-      CLOUD: Azure
-    - TEMPLATE: ubuntu1804
-      CLOUD: Azure
-    - TEMPLATE: ubuntu1604
+    # - TEMPLATE: ws2019
+    #   CLOUD: Azure
+    # - TEMPLATE: vs2019
+    #   CLOUD: Azure
+    # - TEMPLATE: ubuntu1804
+    #   CLOUD: Azure
+    # - TEMPLATE: ubuntu1604
+    #   CLOUD: Azure
+    - TEMPLATE: linux-latest
       CLOUD: Azure
 
-    - TEMPLATE: ws2019
-      CLOUD: GCE
-    - TEMPLATE: vs2019
-      CLOUD: GCE
-    - TEMPLATE: ubuntu1804
-      CLOUD: GCE
-      gce_source_image: ubuntu-1804-bionic-v20200108
-    - TEMPLATE: ubuntu1604
-      CLOUD: GCE
-      gce_source_image: ubuntu-1604-xenial-v20200108
+    # - TEMPLATE: ws2019
+    #   CLOUD: GCE
+    # - TEMPLATE: vs2019
+    #   CLOUD: GCE
+    # - TEMPLATE: ubuntu1804
+    #   CLOUD: GCE
+    #   gce_source_image: ubuntu-1804-bionic-v20200108
+    # - TEMPLATE: ubuntu1604
+    #   CLOUD: GCE
+    #   gce_source_image: ubuntu-1604-xenial-v20200108
 
-    - TEMPLATE: ws2019
-      CLOUD: AWS
-    - TEMPLATE: vs2019
-      CLOUD: AWS
-    - TEMPLATE: ubuntu1804
-      CLOUD: AWS
-    - TEMPLATE: ubuntu1604
-      CLOUD: AWS
+    # - TEMPLATE: ws2019
+    #   CLOUD: AWS
+    # - TEMPLATE: vs2019
+    #   CLOUD: AWS
+    # - TEMPLATE: ubuntu1804
+    #   CLOUD: AWS
+    # - TEMPLATE: ubuntu1604
+    #   CLOUD: AWS
 
 init:
 - appveyor version
@@ -73,15 +75,15 @@ build_script:
       ws2019 )
         azure_storage_account=${azure_storage_account_prem}
         ;;
-      ws2019-bootstrap )
-        azure_storage_account=${azure_storage_account_prem}
-        ;;
       vs2019 )
         azure_storage_account=${azure_storage_account_prem}
         ;;
       ubuntu* )
         azure_storage_account=${azure_storage_account_std}
         ;;
+      linux* )
+        azure_storage_account=${azure_storage_account_std}
+        ;;        
     esac
 - sh: |
     # prepare variables for different Clouds
