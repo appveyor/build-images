@@ -208,8 +208,8 @@
       "winrm_insecure": true,
       "winrm_use_ssl": true,
 
-      "instance_name": "packer-vs2019-{{uuid}}",
-      "image_name": "packer-vs2019-{{timestamp}}",
+      "instance_name": "packer-ws2019-{{uuid}}",
+      "image_name": "packer-ws2019-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
       "disk_size": 256,
       "metadata": {
@@ -221,30 +221,13 @@
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
       "region": "{{user `aws_region`}}",
-      "source_ami_filter": {
-        "filters": {
-        "virtualization-type": "hvm",
-        "name": "Windows_Server-1809-English-Core-Containers*",
-        "root-device-type": "ebs"
-        },
-        "owners": ["801119661308"],
-        "most_recent": true
-      },
-      "instance_type": "t2.medium",
+      "source_ami": "ami-0a1d405ce719bebfd",
+      "instance_type": "m5.large",
       "communicator": "winrm",
-      "winrm_username": "Administrator",
+      "winrm_username": "packer_user",
       "winrm_use_ssl": true,
       "winrm_insecure": true,
-      "ami_name": "Appveyor Worker Windows2019 {{uuid}}",
-      "ami_description": "{{user `image_description`}}",
-      "launch_block_device_mappings": [
-        {
-          "device_name": "/dev/sda1",
-          "volume_size": 400,
-          "volume_type": "gp2",
-          "delete_on_termination": true
-        }
-      ]
+      "ami_name": "packer-ws2019-{{timestamp}}"
     },
     {
       "type": "hyperv-vmcx",
