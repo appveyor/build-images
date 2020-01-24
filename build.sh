@@ -89,6 +89,11 @@ if [[ -n "${DEPLOY_PARTS-}" ]]; then
     echo "DEPLOY_PARTS set to ${DEPLOY_PARTS}"
 fi
 
+if [[ -n "${APPVEYOR_BUILD_AGENT_VERSION-}" ]]; then
+    PACKER_PARAMS+=( "-var" "APPVEYOR_BUILD_AGENT_VERSION=${APPVEYOR_BUILD_AGENT_VERSION}" )
+    echo "APPVEYOR_BUILD_AGENT_VERSION set to ${APPVEYOR_BUILD_AGENT_VERSION}"
+fi
+
 if [[ -n "${OPT_FEATURES-}" ]]; then
     PACKER_PARAMS+=( "-var" "opt_features=${OPT_FEATURES}" )
     echo "OPT_FEATURES set to ${OPT_FEATURES}"
