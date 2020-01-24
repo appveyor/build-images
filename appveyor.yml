@@ -11,7 +11,7 @@ environment:
     #   CLOUD: Azure
     # - TEMPLATE: ubuntu1604
     #   CLOUD: Azure
-    - TEMPLATE: ubuntu
+    - TEMPLATE: appveyor-ubuntu
       CLOUD: Azure
 
     # - TEMPLATE: ws2019
@@ -24,7 +24,7 @@ environment:
     # - TEMPLATE: ubuntu1604
     #   CLOUD: GCE
     #   gce_source_image: ubuntu-1604-xenial-v20200108
-    # - TEMPLATE: ubuntu
+    # - TEMPLATE: appveyor-ubuntu
     #   CLOUD: GCE
     #   gce_source_image: ubuntu-1804-bionic-v20200108
 
@@ -36,7 +36,7 @@ environment:
     #   CLOUD: AWS
     # - TEMPLATE: ubuntu1604
     #   CLOUD: AWS
-    # - TEMPLATE: ubuntu
+    # - TEMPLATE: appveyor-ubuntu
     #   CLOUD: AWS
 
 init:
