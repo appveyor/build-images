@@ -2,7 +2,7 @@
 #shellcheck disable=SC2086,SC2015,SC2164
 
 if [[ -z "${USER_NAME-}" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; fi
-if [[ -z "${USER_HOME-}" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/home/appveyor; fi
+if [[ -z "${USER_HOME-}" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/Users/appveyor; fi
 if [[ -z "${VERSIONS_FILE-}" || "${#VERSIONS_FILE}" = "0" ]]; then VERSIONS_FILE=$HOME/versions.log; fi
 HOST_NAME=appveyor-vm
 OSX_VERS=$(sw_vers -productVersion | awk -F "." '{print $2}')
@@ -658,7 +658,7 @@ function configure_sshd() {
     write_line /private/etc/ssh/sshd_config 'PasswordAuthentication no' '^PasswordAuthentication '
     write_line /private/etc/ssh/sshd_config 'ChallengeResponseAuthentication no' '^ChallengeResponseAuthentication '
     write_line /private/etc/ssh/sshd_config 'DenyUsers root' '^DenyUsers '
-    write_line /private/etc/ssh/sshd_config 'PrintMotd /etc/appveyor.motd' '^PrintMotd '
+    write_line /private/etc/ssh/sshd_config 'PrintMotd yes' '^PrintMotd '
 }
 
 function check_folders() {
