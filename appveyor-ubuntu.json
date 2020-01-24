@@ -131,8 +131,8 @@
       "image_sku": "18.04-LTS",
       "vm_size": "{{user `azure_vm_size`}}",
 
-      "managed_image_name": "appveyor-ubuntu-{{ user `azure_location` }}-{{user `datemark`}}",
-      "managed_image_os_disk_snapshot_name": "appveyor-ubuntu-{{ user `azure_location` }}-{{user `datemark`}}",
+      "managed_image_name": "appveyor_ubuntu_{{ user `azure_location` }}-{{user `datemark`}}",
+      "managed_image_os_disk_snapshot_name": "appveyor_ubuntu_{{ user `azure_location` }}-{{user `datemark`}}",
       "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
       "managed_image_storage_account_type": "Premium_LRS",
 
