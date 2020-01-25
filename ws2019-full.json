@@ -4,7 +4,6 @@
     "azure_client_secret": "",
     "azure_location": "",
     "azure_resource_group_name": "",
-    "azure_storage_account": "",
     "azure_subscription_id": "",
     "aws_access_key": "",
     "aws_secret_key": "",
