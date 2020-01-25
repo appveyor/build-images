@@ -6,17 +6,14 @@
         "azure_resource_group_name": "",
         "azure_subscription_id": "",
         "azure_vm_size": "Standard_D4s_v3",
-
         "gce_account_file": "",
         "gce_zone": "",
         "gce_project": "",
         "gce_source_image": "windows-server-2019-dc-v20200114",
         "gce_source_image_family": "windows-2019",
-
         "aws_access_key": "",
         "aws_secret_key": "",
         "aws_region": "",
-        
         "install_user": "",
         "install_password": "",
         "build_agent_mode": "",
@@ -338,7 +335,8 @@
                 "{{ template_dir }}/scripts/Windows/cleanup_windows.ps1"
             ],
             "environment_vars": [
-                "build_agent_mode={{user `build_agent_mode`}}"
+                "build_agent_mode={{user `build_agent_mode`}}",
+                "build_agent_version_feed_url=https://appveyordownloads.blob.core.windows.net/build-agent/appveyor-build-agent-windows-version-6.0-custom-images.txt"
             ],
             "elevated_user": "{{user `install_user`}}",
             "elevated_password": "{{user `install_password`}}"
