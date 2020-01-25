@@ -12,10 +12,9 @@ $osVer = [System.Environment]::OSVersion.Version
 # Windows 10 (1803)		10.0.17134
 # Windows Server 2019	10.0.17763
 
+$hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
+$hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
 function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
-	$hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
-	$hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
-
 	if ($osVer.Build -ge $minOsBuild) {
 		# Windows Server 2016 or above
 		

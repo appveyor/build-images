@@ -47,8 +47,11 @@ Install-Module DockerMsftProvider -Force
 Write-Host "Install-Package Docker"
 Install-Package -Name docker -ProviderName DockerMsftProvider -Force
 
-if ($osVer.Major -eq 10 -and $osVer.Build -ge 16299) {
-	# 1709 and above is required for LCOW
+$hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
+$hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
+
+if ($hypervInstalled -and $osVer.Major -eq 10 -and $osVer.Build -ge 16299) {
+	# 1709 and above is required for LCOW and if only Hyper-V enabled
 	
 	Write-Host "Enable LCOW"
 	(New-Object Net.WebClient).DownloadFile('https://github.com/linuxkit/lcow/releases/download/v4.14.35-v0.3.9/release.zip', "$env:TEMP\linuxkit-lcow.zip")

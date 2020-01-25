@@ -137,7 +137,7 @@
         },
         {
             "type": "windows-restart",
-            "restart_timeout": "5m"
+            "restart_timeout": "10m"
         },
         {
             "type": "powershell",
@@ -145,16 +145,28 @@
                 "Write-Host 'Waiting for 5 seconds and then restart again...'; Start-Sleep -s 5"
             ],
             "elevated_user": "{{user `install_user`}}",
-            "elevated_password": "{{user `install_password`}}"
+            "elevated_password": "{{user `install_password`}}",
+            "except": [
+                "googlecompute",
+                "amazon-ebs"
+            ]            
         },
         {
             "type": "windows-restart",
-            "restart_timeout": "5m"
+            "restart_timeout": "5m",
+            "except": [
+                "googlecompute",
+                "amazon-ebs"
+            ]            
         },
         {
             "type": "file",
             "source": "{{ template_dir }}/scripts/Windows/docker-appveyor.psm1",
-            "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/docker-appveyor.psm1"
+            "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/docker-appveyor.psm1",
+            "except": [
+                "googlecompute",
+                "amazon-ebs"
+            ]
         },
         {
             "type": "powershell",
@@ -162,11 +174,32 @@
                 "{{ template_dir }}/scripts/Windows/install_docker_desktop.ps1"
             ],
             "elevated_user": "{{user `install_user`}}",
-            "elevated_password": "{{user `install_password`}}"
+            "elevated_password": "{{user `install_password`}}",
+            "except": [
+                "googlecompute",
+                "amazon-ebs"
+            ]            
         },
         {
+            "type": "powershell",
+            "scripts": [
+                "{{ template_dir }}/scripts/Windows/install_docker.ps1",
+                "{{ template_dir }}/scripts/Windows/install_docker_images.ps1"
+            ],
+            "elevated_user": "{{user `install_user`}}",
+            "elevated_password": "{{user `install_password`}}",
+            "only": [
+                "googlecompute",
+                "amazon-ebs"
+            ]
+        },        
+        {
             "type": "windows-restart",
-            "restart_timeout": "5m"
+            "restart_timeout": "5m",
+            "except": [
+                "googlecompute",
+                "amazon-ebs"
+            ]             
         },
         {
             "type": "powershell",
@@ -174,7 +207,11 @@
                 "{{ template_dir }}/scripts/Windows/install_docker_desktop_after_reboot.ps1"
             ],
             "elevated_user": "{{user `install_user`}}",
-            "elevated_password": "{{user `install_password`}}"
+            "elevated_password": "{{user `install_password`}}",
+            "except": [
+                "googlecompute",
+                "amazon-ebs"
+            ]            
         },
         {
             "type": "powershell",
