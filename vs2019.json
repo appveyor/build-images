@@ -436,6 +436,7 @@
             "image_name": "appveyor-vs2019-{{ user `gce_zone` }}-{{timestamp}}",
             "image_description": "{{ user `image_description` }}",
             "disk_size": 256,
+            "disk_type": "pd-ssd",
             "metadata": {
                 "windows-startup-script-cmd": "winrm quickconfig -quiet & net user /add packer_user & net localgroup administrators packer_user /add & winrm set winrm/config/service/auth @{Basic=\"true\"}"
             }
