@@ -3,41 +3,28 @@ image: ubuntu
 
 environment:
   matrix:
-    # - TEMPLATE: ws2019
-    #   CLOUD: Azure
-    # - TEMPLATE: vs2019
-    #   CLOUD: Azure
-    # - TEMPLATE: ubuntu1804
-    #   CLOUD: Azure
-    # - TEMPLATE: ubuntu1604
-    #   CLOUD: Azure
-    - TEMPLATE: appveyor-ubuntu
+    - TEMPLATE: ws2019
+      CLOUD: Azure
+    - TEMPLATE: vs2019
+      CLOUD: Azure
+    - TEMPLATE: ubuntu1804
+      CLOUD: Azure
+    - TEMPLATE: ubuntu1604
       CLOUD: Azure
 
-    # - TEMPLATE: ws2019
-    #   CLOUD: GCE
-    # - TEMPLATE: vs2019
-    #   CLOUD: GCE
-    # - TEMPLATE: ubuntu1804
-    #   CLOUD: GCE
-    #   gce_source_image: ubuntu-1804-bionic-v20200108
-    # - TEMPLATE: ubuntu1604
-    #   CLOUD: GCE
-    #   gce_source_image: ubuntu-1604-xenial-v20200108
-    # - TEMPLATE: appveyor-ubuntu
-    #   CLOUD: GCE
-    #   gce_source_image: ubuntu-1804-bionic-v20200108
+    - TEMPLATE: ws2019
+      CLOUD: GCE
+    - TEMPLATE: vs2019
+      CLOUD: GCE
+    - TEMPLATE: ubuntu1804
+      CLOUD: GCE
+    - TEMPLATE: ubuntu1604
+      CLOUD: GCE
 
-    # - TEMPLATE: ws2019
-    #   CLOUD: AWS
-    # - TEMPLATE: vs2019
-    #   CLOUD: AWS
-    # - TEMPLATE: ubuntu1804
-    #   CLOUD: AWS
-    # - TEMPLATE: ubuntu1604
-    #   CLOUD: AWS
-    # - TEMPLATE: appveyor-ubuntu
-    #   CLOUD: AWS
+    - TEMPLATE: ubuntu1804
+      CLOUD: AWS
+    - TEMPLATE: ubuntu1604
+      CLOUD: AWS
 
 init:
 - appveyor version
@@ -75,22 +62,6 @@ build_script:
     CONTAINER_SECURE_ENVS=( )
 
 - sh: |
-    # find propper azure_storage_account
-    case "${TEMPLATE}" in
-      ws2019 )
-        azure_storage_account=${azure_storage_account_prem}
-        ;;
-      vs2019 )
-        azure_storage_account=${azure_storage_account_prem}
-        ;;
-      ubuntu* )
-        azure_storage_account=${azure_storage_account_std}
-        ;;
-      linux* )
-        azure_storage_account=${azure_storage_account_std}
-        ;;        
-    esac
-- sh: |
     # prepare variables for different Clouds
     case "${CLOUD}" in
       Azure )
@@ -98,7 +69,6 @@ build_script:
         build_agent_mode=Azure
         CONTAINER_ENVS+=( "azure_location=${azure_location}" )
         CONTAINER_ENVS+=( "azure_resource_group_name=${azure_resource_group_name}" )
-        CONTAINER_ENVS+=( "azure_storage_account=${azure_storage_account}" )
         CONTAINER_SECURE_ENVS+=( "azure_client_id=${azure_client_id}" )
         CONTAINER_SECURE_ENVS+=( "azure_client_secret=${azure_client_secret}" )
         CONTAINER_SECURE_ENVS+=( "azure_subscription_id=${azure_subscription_id}" )
@@ -108,7 +78,6 @@ build_script:
         build_agent_mode=GCE
         CONTAINER_ENVS+=( "gce_zone=${gce_zone}" )
         CONTAINER_ENVS+=( "gce_project=${gce_project}" )
-        CONTAINER_ENVS+=( "gce_source_image=${gce_source_image}" )
         CONTAINER_SECURE_ENVS+=( "gce_account_file=${gce_account_file}" )
         ;;
       AWS )
