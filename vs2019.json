@@ -251,13 +251,13 @@
         },
         {
             "type": "file",
-            "source": "{{ template_dir }}/scripts/Windows/install_qt.qs",
-            "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/install_qt.qs"
-        },
+            "source": "{{ template_dir }}/scripts/Windows/path-utils.psm1",
+            "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/install_qt_module.ps1"
+        },        
         {
             "type": "powershell",
             "scripts": [
-                "{{ template_dir }}/scripts/Windows/install_qt.ps1",
+                "{{ template_dir }}/scripts/Windows/install_qt_fast.ps1",
                 "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
                 "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
                 "{{ template_dir }}/scripts/Windows/install_ruby.ps1",

@@ -1,4 +1,4 @@
-$QT_INSTALL_DIR = "C:\qt-test"
+$QT_INSTALL_DIR = "C:\Qt"
 $QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/windows_x86/desktop'
 
 $TOOL_IDS = @(
@@ -73,6 +73,7 @@ function FetchUpdatePackages($feedRootUrl) {
                 Version = $packageNode.Version
                 Dependencies = SplitString $packageNode.Dependencies
                 DownloadableArchives = SplitString $packageNode.DownloadableArchives
+                Installed = $false
             }
 
             $package_updates[$package.Name] = $package
@@ -82,19 +83,66 @@ function FetchUpdatePackages($feedRootUrl) {
     }
 }
 
-function InstallComponent($version, $componentName,[switch]$whatIf) {
-    FetchReleaseUpdatePackages $version
-    InstallComponentById "qt.qt5.$(GetVersionId $version).$componentName" -whatif:$whatIf
+function Install-QtComponent {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$false)]
+        $Version,
+        [Parameter(Mandatory=$false)]
+        $Name,
+        [Parameter(Mandatory=$false)]
+        $Id,
+        [Parameter(Mandatory=$false)]
+        $Path,
+        [switch]$whatIf,
+        [switch]$excludeDocs,
+        [switch]$excludeExamples
+    )
+
+    if ($Version -and $Name) {
+        FetchReleaseUpdatePackages $version
+        InstallComponentById "qt.qt5.$(GetVersionId $version).$Name" $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+    } elseif ($Id) {
+        InstallComponentById $Id $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+    } else {
+        throw "Either -Version and -Name should be specified or -Id."
+    }
 }
 
-function InstallComponentById($componentId,[switch]$whatIf) {
+function InstallComponentById {
+    param(
+        $componentId,
+        $destPath,
+        [switch]$whatIf,
+        [switch]$excludeDocs,
+        [switch]$excludeExamples
+    )
+
     Write-Host "Installing $componentId" -ForegroundColor Cyan
-    
+
     $comp = $package_updates[$componentId]
 
-    # if ($whatIf) {
+    # if ($whatIf -eq $true) {
     #     $comp
     # }
+
+    if (-not $destPath) {
+        $destPath = $QT_INSTALL_DIR
+    }
+
+    if ($comp.Installed) {
+        Write-Host "Already installed" -ForegroundColor Yellow
+        return
+    }    
+
+    if ($excludeDocs -eq $true -and $componentId.EndsWith('.doc')) {
+        Write-Host "Skipped documentation installation" -ForegroundColor Yellow
+        return
+    }
+    if ($excludeExamples -eq $true  -and $componentId.EndsWith('.examples')) {
+        Write-Host "Skipped examples installation" -ForegroundColor Yellow
+        return
+    }
 
     # download and extract component archives
     foreach($downloadableArchive in $comp.DownloadableArchives) {
@@ -105,7 +153,7 @@ function InstallComponentById($componentId,[switch]$whatIf) {
         $tempDir = "$env:TEMP\qt5-installer-temp"
         New-Item $tempDir -ItemType Directory -Force | Out-Null
 
-        Write-Host "Downloading '$($comp.Name)/$fileName'..."
+        Write-Host "$($comp.Name)/$fileName - Downloading..." -NoNewline
         $tempFileName = "$tempDir\$fileName"
         (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
         $downloadedSha1 = (Get-FileHash -Algorithm SHA1 $tempFileName).Hash.ToLowerInvariant()
@@ -114,12 +162,17 @@ function InstallComponentById($componentId,[switch]$whatIf) {
             throw "SHA1 hashes don't match for $downloadUrl ($sha1) and $tempFileName ($downloadedSha1)"
         }
 
+        Write-Host "Extracting..." -NoNewline
+        7z x $tempFileName -aoa -o"$destPath" | Out-Null
+
+        Write-Host "OK" -ForegroundColor Green
+        $comp.Installed = $true
         Remove-Item $tempFileName
     }
 
     # recurse dependencies
     foreach($dependencyId in $comp.Dependencies) {
-        InstallComponentById $dependencyId -whatIf:$whatIf
+        InstallComponentById $dependencyId $destPath -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
     }
 }
 
@@ -128,11 +181,5 @@ foreach($tool_id in $TOOL_IDS) {
     FetchToolsUpdatePackages $tool_id
 }
 
-InstallComponent "5.14.0" "win32_msvc2017" -whatIf
-#InstallComponent "5.14.0" "win64_msvc2017_64" -whatIf
-
-$package_updates.Count
-
-#$package_updates['qt.tools']
-
-#FetchReleaseUpdatePackages "5.14.0"
+# fetch licenses
+FetchUpdatePackages "$QT_ROOT_URL/licenses"
