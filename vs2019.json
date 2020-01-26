@@ -92,8 +92,16 @@
             "elevated_password": "{{user `install_password`}}"
         },
         {
+            "type": "powershell",
+            "inline": [
+                "Write-Host 'Waiting for 5 seconds before restart...'; Start-Sleep -s 5"
+            ],
+            "elevated_user": "{{user `install_user`}}",
+            "elevated_password": "{{user `install_password`}}"          
+        },        
+        {
             "type": "windows-restart",
-            "restart_timeout": "5m"
+            "restart_timeout": "10m"
         },
         {
             "type": "powershell",
