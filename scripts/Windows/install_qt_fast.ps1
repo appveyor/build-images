@@ -250,7 +250,7 @@ foreach($componentGroup in $component_groups) {
         }
     } else {
         foreach($component in $componentGroup.components) {
-            Install-QtComponent -Id -Name $component -Path $installDir
+            Install-QtComponent -Id $component -Path $installDir
         }
     }
 }
