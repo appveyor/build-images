@@ -86,6 +86,30 @@
         {
             "type": "powershell",
             "scripts": [
+                "{{ template_dir }}/scripts/Windows/install_docker_hyperv_wsl_features.ps1"
+            ],
+            "elevated_user": "{{user `install_user`}}",
+            "elevated_password": "{{user `install_password`}}"
+        },
+        {
+            "type": "windows-restart",
+            "restart_timeout": "5m"
+        },
+        {
+            "type": "powershell",
+            "inline": [
+                "Write-Host 'Waiting for 5 seconds and then restart again...'; Start-Sleep -s 5"
+            ],
+            "elevated_user": "{{user `install_user`}}",
+            "elevated_password": "{{user `install_password`}}"          
+        },
+        {
+            "type": "windows-restart",
+            "restart_timeout": "5m"          
+        },        
+        {
+            "type": "powershell",
+            "scripts": [
                 "{{ template_dir }}/scripts/Windows/enable_autologon.ps1"
             ],
             "environment_vars": [
@@ -126,30 +150,6 @@
             ],
             "elevated_user": "{{user `install_user`}}",
             "elevated_password": "{{user `install_password`}}"
-        },
-        {
-            "type": "powershell",
-            "scripts": [
-                "{{ template_dir }}/scripts/Windows/install_docker_hyperv_wsl_features.ps1"
-            ],
-            "elevated_user": "{{user `install_user`}}",
-            "elevated_password": "{{user `install_password`}}"
-        },
-        {
-            "type": "windows-restart",
-            "restart_timeout": "15m"
-        },
-        {
-            "type": "powershell",
-            "inline": [
-                "Write-Host 'Waiting for 5 seconds and then restart again...'; Start-Sleep -s 5"
-            ],
-            "elevated_user": "{{user `install_user`}}",
-            "elevated_password": "{{user `install_password`}}"          
-        },
-        {
-            "type": "windows-restart",
-            "restart_timeout": "5m"          
         },
         {
             "type": "file",
