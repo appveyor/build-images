@@ -251,7 +251,7 @@
         },
         {
             "type": "file",
-            "source": "{{ template_dir }}/scripts/Windows/path-utils.psm1",
+            "source": "{{ template_dir }}/scripts/Windows/install_qt_module.ps1",
             "destination": "C:/Users/{{user `install_user`}}/AppData/Local/Temp/install_qt_module.ps1"
         },        
         {
