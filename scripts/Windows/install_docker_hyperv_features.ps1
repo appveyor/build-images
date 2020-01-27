@@ -16,3 +16,6 @@ if ((Get-WmiObject Win32_Processor).VirtualizationFirmwareEnabled[0] -and (Get-W
 } else {
 	Write-Host "Skipping Hyper-V installation - virtualization is not enabled"
 }
+
+Write-Host "Delay for 60 seconds before next step..."
+Start-Sleep -s 60
