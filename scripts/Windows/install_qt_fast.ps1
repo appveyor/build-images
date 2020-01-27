@@ -1,3 +1,5 @@
+Write-Host "Installing Qt 5.x ..." -ForegroundColor Cyan
+
 $modulePath = "$env:TEMP\install_qt_module.ps1"
 if (Test-Path $modulePath) {
     Write-Host "Dotsourcing $modulePath"
@@ -254,3 +256,17 @@ foreach($componentGroup in $component_groups) {
         }
     }
 }
+
+# compressing folder
+Write-Host "Compacting C:\Qt..." -NoNewline
+compact /c /i /s:C:\Qt | Out-Null
+Write-Host "OK" -ForegroundColor Green
+
+# set aliases
+cmd /c mklink /J C:\Qt\latest C:\Qt\5.14.0
+cmd /c mklink /J C:\Qt\5.14 C:\Qt\5.14.0
+cmd /c mklink /J C:\Qt\5.13 C:\Qt\5.13.2
+cmd /c mklink /J C:\Qt\5.12 C:\Qt\5.12.6
+cmd /c mklink /J C:\Qt\5.9 C:\Qt\5.9.9
+
+Write-Host "Qt 5.x installed" -ForegroundColor Green
