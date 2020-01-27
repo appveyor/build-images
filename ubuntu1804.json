@@ -263,7 +263,7 @@
       "vm_size": "{{user `azure_vm_size`}}",
 
       "capture_container_name": "appveyor-ubuntu1804",
-      "capture_name_prefix": "ubuntu1804-{{user `datemark`}}",
+      "capture_name_prefix": "ubuntu1804_{{user `datemark`}}",
       "resource_group_name": "{{ user `azure_resource_group_name` }}",
       "storage_account": "{{ user `azure_storage_account` }}",      
 
