@@ -24,4 +24,6 @@ $wslFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsyst
 if ($wslFeature -and $wslFeature.State -ne 'Enabled') {
 	Write-Host "Installing WSL feature"
 	Enable-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online -All -NoRestart
+} else {
+	Write-Host "WSL feature is already enabled"
 }
