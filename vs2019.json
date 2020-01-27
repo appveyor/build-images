@@ -93,7 +93,7 @@
         },        
         {
             "type": "windows-restart",
-            "restart_timeout": "5m"
+            "restart_timeout": "10m"
         },
         {
             "type": "powershell",
