@@ -3,7 +3,8 @@
     "iso_url": "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso",
     "iso_checksum": "7d8e0055d663bffa27c1718685085626cb59346e7626ba3d3f476322271f573e",
     "iso_checksum_type": "sha256",
-    "azure_vm_size": "Standard_D2s_v3"
+    "azure_vm_size": "Standard_D2s_v3",
+    "azure_storage_account": ""
   },  
   "provisioners": [
     {
@@ -261,10 +262,10 @@
       "image_sku": "18.04-LTS",
       "vm_size": "{{user `azure_vm_size`}}",
 
-      "managed_image_name": "appveyor_ubuntu1804_{{ user `azure_location` }}_{{user `datemark`}}",
-      "managed_image_os_disk_snapshot_name": "appveyor_ubuntu1804_{{ user `azure_location` }}_{{user `datemark`}}",
-      "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
-      "managed_image_storage_account_type": "Premium_LRS",
+      "capture_container_name": "appveyor-ubuntu1804",
+      "capture_name_prefix": "ubuntu1804-{{user `datemark`}}",
+      "resource_group_name": "{{ user `azure_resource_group_name` }}",
+      "storage_account": "{{ user `azure_storage_account` }}",      
 
       "communicator": "ssh",
 

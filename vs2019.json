@@ -4,6 +4,7 @@
         "azure_client_secret": "",
         "azure_location": "",
         "azure_resource_group_name": "",
+        "azure_storage_account": "",
         "azure_subscription_id": "",
         "azure_vm_size": "Standard_D4s_v3",
 

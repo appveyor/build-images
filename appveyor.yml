@@ -69,6 +69,7 @@ build_script:
         build_agent_mode=Azure
         CONTAINER_ENVS+=( "azure_location=${azure_location}" )
         CONTAINER_ENVS+=( "azure_resource_group_name=${azure_resource_group_name}" )
+        CONTAINER_ENVS+=( "azure_storage_account=${azure_storage_account}" )
         CONTAINER_SECURE_ENVS+=( "azure_client_id=${azure_client_id}" )
         CONTAINER_SECURE_ENVS+=( "azure_client_secret=${azure_client_secret}" )
         CONTAINER_SECURE_ENVS+=( "azure_subscription_id=${azure_subscription_id}" )
