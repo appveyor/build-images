@@ -28,6 +28,20 @@
         {
             "type": "powershell",
             "scripts": [
+                "{{ template_dir }}/scripts/Windows/activate_avma.ps1"
+            ],
+            "environment_vars": [
+                "avma_key={{user `avma_key`}}"
+            ],
+            "elevated_user": "{{user `install_user`}}",
+            "elevated_password": "{{user `install_password`}}",
+            "only": [
+                "hyperv-iso"
+            ]
+        },        
+        {
+            "type": "powershell",
+            "scripts": [
                 "{{ template_dir }}/scripts/Windows/create_appveyor_user.ps1"
             ],
             "environment_vars": [
@@ -49,8 +63,7 @@
         {
             "type": "powershell",
             "scripts": [
-                "{{ template_dir }}/scripts/Windows/init_server.ps1",
-                "{{ template_dir }}/scripts/Windows/install_docker_hyperv_wsl_features.ps1"
+                "{{ template_dir }}/scripts/Windows/init_server.ps1"
             ],
             "elevated_user": "{{user `install_user`}}",
             "elevated_password": "{{user `install_password`}}"
@@ -67,23 +80,29 @@
             ]
         },
         {
+            "type": "powershell",
+            "scripts": [
+                "{{ template_dir }}/scripts/Windows/install_docker_hyperv_features.ps1"
+            ],
+            "elevated_user": "{{user `install_user`}}",
+            "elevated_password": "{{user `install_password`}}"
+        },        
+        {
             "type": "windows-restart",
-            "restart_timeout": "10m"
+            "restart_timeout": "5m"
         },
         {
             "type": "powershell",
             "scripts": [
-                "{{ template_dir }}/scripts/Windows/activate_avma.ps1"
-            ],
-            "environment_vars": [
-                "avma_key={{user `avma_key`}}"
+                "{{ template_dir }}/scripts/Windows/install_wsl_feature.ps1"
             ],
             "elevated_user": "{{user `install_user`}}",
-            "elevated_password": "{{user `install_password`}}",
-            "only": [
-                "hyperv-iso"
-            ]
-        },       
+            "elevated_password": "{{user `install_password`}}"
+        },        
+        {
+            "type": "windows-restart",
+            "restart_timeout": "5m"
+        },
         {
             "type": "powershell",
             "scripts": [
@@ -188,7 +207,7 @@
                 "{{ template_dir }}/scripts/Windows/install_wsl.ps1"
             ],
             "elevated_user": "{{user `install_user`}}",
-            "elevated_password": "{{user `install_password`}}"
+            "elevated_password": "{{user `install_password`}}"        
         },
         {
             "type": "powershell",
