@@ -29,7 +29,7 @@
       ],
       "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -eu '{{.Path}}' {{user `deploy_parts`}}",
       "scripts": [
-        "{{ template_dir }}/scripts/Ubuntu/minimalconfig.sh"
+        "{{ template_dir }}/scripts/Ubuntu/basicconfig.sh"
       ]
     },
     {
