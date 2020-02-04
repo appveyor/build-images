@@ -637,6 +637,16 @@ function install_openjdk() {
     fi
 }
 
+function install_qt() {
+    echo "[INFO] Running install_qt..."
+    brew_install qt
+
+    if check_user; then
+        # shellcheck disable=SC2016
+        write_line "${HOME}/.profile" "export PATH=\"${QT_PATH}:\$PATH\""
+    fi
+}
+
 function configure_term() {
     write_line "${HOME}/.profile" 'export TERM=xterm-256color'
 }

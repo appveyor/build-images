@@ -74,5 +74,6 @@ install_cocoapods
 install_mono
 install_gvm_and_golangs
 install_nvm_and_nodejs
+install_qt
 configure_term
 cleanup
