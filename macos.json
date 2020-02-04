@@ -8,7 +8,15 @@
     "appVeyorUrl": "https://ci.appveyor.com",
     "hostAuthorizationToken": ""
   },
+  "sensitive-variables": ["hostAuthorizationToken", "install_password", "template_password", "appleIdUser", "appleIdPasswd"],
   "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "/usr/bin/dscl -u \"{{user `template_user`}}\" -P \"{{user `template_password`}}\" . -passwd \"/Users/{{user `template_user`}}\" \"{{user `install_password`}}\"",
+        "security set-keychain-password -o \"{{user `template_password`}}\" -p \"{{user `install_password`}}\" \"/Users/{{user `template_user`}}/Library/Keychains/login.keychain\""
+      ]
+    },
     {
       "type": "shell",
       "inline": [
@@ -62,12 +70,12 @@
       "type": "parallels-pvm",
       "parallels_tools_flavor": "mac",
       "source_path": "{{ user `pvm_path` }}",
-      "ssh_username": "{{ user `install_user` }}",
-      "ssh_password": "{{ user `install_password` }}",
+      "ssh_username": "{{ user `template_user` }}",
+      "ssh_password": "{{ user `template_password` }}",
       "ssh_timeout": "30s",
       "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
-      "skip_compaction": "true"
+      "skip_compaction": "false"
     },
     {
       "type": "parallels-iso",
