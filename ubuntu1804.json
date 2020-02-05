@@ -261,6 +261,7 @@
       "image_offer": "UbuntuServer",
       "image_sku": "18.04-LTS",
       "vm_size": "{{user `azure_vm_size`}}",
+      "os_disk_size_gb": 100,
 
       "capture_container_name": "appveyor-ubuntu1804",
       "capture_name_prefix": "{{user `datemark`}}",

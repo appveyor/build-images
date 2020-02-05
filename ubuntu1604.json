@@ -238,6 +238,7 @@
       "image_offer": "UbuntuServer",
       "image_sku": "16.04-LTS",
       "vm_size": "{{user `azure_vm_size`}}",
+      "os_disk_size_gb": 100,
 
       "managed_image_name": "appveyor_ubuntu1604_{{ user `azure_location` }}_{{user `datemark`}}",
       "managed_image_os_disk_snapshot_name": "appveyor_ubuntu1604_{{ user `azure_location` }}_{{user `datemark`}}",
