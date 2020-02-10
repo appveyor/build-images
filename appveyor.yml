@@ -18,15 +18,9 @@ environment:
       CLOUD: GCE
     - TEMPLATE: ubuntu1804
       CLOUD: GCE
-      gce_source_image: ubuntu-1804-bionic-v20200108
     - TEMPLATE: ubuntu1604
       CLOUD: GCE
-      gce_source_image: ubuntu-1604-xenial-v20200108
 
-    - TEMPLATE: ws2019
-      CLOUD: AWS
-    - TEMPLATE: vs2019
-      CLOUD: AWS
     - TEMPLATE: ubuntu1804
       CLOUD: AWS
     - TEMPLATE: ubuntu1604
@@ -68,22 +62,6 @@ build_script:
     CONTAINER_SECURE_ENVS=( )
 
 - sh: |
-    # find propper azure_storage_account
-    case "${TEMPLATE}" in
-      ws2019 )
-        azure_storage_account=${azure_storage_account_prem}
-        ;;
-      ws2019-bootstrap )
-        azure_storage_account=${azure_storage_account_prem}
-        ;;
-      vs2019 )
-        azure_storage_account=${azure_storage_account_prem}
-        ;;
-      ubuntu* )
-        azure_storage_account=${azure_storage_account_std}
-        ;;
-    esac
-- sh: |
     # prepare variables for different Clouds
     case "${CLOUD}" in
       Azure )
@@ -101,7 +79,6 @@ build_script:
         build_agent_mode=GCE
         CONTAINER_ENVS+=( "gce_zone=${gce_zone}" )
         CONTAINER_ENVS+=( "gce_project=${gce_project}" )
-        CONTAINER_ENVS+=( "gce_source_image=${gce_source_image}" )
         CONTAINER_SECURE_ENVS+=( "gce_account_file=${gce_account_file}" )
         ;;
       AWS )
@@ -134,7 +111,7 @@ build_script:
         install_user=${install_user} \
         install_password=${install_password} \
         build_agent_mode=${build_agent_mode} \
-        APPVEYOR_BUILD_VERSION=${APPVEYOR_BUILD_VERSION} \
+        APPVEYOR_BUILD_AGENT_VERSION=${APPVEYOR_BUILD_AGENT_VERSION} \
         "packer_custom_args=${packer_custom_args}" \
         builders=${builders} \
         TEMPLATE=${TEMPLATE} \

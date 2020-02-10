@@ -111,6 +111,11 @@ if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
         _abort $?
 fi
 
+if [ "${BUILD_AGENT_MODE}" == "Azure" ]; then
+    install_azure_linux_agent ||
+        _abort $?
+fi
+
 if $IS_DOCKER; then
     copy_appveyoragent ||
         _abort $?

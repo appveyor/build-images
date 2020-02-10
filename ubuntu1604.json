@@ -2,7 +2,8 @@
   "variables": {
     "iso_url": "http://releases.ubuntu.com/xenial/ubuntu-16.04.6-server-amd64.iso",
     "iso_checksum": "16afb1375372c57471ea5e29803a89a5a6bd1f6aabea2e5e34ac1ab7eb9786ac",
-    "iso_checksum_type": "sha256"
+    "iso_checksum_type": "sha256",
+    "azure_vm_size": "Standard_D2s_v3"
   },   
   "provisioners": [
     {
@@ -63,7 +64,7 @@
       "account_file": "{{user `gce_account_file`}}",
       "project_id": "{{ user `gce_project` }}",
       "zone": "{{ user `gce_zone` }}",
-      "source_image": "{{ user `gce_source_image` }}",
+      "source_image_family": "ubuntu-1604-xenial",
       "state_timeout" : "15m",
       "scopes": [
           "https://www.googleapis.com/auth/userinfo.email",
@@ -76,12 +77,13 @@
           "https://www.googleapis.com/auth/service.management.readonly",
           "https://www.googleapis.com/auth/trace.append" 
         ],
-      "machine_type": "n1-standard-1",
+      "machine_type": "n1-standard-2",
       "ssh_username": "{{ user `install_user` }}",
-      "instance_name": "packer-ubuntu1604-{{uuid}}",
-      "image_name": "packer-ubuntu1604-{{timestamp}}",
+      "instance_name": "appveyor-ubuntu1604-{{ user `gce_zone` }}-{{timestamp}}",
+      "image_name": "appveyor-ubuntu1604-{{ user `gce_zone` }}-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
-      "disk_size": 60,
+      "disk_size": 70,
+      "disk_type": "pd-ssd",
       "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"]
     },
     {
@@ -146,6 +148,9 @@
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
       "region": "{{user `aws_region`}}",
+      "security_group_id": "{{user `aws_security_group_id`}}",
+      "subnet_id": "{{user `aws_subnet_id`}}",      
+      "associate_public_ip_address": true,
       "source_ami_filter": {
         "filters": {
         "virtualization-type": "hvm",
@@ -155,35 +160,18 @@
         "owners": ["099720109477"],
         "most_recent": true
       },
-      "instance_type": "m4.large",
+      "instance_type": "m5.large",
       "ssh_username": "ubuntu",
-      "ssh_keypair_name": "{{user `aws_ssh_keypair_name`}}",
-      "ssh_private_key_file": "{{user `aws_ssh_private_key_file`}}",
-      "ssh_timeout": "1000s",
-      "ami_name": "Appveyor Worker Ubuntu1604 {{timestamp}}",
+      "ami_name": "appveyor-ubuntu1604-{{user `aws_region`}}-{{timestamp}}",
       "ami_description": "{{user `image_description`}}",
       "launch_block_device_mappings": [
         {
           "device_name": "/dev/sda1",
-          "volume_size": 40,
+          "volume_size": 70,
           "volume_type": "gp2",
           "delete_on_termination": true
         }
-      ],
-      "run_tags": {
-        "OS_Version": "Ubuntu1604",
-        "datemark": "{{user `datemark`}}",
-        "description": "{{user `image_description`}}",
-        "Base_AMI_Name": "{{ .SourceAMIName }}",
-        "Extra": "{{ .SourceAMITags.TagName }}"
-      },
-      "tags": {
-        "OS_Version": "Ubuntu1604",
-        "datemark": "{{user `datemark`}}",
-        "description": "{{user `image_description`}}",
-        "Base_AMI_Name": "{{ .SourceAMIName }}",
-        "Extra": "{{ .SourceAMITags.TagName }}"
-      }
+      ]
     },
     {
       "type": "virtualbox-iso",
@@ -250,11 +238,12 @@
       "image_offer": "UbuntuServer",
       "image_sku": "16.04-LTS",
       "vm_size": "{{user `azure_vm_size`}}",
+      "os_disk_size_gb": 100,
 
-      "capture_container_name": "appveyor-images-u16",
-      "capture_name_prefix": "u16-{{user `datemark`}}",
-      "resource_group_name": "{{ user `azure_resource_group_name` }}",
-      "storage_account": "{{ user `azure_storage_account` }}",
+      "managed_image_name": "appveyor_ubuntu1604_{{ user `azure_location` }}_{{user `datemark`}}",
+      "managed_image_os_disk_snapshot_name": "appveyor_ubuntu1604_{{ user `azure_location` }}_{{user `datemark`}}",
+      "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
+      "managed_image_storage_account_type": "Premium_LRS",
 
       "communicator": "ssh",
 
