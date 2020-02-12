@@ -139,19 +139,23 @@ function check_user(){
     id -un ${USER_NAME}  >/dev/null
 }
 
+function brew_link() {
+    run_brew link "$@"
+}
+
 function brew_install() {
-    run_brew "$@"
+    run_brew install "$@"
 }
 
 function brew_cask_install() {
-    BREW_CASK=cask run_brew "$@"
+    BREW_CASK=cask run_brew install "$@"
 }
 
 function run_brew() {
     [ -x "${BREW_CMD-}" ] ||
         { echo "[ERROR] Cannot find brew. Install Homebrew first!" 1>&2; return 1; }
     if check_user; then
-        su -l ${USER_NAME} -c "$BREW_CMD ${BREW_CASK-} install $*" ||
+        su -l ${USER_NAME} -c "$BREW_CMD ${BREW_CASK-} $*" ||
             { echo "[ERROR] Cannot install '$*' with Homebrew." 1>&2; return 20; }
     else
         echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
@@ -603,6 +607,7 @@ function install_mono() {
 }
 
 function install_cocoapods() {
+    echo "[INFO] Running install_cocoapods..."
     if check_user; then
         su -l ${USER_NAME} -c "
             gem install cocoapods
@@ -617,6 +622,7 @@ function install_cocoapods() {
 }
 
 function install_openjdk() {
+    echo "[INFO] Running install_openjdk..."
     [ -x "${BREW_CMD-}" ] ||
         { echo "[ERROR] Cannot find brew. Install Homebrew first!" 1>&2; return 1; }
     if check_user; then
@@ -640,29 +646,40 @@ function install_openjdk() {
 function install_qt() {
     echo "[INFO] Running install_qt..."
     brew_install qt
+    brew_link qt --force
+}
 
-    if check_user; then
-        # shellcheck disable=SC2016
-        write_line "${HOME}/.profile" "export PATH=\"${QT_PATH}:\$PATH\""
+function configure_autologin() {
+    echo "[INFO] Running configure_autologin..."
+    if [[ -z "${INSTALL_PASSWORD-}" || "${#INSTALL_PASSWORD}" = "0" ]]; then
+        echo "[ERROR] Password is not set, cannot configure autologin." 1>&2
+        return 10
     fi
+    brew_install xfreebird/utils/kcpassword &&
+    enable_autologin "$USER_NAME" "$INSTALL_PASSWORD" ||
+        { echo "[ERROR] Cannot install kcpassword with Homebrew." 1>&2; return 20; }
 }
 
 function configure_term() {
+    echo "[INFO] Running configure_term..."
     write_line "${HOME}/.profile" 'export TERM=xterm-256color'
 }
 
 function enable_vnc() {
+    echo "[INFO] Running enable_vnc..."
     defaults write /var/db/launchd.db/com.apple.launchd/overrides.plist com.apple.screensharing -dict Disabled -bool false
     launchctl load -w /System/Library/LaunchDaemons/com.apple.screensharing.plist
 }
 
 function configure_updates() {
+    echo "[INFO] Running configure_updates..."
     softwareupdate --schedule off
     defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -boolean FALSE
     defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -boolean FALSE
 }
 
 function configure_sshd() {
+    echo "[INFO] Running configure_sshd..."
     systemsetup -setremotelogin on
     write_line /private/etc/ssh/sshd_config 'Protocol 2' '^Protocol '
     write_line /private/etc/ssh/sshd_config 'PasswordAuthentication no' '^PasswordAuthentication '

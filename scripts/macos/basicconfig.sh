@@ -38,6 +38,7 @@ init_logging
 configure_path
 configure_updates
 configure_sshd
+configure_autologin
 install_cvs
 install_gpg
 install_rvm_and_rubies
