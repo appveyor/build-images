@@ -250,6 +250,7 @@ foreach($componentGroup in $component_groups) {
         foreach($component in $componentGroup.components) {
             Install-QtComponent -Version $componentGroup.version -Name $component -Path $installDir
         }
+        ConfigureQtVersion $installDir $componentGroup.version
     } else {
         foreach($component in $componentGroup.components) {
             Install-QtComponent -Id $component -Path $installDir
