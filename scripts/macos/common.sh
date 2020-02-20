@@ -576,7 +576,7 @@ function install_nvm_nodejs() {
 
 function install_xcode() {
     echo "[INFO] Running install_xcode..."
-    XCODE_VERSION="11.2.1"
+    XCODE_VERSION="11.3.1"
     #check fastlane
     if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
         [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
