@@ -186,8 +186,8 @@ su -l ${USER_NAME} -c "
 # .NET stuff
 install_dotnets ||
     _abort $?
-# install_dotnetv3_preview ||
-#     _abort $?
+install_dotnetv5_preview ||
+    _abort $?
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f configure_nuget)

@@ -811,6 +811,30 @@ function prerequisites_dotnetv3_preview () {
     echo "libicu"
 }
 
+function install_dotnetv5_preview() {
+    echo "[INFO] Running install_dotnetv5_preview..."
+    local DOTNET5_SDK_URL
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        DOTNET5_SDK_URL="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-sdk-latest-linux-x64.tar.gz"
+    else
+        DOTNET5_SDK_URL=$1
+    fi
+    local DOTNET5_SDK_TAR=${DOTNET5_SDK_URL##*/}
+
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    curl -fsSL -O "${DOTNET5_SDK_URL}" &&
+    tar -zxf "${DOTNET5_SDK_TAR}" -C /usr/share/dotnet/ ||
+        { echo "[ERROR] Cannot download and unpack .NET SDK 5.0 preview from url '${DOTNET5_SDK_URL}'." 1>&2; popd; return 20; }
+
+    popd &&
+    rm -rf "${TMP_DIR}"
+    log_version dotnet --list-sdks
+    log_version dotnet --list-runtimes
+}
+
 function install_dotnetv3_preview() {
     echo "[INFO] Running install_dotnetv3_preview..."
     local DOTNET3_SDK_URL
