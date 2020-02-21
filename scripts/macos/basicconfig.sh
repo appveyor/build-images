@@ -69,8 +69,13 @@ su -l "${USER_NAME}" -c "
         $(declare -f write_line)
         $(declare -f global_json)
         $(declare -f preheat_dotnet_sdks)
+        $(declare -f install_dotnetv5_preview)
         $(declare -f install_dotnets)
-        install_dotnets" ||
+        install_dotnets
+        install_dotnetv5_preview
+        preheat_dotnet_sdks
+        log_version dotnet --list-sdks
+        log_version dotnet --list-runtimes" ||
     _abort $?
 install_cocoapods
 install_mono

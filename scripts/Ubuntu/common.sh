@@ -799,16 +799,6 @@ function install_dotnets() {
 
     #cleanup
     if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
-
-    #pre-heat
-    preheat_dotnet_sdks
-    log_version dotnet --list-sdks
-    log_version dotnet --list-runtimes
-}
-
-function prerequisites_dotnetv3_preview () {
-    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
-    echo "libicu"
 }
 
 function install_dotnetv5_preview() {
@@ -833,6 +823,11 @@ function install_dotnetv5_preview() {
     rm -rf "${TMP_DIR}"
     log_version dotnet --list-sdks
     log_version dotnet --list-runtimes
+}
+
+function prerequisites_dotnetv3_preview () {
+    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
+    echo "libicu"
 }
 
 function install_dotnetv3_preview() {

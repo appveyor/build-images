@@ -188,6 +188,10 @@ install_dotnets ||
     _abort $?
 install_dotnetv5_preview ||
     _abort $?
+preheat_dotnet_sdks &&
+log_version dotnet --list-sdks &&
+log_version dotnet --list-runtimes ||
+    _abort $?
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f configure_nuget)

@@ -415,6 +415,33 @@ function preheat_dotnet_sdks() {
     done
 }
 
+function install_dotnetv5_preview() {
+    echo "[INFO] Running install_dotnetv5_preview..."
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    local DOTNET5_SDK_URL
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        DOTNET5_SDK_URL="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-sdk-latest-osx-x64.tar.gz"
+    else
+        DOTNET5_SDK_URL=$1
+    fi
+    local DOTNET5_SDK_TAR=${DOTNET5_SDK_URL##*/}
+
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    curl -fsSL -O "${DOTNET5_SDK_URL}" &&
+    tar -zxf "${DOTNET5_SDK_TAR}" -C "${HOME}/.dotnet" ||
+        { echo "[ERROR] Cannot download and unpack .NET SDK 5.0 preview from url '${DOTNET5_SDK_URL}'." 1>&2; popd; return 20; }
+
+    popd &&
+    rm -rf "${TMP_DIR}"
+}
+
 function install_dotnets() {
     echo "[INFO] Running install_dotnets..."
     # this must be executed as appveyor user
@@ -436,14 +463,6 @@ function install_dotnets() {
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'add2path_suffix $HOME/.dotnet'
     export PATH="$PATH:$HOME/.dotnet"
-
-    if command -v dotnet; then
-        preheat_dotnet_sdks
-        log_version dotnet --list-sdks
-        log_version dotnet --list-runtimes
-    else
-        echo "[WARNING] Cannot find 'dotnet' executable in PATH. .NET not configured properly."
-    fi
 }
 
 function install_gvm_and_golangs() {
