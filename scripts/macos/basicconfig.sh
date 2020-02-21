@@ -52,6 +52,7 @@ su -l "${USER_NAME}" -c "
         USER_NAME=${USER_NAME}
         $(declare -f log_version)
         $(declare -f install_pip)
+        $(declare -f fix_python_six)
         $(declare -f install_virtualenv)
         $(declare -f install_pythons)
         install_pythons" ||

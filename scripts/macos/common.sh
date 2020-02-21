@@ -327,6 +327,17 @@ function install_virtualenv() {
     log_version virtualenv --version
 }
 
+function fix_python_six() {
+    if [ "$OSX_VERS" -le 14 ]; then
+        # output current version
+        pip list 2>/dev/null | grep six || true
+        pip install --ignore-installed six ||
+            { echo "[WARNING] Cannot update python's lib 'six'." ; return 10; }
+        # output version again
+        pip list 2>/dev/null | grep six || true
+    fi
+}
+
 function install_pip() {
     echo "[INFO] Running install_pip..."
     curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
@@ -336,6 +347,7 @@ function install_pip() {
 
     log_version pip --version
 
+    fix_python_six
     #cleanup
     rm get-pip.py
 }
