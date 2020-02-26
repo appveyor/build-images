@@ -48,8 +48,8 @@ build_script:
 
 #- ps: Copy-Item .\docker-appveyor.psm1 "$env:TEMP\docker-appveyor.psm1"
 - cd %base_dir%
-- ps: if ($env:cloud_type -eq 'GCE' -or $cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 }
-- ps: if ($env:cloud_type -ne 'GCE' -and $cloud_type -ne 'AmazonEC2') { .\install_docker_desktop.ps1 }
+- ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 }
+- ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop.ps1 }
 
 # Restart VM
 - ps: Start-Sleep -s 5
@@ -57,8 +57,8 @@ build_script:
 - ps: Start-Sleep -s 5
 
 - cd %base_dir%
-- ps: if ($env:cloud_type -eq 'GCE' -or $cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
-- ps: if ($env:cloud_type -ne 'GCE' -and $cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
+- ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
+- ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
 
 - ps: .\disable_windows_background_services.ps1
 - ps: .\enforce_windows_firewall.ps1
