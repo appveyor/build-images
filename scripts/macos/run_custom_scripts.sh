@@ -10,3 +10,8 @@ if [ -d "./custom-scripts" ] && stat ./custom-scripts/*.sh >/dev/null 2>&1; then
 else
     echo "[INFO] No custom-scripts found."
 fi
+
+if [ -d "./custom-scripts" ]; then
+    echo "[INFO] Cleanup custom-scripts folder."
+    rm -rf "./custom-scripts"
+fi

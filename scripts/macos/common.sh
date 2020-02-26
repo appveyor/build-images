@@ -449,6 +449,11 @@ function install_dotnets() {
         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
+
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
     local SCRIPT_URL
     SCRIPT_URL="https://dot.net/v1/dotnet-install.sh"
     curl -fsSL "$SCRIPT_URL" -O ||
@@ -459,6 +464,8 @@ function install_dotnets() {
         echo "[INFO] Installing .NET Core ${v}..."
         ./dotnet-install.sh -channel "$v"
     done
+
+    popd
 
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'add2path_suffix $HOME/.dotnet'
@@ -710,6 +717,7 @@ function enable_vnc() {
     echo "[INFO] Running enable_vnc..."
     defaults write /var/db/launchd.db/com.apple.launchd/overrides.plist com.apple.screensharing -dict Disabled -bool false
     launchctl load -w /System/Library/LaunchDaemons/com.apple.screensharing.plist
+    log_version defaults read /var/db/launchd.db/com.apple.launchd/overrides.plist com.apple.screensharing
 }
 
 function configure_updates() {
@@ -717,6 +725,7 @@ function configure_updates() {
     softwareupdate --schedule off
     defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -boolean FALSE
     defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -boolean FALSE
+    log_version defaults read /Library/Preferences/com.apple.SoftwareUpdate
 }
 
 function configure_sshd() {
@@ -749,7 +758,7 @@ function cleanup() {
     fi
 
     # cleanup script guts
-    # find $HOME -maxdepth 1 -name "*.sh" -delete
+    find $HOME -maxdepth 1 -name "*.sh" -delete
 
     #log some data about image size
     log_version df -h
