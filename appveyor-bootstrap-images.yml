@@ -2,7 +2,7 @@ image: windows-server-2019-dc
 
 environment:
   base_dir: src\build-images-%APPVEYOR_REPO_BRANCH%\scripts\Windows
-  APPVEYOR_BAKE_IMAGE: bootstrap-win-test-1
+  APPVEYOR_BAKE_IMAGE: bootstrap-win-test-2
 
 init:
 - ps: $ErrorActionPreference = 'Stop'
@@ -39,29 +39,29 @@ build_script:
 - ps: .\install_subversion.ps1
 - ps: .\add_ssh_known_hosts.ps1
 
-- ps: .\install_docker_hyperv_wsl_features.ps1
+# - ps: .\install_docker_hyperv_wsl_features.ps1
 
-# Restart VM
-- ps: Start-Sleep -s 5
-- ps: Restart-Computer
-- ps: Start-Sleep -s 5
+# # Restart VM
+# - ps: Start-Sleep -s 5
+# - ps: Restart-Computer
+# - ps: Start-Sleep -s 5
 
-- cd %base_dir%
-- ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 }
-- ps: |
-    if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') {
-      Copy-Item .\docker-appveyor.psm1 "$env:TEMP\docker-appveyor.psm1"
-      .\install_docker_desktop.ps1
-    }
+# - cd %base_dir%
+# - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 }
+# - ps: |
+#     if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') {
+#       Copy-Item .\docker-appveyor.psm1 "$env:TEMP\docker-appveyor.psm1"
+#       .\install_docker_desktop.ps1
+#     }
 
-# Restart VM
-- ps: Start-Sleep -s 5
-- ps: Restart-Computer
-- ps: Start-Sleep -s 5
+# # Restart VM
+# - ps: Start-Sleep -s 5
+# - ps: Restart-Computer
+# - ps: Start-Sleep -s 5
 
-- cd %base_dir%
-- ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
-- ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
+# - cd %base_dir%
+# - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
+# - ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
 
 - ps: .\disable_windows_background_services.ps1
 - ps: .\enforce_windows_firewall.ps1
