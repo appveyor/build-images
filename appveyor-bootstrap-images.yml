@@ -46,10 +46,13 @@ build_script:
 - ps: Restart-Computer
 - ps: Start-Sleep -s 5
 
-#- ps: Copy-Item .\docker-appveyor.psm1 "$env:TEMP\docker-appveyor.psm1"
 - cd %base_dir%
 - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 }
-- ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop.ps1 }
+- ps: |
+    if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') {
+      Copy-Item .\docker-appveyor.psm1 "$env:TEMP\docker-appveyor.psm1"
+      .\install_docker_desktop.ps1
+    }
 
 # Restart VM
 - ps: Start-Sleep -s 5
