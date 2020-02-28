@@ -64,7 +64,7 @@
       "account_file": "{{user `gce_account_file`}}",
       "project_id": "{{ user `gce_project` }}",
       "zone": "{{ user `gce_zone` }}",
-      "source_image_family": "ubuntu-1604-xenial",
+      "source_image_family": "ubuntu-1604-lts",
       "state_timeout" : "15m",
       "scopes": [
           "https://www.googleapis.com/auth/userinfo.email",
