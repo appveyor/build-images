@@ -141,8 +141,6 @@ apt-get -y -qq update && apt-get install -y -q sudo ||
 if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
     add_user ||
         _abort $?
-else
-    echo "Running in BOOTSTRAP: $BOOTSTRAP"
 fi
 
 chown_logfile || _continue

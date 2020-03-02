@@ -1,10 +1,6 @@
 #!/bin/bash
 #shellcheck disable=SC2086,SC2015,SC2164
 
-echo "------- start env --------"
-env
-echo "------- end env --------"
-
 # set variables
 declare BASH_ATTRIBUTES
 declare PACKAGES=( )
