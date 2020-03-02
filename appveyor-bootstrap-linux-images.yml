@@ -12,6 +12,7 @@ clone_script:
 
 build_script:
 - cd $BASE_DIR
+- env
 - sudo bash -c ". common.sh && ./basicconfig.sh"
 
 test: off
