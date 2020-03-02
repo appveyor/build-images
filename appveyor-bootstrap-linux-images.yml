@@ -3,7 +3,8 @@ image: ubuntu-1804-base
 environment:
   BASE_DIR: src/build-images-${APPVEYOR_REPO_BRANCH}/scripts/Ubuntu
   APPVEYOR_BAKE_IMAGE: bootstrap-ubuntu-test-2
-  CLOUD_TYPE: GCE
+  BOOTSTRAP: true
+  BUILD_AGENT_MODE: GCE
 
 clone_script:
 - curl -fsSL "https://github.com/appveyor/build-images/archive/$APPVEYOR_REPO_BRANCH.tar.gz" -o scripts.tar.gz

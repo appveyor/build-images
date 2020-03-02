@@ -26,18 +26,20 @@ else
     echo "Running script as $(whoami)"
 fi
 
-case  ${PACKER_BUILDER_TYPE-} in
-    googlecompute )
-        BUILD_AGENT_MODE=GCE;;
-    hyperv* )
-        BUILD_AGENT_MODE=HyperV;;
-    azure* )
-        BUILD_AGENT_MODE=Azure;;
-    amazon-* )
-        BUILD_AGENT_MODE=AmazonEC2;;
-    * )
-        BUILD_AGENT_MODE='';;
-esac
+if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
+    case  ${PACKER_BUILDER_TYPE-} in
+        googlecompute )
+            BUILD_AGENT_MODE=GCE;;
+        hyperv* )
+            BUILD_AGENT_MODE=HyperV;;
+        azure* )
+            BUILD_AGENT_MODE=Azure;;
+        amazon-* )
+            BUILD_AGENT_MODE=AmazonEC2;;
+        * )
+            BUILD_AGENT_MODE='';;
+    esac
+fi
 
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )
@@ -136,8 +138,10 @@ configure_path
 apt-get -y -qq update && apt-get install -y -q sudo ||
     _continue $?
 
-add_user ||
-    _abort $?
+if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
+    add_user ||
+        _abort $?
+fi
 
 chown_logfile || _continue
 
@@ -154,8 +158,10 @@ if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
         _abort $?
 fi
 
-install_appveyoragent "${BUILD_AGENT_MODE}" ||
-    _abort $?
+if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
+    install_appveyoragent "${BUILD_AGENT_MODE}" ||
+        _abort $?
+fi
 
 if ! ${DEBUG}; then                          ### Disabled for faster debugging
 
