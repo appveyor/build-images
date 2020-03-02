@@ -26,10 +26,6 @@ else
     echo "Running script as $(whoami)"
 fi
 
-echo "------- start env --------"
-env
-echo "------- end env --------"
-
 if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
     case  ${PACKER_BUILDER_TYPE-} in
         googlecompute )
