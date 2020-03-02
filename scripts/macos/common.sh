@@ -376,7 +376,7 @@ function install_pythons(){
             { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
         PY_PATH=${HOME}/.localpython${i}
         mkdir -p "${PY_PATH}"
-        ./configure --silent "--prefix=${PY_PATH}" "CPPFLAGS=${CPPFLAGS}" "LDFLAGS=${LDFLAGS}" &&
+        ./configure --silent "--prefix=${PY_PATH}" "CPPFLAGS=${CPPFLAGS}" "LDFLAGS=${LDFLAGS}" "--with-openssl=$SSL_PATH" &&
         make --silent &&
         make install --silent >/dev/null ||
             { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
