@@ -166,6 +166,7 @@ function check_apt_locks() {
 }
 
 function add_user() {
+    echo "[INFO] Creating user account..."
     local USER_PASSWORD_LENGTH=${1:-32}
     save_bash_attributes
     set +o xtrace
