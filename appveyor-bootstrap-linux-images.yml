@@ -1,15 +1,18 @@
 image: ubuntu-1804-base
 
 environment:
-  base_dir: src/build-images-${APPVEYOR_REPO_BRANCH}/scripts/Ubuntu
+  BASE_DIR: src/build-images-${APPVEYOR_REPO_BRANCH}/scripts/Ubuntu
   APPVEYOR_BAKE_IMAGE: bootstrap-ubuntu-test-2
-  cloud_type: GCE
+  CLOUD_TYPE: GCE
 
 clone_script:
 - curl -fsSL "https://github.com/appveyor/build-images/archive/$APPVEYOR_REPO_BRANCH.tar.gz" -o scripts.tar.gz
 - mkdir src && tar -zxf scripts.tar.gz -C $APPVEYOR_BUILD_FOLDER/src
 
 build_script:
-- ls
+- cd $BASE_DIR
+- sudo su -
+- . common.sh
+- ./basicconfig.sh
 
 test: off
