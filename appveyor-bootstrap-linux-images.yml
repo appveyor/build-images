@@ -11,6 +11,6 @@ clone_script:
 
 build_script:
 - cd $BASE_DIR
-- sudo bash -c . common.sh && ./basicconfig.sh
+- sudo bash -c ". common.sh"
 
 test: off
