@@ -26,7 +26,7 @@ else
     echo "Running script as $(whoami)"
 fi
 
-
+env
 
 if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
     case  ${PACKER_BUILDER_TYPE-} in
