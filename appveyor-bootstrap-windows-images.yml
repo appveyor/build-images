@@ -2,7 +2,7 @@ image: windows-server-2019-dc
 
 environment:
   base_dir: src\build-images-%APPVEYOR_REPO_BRANCH%\scripts\Windows
-  APPVEYOR_BAKE_IMAGE: bootstrap-win-test-2
+  APPVEYOR_BAKE_IMAGE: windows-server-2019-base
 
 init:
 - ps: $ErrorActionPreference = 'Stop'
