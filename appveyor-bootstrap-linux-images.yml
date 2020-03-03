@@ -8,7 +8,7 @@ environment:
 
 init:
 - appveyor version
-- ls /opt/appveyor/build-agent
+#- ls /opt/appveyor/build-agent
 
 clone_script:
 - curl -fsSL "https://github.com/appveyor/build-images/archive/$APPVEYOR_REPO_BRANCH.tar.gz" -o scripts.tar.gz
