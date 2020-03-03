@@ -6,6 +6,10 @@ environment:
   BOOTSTRAP: true
   BUILD_AGENT_MODE: GCE
 
+init:
+- appveyor version
+- ls /opt/appveyor/build-agent
+
 clone_script:
 - curl -fsSL "https://github.com/appveyor/build-images/archive/$APPVEYOR_REPO_BRANCH.tar.gz" -o scripts.tar.gz
 - mkdir src && tar -zxf scripts.tar.gz -C $APPVEYOR_BUILD_FOLDER/src
