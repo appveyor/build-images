@@ -16,6 +16,6 @@ clone_script:
 
 build_script:
 - cd $BASE_DIR
-- sudo -E ./basicconfig.sh
+- sudo -E ./minimalconfig.sh
 
 test: off
