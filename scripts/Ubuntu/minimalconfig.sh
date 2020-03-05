@@ -113,8 +113,6 @@ install_tools ||
 if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
     install_KVP_packages ||
         _abort $?
-    sudo rm -f /var/lib/hyperv/.kvp_pool_0
-    sudo rm -f /var/lib/hyperv/.kvp_pool_1
 fi
 
 if [ "${BUILD_AGENT_MODE}" == "Azure" ]; then

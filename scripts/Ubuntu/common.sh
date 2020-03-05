@@ -335,6 +335,7 @@ function install_KVP_packages(){
         echo "[ERROR] Cannot get kernels version." 1>&2;
         return 1
     fi
+    sudo touch /var/lib/hyperv/.kvp_pool_1
 }
 
 # this package is required to communicate with Azure
