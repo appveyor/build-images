@@ -5,6 +5,7 @@ environment:
   APPVEYOR_BAKE_IMAGE: bootstrap-windows-2019-test
 
 init:
+- appveyor version
 - ps: $ErrorActionPreference = 'Stop'
 - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
 
