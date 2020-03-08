@@ -6,8 +6,6 @@ environment:
 
 init:
 - appveyor version
-- ps: Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
-- ps: Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run"
 - ps: $ErrorActionPreference = 'Stop'
 - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
 
