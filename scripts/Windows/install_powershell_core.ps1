@@ -9,9 +9,22 @@ $msiPath = "$env:TEMP\PowerShell-Core.msi"
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i $msiPath /quiet REGISTER_MANIFEST=1
-del $msiPath
+Remove-Item $msiPath
 Add-SessionPath "$env:ProgramFiles\PowerShell\6"
 
+# Make AppVeyor cmdlets visible in external PowerShell Core sessions
+$appveyorPath = "$env:ProgramFiles\AppVeyor\BuildAgent"
+if (Test-Path $appveyorPath) {
+    $pwshProfilePath = "$env:USERPROFILE\Documents\PowerShell"
+    if (-not (Test-Path $pwshProfilePath)) {
+        New-Item $pwshProfilePath -ItemType Directory -Force | Out-Null
+    }
+    
+    $pwshProfileFilename = "$pwshProfilePath\Microsoft.PowerShell_profile.ps1"
+    Add-Content $pwshProfileFilename "`nImport-Module '$appveyorPath\dotnetcore\AppVeyor.BuildAgent.PowerShell.dll'"
+}
+
+# Check version
 pwsh --version
 
 Write-Host "PowerShell Core Installed"
