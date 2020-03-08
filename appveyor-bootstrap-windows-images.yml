@@ -65,6 +65,13 @@ build_script:
 # - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
 # - ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
 
+# Restart VM
+- ps: Start-Sleep -s 5
+- ps: Restart-Computer
+- ps: Start-Sleep -s 5
+
+- cd %base_dir%
+- appveyor version
 - ps: .\disable_windows_background_services.ps1
 - ps: .\enforce_windows_firewall.ps1
 - ps: .\cleanup_windows.ps1
