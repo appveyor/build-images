@@ -24,6 +24,7 @@ build_script:
 - ps: Start-Sleep -s 5
 
 - cd %base_dir%
+- appveyor version
 - ps: Copy-Item .\path-utils.psm1 "$env:TEMP\path-utils.psm1"
 - ps: .\install_path_utils.ps1
 - ps: .\install_powershell_core.ps1
