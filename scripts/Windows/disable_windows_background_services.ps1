@@ -53,7 +53,7 @@ Set-Service diagtrack -StartupType Disabled -ErrorAction SilentlyContinue
 Set-Service vmicvss -StartupType Disabled -ErrorAction SilentlyContinue
 Set-Service VSS -StartupType Disabled -ErrorAction SilentlyContinue
 Set-Service wuauserv -StartupType Disabled -ErrorAction SilentlyContinue
-#Set-Service winrm -StartupType Disabled -ErrorAction SilentlyContinue
+Set-Service winrm -StartupType Disabled -ErrorAction SilentlyContinue
 Set-Service UsoSvc -StartupType Disabled -ErrorAction SilentlyContinue
 Set-Service DPS -StartupType Disabled -ErrorAction SilentlyContinue
 Set-Service spooler -StartupType Disabled -ErrorAction SilentlyContinue
