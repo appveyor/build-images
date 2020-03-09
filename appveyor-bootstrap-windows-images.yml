@@ -1,8 +1,8 @@
-image: windows-server-2019-base
+image: windows-server-2019-dc-base-gce
 
 environment:
   base_dir: src\build-images-%APPVEYOR_REPO_BRANCH%\scripts\Windows
-  APPVEYOR_BAKE_IMAGE: bootstrap-windows-2019-test
+  APPVEYOR_BAKE_IMAGE: vs2019-westus
 
 init:
 - appveyor version
