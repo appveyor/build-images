@@ -1,8 +1,8 @@
-image: ubuntu-1804-base-gce
+image: ubuntu-1604-base-gce
 
 environment:
   BASE_DIR: src/build-images-${APPVEYOR_REPO_BRANCH}/scripts/Ubuntu
-  APPVEYOR_BAKE_IMAGE: appveyor-ubuntu1804-us-central1
+  APPVEYOR_BAKE_IMAGE: appveyor-ubuntu1604-us-central1
   BOOTSTRAP: true
   BUILD_AGENT_MODE: GCE
 
