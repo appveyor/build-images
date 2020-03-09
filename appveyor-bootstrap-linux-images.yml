@@ -1,10 +1,18 @@
-image: ubuntu-1604-base-gce
-
 environment:
+
+  matrix:
+  - job_name: Ubuntu 18.04 on GCE us-central1
+    APPVEYOR_BUILD_WORKER_IMAGE: ubuntu-1804-base-gce
+    APPVEYOR_BAKE_IMAGE: ubuntu1804-gce-us-central1
+    BUILD_AGENT_MODE: GCE
+
+  - job_name: Ubuntu 16.04 on GCE us-central1
+    APPVEYOR_BUILD_WORKER_IMAGE: ubuntu-1604-base-gce
+    APPVEYOR_BAKE_IMAGE: ubuntu1604-gce-us-central1
+    BUILD_AGENT_MODE: GCE
+
   BASE_DIR: src/build-images-${APPVEYOR_REPO_BRANCH}/scripts/Ubuntu
-  APPVEYOR_BAKE_IMAGE: appveyor-ubuntu1604-us-central1
   BOOTSTRAP: true
-  BUILD_AGENT_MODE: GCE
 
 init:
 - appveyor version
