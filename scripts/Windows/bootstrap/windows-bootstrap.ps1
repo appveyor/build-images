@@ -84,7 +84,7 @@ New-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -
 # https://docs.microsoft.com/en-us/windows/desktop/SecAuthN/msgina-dll-features
 Remove-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoLogonCount -ErrorAction SilentlyContinue
 
-Write-Host "Autologon enabled"
+Write-Host "Autologon enabled" -ForegroundColor Green
 
 
 Write-Host "Installing AppVeyor Build Agent"

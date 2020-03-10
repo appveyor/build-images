@@ -1,12 +1,16 @@
 environment:
   matrix:
-  - job_name: VS 2019 on GCE us-central1
-    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-gce-us-central1
-    APPVEYOR_BAKE_IMAGE: vs2019-gce-us-central1
+  # - job_name: VS 2019 on GCE us-central1
+  #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-gce-us-central1
+  #   APPVEYOR_BAKE_IMAGE: vs2019-gce-us-central1
 
-  - job_name: VS 2019 on Azure West US
-    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-azure-westus
-    APPVEYOR_BAKE_IMAGE: vs2019-azure-westus
+  # - job_name: VS 2019 on Azure West US
+  #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-azure-westus
+  #   APPVEYOR_BAKE_IMAGE: vs2019-azure-westus
+
+  - job_name: VS 2019 on Hyper-V
+    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
+    APPVEYOR_BAKE_IMAGE: vs2019
 
   base_dir: src\build-images-%APPVEYOR_REPO_BRANCH%\scripts\Windows
 
