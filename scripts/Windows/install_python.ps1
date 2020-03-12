@@ -40,9 +40,9 @@ function UninstallPython($pythonName) {
 function UpdatePip($pythonPath) {
     Write-Host "Installing virtualenv for $pythonPath..." -ForegroundColor Cyan
     UpdatePythonPath "$pythonPath;$pythonPath\scripts"
-    RunProcess "python -m pip install --upgrade pip==$pipVersion"
-    RunProcess "pip --version"
-    RunProcess "pip install virtualenv"
+    Start-ProcessWithOutput "python -m pip install --upgrade pip==$pipVersion" -SkipExitCode
+    Start-ProcessWithOutput "pip --version" -SkipExitCode
+    Start-ProcessWithOutput "pip install virtualenv" -SkipExitCode
 }
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -99,6 +99,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         python $pipPath26
     }
 
+    UpdatePip 'C:\Python26'
+    UpdatePip 'C:\Python26-x64'
 }
 
 # Python 2.7.17

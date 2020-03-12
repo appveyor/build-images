@@ -17,10 +17,11 @@ function GetProductVersion ($partialName) {
     | Format-Table -AutoSize | Out-String
 }
 
-function RunProcess($command) {
-    
-    $Global:LASTEXITCODE = $null
-
+function RunProcess {
+    param(
+        $command,
+        [switch]$skipExitCode
+    )
     $fileName = $command
     $arguments = $null
 
@@ -70,7 +71,7 @@ function RunProcess($command) {
     }
     $errScripBlock = {
         if (! [String]::IsNullOrEmpty($EventArgs.Data)) {
-            Write-Host "STDERR: $($EventArgs.Data)"
+            Write-Host "$($EventArgs.Data)" -ForegroundColor Red
         }
     }    
     $stdOutEvent = Register-ObjectEvent -InputObject $process -Action $outScripBlock -EventName 'OutputDataReceived'
@@ -86,7 +87,7 @@ function RunProcess($command) {
     Unregister-Event -SourceIdentifier $stdOutEvent.Name
     Unregister-Event -SourceIdentifier $stdErrEvent.Name    
 
-    if ($process.ExitCode -ne 0) {
+    if ($skipExitCode -eq $false -and $process.ExitCode -ne 0) {
         exit $process.ExitCode
     }
 }
