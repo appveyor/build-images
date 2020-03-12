@@ -76,6 +76,6 @@ function RunProcess($command) {
     }
 
     if ($process.ExitCode -ne 0) {
-        $LASTEXITCODE = $process.ExitCode
+        cmd /c "exit ${$process.ExitCode}"
     }
 }
