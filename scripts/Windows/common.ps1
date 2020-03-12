@@ -28,6 +28,24 @@ function RunProcess($command) {
         $arguments = $command.substring($idx + 1)
     }
 
+    # find tool in path
+    if (-not (Test-Path $fileName)) {
+        foreach($pathPart in $($env:PATH).Split(';')) {
+            $searchPath = [IO.Path]::Combine($pathPart, $fileName)
+            if (Test-Path $searchPath) {
+                $fileName = $searchPath; break;
+            }
+            $searchPath = [IO.Path]::Combine($pathPart, "$fileName.cmd")
+            if (Test-Path $searchPath) {
+                $fileName = $searchPath; break;
+            }
+            $searchPath = [IO.Path]::Combine($pathPart, "$fileName.exe")
+            if (Test-Path $searchPath) {
+                $fileName = $searchPath; break;
+            }             
+        }
+    }
+
     $ProcessInfo = New-Object System.Diagnostics.ProcessStartInfo 
     $ProcessInfo.FileName = $fileName
     $ProcessInfo.RedirectStandardError = $true 
