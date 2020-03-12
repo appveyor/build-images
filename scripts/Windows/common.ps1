@@ -89,7 +89,6 @@ function RunProcess($command) {
     Unregister-Event -SourceIdentifier $oStdErrEvent.Name    
 
     if ($process.ExitCode -ne 0) {
-        "ExitCode _: $($process.ExitCode)"
         exit $process.ExitCode
     }
 }
