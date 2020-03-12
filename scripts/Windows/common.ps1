@@ -20,7 +20,7 @@ function GetProductVersion ($partialName) {
 function RunProcess($command) {
     
     $Global:LASTEXITCODE = $null
-    
+
     $fileName = $command
     $arguments = $null
 
@@ -83,7 +83,7 @@ function RunProcess($command) {
 
     if ($process.ExitCode -ne 0) {
         "ExitCode _: $($process.ExitCode)"
-        cmd /c exit $process.ExitCode
+        exit $process.ExitCode
         $Global:LASTEXITCODE = $process.ExitCode
     }
 }
