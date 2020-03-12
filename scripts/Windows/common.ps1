@@ -63,20 +63,18 @@ function RunProcess($command) {
     $process.StartInfo = $psi
 
     # Adding event handers for stdout and stderr.
-    $sOutScripBlock = {
+    $outScripBlock = {
         if (! [String]::IsNullOrEmpty($EventArgs.Data)) {
             Write-Host "$($EventArgs.Data)"
         }
     }
-    $sErrScripBlock = {
+    $errScripBlock = {
         if (! [String]::IsNullOrEmpty($EventArgs.Data)) {
             Write-Host "STDERR: $($EventArgs.Data)"
         }
     }    
-    $oStdOutEvent = Register-ObjectEvent -InputObject $oProcess `
-        -Action $sOutScripBlock -EventName 'OutputDataReceived'
-    $oStdErrEvent = Register-ObjectEvent -InputObject $oProcess `
-        -Action $sErrScripBlock -EventName 'ErrorDataReceived'
+    $stdOutEvent = Register-ObjectEvent -InputObject $process -Action $outScripBlock -EventName 'OutputDataReceived'
+    $stdErrEvent = Register-ObjectEvent -InputObject $process -Action $errScripBlock -EventName 'ErrorDataReceived'
 
     $process.Start() | Out-Null
 
@@ -85,8 +83,8 @@ function RunProcess($command) {
     [Void]$process.WaitForExit()
 
     # Unregistering events to retrieve process output.
-    Unregister-Event -SourceIdentifier $oStdOutEvent.Name
-    Unregister-Event -SourceIdentifier $oStdErrEvent.Name    
+    Unregister-Event -SourceIdentifier $stdOutEvent.Name
+    Unregister-Event -SourceIdentifier $stdErrEvent.Name    
 
     if ($process.ExitCode -ne 0) {
         exit $process.ExitCode
