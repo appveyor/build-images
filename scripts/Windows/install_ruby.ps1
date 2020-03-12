@@ -304,10 +304,12 @@ function Update-Ruby($ruby) {
 
     if ($ruby.install_psych) {
         Write-Host "gem install psych -v 2.2.4" -ForegroundColor Gray
-        cmd /c gem install psych -v 2.2.4 --no-rdoc
+        $output = (cmd /c gem install psych -v 2.2.4 --no-rdoc 2>&1)
+        if ($output.Exception) { $output.Exception.Message} else { $output }
     } elseif ($ruby.update_psych) {
         Write-Host "gem update psych" -ForegroundColor Gray
-        cmd /c gem update psych
+        $output = (cmd /c gem update psych 2>&1)
+        if ($output.Exception) { $output.Exception.Message} else { $output }
     }
 
     if (-not $ruby.dontUpdateRubygems) {
