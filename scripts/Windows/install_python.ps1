@@ -1,4 +1,5 @@
-﻿#
+﻿. "$PSScriptRoot\common.ps1"
+#
 # Upgrading PIP:
 # https://stackoverflow.com/questions/30699782/access-is-denied-while-upgrading-pip-exe-on-windows/35580525#35580525
 #
@@ -39,9 +40,9 @@ function UninstallPython($pythonName) {
 function UpdatePip($pythonPath) {
     Write-Host "Installing virtualenv for $pythonPath..." -ForegroundColor Cyan
     UpdatePythonPath "$pythonPath;$pythonPath\scripts"
-    python -m pip install --upgrade pip==$pipVersion
-    pip --version
-    pip install virtualenv
+    RunProcess "python -m pip install --upgrade pip==$pipVersion"
+    RunProcess "pip --version"
+    RunProcess "pip install virtualenv"
 }
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
