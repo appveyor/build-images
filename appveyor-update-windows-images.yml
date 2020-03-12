@@ -41,3 +41,6 @@ build_script:
 - ps: .\cleanup_windows.ps1
 
 test: off
+
+on_failure:
+- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
