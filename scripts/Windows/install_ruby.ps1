@@ -9,16 +9,16 @@ $env:SSL_CERT_FILE = "$env:temp\cacert.pem"
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     $rubies = @(
-        # @{
-        #     "version" = "Ruby 1.9.3-p551"
-        #     "install_path" = "C:\Ruby193"
-        #     "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-1.9.3-p551-i386-mingw32.7z"
-        #     "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe"
-        #     "devkit_paths" = @("C:/Ruby193")
-        #     "install_psych" = "true"
-        #     "dontUpdateRubygems" = $true
-        #     #"rubygemsUpdate" = $true
-        # }
+        @{
+            "version" = "Ruby 1.9.3-p551"
+            "install_path" = "C:\Ruby193"
+            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-1.9.3-p551-i386-mingw32.7z"
+            "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe"
+            "devkit_paths" = @("C:/Ruby193")
+            "install_psych" = "true"
+            "dontUpdateRubygems" = $true
+            #"rubygemsUpdate" = $true
+        }
         @{
             "version" = "Ruby 2.0.0-p648"
             "install_path" = "C:\Ruby200"
@@ -28,123 +28,123 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "install_psych" = "true"
             "rubygemsUpdate" = $true
         }
-        # @{
-        #     "version" = "Ruby 2.0.0-p648 (x64)"
-        #     "install_path" = "C:\Ruby200-x64"
-        #     "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.0.0-p648-x64-mingw32.7z"
-        #     "install_psych" = "true"
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.2.6"
-        #     "install_path" = "C:\Ruby22"
-        #     "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.2.6-i386-mingw32.7z"
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.2.6 (x64)"
-        #     "install_path" = "C:\Ruby22-x64"
-        #     "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.2.6-x64-mingw32.7z"
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.1.9"
-        #     "install_path" = "C:\Ruby21"
-        #     "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.1.9-i386-mingw32.7z"
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.1.9 (x64)"
-        #     "install_path" = "C:\Ruby21-x64"
-        #     "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.1.9-x64-mingw32.7z"
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.3.3"
-        #     "install_path" = "C:\Ruby23"
-        #     "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.3.3-i386-mingw32.7z"
-        #     "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe"
-        #     "devkit_paths" = @("C:/Ruby200", "C:/Ruby21", "C:/Ruby22", "C:/Ruby23")
-        #     "bundlerV2" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.3.3 (x64)"
-        #     "install_path" = "C:\Ruby23-x64"
-        #     "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.3.3-x64-mingw32.7z"
-        #     "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-64-4.7.2-20130224-1432-sfx.exe"
-        #     "devkit_paths" = @("C:/Ruby200-x64", "C:/Ruby21-x64", "C:/Ruby22-x64", "C:/Ruby23-x64")
-        #     "bundlerV2" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.4.9-1"
-        #     "install_path" = "C:\Ruby24"
-        #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.9-1/rubyinstaller-2.4.9-1-x86.exe"
-        #     "devkit_url" = ""
-        #     "devkit_paths" = @()
-        #     "bundlerV2" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.4.9-1 (x64)"
-        #     "install_path" = "C:\Ruby24-x64"
-        #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.9-1/rubyinstaller-2.4.9-1-x64.exe"
-        #     "devkit_url" = ""
-        #     "devkit_paths" = @()
-        #     "bundlerV2" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.5.7-1"
-        #     "install_path" = "C:\Ruby25"
-        #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.7-1/rubyinstaller-2.5.7-1-x86.exe"
-        #     "devkit_url" = ""
-        #     "devkit_paths" = @()
-        #     "bundlerV2" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.5.7-1 (x64)"
-        #     "install_path" = "C:\Ruby25-x64"
-        #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.7-1/rubyinstaller-2.5.7-1-x64.exe"
-        #     "devkit_url" = ""
-        #     "devkit_paths" = @()
-        #     "bundlerV2" = $true
-        # }
-        # @{
-        #     "version" = "Ruby 2.6.5-1"
-        #     "install_path" = "C:\Ruby26"
-        #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.5-1/rubyinstaller-2.6.5-1-x86.exe"
-        #     "devkit_url" = ""
-        #     "devkit_paths" = @()
-        #     "bundlerV2" = $true
-        # }    
-        # @{
-        #     "version" = "Ruby 2.6.5-1 (x64)"
-        #     "install_path" = "C:\Ruby26-x64"
-        #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.5-1/rubyinstaller-2.6.5-1-x64.exe"
-        #     "devkit_url" = ""
-        #     "devkit_paths" = @()
-        #     "bundlerV2" = $true
-        # }        
+        @{
+            "version" = "Ruby 2.0.0-p648 (x64)"
+            "install_path" = "C:\Ruby200-x64"
+            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.0.0-p648-x64-mingw32.7z"
+            "install_psych" = "true"
+            "rubygemsUpdate" = $true
+        }
+        @{
+            "version" = "Ruby 2.2.6"
+            "install_path" = "C:\Ruby22"
+            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.2.6-i386-mingw32.7z"
+            "rubygemsUpdate" = $true
+        }
+        @{
+            "version" = "Ruby 2.2.6 (x64)"
+            "install_path" = "C:\Ruby22-x64"
+            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.2.6-x64-mingw32.7z"
+            "rubygemsUpdate" = $true
+        }
+        @{
+            "version" = "Ruby 2.1.9"
+            "install_path" = "C:\Ruby21"
+            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.1.9-i386-mingw32.7z"
+            "rubygemsUpdate" = $true
+        }
+        @{
+            "version" = "Ruby 2.1.9 (x64)"
+            "install_path" = "C:\Ruby21-x64"
+            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.1.9-x64-mingw32.7z"
+            "rubygemsUpdate" = $true
+        }
+        @{
+            "version" = "Ruby 2.3.3"
+            "install_path" = "C:\Ruby23"
+            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.3.3-i386-mingw32.7z"
+            "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe"
+            "devkit_paths" = @("C:/Ruby200", "C:/Ruby21", "C:/Ruby22", "C:/Ruby23")
+            "bundlerV2" = $true
+        }
+        @{
+            "version" = "Ruby 2.3.3 (x64)"
+            "install_path" = "C:\Ruby23-x64"
+            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.3.3-x64-mingw32.7z"
+            "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-64-4.7.2-20130224-1432-sfx.exe"
+            "devkit_paths" = @("C:/Ruby200-x64", "C:/Ruby21-x64", "C:/Ruby22-x64", "C:/Ruby23-x64")
+            "bundlerV2" = $true
+        }
+        @{
+            "version" = "Ruby 2.4.9-1"
+            "install_path" = "C:\Ruby24"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.9-1/rubyinstaller-2.4.9-1-x86.exe"
+            "devkit_url" = ""
+            "devkit_paths" = @()
+            "bundlerV2" = $true
+        }
+        @{
+            "version" = "Ruby 2.4.9-1 (x64)"
+            "install_path" = "C:\Ruby24-x64"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.9-1/rubyinstaller-2.4.9-1-x64.exe"
+            "devkit_url" = ""
+            "devkit_paths" = @()
+            "bundlerV2" = $true
+        }
+        @{
+            "version" = "Ruby 2.5.7-1"
+            "install_path" = "C:\Ruby25"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.7-1/rubyinstaller-2.5.7-1-x86.exe"
+            "devkit_url" = ""
+            "devkit_paths" = @()
+            "bundlerV2" = $true
+        }
+        @{
+            "version" = "Ruby 2.5.7-1 (x64)"
+            "install_path" = "C:\Ruby25-x64"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.7-1/rubyinstaller-2.5.7-1-x64.exe"
+            "devkit_url" = ""
+            "devkit_paths" = @()
+            "bundlerV2" = $true
+        }
+        @{
+            "version" = "Ruby 2.6.5-1"
+            "install_path" = "C:\Ruby26"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.5-1/rubyinstaller-2.6.5-1-x86.exe"
+            "devkit_url" = ""
+            "devkit_paths" = @()
+            "bundlerV2" = $true
+        }    
+        @{
+            "version" = "Ruby 2.6.5-1 (x64)"
+            "install_path" = "C:\Ruby26-x64"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.5-1/rubyinstaller-2.6.5-1-x64.exe"
+            "devkit_url" = ""
+            "devkit_paths" = @()
+            "bundlerV2" = $true
+        }        
     )
 } else {
     $rubies = @()
 }
 
 $rubies = $rubies + @(
-    # @{
-    #     "version" = "Ruby 2.7.0-1"
-    #     "install_path" = "C:\Ruby27"
-    #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.0-1/rubyinstaller-2.7.0-1-x86.exe"
-    #     "devkit_url" = ""
-    #     "devkit_paths" = @()
-    #     "bundlerV2" = $true
-    # }    
-    # @{
-    #     "version" = "Ruby 2.7.0-1 (x64)"
-    #     "install_path" = "C:\Ruby27-x64"
-    #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.0-1/rubyinstaller-2.7.0-1-x64.exe"
-    #     "devkit_url" = ""
-    #     "devkit_paths" = @()
-    #     "bundlerV2" = $true
-    # }
+    @{
+        "version" = "Ruby 2.7.0-1"
+        "install_path" = "C:\Ruby27"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.0-1/rubyinstaller-2.7.0-1-x86.exe"
+        "devkit_url" = ""
+        "devkit_paths" = @()
+        "bundlerV2" = $true
+    }    
+    @{
+        "version" = "Ruby 2.7.0-1 (x64)"
+        "install_path" = "C:\Ruby27-x64"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.0-1/rubyinstaller-2.7.0-1-x64.exe"
+        "devkit_url" = ""
+        "devkit_paths" = @()
+        "bundlerV2" = $true
+    }
 )
 
 function UpdateRubyPath($rubyPath) {
