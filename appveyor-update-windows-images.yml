@@ -12,7 +12,7 @@ environment:
   #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
   #   APPVEYOR_BAKE_IMAGE: vs2019
 
-  base_dir: src\build-images-%APPVEYOR_REPO_BRANCH%\scripts\Windows
+  base_dir: scripts\Windows
 
 init:
 - appveyor version
