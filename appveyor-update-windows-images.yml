@@ -18,6 +18,7 @@ init:
 - appveyor version
 - ps: $ErrorActionPreference = 'Stop'
 - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
+- ps: cmd /c exit 2
 
 build_script:
 - cd %base_dir%
