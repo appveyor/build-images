@@ -90,9 +90,6 @@ init_logging
 
 configure_path
 
-apt-get -y -qq update && apt-get install -y -q sudo ||
-    _continue $?
-
 if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
     add_user ||
         _abort $?
