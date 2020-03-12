@@ -1,15 +1,8 @@
-function GetEmulatorVersion {
-    $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
-    $x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
-        | ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
-        | Where-Object { $_.DisplayName -and $_.DisplayName.contains('Azure Storage Emulator') } `
-        | Sort-Object -Property DisplayName `
-        | Select-Object -Property DisplayName,DisplayVersion
-}
-
-GetEmulatorVersion
+. "$PSScriptRoot\common.ps1"
 
 Write-Host "Installing Azure storage emulator 5.10..." -ForegroundColor Cyan
+
+GetProductVersion "Azure Storage Emulator"
 
 Write-Host "Downloading..."
 $msiPath = "$env:TEMP\MicrosoftAzureStorageEmulator.msi"
@@ -19,6 +12,6 @@ Write-Host "Installing..."
 cmd /c start /wait msiexec /i "$msiPath" /q
 Remove-Item $msiPath
 
-GetEmulatorVersion
+GetProductVersion "Azure Storage Emulator"
 
 Write-Host "Installed Azure storage emulator" -ForegroundColor Green
