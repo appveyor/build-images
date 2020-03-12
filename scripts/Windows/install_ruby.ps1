@@ -321,7 +321,7 @@ function Update-Ruby($ruby) {
             cmd /c gem install rubygems-update -v `"~>2.7`" --no-rdoc
             
             Write-Host "update_rubygems" -ForegroundColor Gray
-            cmd /c update_rubygems        
+            RunProcess "update_rubygems"
         } else {
             # Ruby > 2.3
             Write-Host "gem update --system" -ForegroundColor Gray
