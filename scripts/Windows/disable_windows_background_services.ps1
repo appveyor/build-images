@@ -25,7 +25,7 @@ Set-ItemProperty -Path 'HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate\
 
 
 # Disable scheduled tasks
-#Get-ScheduledTask -TaskName 'packer-*' | Unregister-ScheduledTask -Confirm:$false
+Write-Host "Disabling scheduled tasks"
 Get-ScheduledTask -TaskPath '\Microsoft\VisualStudio\*' | Disable-ScheduledTask -ErrorAction SilentlyContinue | ForEach-Object { $_.URI }
 Get-ScheduledTask -TaskPath '\Microsoft\Windows\Application Experience\*' | Disable-ScheduledTask -ErrorAction SilentlyContinue | ForEach-Object { $_.URI }
 Get-ScheduledTask -TaskPath '\Microsoft\Windows\Customer Experience Improvement Program\*' | Disable-ScheduledTask -ErrorAction SilentlyContinue | ForEach-Object { $_.URI }

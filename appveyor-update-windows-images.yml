@@ -27,6 +27,7 @@ build_script:
 
 # Main block
 - ps: .\install_azure_storage_emulator.ps1
+- ps: .\install_ruby.ps1
 
 # Restart VM
 - ps: Start-Sleep -s 5
