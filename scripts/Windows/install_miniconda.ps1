@@ -156,8 +156,8 @@ function CheckMiniconda($path) {
     elseif (-not (Test-Path "$path\Scripts\conda.exe")) { throw "conda.exe is missing in $path"; }
     else { Write-Host "$path is OK" -ForegroundColor Green; }
 
-    Write-Host "python --version: $(Start-ProcessWithOutput "$path\python --version")"
-    Write-Host "conda --version: $(Start-ProcessWithOutput "$path\Scripts\conda --version")"
+    Start-ProcessWithOutput "$path\python --version"
+    Start-ProcessWithOutput "$path\Scripts\conda --version"
 }
 
 CheckMiniconda 'C:\Miniconda'
