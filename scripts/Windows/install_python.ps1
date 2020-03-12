@@ -40,9 +40,9 @@ function UninstallPython($pythonName) {
 function UpdatePip($pythonPath) {
     Write-Host "Installing virtualenv for $pythonPath..." -ForegroundColor Cyan
     UpdatePythonPath "$pythonPath;$pythonPath\scripts"
-    Start-ProcessWithOutput "python -m pip install --upgrade pip==$pipVersion" -SkipExitCode
-    Start-ProcessWithOutput "pip --version" -SkipExitCode
-    Start-ProcessWithOutput "pip install virtualenv" -SkipExitCode
+    Start-ProcessWithOutput "python -m pip install --upgrade pip==$pipVersion" -IgnoreExitCode
+    Start-ProcessWithOutput "pip --version" -IgnoreExitCode
+    Start-ProcessWithOutput "pip install virtualenv" -IgnoreExitCode
 }
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12

@@ -27,6 +27,7 @@ build_script:
 - ps: DisplayDiskInfo
 
 # Main block
+- ps: .\install_miniconda.ps1
 - ps: .\install_python.ps1
 - ps: .\install_msys64.ps1
 - ps: .\install_azure_storage_emulator.ps1

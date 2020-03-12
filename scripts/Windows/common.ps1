@@ -20,7 +20,7 @@ function GetProductVersion ($partialName) {
 function Start-ProcessWithOutput {
     param(
         $command,
-        [switch]$skipExitCode
+        [switch]$ignoreExitCode
     )
     $fileName = $command
     $arguments = $null
@@ -87,7 +87,7 @@ function Start-ProcessWithOutput {
     Unregister-Event -SourceIdentifier $stdOutEvent.Name
     Unregister-Event -SourceIdentifier $stdErrEvent.Name    
 
-    if ($skipExitCode -eq $false -and $process.ExitCode -ne 0) {
+    if ($ignoreExitCode -eq $false -and $process.ExitCode -ne 0) {
         exit $process.ExitCode
     }
 }
