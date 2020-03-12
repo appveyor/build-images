@@ -22,7 +22,7 @@ init:
 build_script:
 - cd %base_dir%
 - ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
-- ps: .\common.ps1
+- ps: . .\common.ps1
 - ps: DisplayDiskInfo
 
 # Main block
