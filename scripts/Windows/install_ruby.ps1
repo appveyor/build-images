@@ -1,4 +1,6 @@
-﻿$started = Get-Date
+﻿. "$PSScriptRoot\common.ps1"
+
+$started = Get-Date
 
 # download SSL certificates
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -304,10 +306,10 @@ function Update-Ruby($ruby) {
 
     if ($ruby.install_psych) {
         Write-Host "gem install psych -v 2.2.4" -ForegroundColor Gray
-        Write-Host "$(cmd /c gem install psych -v 2.2.4 --no-rdoc 2>&1)"
+        RunProcess "gem install psych -v 2.2.4 --no-rdoc"
     } elseif ($ruby.update_psych) {
         Write-Host "gem update psych" -ForegroundColor Gray
-        Write-Host "$(cmd /c gem update psych 2>&1)"
+        RunProcess "gem update psych"
     }
 
     if (-not $ruby.dontUpdateRubygems) {
@@ -352,8 +354,6 @@ function Update-Ruby($ruby) {
 }
 
 # save current directory
-$currentDir = (pwd).Path
-
 for($i = 0; $i -lt $rubies.Count; $i++) {
     Install-Ruby $rubies[$i]
 }

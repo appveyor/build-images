@@ -16,3 +16,31 @@ function GetProductVersion ($partialName) {
         | Select-Object -Property DisplayName,DisplayVersion `
         | Format-Table -AutoSize | Out-String
 }
+
+function RunProcess($command) {
+    
+    $fileName = $command
+    $arguments = $null
+
+    $idx = $command.indexOf(' ')
+    if ($idx -ne -1) {
+        $fileName = $command.substring(0, $idx)
+        $arguments = $command.substring($idx + 1)
+    }
+    $ProcessInfo = New-Object System.Diagnostics.ProcessStartInfo 
+    $ProcessInfo.FileName = $fileName
+    $ProcessInfo.RedirectStandardError = $true 
+    $ProcessInfo.RedirectStandardOutput = $true 
+    $ProcessInfo.UseShellExecute = $false 
+    $ProcessInfo.Arguments = $arguments
+    $Process = New-Object System.Diagnostics.Process 
+    $Process.StartInfo = $ProcessInfo 
+    $Process.Start() | Out-Null 
+    $Process.WaitForExit() 
+    $stdOut = $Process.StandardOutput.ReadToEnd()
+    $stdErr = $Process.StandardError.ReadToEnd()
+    $stdOut
+    if ($stdErr) {
+        "StdErr: $stdErr"
+    }
+}
