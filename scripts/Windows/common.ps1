@@ -17,7 +17,7 @@ function GetProductVersion ($partialName) {
     | Format-Table -AutoSize | Out-String
 }
 
-function RunProcess {
+function Start-ProcessWithOutput {
     param(
         $command,
         [switch]$skipExitCode
