@@ -80,8 +80,8 @@ function RunProcess($command) {
     }
 
     if ($process.ExitCode -ne 0) {
-        cmd /c "exit ${$process.ExitCode}"
+        cmd /c "exit $($process.ExitCode)"
     }
 
-    "ExitCode: ${$process.ExitCode}"
+    "ExitCode: $($process.ExitCode)"
 }
