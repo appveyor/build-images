@@ -84,6 +84,5 @@ function RunProcess($command) {
     if ($process.ExitCode -ne 0) {
         "ExitCode _: $($process.ExitCode)"
         exit $process.ExitCode
-        $Global:LASTEXITCODE = $process.ExitCode
     }
 }

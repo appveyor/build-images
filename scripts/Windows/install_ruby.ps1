@@ -23,8 +23,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "version" = "Ruby 2.0.0-p648"
             "install_path" = "C:\Ruby200"
             "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.0.0-p648-i386-mingw32.7z"
-            #"devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe"
-            #"devkit_paths" = @("C:/Ruby200")
+            "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe"
+            "devkit_paths" = @("C:/Ruby200")
             "install_psych" = "true"
             "rubygemsUpdate" = $true
         }
