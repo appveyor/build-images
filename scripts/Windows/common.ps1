@@ -61,25 +61,32 @@ function RunProcess($command) {
     $psi.Arguments = $arguments
     $process = New-Object System.Diagnostics.Process
     $process.StartInfo = $psi
+
+    # Adding event handers for stdout and stderr.
+    $sOutScripBlock = {
+        if (! [String]::IsNullOrEmpty($EventArgs.Data)) {
+            Write-Host "$($EventArgs.Data)"
+        }
+    }
+    $sErrScripBlock = {
+        if (! [String]::IsNullOrEmpty($EventArgs.Data)) {
+            Write-Host "STDERR: $($EventArgs.Data)"
+        }
+    }    
+    $oStdOutEvent = Register-ObjectEvent -InputObject $oProcess `
+        -Action $sOutScripBlock -EventName 'OutputDataReceived'
+    $oStdErrEvent = Register-ObjectEvent -InputObject $oProcess `
+        -Action $sErrScripBlock -EventName 'ErrorDataReceived'
+
     $process.Start() | Out-Null
 
-    do {
-        if (!$process.StandardOutput.EndOfStream) {
-            Write-Host "$($process.StandardOutput.ReadLine())"
-        }
-        if (!$process.StandardError.EndOfStream) {
-            Write-Host "STDERR: $($process.StandardError.ReadLine())"
-        }
-        Start-Sleep -Milliseconds 10
-    } while (!$process.HasExited)
+    $process.BeginOutputReadLine()
+    $process.BeginErrorReadLine()
+    [Void]$process.WaitForExit()
 
-    # read remainder
-    if (!$process.StandardOutput.EndOfStream) {
-        Write-Host "$($process.StandardOutput.ReadLine())"
-    }
-    if (!$process.StandardError.EndOfStream) {
-        Write-Host "STDERR: $($process.StandardError.ReadLine())"
-    }
+    # Unregistering events to retrieve process output.
+    Unregister-Event -SourceIdentifier $oStdOutEvent.Name
+    Unregister-Event -SourceIdentifier $oStdErrEvent.Name    
 
     if ($process.ExitCode -ne 0) {
         "ExitCode _: $($process.ExitCode)"
