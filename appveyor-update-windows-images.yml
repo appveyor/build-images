@@ -24,6 +24,7 @@ build_script:
 - ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
 - ps: . .\common.ps1
 - ps: DisplayDiskInfo
+- dir C:\Ruby193\bin
 
 # Main block
 - ps: .\install_azure_storage_emulator.ps1
