@@ -46,6 +46,9 @@ function RunProcess($command) {
         }
     }
 
+    $fileName
+    $arguments
+    
     $ProcessInfo = New-Object System.Diagnostics.ProcessStartInfo 
     $ProcessInfo.FileName = $fileName
     $ProcessInfo.RedirectStandardError = $true 
