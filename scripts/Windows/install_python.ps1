@@ -3,7 +3,7 @@
 # https://stackoverflow.com/questions/30699782/access-is-denied-while-upgrading-pip-exe-on-windows/35580525#35580525
 #
 
-$pipVersion = "19.3.1"
+$pipVersion = "20.0.2"
 
 function UpdatePythonPath($pythonPath) {
     $env:path = ($env:path -split ';' | Where-Object { -not $_.contains('\Python') }) -join ';'
@@ -309,53 +309,44 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     # Python 3.7.5
-    $python37 = (GetUninstallString 'Python 3.7.5 (32-bit)')
+    $python37 = (GetUninstallString 'Python 3.7.7 (32-bit)')
     if($python37) {
-        Write-Host 'Python 3.7.5 already installed'
+        Write-Host 'Python 3.7.7 already installed'
     } else {
-
-        UninstallPython "Python 3.7.0 (32-bit)"
-        UninstallPython "Python 3.7.1 (32-bit)"
-        UninstallPython "Python 3.7.2 (32-bit)"
-        UninstallPython "Python 3.7.3 (32-bit)"
-        UninstallPython "Python 3.7.4 (32-bit)"
+        UninstallPython "Python 3.7.5 (32-bit)"
 
         # Python 3.7.5
-        Write-Host "Installing Python 3.7.5..." -ForegroundColor Cyan
+        Write-Host "Installing Python 3.7.7..." -ForegroundColor Cyan
         Write-Host "Downloading..."
-        $exePath = "$env:TEMP\python-3.7.5.exe"
-        (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.7.5/python-3.7.5.exe', $exePath)
+        $exePath = "$env:TEMP\python-3.7.7.exe"
+        (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.7.7/python-3.7.7.exe', $exePath)
         Write-Host "Installing..."
         cmd /c start /wait $exePath /quiet TargetDir=C:\Python37 Shortcuts=0 Include_launcher=0 InstallLauncherAllUsers=0 Include_debug=1
         del $exePath
-        Write-Host "Python 3.7.5 x86 installed"
+        Write-Host "Python 3.7.7 x86 installed"
 
         C:\Python37\python --version
     }
 
-    $python37_x64 = (GetUninstallString 'Python 3.7.5 (64-bit)')
+    $python37_x64 = (GetUninstallString 'Python 3.7.7 (64-bit)')
     if($python37_x64) {
-        Write-Host 'Python 3.7.5 x64 already installed'
+        Write-Host 'Python 3.7.7 x64 already installed'
     } else {
 
-        UninstallPython "Python 3.7.0 (64-bit)"
-        UninstallPython "Python 3.7.1 (64-bit)"
-        UninstallPython "Python 3.7.2 (64-bit)"
-        UninstallPython "Python 3.7.3 (64-bit)"
-        UninstallPython "Python 3.7.4 (64-bit)"
+        UninstallPython "Python 3.7.5 (64-bit)"
 
         # Python 3.7.5
-        Write-Host "Installing Python 3.7.5 x64..." -ForegroundColor Cyan
+        Write-Host "Installing Python 3.7.7 x64..." -ForegroundColor Cyan
         Write-Host "Downloading..."
-        $exePath = "$env:TEMP\python-3.7.5-amd64.exe"
-        (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.7.5/python-3.7.5-amd64.exe', $exePath)
+        $exePath = "$env:TEMP\python-3.7.7-amd64.exe"
+        (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.7.7/python-3.7.7-amd64.exe', $exePath)
         Write-Host "Installing..."
         cmd /c start /wait $exePath /quiet TargetDir=C:\Python37-x64 Shortcuts=0 Include_launcher=1 InstallLauncherAllUsers=1 Include_debug=1
         Start-sleep -s 10
         del $exePath
         C:\Python37-x64\python --version
 
-        Write-Host "Python 3.7.5 x64 installed"
+        Write-Host "Python 3.7.7 x64 installed"
     }
 
     UpdatePip 'C:\Python37'
@@ -363,45 +354,45 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 }
 
 # Python 3.8.0
-$python38 = (GetUninstallString 'Python 3.8.0 (32-bit)')
+$python38 = (GetUninstallString 'Python 3.8.2 (32-bit)')
 if($python38) {
-    Write-Host 'Python 3.8.0 already installed'
+    Write-Host 'Python 3.8.2 already installed'
 } else {
 
-    #UninstallPython "Python 3.8.0 (32-bit)"
+    UninstallPython "Python 3.8.0 (32-bit)"
 
     # Python 3.8.0
-    Write-Host "Installing Python 3.8.0..." -ForegroundColor Cyan
+    Write-Host "Installing Python 3.8.2..." -ForegroundColor Cyan
     Write-Host "Downloading..."
-    $exePath = "$env:TEMP\python-3.8.0.exe"
-    (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.8.0/python-3.8.0.exe', $exePath)
+    $exePath = "$env:TEMP\python-3.8.2.exe"
+    (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.8.2/python-3.8.2.exe', $exePath)
     Write-Host "Installing..."
     cmd /c start /wait $exePath /quiet TargetDir=C:\Python38 Shortcuts=0 Include_launcher=0 InstallLauncherAllUsers=0 Include_debug=1
     del $exePath
-    Write-Host "Python 3.8.0 x86 installed"
+    Write-Host "Python 3.8.2 x86 installed"
 
     C:\Python38\python --version
 }
 
-$python38_x64 = (GetUninstallString 'Python 3.8.0 (64-bit)')
+$python38_x64 = (GetUninstallString 'Python 3.8.2 (64-bit)')
 if($python38_x64) {
-    Write-Host 'Python 3.8.0 x64 already installed'
+    Write-Host 'Python 3.8.2 x64 already installed'
 } else {
 
-    #UninstallPython "Python 3.8.0 (64-bit)"
+    UninstallPython "Python 3.8.0 (64-bit)"
 
     # Python 3.8.0
-    Write-Host "Installing Python 3.8.0 x64..." -ForegroundColor Cyan
+    Write-Host "Installing Python 3.8.2 x64..." -ForegroundColor Cyan
     Write-Host "Downloading..."
-    $exePath = "$env:TEMP\python-3.8.0-amd64.exe"
-    (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.8.0/python-3.8.0-amd64.exe', $exePath)
+    $exePath = "$env:TEMP\python-3.8.2-amd64.exe"
+    (New-Object Net.WebClient).DownloadFile('https://www.python.org/ftp/python/3.8.2/python-3.8.2-amd64.exe', $exePath)
     Write-Host "Installing..."
     cmd /c start /wait $exePath /quiet TargetDir=C:\Python38-x64 Shortcuts=0 Include_launcher=1 InstallLauncherAllUsers=1 Include_debug=1
     Start-sleep -s 10
     del $exePath
     C:\Python38-x64\python --version
 
-    Write-Host "Python 3.8.0 x64 installed"
+    Write-Host "Python 3.8.2 x64 installed"
 }
 
 UpdatePip 'C:\Python38'
