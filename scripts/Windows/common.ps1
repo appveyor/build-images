@@ -31,6 +31,10 @@ function RunProcess($command) {
     # find tool in path
     if (-not (Test-Path $fileName)) {
         foreach ($pathPart in $($env:PATH).Split(';')) {
+            $searchPath = [IO.Path]::Combine($pathPart, "$fileName.bat")
+            if (Test-Path $searchPath) {
+                $fileName = $searchPath; break;
+            }            
             $searchPath = [IO.Path]::Combine($pathPart, "$fileName.cmd")
             if (Test-Path $searchPath) {
                 $fileName = $searchPath; break;
@@ -45,9 +49,6 @@ function RunProcess($command) {
             }
         }
     }
-
-    $fileName
-    $arguments
 
     $psi = New-Object System.Diagnostics.ProcessStartInfo 
     $psi.FileName = $fileName
