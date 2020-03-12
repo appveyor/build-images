@@ -98,7 +98,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         @{
             "version" = "Ruby 2.5.7-1 (x64)"
             "install_path" = "C:\Ruby25-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.5-1/rubyinstaller-2.5.7-1-x64.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.7-1/rubyinstaller-2.5.7-1-x64.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
