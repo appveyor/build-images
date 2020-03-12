@@ -1,10 +1,10 @@
 ﻿Write-Host "Installing MSYS2..." -ForegroundColor Cyan
 
-Set-Content -Value "Write-Host 'Sleep then kill gpg-agent.exe'; sleep 300; Stop-Process -name gpg-agent -Force" -Path .\kill-gpg-agent.ps1
+Set-Content -Value "Write-Host 'Sleep then kill gpg-agent.exe'; Start-Sleep -s 300; Stop-Process -name gpg-agent -Force" -Path .\kill-gpg-agent.ps1
 Start-Process powershell.exe -ArgumentList .\kill-gpg-agent.ps1
 
 if(Test-path C:\msys64) {
-    del C:\msys64 -Recurse -Force
+    Remove-Item C:\msys64 -Recurse -Force
 }
 
 # download installer
@@ -18,8 +18,8 @@ Write-Host "Untaring installation package..."
 
 Write-Host "Unzipping installation package..."
 7z x $tarPath -y -oC:\ | Out-Null
-del $zipPath
-del $tarPath
+Remove-Item $zipPath
+Remove-Item $tarPath
 
 function bash($command) {
     Write-Host $command -NoNewline
