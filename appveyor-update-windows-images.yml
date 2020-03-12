@@ -1,0 +1,40 @@
+environment:
+  matrix:
+  - job_name: VS 2017 on GCE us-central1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-vs2017-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: vs2017-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+
+  # - job_name: VS 2019 on Azure West US
+  #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-azure-westus
+  #   APPVEYOR_BAKE_IMAGE: vs2019-azure-westus
+
+  # - job_name: VS 2019 on Hyper-V
+  #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
+  #   APPVEYOR_BAKE_IMAGE: vs2019
+
+  base_dir: src\build-images-%APPVEYOR_REPO_BRANCH%\scripts\Windows
+
+init:
+- appveyor version
+- ps: $ErrorActionPreference = 'Stop'
+- ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
+
+build_script:
+- cd %base_dir%
+- ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
+
+# Main block
+- ps: .\install_azure_storage_emulator.ps1
+
+# Restart VM
+- ps: Start-Sleep -s 5
+- ps: Restart-Computer
+- ps: Start-Sleep -s 5
+
+- cd %base_dir%
+- appveyor version
+- ps: .\disable_windows_background_services.ps1
+- ps: .\enforce_windows_firewall.ps1
+- ps: .\cleanup_windows.ps1
+
+test: off
