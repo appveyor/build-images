@@ -27,6 +27,7 @@ function RunProcess($command) {
         $fileName = $command.substring(0, $idx)
         $arguments = $command.substring($idx + 1)
     }
+
     $ProcessInfo = New-Object System.Diagnostics.ProcessStartInfo 
     $ProcessInfo.FileName = $fileName
     $ProcessInfo.RedirectStandardError = $true 
