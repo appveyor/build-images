@@ -18,9 +18,6 @@ Write-Host "Unzipping installation package..."
 Remove-Item $zipPath
 Remove-Item $tarPath
 
-Set-Content -Value "Write-Host 'Sleep then kill gpg-agent.exe'; Start-Sleep -s 300; Stop-Process -name gpg-agent -Force" -Path .\kill-gpg-agent.ps1
-Start-Process powershell.exe -ArgumentList .\kill-gpg-agent.ps1
-
 function bash($command) {
     Write-Host $command -NoNewline
     cmd /c start /wait C:\msys64\usr\bin\sh.exe --login -c $command
@@ -34,7 +31,7 @@ function bash($command) {
 
 # update core packages
 bash 'pacman -Syuu --needed --noconfirm --ask=20'
-bash 'pacman -Syu --noconfirm'
+bash "pacman -Syu --noconfirm && ps -ef | grep 'gpg-agent' | grep -v grep | awk '{print `$2}' | xargs -r kill -9"
 bash 'pacman -Syu --noconfirm'
 
 # install packages
@@ -54,8 +51,6 @@ cmd /c assoc .sh=sh_auto_file
 Write-Host "Compacting C:\msys64..." -NoNewline
 compact /c /i /s:C:\msys64 | Out-Null
 Write-Host "OK" -ForegroundColor Green
-
-Remove-Item .\kill-gpg-agent.ps1 -Force -ErrorAction Ignore
 
 Write-Host "MSYS2 installed" -ForegroundColor Green
 
