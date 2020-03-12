@@ -99,8 +99,6 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         python $pipPath26
     }
 
-    UpdatePip 'C:\Python26'
-    UpdatePip 'C:\Python26-x64'
 }
 
 # Python 2.7.17
