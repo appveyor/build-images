@@ -26,7 +26,9 @@ build_script:
 - ps: . .\common.ps1
 - ps: DisplayDiskInfo
 
-- ps: .\install_ssis_vs2019.ps1
+- ps: .\install_edge_browser.ps1
+- ps: .\install_chrome_browser.ps1
+- ps: .\install_firefox_browser.ps1
 
 # Service Fabric
 - ps: .\uninstall_service_fabric.ps1
