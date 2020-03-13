@@ -34,6 +34,11 @@ build_script:
 - cd %base_dir%
 - ps: .\install_service_fabric.ps1
 
+- ps: Start-Sleep -s 5
+- ps: Restart-Computer
+- ps: Start-Sleep -s 5
+- cd %base_dir%
+
 - ps: |
     . "$env:ProgramFiles\Microsoft SDKs\Service Fabric\ClusterSetup\CleanCluster.ps1"
     . "$env:ProgramFiles\Microsoft SDKs\Service Fabric\ClusterSetup\DevClusterSetup.ps1"
