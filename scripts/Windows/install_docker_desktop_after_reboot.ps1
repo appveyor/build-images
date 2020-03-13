@@ -59,7 +59,10 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		
 		if ($isolation) {
 			Write-Host "Pulling and running '$serverCoreTag' images in '$isolation' mode"
+			docker pull mcr.microsoft.com/windows/servercore:$serverCoreTag
 			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
+
+			docker pull mcr.microsoft.com/windows/nanoserver:$nanoServerTag
 			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
 		}
 	}
@@ -79,12 +82,18 @@ if (Test-Path $configPath) {
 Write-Host "Switching Docker to Linux mode..."
 Switch-DockerLinux
 docker version
+
+docker pull busybox
 docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
+
+docker pull alpine
 docker run --rm alpine echo hello_world
 
 Write-Host "Switching Docker to Windows mode..."
 Switch-DockerWindows
 docker version
+
+docker pull busybox
 docker run --rm -v "$env:USERPROFILE`:/user-profile" busybox ls /user-profile
 
 if (-not $env:INSTALL_LATEST_ONLY) {
