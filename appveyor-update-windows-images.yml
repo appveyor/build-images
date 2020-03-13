@@ -29,6 +29,8 @@ build_script:
 - ps: .\install_edge_browser.ps1
 - ps: .\install_chrome_browser.ps1
 - ps: .\install_firefox_browser.ps1
+- ps: .\install_selenium_drivers.ps1
+- ps: dir C:\Tools\WebDriver
 
 # Service Fabric
 - ps: .\uninstall_service_fabric.ps1
