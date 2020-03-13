@@ -116,6 +116,7 @@ Start-ProcessWithOutput "go version"
 # test go installations
 
 for($i = 0; $i -lt $go_versions.Count; $i++) {
-    Start-ProcessWithOutput "C:\$($go_versions[$i].folder)\bin\go.exe version"
-    Start-ProcessWithOutput "C:\$($go_versions[$i].folder)-x86\bin\go.exe version"
+    Write-Host "$($go_versions[$i].version)" -ForegroundColor Cyan
+    Start-ProcessWithOutput "C:\$($go_versions[$i].folder)\bin\go.exe version" -IgnoreExitCode
+    Start-ProcessWithOutput "C:\$($go_versions[$i].folder)-x86\bin\go.exe version" -IgnoreExitCode
 }
