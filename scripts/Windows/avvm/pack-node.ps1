@@ -16,20 +16,20 @@ $node_versions = @(
 )
 
 foreach($node_version in $node_versions) {
-    $x86path = "$avvmRoot\$node_version\x86\nodejs\node"
+    $x86path = "$avvmRoot\$node_version\x86\nodejs\node.exe"
     if (Test-Path $x86path){
-        $x86 = $(& "$x86path --version")
+        $x86 = $(& "$x86path" --version)
         if ($x86 -eq "v$node_version") { Write-Host "$node_version x86 good" -ForegroundColor Green } else { Write-Host "$node_version x86 wrong" -ForegroundColor Red }
     } else {
-        throw "Node $node_version x86 not found"
+        throw "$x86path not found"
     }
 
-    $x64path = "$avvmRoot\$node_version\x64\nodejs\node"
+    $x64path = "$avvmRoot\$node_version\x64\nodejs\node.exe"
     if (Test-Path $x64path){
-        $x64 = $(& "$x64path --version")
+        $x64 = $(& "$x64path" --version)
         if ($x64 -eq "v$node_version") { Write-Host "$node_version x64 good" -ForegroundColor Green } else { Write-Host "$node_version x64 wrong" -ForegroundColor Red }
     } else {
-        throw "Node $node_version x64 not found"
+        throw "$x64path not found"
     }    
 }
 

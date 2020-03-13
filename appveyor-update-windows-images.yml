@@ -54,6 +54,7 @@ build_script:
 - ps: .\install_msys64.ps1
 - ps: if ($env:VS_VERSION -ne '2013') { .\install_azure_storage_emulator.ps1 }
 - ps: .\install_ruby.ps1
+- ps: .\install_nodejs.ps1
 
 # Restart VM
 - ps: Start-Sleep -s 5; Restart-Computer
