@@ -16,7 +16,7 @@ $zipPath = "$env:TEMP\ninja-win.zip"
 (New-Object Net.WebClient).DownloadFile($ninjaUrl, $zipPath)
 
 Write-Host "Unpacking Ninja..."
-7z x $zipPath -o"`"$env:ProgramFiles\Meson`"" | Out-Null
+7z x $zipPath -aoa -o"`"$env:ProgramFiles\Meson`"" | Out-Null
 Remove-Item $zipPath
 
 Write-Host "Ninja version:"
