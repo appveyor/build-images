@@ -27,6 +27,7 @@ build_script:
 - ps: DisplayDiskInfo
 
 # Main block
+- ps: .\install_meson_and_ninja.ps1
 - ps: .\install_miniconda.ps1
 - ps: .\install_python.ps1
 - ps: .\install_msys64.ps1
