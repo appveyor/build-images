@@ -18,21 +18,19 @@ function GetUninstallString($productName) {
         | Select-Object UninstallString).UninstallString
 }
 
-Write-Host "Uninstalling Service Fabric SDK..."
-
 $sdkUninstallString = GetUninstallString "Microsoft Azure Service Fabric SDK"
 if ($sdkUninstallString) {
+    Write-Host "Uninstalling Service Fabric SDK..."
     $uninstallCommand = $sdkUninstallString.replace('MsiExec.exe /I{', '/x{').replace('MsiExec.exe /X{', '/x{')
     cmd /c start /wait msiexec.exe $uninstallCommand /quiet
 } else {
     Write-Host "Service Fabric SDK not found" -ForegroundColor Yellow
 }
 
-Write-Host "Uninstalling Service Fabric Runtime..."
-
 $runtimeUninstallString = GetUninstallString "Microsoft Azure Service Fabric"
 if ($runtimeUninstallString) {
-     Start-ProcessWithOutput $runtimeUninstallString
+    Write-Host "Uninstalling Service Fabric Runtime..."
+    Start-ProcessWithOutput $runtimeUninstallString
 } else {
     Write-Host "Service Fabric Runtime not found" -ForegroundColor Yellow
 }
