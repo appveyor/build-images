@@ -258,6 +258,7 @@
             "type": "powershell",
             "scripts": [
                 "{{ template_dir }}/scripts/Windows/install_qt_fast.ps1",
+                "{{ template_dir }}/scripts/Windows/install_service_fabric.ps1",
                 "{{ template_dir }}/scripts/Windows/install_nodejs_latest.ps1",
                 "{{ template_dir }}/scripts/Windows/install_yarn.ps1",
                 "{{ template_dir }}/scripts/Windows/install_ruby.ps1",
