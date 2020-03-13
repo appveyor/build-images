@@ -65,11 +65,12 @@ function InstallPythonMSI($version, $platform, $targetPath) {
         $urlPlatform = ".amd64"
     }
 
-    Write-Host "Installing Python $version to $targetDir..." -ForegroundColor Cyan
+    Write-Host "Installing Python $version $platform to $($targetDir)..." -ForegroundColor Cyan
 
-    Write-Host "Downloading..."
+    $downloadUrl = "https://www.python.org/ftp/python/$version/python-$version$urlPlatform.msi"
+    Write-Host "Downloading $($downloadUrl)..."
     $msiPath = "$env:TEMP\python-$version.msi"
-    (New-Object Net.WebClient).DownloadFile("https://www.python.org/ftp/python/$version/python-$version$urlPlatform.msi", $msiPath)
+    (New-Object Net.WebClient).DownloadFile($downloadUrl, $msiPath)
 
     Write-Host "Installing..."
     cmd /c start /wait msiexec /i "$msiPath" /passive ALLUSERS=1 TARGETDIR="$targetPath"
@@ -86,11 +87,12 @@ function InstallPythonEXE($version, $platform, $targetPath) {
         $urlPlatform = "-amd64"
     }
 
-    Write-Host "Installing Python $version to $targetDir..." -ForegroundColor Cyan
+    Write-Host "Installing Python $version $platform to $($targetDir)..." -ForegroundColor Cyan
 
-    Write-Host "Downloading..."
+    $downloadUrl = "https://www.python.org/ftp/python/$version/python-$version$urlPlatform.exe"
+    Write-Host "Downloading $($downloadUrl)..."
     $exePath = "$env:TEMP\python-$version.exe"
-    (New-Object Net.WebClient).DownloadFile("https://www.python.org/ftp/python/3.6.8/python-$version$urlPlatform.exe", $exePath)
+    (New-Object Net.WebClient).DownloadFile($downloadUrl, $exePath)
 
     Write-Host "Installing..."
     cmd /c start /wait $exePath /quiet TargetDir="$targetPath" Shortcuts=0 Include_launcher=1 InstallLauncherAllUsers=1 Include_debug=1
