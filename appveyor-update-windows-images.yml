@@ -28,18 +28,19 @@ build_script:
 
 # Service Fabric
 - ps: .\uninstall_service_fabric.ps1
-- ps: Start-Sleep -s 5
-- ps: Restart-Computer
+
+- ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
 - cd %base_dir%
+
 - ps: .\install_service_fabric.ps1
 
-- ps: Start-Sleep -s 5
-- ps: Restart-Computer
+- ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
 - cd %base_dir%
 
 - ps: |
+    iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/fix-service-fabric-docker.ps1'))
     . "$env:ProgramFiles\Microsoft SDKs\Service Fabric\ClusterSetup\CleanCluster.ps1"
     . "$env:ProgramFiles\Microsoft SDKs\Service Fabric\ClusterSetup\DevClusterSetup.ps1"
 
@@ -55,11 +56,10 @@ build_script:
 - ps: .\install_ruby.ps1
 
 # Restart VM
+- ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
-- ps: Restart-Computer
-- ps: Start-Sleep -s 5
-
 - cd %base_dir%
+
 - appveyor version
 - ps: .\disable_windows_background_services.ps1
 - ps: .\enforce_windows_firewall.ps1
