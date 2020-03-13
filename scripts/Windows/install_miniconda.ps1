@@ -28,6 +28,9 @@ function UninstallMiniconda($condaName) {
     }
 }
 
+UninstallMiniconda "Python 2.7.15 (Miniconda2 4.5.11 32-bit)"
+UninstallMiniconda "Python 2.7.15 (Miniconda2 4.5.11 64-bit)"
+
 UninstallMiniconda "Miniconda2 4.7.12 (Python 2.7.16 32-bit)"
 UninstallMiniconda "Miniconda2 4.7.12 (Python 2.7.16 64-bit)"
 
@@ -39,6 +42,9 @@ UninstallMiniconda "Python 3.5.2 (Miniconda3 4.2.12 64-bit)"
 
 UninstallMiniconda "Python 3.6.5 (Miniconda3 4.5.4 32-bit)"
 UninstallMiniconda "Python 3.6.5 (Miniconda3 4.5.4 64-bit)"
+
+UninstallMiniconda "Python 3.7.0 (Miniconda3 4.5.11 32-bit)"
+UninstallMiniconda "Python 3.7.0 (Miniconda3 4.5.11 64-bit)"
 
 UninstallMiniconda "Miniconda3 4.7.12 (Python 3.7.4 32-bit)"
 UninstallMiniconda "Miniconda3 4.7.12 (Python 3.7.4 64-bit)"
