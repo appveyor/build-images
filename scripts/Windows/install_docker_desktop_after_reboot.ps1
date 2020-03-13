@@ -93,6 +93,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 }
 PullRunDockerImages 17763 'ltsc2019' '1809'
 
+docker pull mcr.microsoft.com/dotnet/framework/aspnet:4.8
+
 Write-Host "Disable SMB share for disk C:"
 Remove-SmbShare -Name C -ErrorAction SilentlyContinue -Force
 

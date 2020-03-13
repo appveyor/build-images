@@ -1,8 +1,19 @@
 environment:
   matrix:
-  - job_name: VS 2017 on GCE us-central1
-    APPVEYOR_BUILD_WORKER_IMAGE: base-vs2017-gce-us-central1
-    APPVEYOR_BAKE_IMAGE: vs2017-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+  - job_name: VS 2013 on GCE us-central1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-vs2013-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: vs2013-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+    VS_VERSION: 2013
+
+  # - job_name: VS 2015 on GCE us-central1
+  #   APPVEYOR_BUILD_WORKER_IMAGE: base-vs2015-gce-us-central1
+  #   APPVEYOR_BAKE_IMAGE: vs2015-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+  #   VS_VERSION: 2015
+
+  # - job_name: VS 2017 on GCE us-central1
+  #   APPVEYOR_BUILD_WORKER_IMAGE: base-vs2017-gce-us-central1
+  #   APPVEYOR_BAKE_IMAGE: vs2017-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+  #   VS_VERSION: 2017
 
   # - job_name: VS 2019 on Azure West US
   #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-azure-westus
@@ -27,31 +38,21 @@ build_script:
 - ps: DisplayDiskInfo
 
 - ps: .\install_mingw-w64.ps1
-- ps: dir "$env:systemdrive\mingw-w64"
 
-- ps: .\install_edge_browser.ps1
-- ps: .\install_chrome_browser.ps1
-- ps: .\install_firefox_browser.ps1
-- ps: .\install_selenium_drivers.ps1
-
-# Service Fabric
-- ps: .\uninstall_service_fabric.ps1
-
-- ps: Start-Sleep -s 5; Restart-Computer
-- ps: Start-Sleep -s 5
-- cd %base_dir%
-
-- ps: .\install_service_fabric.ps1
+- ps: if ($env:VS_VERSION -ne '2013') { .\install_edge_browser.ps1 }
+- ps: if ($env:VS_VERSION -ne '2013') { .\install_chrome_browser.ps1 }
+- ps: if ($env:VS_VERSION -ne '2013') { .\install_firefox_browser.ps1 }
+- ps: if ($env:VS_VERSION -ne '2013') { .\install_selenium_drivers.ps1 }
 
 # Main block
 - ps: .\add_ssh_known_hosts.ps1
-- ps: .\install_powershell_core.ps1
+- ps: if ($env:VS_VERSION -ne '2013') { .\install_powershell_core.ps1 }
 - ps: .\install_meson_and_ninja.ps1
 - ps: .\install_miniconda.ps1
 - ps: .\install_go.ps1
 - ps: .\install_python.ps1
 - ps: .\install_msys64.ps1
-- ps: .\install_azure_storage_emulator.ps1
+- ps: if ($env:VS_VERSION -ne '2013') { .\install_azure_storage_emulator.ps1 }
 - ps: .\install_ruby.ps1
 
 # Restart VM
