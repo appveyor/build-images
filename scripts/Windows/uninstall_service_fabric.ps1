@@ -1,5 +1,12 @@
 ﻿. "$PSScriptRoot\common.ps1"
 
+if (-not ((test-path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community") -or
+    (test-path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community")))
+{
+    Write-Host "Service Fabric requires VS 2017 or VS 2019" -ForegroundColor Yellow
+    return
+}
+
 Write-Host "Uninstalling Service Fabric" -ForegroundColor Cyan
 
 function GetUninstallString($productName) {

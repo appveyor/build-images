@@ -35,8 +35,8 @@ build_script:
 - ps: .\install_service_fabric.ps1
 
 - ps: |
-    . "$ENV:ProgramFiles\Microsoft SDKs\Service Fabric\ClusterSetup\CleanCluster.ps1"
-    . "$ENV:ProgramFiles\Microsoft SDKs\Service Fabric\ClusterSetup\DevClusterSetup.ps1"
+    . "$env:ProgramFiles\Microsoft SDKs\Service Fabric\ClusterSetup\CleanCluster.ps1"
+    . "$env:ProgramFiles\Microsoft SDKs\Service Fabric\ClusterSetup\DevClusterSetup.ps1"
 
 # Main block
 - ps: .\add_ssh_known_hosts.ps1
