@@ -1,4 +1,6 @@
-﻿Write-Host "Installing FireFox..." -ForegroundColor Cyan
+﻿. "$PSScriptRoot\common.ps1"
+
+Write-Host "Installing FireFox..." -ForegroundColor Cyan
 
 $arch = 'win64'
 if (test-path "${env:ProgramFiles(x86)}\Mozilla Firefox") {
@@ -14,5 +16,7 @@ $exePath = "$env:TEMP\firefox-installer.exe"
 Write-Host "Installing..."
 cmd /c start /wait $exePath -ms
 Remove-Item $exePath
+
+GetProductVersion "Firefox"
 
 Write-Host "Installed FireFox" -ForegroundColor Green

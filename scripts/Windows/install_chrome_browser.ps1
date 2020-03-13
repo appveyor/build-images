@@ -1,4 +1,6 @@
-﻿Write-Host "Installing Chrome..." -ForegroundColor Cyan
+﻿. "$PSScriptRoot\common.ps1"
+
+Write-Host "Installing Chrome..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
 $msiPath = "$env:TEMP\googlechromestandaloneenterprise64.msi"
@@ -13,5 +15,7 @@ Set-Service gupdatem -StartupType Manual -ErrorAction SilentlyContinue
 
 Unregister-ScheduledTask -TaskName GoogleUpdateTaskMachineCore -Confirm:$false -ErrorAction SilentlyContinue
 Unregister-ScheduledTask -TaskName GoogleUpdateTaskMachineUA -Confirm:$false -ErrorAction SilentlyContinue
+
+GetProductVersion "Chrome"
 
 Write-Host "Installed Chrome" -ForegroundColor Green
