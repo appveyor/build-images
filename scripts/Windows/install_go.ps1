@@ -1,14 +1,20 @@
-﻿$go_versions = @(
+﻿. "$PSScriptRoot\common.ps1"
+
+$go_versions = @(
     @{
-        "version" = "1.13.3"
-        "folder" = "go113"
+        "version" = "1.14"
+        "folder" = "go114"
     }
 )
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     $go_versions = $go_versions + @(
         @{
-            "version" = "1.12.12"
+            "version" = "1.13.8"
+            "folder" = "go113"
+        }
+        @{
+            "version" = "1.12.17"
             "folder" = "go112"
         }
         @{
@@ -62,7 +68,7 @@ function InstallGo ($go_version, $folder_name) {
     
     Write-Host "Downloading..."
     $goDistPath = "$env:TEMP\go$go_version.windows-386.zip"
-    (New-Object Net.WebClient).DownloadFile("https://storage.googleapis.com/golang/go$go_version.windows-386.zip", $goDistPath)
+    (New-Object Net.WebClient).DownloadFile("https://dl.google.com/go/go$go_version.windows-386.zip", $goDistPath)
     
     Write-Host "Unpacking..."
     7z x $goDistPath -o"$destDir-temp-x86" | Out-Null
@@ -74,7 +80,7 @@ function InstallGo ($go_version, $folder_name) {
     
     Write-Host "Downloading..."
     $goDistPath = "$env:TEMP\go$go_version.windows-amd64.zip"
-    (New-Object Net.WebClient).DownloadFile("https://storage.googleapis.com/golang/go$go_version.windows-amd64.zip", $goDistPath)
+    (New-Object Net.WebClient).DownloadFile("https://dl.google.com/go/go$go_version.windows-amd64.zip", $goDistPath)
     
     Write-Host "Unpacking..."
     7z x $goDistPath -o"$destDir-temp-x64" | Out-Null
@@ -105,16 +111,12 @@ Add-SessionPath C:\go\bin
 # set GOROOT variable
 [Environment]::SetEnvironmentVariable("GOROOT", 'C:\go', "Machine")
 
-go version
+Start-ProcessWithOutput "go version"
 
 # test go installations
 
-C:\go\bin\go.exe version
-C:\go-x86\bin\go.exe version
-
-<#
 for($i = 0; $i -lt $go_versions.Count; $i++) {
-    & "C:\$($go_versions[$i].folder)\bin\go.exe" version
-    & "C:\$($go_versions[$i].folder)-x86\bin\go.exe" version
+    Write-Host "$($go_versions[$i].version)" -ForegroundColor Cyan
+    Start-ProcessWithOutput "C:\$($go_versions[$i].folder)\bin\go.exe version" -IgnoreExitCode
+    Start-ProcessWithOutput "C:\$($go_versions[$i].folder)-x86\bin\go.exe version" -IgnoreExitCode
 }
-#>
