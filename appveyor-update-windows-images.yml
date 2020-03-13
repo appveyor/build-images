@@ -26,11 +26,13 @@ build_script:
 - ps: . .\common.ps1
 - ps: DisplayDiskInfo
 
+- ps: .\install_mingw-w64.ps1
+- ps: dir "$env:systemdrive\mingw-w64"
+
 - ps: .\install_edge_browser.ps1
 - ps: .\install_chrome_browser.ps1
 - ps: .\install_firefox_browser.ps1
 - ps: .\install_selenium_drivers.ps1
-- ps: dir C:\Tools\WebDriver
 
 # Service Fabric
 - ps: .\uninstall_service_fabric.ps1
