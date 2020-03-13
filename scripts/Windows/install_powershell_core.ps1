@@ -5,12 +5,12 @@ Write-Host "=========================="
 
 Write-Host "Downloading..."
 $msiPath = "$env:TEMP\PowerShell-Core.msi"
-(New-Object Net.WebClient).DownloadFile('https://github.com/PowerShell/PowerShell/releases/download/v6.2.3/PowerShell-6.2.3-win-x64.msi', $msiPath)
+(New-Object Net.WebClient).DownloadFile('https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/PowerShell-7.0.0-win-x64.msi', $msiPath)
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i $msiPath /quiet REGISTER_MANIFEST=1
 Remove-Item $msiPath
-Add-SessionPath "$env:ProgramFiles\PowerShell\6"
+Add-SessionPath "$env:ProgramFiles\PowerShell\7"
 
 # Make AppVeyor cmdlets visible in external PowerShell Core sessions
 $appveyorPath = "$env:ProgramFiles\AppVeyor\BuildAgent"

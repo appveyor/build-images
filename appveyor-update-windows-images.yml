@@ -28,6 +28,7 @@ build_script:
 
 # Main block
 - ps: .\add_ssh_known_hosts.ps1
+- ps: .\install_powershell_core.ps1
 - ps: .\install_go.ps1
 - ps: .\install_meson_and_ninja.ps1
 - ps: .\install_miniconda.ps1
