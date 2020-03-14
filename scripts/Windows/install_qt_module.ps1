@@ -155,7 +155,18 @@ function InstallComponentById {
 
         Write-Host "$($comp.Name)/$fileName - Downloading..." -NoNewline
         $tempFileName = "$tempDir\$fileName"
-        (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
+
+        try {
+            (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
+        } catch {
+            Write-Host "Error downloading $($downloadUrl): $($_.Exception.Message)" -ForegroundColor Red
+
+            # retrying
+            Write-Host "Re-trying to download $($downloadUrl) in 5 seconds"
+            Start-Sleep -s 5
+            (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
+        }
+
         $downloadedSha1 = (Get-FileHash -Algorithm SHA1 $tempFileName).Hash.ToLowerInvariant()
 
         if ($sha1 -ne $downloadedSha1) {
