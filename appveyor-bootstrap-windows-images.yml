@@ -2,15 +2,15 @@ environment:
   matrix:
   # - job_name: VS 2019 on GCE us-central1
   #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-gce-us-central1
-  #   APPVEYOR_BAKE_IMAGE: vs2019-gce-us-central1
+  #   APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-gce-us-central1
 
   # - job_name: VS 2019 on Azure West US
   #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-azure-westus
-  #   APPVEYOR_BAKE_IMAGE: vs2019-azure-westus
+  #   APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-azure-westus
 
   - job_name: VS 2019 on Hyper-V
     APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
-    APPVEYOR_BAKE_IMAGE: vs2019
+    APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
 
   base_dir: src\build-images-%APPVEYOR_REPO_BRANCH%\scripts\Windows
 
@@ -81,6 +81,87 @@ build_script:
 - ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
 - cd %base_dir%
+
+- ps: .\install_vs2019.ps1
+- ps: .\update_msbuild_path.ps1
+- ps: .\install_xunit_192.ps1
+- ps: .\install_xunit_20.ps1
+- ps: .\install_nunit.ps1
+- ps: .\install_nunit3.ps1
+- ps: .\install_vstest_console_logger.ps1
+
+- ps: Copy-Item .\install_qt_module.ps1 "$env:TEMP\install_qt_module.ps1"
+- ps: .\install_qt_fast.ps1
+- ps: .\install_service_fabric.ps1
+- ps: .\install_ssis_vs2019.ps1
+- ps: .\install_nodejs_latest.ps1
+- ps: .\install_yarn.ps1
+- ps: .\install_ruby.ps1
+- ps: .\install_miniconda.ps1
+- ps: .\install_python.ps1
+- ps: .\install_go.ps1
+- ps: .\install_rust.ps1
+- ps: .\install_openssl.ps1
+- ps: .\install_cmake.ps1
+- ps: .\install_postgres96.ps1
+- ps: .\install_postgres10.ps1
+- ps: .\install_postgres11.ps1
+- ps: .\install_postgres12.ps1
+- ps: .\install_mysql.ps1
+- ps: .\install_aws_cli.ps1
+- ps: .\install_aws_powershell.ps1
+- ps: .\install_azure_cli.ps1
+- ps: .\install_azure_cosmosdb_emulator.ps1
+- ps: .\install_azure_powershell.ps1
+- ps: .\install_gcloud_sdk.ps1
+- ps: .\install_erlang.ps1
+- ps: .\install_mongo.ps1
+- ps: .\install_winsdk_81.ps1
+- ps: .\install_wdk_1809.ps1
+- ps: .\install_wdk_1903.ps1
+- ps: .\install_dxsdk.ps1
+- ps: .\install_vdproj_vs2019.ps1
+- ps: .\install_wix311.ps1
+- ps: .\install_wix_toolset_vs2019.ps1
+- ps: .\install_chrome_browser.ps1
+- ps: .\install_firefox_browser.ps1
+- ps: .\install_edge_browser.ps1
+- ps: .\install_selenium_drivers.ps1
+- ps: .\install_llvm.ps1
+- ps: .\install_llvm_extension_vs2019.ps1
+- ps: .\install_vcpkg.ps1
+- ps: .\install_innosetup.ps1
+- ps: .\install_coverity.ps1
+- ps: .\install_iis_win2019.ps1
+- ps: .\install_nsis.ps1
+- ps: .\install_octo.ps1
+- ps: .\install_meson_and_ninja.ps1
+- ps: .\install_java_7_8.ps1
+- ps: .\install_jdk11.ps1
+- ps: .\install_jdk12.ps1
+- ps: .\install_jdk13.ps1
+- ps: .\install_maven.ps1
+- ps: .\install_gitversion.ps1
+- ps: .\install_android_sdk.ps1
+- ps: .\install_msys64.ps1
+- ps: .\install_cygwin.ps1
+- ps: .\install_mingw-w64.ps1
+- ps: .\install_boost_1.71.0_vs2019.ps1
+
+- ps: .\install_sql_server_2017.ps1
+
+# Restart VM
+- ps: Start-Sleep -s 5; Restart-Computer
+- ps: Start-Sleep -s 5
+- cd %base_dir%
+
+- ps: .\sql_server_2017_after_reboot.ps1
+
+- ps: .\install_dotnet_core_sdks.ps1
+- ps: .\install_dotnet_devpacks.ps1
+- ps: .\install_dotnet_runtimes.ps1
+
+- ps: .\optimize_dotnet_runtime.ps1
 
 - appveyor version
 - ps: .\disable_windows_background_services.ps1

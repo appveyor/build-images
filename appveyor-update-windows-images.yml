@@ -37,8 +37,8 @@ build_script:
 - ps: . .\common.ps1
 - ps: DisplayDiskInfo
 
+- ps: .\install_nuget.ps1
 - ps: .\install_meson_and_ninja.ps1
-- ps: dir
 - ps: if ($env:VS_VERSION -ne '2013') { .\install_vcpkg.ps1 }
 - ps: .\install_cmake.ps1
 - ps: .\install_rust.ps1
