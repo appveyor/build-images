@@ -1,3 +1,5 @@
+$ErrorActionPreference = 'Continue'
+
 if (test-path "$env:SystemDrive\Tools\vcpkg") {
   Write-Host "vcpkg is already installed. Updating..." -ForegroundColor Cyan
   vcpkg version | findstr /psi "version"
@@ -19,3 +21,5 @@ else {
 }
 Pop-Location
 vcpkg version | findstr /psi "version"
+
+$ErrorActionPreference = 'Stop'
