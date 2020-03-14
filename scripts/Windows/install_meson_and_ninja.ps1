@@ -11,7 +11,6 @@ Write-Host "Installing..."
 cmd /c start /wait msiexec /i "$msiPath" /quiet
 Remove-Item $msiPath
 
-<#
 Write-Host "Downloading Ninja..."
 $zipPath = "$env:TEMP\ninja-win.zip"
 (New-Object Net.WebClient).DownloadFile($ninjaUrl, $zipPath)
@@ -20,6 +19,7 @@ Write-Host "Unpacking Ninja..."
 7z x $zipPath -aoa -o"`"$env:ProgramFiles\Meson`"" | Out-Null
 Remove-Item $zipPath
 
+<#
 Write-Host "Ninja version:"
 & "$env:ProgramFiles\Meson\ninja.exe" --version
 
