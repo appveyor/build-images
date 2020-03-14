@@ -19,10 +19,10 @@ Write-Host "Unpacking Ninja..."
 7z x $zipPath -aoa -o"`"$env:ProgramFiles\Meson`"" | Out-Null
 Remove-Item $zipPath
 
-<#
 Write-Host "Ninja version:"
 & "$env:ProgramFiles\Meson\ninja.exe" --version
 
+<#
 Write-Host "Meson version:"
 & "$env:ProgramFiles\Meson\meson.exe" --version
 #>
