@@ -22,9 +22,7 @@ Remove-Item $zipPath
 Write-Host "Ninja version:"
 & "$env:ProgramFiles\Meson\ninja.exe" --version
 
-<#
 Write-Host "Meson version:"
 & "$env:ProgramFiles\Meson\meson.exe" --version
-#>
 
 Write-Host "Installed Meson and Ninja" -ForegroundColor Green
