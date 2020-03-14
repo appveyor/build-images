@@ -1,15 +1,13 @@
 ﻿$nugetVersion = '5.4.0'
 $nugetUrl = "https://dist.nuget.org/win-x86-commandline/v$nugetVersion/nuget.exe"
 
-[System.Net.ServicePointManager]::SecurityProtocol = "Tls12"
-
 $nugetDir = "$env:SystemDrive\Tools\NuGet3"
 
 if (-not (Test-Path $nugetDir)) {
-    $nugetPath = "$env:SystemDrive\Tools\NuGet"
-    if (-not (Test-Path $nugetPath)) {
+    $nugetDir = "$env:SystemDrive\Tools\NuGet"
+    if (-not (Test-Path $nugetDir)) {
         Write-Host "Installing NuGet into $nugetDir"
-        New-Item $nugetPath -ItemType Directory -Force | Out-Null
+        New-Item $nugetDir -ItemType Directory -Force | Out-Null
     } else {
         Write-Host "Updating NuGet in $nugetDir"
     }
