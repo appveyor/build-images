@@ -37,6 +37,7 @@ build_script:
 - ps: . .\common.ps1
 - ps: DisplayDiskInfo
 
+- ps: .\install_rust.ps1
 - ps: .\install_python.ps1
 - ps: .\install_mingw-w64.ps1
 

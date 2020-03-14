@@ -1,7 +1,7 @@
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # What Windows is that?
-$osVer = [System.Environment]::OSVersion.Version
+$osVerBuild = (Get-CimInstance Win32_OperatingSystem).BuildNumber
 
 # Major  Minor  Build  Revision
 # -----  -----  -----  --------
@@ -15,13 +15,13 @@ $osVer = [System.Environment]::OSVersion.Version
 $hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
 $hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
 function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
-	if ($osVer.Build -ge $minOsBuild) {
+	if ($osVerBuild -ge $minOsBuild) {
 		# Windows Server 2016 or above
 		
 		$isolation = $null
-		if ($osVer.Build -gt $minOsBuild -and $hypervInstalled) {
+		if ($osVerBuild -gt $minOsBuild -and $hypervInstalled) {
 			$isolation = 'hyperv'
-		} elseif ($osVer.Build -eq $minOsBuild) {
+		} elseif ($osVerBuild -eq $minOsBuild) {
 			$isolation = 'default'
 		}
 		
