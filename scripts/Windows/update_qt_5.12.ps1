@@ -27,15 +27,15 @@ foreach($version_to_delete in $versions_to_delete) {
 
     # Delete Qt
     Write-Host "Deleting $version_to_delete installation..."
-    Get-Item "$installDir\$version_to_delete" | Remove-Item -Force -Recurse -Confirm:$false -ErrorAction SilentlyContinue
+    Get-Item "$installDir\$version_to_delete" -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse -Confirm:$false
 
     # Delete Docs
     Write-Host "Deleting $version_to_delete Docs..."
-    Get-Item "$installDir\Docs\$version_to_delete" | Remove-Item -Force -Recurse -Confirm:$false -ErrorAction SilentlyContinue
+    Get-Item "$installDir\Docs\$version_to_delete" -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse -Confirm:$false
 
     # Delete Examples
     Write-Host "Deleting $version_to_delete Examples..."
-    Get-Item "$installDir\Examples\$version_to_delete" | Remove-Item -Force -Recurse -Confirm:$false -ErrorAction SilentlyContinue
+    Get-Item "$installDir\Examples\$version_to_delete" -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse -Confirm:$false
 }
 
 
