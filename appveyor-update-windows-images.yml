@@ -1,14 +1,14 @@
 environment:
   matrix:
-  - job_name: VS 2013 on GCE us-central1
-    APPVEYOR_BUILD_WORKER_IMAGE: base-vs2013-gce-us-central1
-    APPVEYOR_BAKE_IMAGE: vs2013-${APPVEYOR_REPO_BRANCH}-gce-us-central1
-    VS_VERSION: 2013
+  # - job_name: VS 2013 on GCE us-central1
+  #   APPVEYOR_BUILD_WORKER_IMAGE: base-vs2013-gce-us-central1
+  #   APPVEYOR_BAKE_IMAGE: vs2013-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+  #   VS_VERSION: 2013
 
-  # - job_name: VS 2015 on GCE us-central1
-  #   APPVEYOR_BUILD_WORKER_IMAGE: base-vs2015-gce-us-central1
-  #   APPVEYOR_BAKE_IMAGE: vs2015-${APPVEYOR_REPO_BRANCH}-gce-us-central1
-  #   VS_VERSION: 2015
+  - job_name: VS 2015 on GCE us-central1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-vs2015-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: vs2015-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+    VS_VERSION: 2015
 
   # - job_name: VS 2017 on GCE us-central1
   #   APPVEYOR_BUILD_WORKER_IMAGE: base-vs2017-gce-us-central1
