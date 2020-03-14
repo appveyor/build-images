@@ -1,10 +1,6 @@
 Write-Host "Installing Qt 5.x ..." -ForegroundColor Cyan
 
-$modulePath = "$env:TEMP\install_qt_module.ps1"
-if (Test-Path $modulePath) {
-    Write-Host "Dotsourcing $modulePath"
-    . $modulePath
-}
+. "$PSScriptRoot\install_qt_module.ps1"
 
 $installDir = "C:\Qt"
 

@@ -90,7 +90,6 @@ build_script:
 - ps: .\install_nunit3.ps1
 - ps: .\install_vstest_console_logger.ps1
 
-- ps: Copy-Item .\install_qt_module.ps1 "$env:TEMP\install_qt_module.ps1"
 - ps: .\install_qt_fast.ps1
 - ps: .\install_service_fabric.ps1
 - ps: .\install_ssis_vs2019.ps1

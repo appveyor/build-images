@@ -1,3 +1,5 @@
+. "$PSScriptRoot\install_qt_module.ps1"
+
 # Delete old Qt 5.12.x
 # It's examples and docs
 
@@ -40,12 +42,6 @@ foreach($version_to_delete in $versions_to_delete) {
 
 
 Write-Host "Installing Qt 5.12.7 ..." -ForegroundColor Cyan
-
-$modulePath = "$env:TEMP\install_qt_module.ps1"
-if (Test-Path $modulePath) {
-    Write-Host "Dotsourcing $modulePath"
-    . $modulePath
-}
 
 if ($env:VS_VERSION -eq "2017") {
     $component_groups = @(
