@@ -8,6 +8,8 @@ if (-not (Test-Path $nugetDir)) {
     if (-not (Test-Path $nugetDir)) {
         Write-Host "Installing NuGet into $nugetDir"
         New-Item $nugetDir -ItemType Directory -Force | Out-Null
+        Add-Path $nugetDir
+        Add-SessionPath $nugetDir
     } else {
         Write-Host "Updating NuGet in $nugetDir"
     }
