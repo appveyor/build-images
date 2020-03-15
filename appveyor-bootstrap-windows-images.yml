@@ -12,8 +12,6 @@ environment:
     APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
     APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
 
-  base_dir: src\build-images-%APPVEYOR_REPO_BRANCH%\scripts\Windows
-
 init:
 - appveyor version
 - ps: $ErrorActionPreference = 'Stop'
@@ -21,11 +19,11 @@ init:
 - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
 
 clone_script:
-- ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_BRANCH).zip" -OutFile scripts.zip
-- ps: Expand-Archive -Path $env:APPVEYOR_BUILD_FOLDER\scripts.zip -DestinationPath $env:APPVEYOR_BUILD_FOLDER\src -Force
+- ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_BRANCH).zip" -OutFile "$env:temp\scripts.zip"
+- ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
+- ps: Copy-Item -Path "$env:temp\scripts\build-images-%APPVEYOR_REPO_BRANCH%\scripts\Windows" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
 
 build_script:
-- cd %base_dir%
 - ps: .\init_server.ps1
 - ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
 
@@ -33,9 +31,7 @@ build_script:
 - ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
 
-- cd %base_dir%
 - appveyor version
-- ps: Copy-Item .\path-utils.psm1 "$env:TEMP\path-utils.psm1"
 - ps: .\install_path_utils.ps1
 - ps: .\install_powershell_core.ps1
 - ps: .\install_powershell_get.ps1
@@ -56,19 +52,12 @@ build_script:
 # Restart VM
 - ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
-- cd %base_dir%
 
-- ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 }
-- ps: |
-    if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') {
-      Copy-Item .\docker-appveyor.psm1 "$env:TEMP\docker-appveyor.psm1"
-      .\install_docker_desktop.ps1
-    }
+- ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 } else { .\install_docker_desktop.ps1 }
 
 # Restart VM
 - ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
-- cd %base_dir%
 
 # Finalize Docker installation
 - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
@@ -80,7 +69,6 @@ build_script:
 # Restart VM
 - ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
-- cd %base_dir%
 
 - ps: .\install_vs2019.ps1
 - ps: .\update_msbuild_path.ps1
@@ -152,7 +140,6 @@ build_script:
 # Restart VM
 - ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
-- cd %base_dir%
 
 - ps: .\sql_server_2017_after_reboot.ps1
 
