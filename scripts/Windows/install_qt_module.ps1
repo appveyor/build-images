@@ -1,3 +1,6 @@
+# Mirrors: http://download.qt.io/static/mirrorlist/
+# Mirrors2: https://download.qt.io/official_releases/qt/5.14/5.14.1/qt-opensource-windows-x86-5.14.1.exe.mirrorlist
+
 $QT_INSTALL_DIR = "C:\Qt"
 #$QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/windows_x86/desktop'
 $QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/desktop'
