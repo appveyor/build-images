@@ -49,7 +49,7 @@ for:
 
     build_script:
     - ps: dir
-    - ps: Start-Sleep -s 5
+    - ps: Start-Sleep -s 180
 
   -
     matrix:
