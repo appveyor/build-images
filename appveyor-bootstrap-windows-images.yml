@@ -21,7 +21,7 @@ init:
 clone_script:
 - ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_BRANCH).zip" -OutFile "$env:temp\scripts.zip"
 - ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
-- ps: Copy-Item -Path "$env:temp\scripts\build-images-%APPVEYOR_REPO_BRANCH%\scripts\Windows" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
+- ps: Copy-Item -Path "$env:temp\scripts\build-images-$($env:APPVEYOR_REPO_BRANCH)\scripts\Windows" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
 
 build_script:
 - ps: .\init_server.ps1
