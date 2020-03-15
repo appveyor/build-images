@@ -6,7 +6,7 @@ $vs2017TestWindowPath1 = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\
 $vs2017TestWindowPath2 = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community\Common7\IDE\Extensions\TestPlatform"
 
 $vs2019RootPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community"
-if (-not (Test-Path $vsPath)) {
+if (-not (Test-Path $vs2019RootPath)) {
     $vs2019RootPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview"
 }
 
@@ -27,13 +27,14 @@ Remove-Path $vs2017TestWindowPath2
 Remove-Path $vs2019TestWindowPath1
 Remove-Path $vs2019TestWindowPath2
 
-# VS 2013
-Remove-Item "$vs2013Path\appveyor.*" -Force
-$zipPath = "$($env:TEMP)\Appveyor.MSTestLogger.zip"
+$zipPath = "$env:TEMP\Appveyor.MSTestLogger.zip"
 (New-Object Net.WebClient).DownloadFile('http://www.appveyor.com/downloads/Appveyor.MSTestLogger.zip', $zipPath)
 
+$zipPath2 = "$($env:TEMP)\Appveyor.MSTestLogger.VS2017.zip"
+(New-Object Net.WebClient).DownloadFile('http://www.appveyor.com/downloads/Appveyor.MSTestLogger.VS2017.zip', $zipPath2)
+
 if(Test-Path $vs2013Path) {
-    # VS 2015
+    # VS 2013
     Remove-Item "$vs2013Path\appveyor.*" -Force
     7z x $zipPath -y -o"$vs2013Path" | Out-Null
 }
@@ -47,40 +48,29 @@ if(Test-Path $vs2015Path) {
 if(Test-Path $vs2017Path1) {
     # VS 2017
     Remove-Item "$vs2017Path1\appveyor.*" -Force
-    $zipPath2 = "$($env:TEMP)\Appveyor.MSTestLogger.VS2017.zip"
-    (New-Object Net.WebClient).DownloadFile('http://www.appveyor.com/downloads/Appveyor.MSTestLogger.VS2017.zip', $zipPath2)
     7z x $zipPath2 -y -o"$vs2017Path1" | Out-Null
-    del $zipPath2
 }
 
 if(Test-Path $vs2017Path2) {
     # VS 2017
     Remove-Item "$vs2017Path2\appveyor.*" -Force
-    $zipPath2 = "$($env:TEMP)\Appveyor.MSTestLogger.VS2017.zip"
-    (New-Object Net.WebClient).DownloadFile('http://www.appveyor.com/downloads/Appveyor.MSTestLogger.VS2017.zip', $zipPath2)
     7z x $zipPath2 -y -o"$vs2017Path2" | Out-Null
-    del $zipPath2
 }
 
 if(Test-Path $vs2019Path1) {
     # VS 2019
     Remove-Item "$vs2019Path1\appveyor.*" -Force
-    $zipPath2 = "$($env:TEMP)\Appveyor.MSTestLogger.VS2017.zip"
-    (New-Object Net.WebClient).DownloadFile('http://www.appveyor.com/downloads/Appveyor.MSTestLogger.VS2017.zip', $zipPath2)
     7z x $zipPath2 -y -o"$vs2019Path1" | Out-Null
-    del $zipPath2
 }
 
 if(Test-Path $vs2019Path2) {
     # VS 2019
     Remove-Item "$vs2019Path2\appveyor.*" -Force
-    $zipPath2 = "$($env:TEMP)\Appveyor.MSTestLogger.VS2017.zip"
-    (New-Object Net.WebClient).DownloadFile('http://www.appveyor.com/downloads/Appveyor.MSTestLogger.VS2017.zip', $zipPath2)
     7z x $zipPath2 -y -o"$vs2019Path2" | Out-Null
-    del $zipPath2
 }
 
 del $zipPath
+del $zipPath2
 
 # modify PATH
 if(Test-Path $vs2019Path2) {

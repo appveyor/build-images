@@ -1,7 +1,7 @@
 ﻿Write-Host "Installing xUnit 2.0..." -ForegroundColor Cyan
 $xunitPath = "$env:SYSTEMDRIVE\Tools\xUnit20"
 
-Remove-Item $xunitPath -Recurse -Force
+Remove-Item $xunitPath -Recurse -Force -ErrorAction SilentlyContinue
 
 $tempPath = "$env:TEMP\xunit20"
 nuget install xunit.runner.console -excludeversion -outputdirectory $tempPath
