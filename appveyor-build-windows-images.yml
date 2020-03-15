@@ -4,16 +4,16 @@ environment:
   - job_name: VS 2019 on Hyper-V - Part I
     job_group: part-1
     APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
-    APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
+    APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-p1
 
-  - job_name: VS 2019 on Hyper-V - Wait for image to be ready
+  - job_name: VS 2019 on Hyper-V - Wait for Part I image to be ready
     job_group: part-2
     job_depends_on: part-1
 
   - job_name: VS 2019 on Hyper-V - Part II
     job_group: part-3
     job_depends_on: part-2
-    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
+    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-p1
     APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
 
 matrix:
