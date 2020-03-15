@@ -51,8 +51,8 @@ UninstallMiniconda "Miniconda3 4.7.12 (Python 3.7.4 64-bit)"
 
 Start-Sleep -Seconds 30
 
-Remove-Item C:\Miniconda3 -Force -Recurse
-Remove-Item C:\Miniconda3-x64 -Force -Recurse
+Remove-Item C:\Miniconda3 -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item C:\Miniconda3-x64 -Force -Recurse -ErrorAction SilentlyContinue
 
 Write-Host "Installing Miniconda2 4.7.12 (Python 2.7.16 64-bit)..." -ForegroundColor Cyan
 Write-Host "Downloading..."
