@@ -1,5 +1,6 @@
 $QT_INSTALL_DIR = "C:\Qt"
-$QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/windows_x86/desktop'
+#$QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/windows_x86/desktop'
+$QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/desktop'
 
 $TOOL_IDS = @(
     "vcredist"
