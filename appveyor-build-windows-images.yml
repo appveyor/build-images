@@ -1,0 +1,61 @@
+environment:    
+  matrix:
+
+  - job_name: VS 2019 on Hyper-V - Part I
+    job_group: part-1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
+    APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
+
+  - job_name: VS 2019 on Hyper-V - Wait for image to be ready
+    job_group: part-2
+    job_depends_on: part-1
+
+  - job_name: VS 2019 on Hyper-V - Part II
+    job_group: part-3
+    job_depends_on: part-2
+    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
+    APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
+
+matrix:
+  fast_finish: true
+
+init:
+  - appveyor version
+  - ps: $ErrorActionPreference = 'Stop'
+  - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
+  - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
+  
+  clone_script:
+  - ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_BRANCH).zip" -OutFile "$env:temp\scripts.zip"
+  - ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
+  - ps: Copy-Item -Path "$env:temp\scripts\build-images-$($env:APPVEYOR_REPO_BRANCH)\scripts\Windows\*" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
+
+  test: off
+
+for:
+  -
+    matrix:
+      only:
+        - job_group: part-1
+
+    build_script:
+    - ps: Write-Host "Part 1"
+    - ps: dir
+
+  -
+    matrix:
+      only:
+        - job_group: part-2
+
+    build_script:
+    - ps: dir
+    - ps: Start-Sleep -s 5
+
+  -
+    matrix:
+      only:
+        - job_group: part-3
+
+    build_script:
+    - ps: dir
+    - ps: Write-Host "Part 3"
