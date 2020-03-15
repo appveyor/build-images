@@ -4,7 +4,7 @@ environment:
   - job_name: VS 2019 on Hyper-V - Part I
     job_group: part-1
     APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
-    APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-p1
+    APPVEYOR_BAKE_IMAGE: vs2019-temp-p1
 
   - job_name: VS 2019 on Hyper-V - Wait for Part I image to be ready
     job_group: part-2
@@ -13,7 +13,7 @@ environment:
   - job_name: VS 2019 on Hyper-V - Part II
     job_group: part-3
     job_depends_on: part-2
-    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-p1
+    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1
     APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
 
 matrix:
@@ -41,6 +41,7 @@ for:
     build_script:
     - ps: Write-Host "Part 1"
     - ps: dir
+    - ps: Set-Content -Path 'C:\test.txt' -Value 'Hello, world!'
 
   -
     matrix:
@@ -57,5 +58,6 @@ for:
         - job_group: part-3
 
     build_script:
+    - ps: Get-Content -Path 'C:\test.txt'
     - ps: dir
     - ps: Write-Host "Part 3"
