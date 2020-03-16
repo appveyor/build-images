@@ -261,6 +261,7 @@ function configure_apt() {
     echo "[INFO] Running configure_apt..."
 
     # Disable automatic updates
+    # https://askubuntu.com/questions/1059971/disable-updates-from-command-line-in-ubuntu-16-04
     echo "[INFO] Disabling automatic apt updates..."
     systemctl stop apt-daily.timer
     systemctl disable apt-daily.timer

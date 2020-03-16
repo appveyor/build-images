@@ -39,7 +39,7 @@ init:
 #- ls /opt/appveyor/build-agent
 
 clone_script:
-- curl -fsSL "https://github.com/appveyor/build-images/archive/$APPVEYOR_REPO_BRANCH.tar.gz" -o scripts.tar.gz
+- curl -fsSL "https://github.com/appveyor/build-images/archive/$APPVEYOR_REPO_COMMIT.tar.gz" -o scripts.tar.gz
 - mkdir src && tar -zxf scripts.tar.gz -C $APPVEYOR_BUILD_FOLDER/src
 
 build_script:
