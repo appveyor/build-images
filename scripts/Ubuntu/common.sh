@@ -1468,9 +1468,6 @@ function install_azurecli() {
     AZ_REPO=${OS_CODENAME}
     sudo apt-get -y -q install ca-certificates curl apt-transport-https gnupg
 
-    wget https://packages.microsoft.com/keys/microsoft.asc
-    ls
-
     curl -sL https://packages.microsoft.com/keys/microsoft.asc | 
         gpg --dearmor | 
         sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
