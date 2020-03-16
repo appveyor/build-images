@@ -142,6 +142,9 @@ fi
 
 chown_logfile || _continue
 
+disable_automatic_apt_updates ||
+    _abort $?
+
 configure_apt ||
     _abort $?
 

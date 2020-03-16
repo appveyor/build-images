@@ -257,13 +257,11 @@ function wait_cloudinit () {
     fi
 }
 
-function configure_apt() {
-    echo "[INFO] Running configure_apt..."
-
-    # Disable automatic updates
+function disable_automatic_apt_updates() {
+    echo "[INFO] Disabling automatic apt updates..."
     # https://askubuntu.com/questions/1059971/disable-updates-from-command-line-in-ubuntu-16-04
     # https://stackoverflow.com/questions/45269225/ansible-playbook-fails-to-lock-apt/51919678#51919678
-    echo "[INFO] Disabling automatic apt updates..."
+    
     systemctl stop apt-daily.timer
     systemctl disable apt-daily.timer
     systemctl disable apt-daily.service
@@ -271,9 +269,11 @@ function configure_apt() {
     systemctl disable apt-daily-upgrade.timer
     systemctl disable apt-daily-upgrade.service
     systemctl daemon-reload
-    systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
     apt-get -y purge unattended-upgrades
+}
 
+function configure_apt() {
+    echo "[INFO] Running configure_apt..."
     dpkg --add-architecture i386
     export DEBIAN_FRONTEND=noninteractive
     export ACCEPT_EULA=Y

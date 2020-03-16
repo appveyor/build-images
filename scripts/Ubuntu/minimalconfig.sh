@@ -99,6 +99,9 @@ if ! $IS_DOCKER; then
     wait_cloudinit || _continue
 fi
 
+disable_automatic_apt_updates ||
+    _abort $?
+
 configure_apt ||
     _abort $?
 
