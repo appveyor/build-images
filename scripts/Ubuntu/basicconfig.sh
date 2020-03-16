@@ -148,9 +148,6 @@ disable_automatic_apt_updates ||
 configure_apt ||
     _abort $?
 
-install_azurecli ||
-    _abort $?    
-
 configure_locale
 
 install_tools ||
