@@ -144,6 +144,7 @@ function write_line() {
 
 # check_apt_locks waits for LOCK_TIMEOUT seconds for apt locks released
 function check_apt_locks() {
+    echo "[INFO] check_apt_locks..."
     local LOCK_TIMEOUT=60
     local START_TIME
     START_TIME=$(date +%s)
@@ -157,7 +158,7 @@ function check_apt_locks() {
         if lsof /var/lib/apt/lists/lock; then
             sleep 1
         else
-            #apt succcessfully unlocked
+            echo "[INFO] apt succcessfully unlocked"
             return 0
         fi
     done
@@ -257,6 +258,7 @@ function wait_cloudinit () {
 }
 
 function configure_apt() {
+    echo "[INFO] Running configure_apt..."
     dpkg --add-architecture i386
     export DEBIAN_FRONTEND=noninteractive
     export ACCEPT_EULA=Y
