@@ -103,7 +103,7 @@ for:
         - job_group: part-2
 
     build_script:
-    - ps: Start-Sleep -s 600
+    - ps: Start-Sleep -s 900
 
 # Part 2
   -
@@ -169,19 +169,18 @@ for:
     - ps: .\install_boost_1.71.0_vs2019.ps1
     
     - ps: .\install_sql_server_2017.ps1
-    
-    # Restart VM
-    - ps: Start-Sleep -s 5; Restart-Computer
-    - ps: Start-Sleep -s 5
-    
-    - ps: .\sql_server_2017_after_reboot.ps1
+    - ps: .\install_sql_server_2019.ps1
     
     - ps: .\install_dotnet_core_sdks.ps1
     - ps: .\install_dotnet_devpacks.ps1
     - ps: .\install_dotnet_runtimes.ps1
     
     - ps: .\optimize_dotnet_runtime.ps1
-    
+
+    # Restart VM
+    - ps: Start-Sleep -s 5; Restart-Computer
+    - ps: Start-Sleep -s 5
+
     - appveyor version
     - ps: .\disable_windows_background_services.ps1
     - ps: .\enforce_windows_firewall.ps1
