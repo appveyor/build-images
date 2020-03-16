@@ -14,7 +14,7 @@ CURRENT_NODEJS=8
 AGENT_DIR=/opt/appveyor/build-agent
 WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 LOG_FILE=$HOME/$(basename $0)-$DATEMARK.log
-VERSIONS_FILE=$HOME/versions-$DATEMARK.log
+VERSIONS_FILE=$HOME/versions.log
 LOGGING=true
 SCRIPT_PID=$$
 

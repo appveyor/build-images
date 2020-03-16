@@ -672,7 +672,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.10" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.8.0" "3.8.1" "3.8.2rc2" "3.9.0a3" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.10" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.7.7" "3.8.0" "3.8.1" "3.8.2" "3.9.0a4" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
@@ -1060,7 +1060,7 @@ function install_rubies() {
         return 1
     fi
     local DEFAULT_RUBY
-    DEFAULT_RUBY="ruby-2.6"
+    DEFAULT_RUBY="ruby-2.7"
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
@@ -1134,7 +1134,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.8" "go1.14rc1" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.8" "go1.14" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1790,7 +1790,7 @@ function install_qt(){
 
 function add_ssh_known_hosts() {
     if [ -f "add_ssh_known_hosts.ps1" ] && command -v pwsh; then
-        pwsh ./add_ssh_known_hosts.ps1
+        pwsh ../Windows/add_ssh_known_hosts.ps1
     else
         echo '[ERROR] Cannot run add_ssh_known_hosts.ps1: Either Powershell is not installed or add_ssh_known_hosts.ps1 does not exist.' 1>&2;
         return 10;
@@ -1882,5 +1882,4 @@ function cleanup() {
     log_version ls -ltra "${HOME}"
     log_version check_folders ${HOME}/.*
     log_version check_folders "/*" "/opt/*" "/var/*" "/var/lib/*" "/var/cache/*" "/usr/*" "/usr/lib/*" "/usr/share/*"
-
 }
