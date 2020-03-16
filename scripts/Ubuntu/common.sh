@@ -259,6 +259,16 @@ function wait_cloudinit () {
 
 function configure_apt() {
     echo "[INFO] Running configure_apt..."
+
+    # Disable automatic updates
+    echo "[INFO] Disabling automatic apt updates..."
+    systemctl stop apt-daily.timer
+    systemctl disable apt-daily.timer
+    systemctl disable apt-daily.service
+    systemctl stop apt-daily-upgrade.timer
+    systemctl disable apt-daily-upgrade.timer
+    systemctl disable apt-daily-upgrade.service
+
     dpkg --add-architecture i386
     export DEBIAN_FRONTEND=noninteractive
     export ACCEPT_EULA=Y
@@ -269,8 +279,6 @@ function configure_apt() {
     apt-get -y -q install software-properties-common ||
         { echo "[ERROR] Cannot install software-properties-common package." 1>&2; return 10; }
 
-    # Disable daily apt unattended updates.
-    write_line /etc/apt/apt.conf.d/10periodic 'APT::Periodic::Enable "0";' 'APT::Periodic::Enable '
     # configure appveyor env variables for future apt-get upgrades
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         write_line "$USER_HOME/.profile" 'export DEBIAN_FRONTEND=noninteractive'
