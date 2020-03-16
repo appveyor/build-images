@@ -31,7 +31,7 @@ environment:
     APPVEYOR_BAKE_IMAGE: ubuntu1604-${APPVEYOR_REPO_BRANCH}
     BUILD_AGENT_MODE: HyperV
 
-  BASE_DIR: src/build-images-${APPVEYOR_REPO_BRANCH}/scripts/Ubuntu
+  BASE_DIR: src/build-images-${APPVEYOR_REPO_COMMIT}/scripts/Ubuntu
   BOOTSTRAP: true
 
 init:
