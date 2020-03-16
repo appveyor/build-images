@@ -1,20 +1,59 @@
 environment:    
   matrix:
 
-  - job_name: VS 2019 on Hyper-V - Part I
+# Hyper-V
+# =======
+
+  # - job_name: VS 2019 on Hyper-V - Part I
+  #   job_group: part-1
+  #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
+  #   APPVEYOR_BAKE_IMAGE: vs2019-temp-p1
+
+  # - job_name: VS 2019 on Hyper-V - Wait for Part I image to be ready
+  #   job_group: part-2
+  #   job_depends_on: VS 2019 on Hyper-V - Part I
+
+  # - job_name: VS 2019 on Hyper-V - Part II
+  #   job_group: part-3
+  #   job_depends_on: VS 2019 on Hyper-V - Wait for Part I image to be ready
+  #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1
+  #   APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
+
+# Azure
+# =======
+
+  - job_name: VS 2019 on Azure West US - Part I
     job_group: part-1
-    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
-    APPVEYOR_BAKE_IMAGE: vs2019-temp-p1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-azure-westus
+    APPVEYOR_BAKE_IMAGE: vs2019-temp-p1-azure-westus
 
-  - job_name: VS 2019 on Hyper-V - Wait for Part I image to be ready
+  - job_name: VS 2019 on Azure West US - Wait for Part I image to be ready
     job_group: part-2
-    job_depends_on: part-1
+    job_depends_on: VS 2019 on Azure West US - Part I
 
-  - job_name: VS 2019 on Hyper-V - Part II
+  - job_name: VS 2019 on Azure West US - Part II
     job_group: part-3
-    job_depends_on: part-2
-    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1
-    APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
+    job_depends_on: VS 2019 on Azure West US - Wait for Part I image to be ready
+    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-azure-westus
+    APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-azure-westus
+
+# GCE
+# =======
+
+  - job_name: VS 2019 on GCE us-central1 - Part I
+    job_group: part-1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: vs2019-temp-p1-gce-us-central1
+
+  - job_name: VS 2019 on GCE us-central1 - Wait for Part I image to be ready
+    job_group: part-2
+    job_depends_on: VS 2019 on GCE us-central1 - Part I
+
+  - job_name: VS 2019 on GCE us-central1 - Part II
+    job_group: part-3
+    job_depends_on: VS 2019 on GCE us-central1 - Wait for Part I image to be ready
+    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-gce-us-central1
 
 matrix:
   fast_finish: true
