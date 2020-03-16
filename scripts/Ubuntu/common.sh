@@ -262,6 +262,7 @@ function configure_apt() {
 
     # Disable automatic updates
     # https://askubuntu.com/questions/1059971/disable-updates-from-command-line-in-ubuntu-16-04
+    # https://stackoverflow.com/questions/45269225/ansible-playbook-fails-to-lock-apt/51919678#51919678
     echo "[INFO] Disabling automatic apt updates..."
     systemctl stop apt-daily.timer
     systemctl disable apt-daily.timer
@@ -269,6 +270,9 @@ function configure_apt() {
     systemctl stop apt-daily-upgrade.timer
     systemctl disable apt-daily-upgrade.timer
     systemctl disable apt-daily-upgrade.service
+    systemctl daemon-reload
+    systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
+    apt-get -y purge unattended-upgrades
 
     dpkg --add-architecture i386
     export DEBIAN_FRONTEND=noninteractive
