@@ -93,8 +93,6 @@ function Start-ProcessWithOutput {
         }
     } catch {
         Write-Host "Error running '$($psi.FileName) $($psi.Arguments)' command: $($_.Exception.Message)" -ForegroundColor Red
-        $env:PATH
-        dir 'C:\'
         throw $_
     }
 }
