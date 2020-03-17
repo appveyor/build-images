@@ -65,7 +65,7 @@ function InstallPythonMSI($version, $platform, $targetPath) {
         $urlPlatform = ".amd64"
     }
 
-    Write-Host "Installing Python $version $platform to $($targetDir)..." -ForegroundColor Cyan
+    Write-Host "Installing Python $version $platform to $($targetPath)..." -ForegroundColor Cyan
 
     $downloadUrl = "https://www.python.org/ftp/python/$version/python-$version$urlPlatform.msi"
     Write-Host "Downloading $($downloadUrl)..."
@@ -87,7 +87,7 @@ function InstallPythonEXE($version, $platform, $targetPath) {
         $urlPlatform = "-amd64"
     }
 
-    Write-Host "Installing Python $version $platform to $($targetDir)..." -ForegroundColor Cyan
+    Write-Host "Installing Python $version $platform to $($targetPath)..." -ForegroundColor Cyan
 
     $downloadUrl = "https://www.python.org/ftp/python/$version/python-$version$urlPlatform.exe"
     Write-Host "Downloading $($downloadUrl)..."
