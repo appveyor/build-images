@@ -148,11 +148,11 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         Write-Host "Installing pip for 3.3.5..." -ForegroundColor Cyan
 
         # Python 3.3
-        UpdatePythonPath "C:\Python33"
+        UpdatePythonPath "$env:SystemDrive\Python33"
         Start-ProcessWithOutput "python $pipPath33" -IgnoreExitCode
 
         # Python 3.3 x64
-        UpdatePythonPath "C:\Python33-x64"
+        UpdatePythonPath "$env:SystemDrive\Python33-x64"
         Start-ProcessWithOutput "python $pipPath33" -IgnoreExitCode
     }
 
@@ -171,7 +171,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         UninstallPython "Python 3.4.3 (64-bit)"
 
         InstallPythonMSI "3.4.4" "x86" "$env:SystemDrive\Python34"
-        InstallPythonMSI "3.4.4" "x64" "$env:SystemDrive\Python34-x64"   
+        InstallPythonMSI "3.4.4" "x64" "$env:SystemDrive\Python34-x64"  
     }
 
     UpdatePip "$env:SystemDrive\Python34"

@@ -157,8 +157,8 @@ for:
         - bake_phase: 3
 
     build_script:
+    - ps: .\install_python.ps1
     - ps: .\install_miniconda.ps1
-    - ps: .\install_python.ps1      
     - ps: .\install_nodejs_latest.ps1
     - ps: .\install_yarn.ps1
     - ps: .\install_service_fabric.ps1
