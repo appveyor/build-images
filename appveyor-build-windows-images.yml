@@ -157,14 +157,7 @@ for:
         - bake_phase: 3
 
     build_script:
-    - ps: .\install_azure_powershell.ps1
-    - ps: .\install_mysql.ps1
-    - ps: .\install_aws_cli.ps1
-    - ps: .\install_aws_powershell.ps1
-    - ps: .\install_azure_cli.ps1
-    - ps: .\install_azure_cosmosdb_emulator.ps1
-    - ps: .\install_gcloud_sdk.ps1
-    - ps: .\install_erlang.ps1
+
     - ps: .\install_mongo.ps1
     - ps: .\install_winsdk_81.ps1
     - ps: .\install_wdk_1809.ps1
@@ -217,6 +210,14 @@ for:
     - ps: .\install_postgres10.ps1
     - ps: .\install_postgres11.ps1
     - ps: .\install_postgres12.ps1
+    - ps: .\install_azure_powershell.ps1
+    - ps: .\install_mysql.ps1
+    - ps: .\install_aws_cli.ps1
+    - ps: .\install_aws_powershell.ps1
+    - ps: .\install_azure_cli.ps1
+    - ps: .\install_azure_cosmosdb_emulator.ps1
+    - ps: .\install_gcloud_sdk.ps1
+    - ps: .\install_erlang.ps1    
 #---- tested      
     
     - ps: .\install_dotnet_core_sdks.ps1
