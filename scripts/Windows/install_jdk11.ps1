@@ -16,7 +16,7 @@ Write-Host "Unpacking..."
 7z x $zipPath -oC:\jdk11_temp | Out-Null
 [IO.Directory]::Move('C:\jdk11_temp\jdk-11.0.2', $jdkPath)
 Remove-Item 'C:\jdk11_temp' -Recurse -Force
-del $zipPath
+Remove-Item $zipPath
 
 cmd /c "`"$jdkPath\bin\java`" --version"
 

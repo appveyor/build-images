@@ -191,6 +191,7 @@ for:
     - ps: .\install_jdk11.ps1
     - ps: .\install_jdk12.ps1
     - ps: .\install_jdk13.ps1
+    - ps: .\install_jdk14.ps1
     - ps: .\install_maven.ps1
     - ps: .\install_gitversion.ps1
     - ps: .\install_android_sdk.ps1

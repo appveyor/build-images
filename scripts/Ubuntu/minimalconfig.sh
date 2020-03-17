@@ -139,11 +139,10 @@ install_cvs ||
 install_gitlfs ||
     _abort $?
 
+# ====================================
 install_azurecli ||
     _abort $?
 
-
-# ====================================
 install_pip ||
     _abort $?
 

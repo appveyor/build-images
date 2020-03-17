@@ -39,6 +39,9 @@ function Start-ProcessWithOutput {
         }
     }
 
+    $fileName
+    $arguments
+
     # find tool in path
     if (-not (Test-Path $fileName)) {
         foreach ($pathPart in $($env:PATH).Split(';')) {
