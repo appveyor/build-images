@@ -158,20 +158,7 @@ for:
 
     build_script:
     - ps: .\install_mysql.ps1
-    - ps: .\install_miniconda.ps1
-    - ps: .\install_python.ps1
-    - ps: .\install_nodejs_latest.ps1
-    - ps: .\install_yarn.ps1
-    - ps: .\install_service_fabric.ps1
-    - ps: .\install_ssis_vs2019.ps1
-    - ps: .\install_go.ps1
-    - ps: .\install_rust.ps1
-    - ps: .\install_openssl.ps1
-    - ps: .\install_cmake.ps1
-    - ps: .\install_postgres96.ps1
-    - ps: .\install_postgres10.ps1
-    - ps: .\install_postgres11.ps1
-    - ps: .\install_postgres12.ps1
+
     - ps: .\install_aws_cli.ps1
     - ps: .\install_aws_powershell.ps1
     - ps: .\install_azure_cli.ps1
@@ -214,6 +201,23 @@ for:
     
     - ps: .\install_sql_server_2017.ps1
     - ps: .\install_sql_server_2019.ps1
+
+#---- tested
+    - ps: .\install_miniconda.ps1
+    - ps: .\install_python.ps1
+    - ps: .\install_nodejs_latest.ps1
+    - ps: .\install_yarn.ps1
+    - ps: .\install_service_fabric.ps1
+    - ps: .\install_ssis_vs2019.ps1
+    - ps: .\install_go.ps1
+    - ps: .\install_rust.ps1
+    - ps: .\install_openssl.ps1
+    - ps: .\install_cmake.ps1
+    - ps: .\install_postgres96.ps1
+    - ps: .\install_postgres10.ps1
+    - ps: .\install_postgres11.ps1
+    - ps: .\install_postgres12.ps1
+#---- tested      
     
     - ps: .\install_dotnet_core_sdks.ps1
     - ps: .\install_dotnet_devpacks.ps1

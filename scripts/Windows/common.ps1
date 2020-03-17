@@ -25,10 +25,18 @@ function Start-ProcessWithOutput {
     $fileName = $command
     $arguments = $null
 
-    $idx = $command.indexOf(' ')
-    if ($idx -ne -1) {
-        $fileName = $command.substring(0, $idx)
-        $arguments = $command.substring($idx + 1)
+    if ($command.startsWith('"')) {
+        $idx = $command.indexOf('"', 1)
+        $fileName = $command.substring(1, $idx)
+        if ($idx -lt ($command.length - 1)) {
+            $arguments = $command.substring($idx + 1)
+        }
+    } else {
+        $idx = $command.indexOf(' ')
+        if ($idx -ne -1) {
+            $fileName = $command.substring(0, $idx)
+            $arguments = $command.substring($idx + 1)
+        }
     }
 
     # find tool in path
