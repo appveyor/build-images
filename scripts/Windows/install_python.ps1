@@ -51,9 +51,9 @@ function UpdatePip($pythonPath) {
 # $pipPath = "$env:TEMP\get-pip.py"
 # (New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/get-pip.py', $pipPath)
 
-# Write-Host "Downloading get-pip.py v2.6..." -ForegroundColor Cyan
-# $pipPath26 = "$env:TEMP\get-pip-26.py"
-# (New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/2.6/get-pip.py', $pipPath26)
+Write-Host "Downloading get-pip.py v2.6..." -ForegroundColor Cyan
+$pipPath26 = "$env:TEMP\get-pip-26.py"
+(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/2.6/get-pip.py', $pipPath26)
 
 Write-Host "Downloading get-pip.py v3.3..." -ForegroundColor Cyan
 $pipPath33 = "$env:TEMP\get-pip-33.py"
@@ -112,6 +112,17 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
         InstallPythonMSI "2.6.6" "x64" "$env:SystemDrive\Python26-x64"
         InstallPythonMSI "2.6.6" "x86" "$env:SystemDrive\Python26"
+
+        # install pip for python 2.6
+        Write-Host "Installing pip for 2.6..." -ForegroundColor Cyan
+
+        # Python 2.6
+        UpdatePythonPath "$env:SystemDrive\Python26"
+        Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode
+
+        # Python 2.6 x64
+        UpdatePythonPath "$env:SystemDrive\Python26-x64"
+        Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode        
     }
 }
 
