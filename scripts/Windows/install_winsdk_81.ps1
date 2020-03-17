@@ -6,6 +6,7 @@ $exePath = "$env:TEMP\sdksetup.exe"
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath /Quiet /NoRestart
-del $exePath
+Start-Sleep -s 15
+Remove-Item $exePath -ErrorAction SilentlyContinue -Verbose
 
 Write-Host "Installed Windows SDK 8.1" -ForegroundColor Green
