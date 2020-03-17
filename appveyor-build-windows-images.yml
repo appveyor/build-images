@@ -55,9 +55,6 @@ environment:
     APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-gce-us-central1
     APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-gce-us-central1
 
-matrix:
-  fast_finish: true
-
 init:
   - appveyor version
   - ps: $ErrorActionPreference = 'Stop'
