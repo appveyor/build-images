@@ -68,6 +68,9 @@ clone_script:
 
 test: off
 
+on_failure:
+- ps: Get-EventLog AppVeyor -newest 10 | Format-List
+
 for:
 
 # Part 1
