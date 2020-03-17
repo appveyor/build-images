@@ -158,19 +158,6 @@ for:
 
     build_script:
 
-    - ps: .\install_winsdk_81.ps1
-    - ps: .\install_wdk_1809.ps1
-    - ps: .\install_wdk_1903.ps1
-    - ps: .\install_dxsdk.ps1
-    - ps: .\install_vdproj_vs2019.ps1
-    - ps: .\install_wix311.ps1
-    - ps: .\install_wix_toolset_vs2019.ps1
-    - ps: .\install_chrome_browser.ps1
-    - ps: .\install_firefox_browser.ps1
-    - ps: .\install_edge_browser.ps1
-    - ps: .\install_selenium_drivers.ps1
-    - ps: .\install_llvm.ps1
-    - ps: .\install_llvm_extension_vs2019.ps1
     - ps: .\install_vcpkg.ps1
     - ps: .\install_innosetup.ps1
     - ps: .\install_coverity.ps1
@@ -218,6 +205,19 @@ for:
     - ps: .\install_gcloud_sdk.ps1
     - ps: .\install_erlang.ps1
     - ps: .\install_mongo.ps1
+    - ps: .\install_winsdk_81.ps1
+    - ps: .\install_wdk_1809.ps1
+    - ps: .\install_wdk_1903.ps1
+    - ps: .\install_dxsdk.ps1
+    - ps: .\install_vdproj_vs2019.ps1
+    - ps: .\install_wix311.ps1
+    - ps: .\install_wix_toolset_vs2019.ps1
+    - ps: .\install_chrome_browser.ps1
+    - ps: .\install_firefox_browser.ps1
+    - ps: .\install_edge_browser.ps1
+    - ps: .\install_selenium_drivers.ps1
+    - ps: .\install_llvm.ps1
+    - ps: .\install_llvm_extension_vs2019.ps1    
 #---- tested      
     
     - ps: .\install_dotnet_core_sdks.ps1

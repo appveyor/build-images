@@ -6,7 +6,7 @@ if (test-path "$env:SystemDrive\Tools\vcpkg") {
   Push-Location "$env:SystemDrive\Tools\vcpkg"
   cmd /c git pull
   .\bootstrap-vcpkg.bat
-  .\vcpkg integrate install
+  vcpkg integrate install
   Write-Host "vcpkg updated" -ForegroundColor Green
 }
 else {
@@ -16,7 +16,7 @@ else {
   .\vcpkg\bootstrap-vcpkg.bat  
   Add-Path "$env:SystemDrive\Tools\vcpkg"
   Add-SessionPath "$env:SystemDrive\Tools\vcpkg"
-  .\vcpkg integrate install
+  vcpkg integrate install
   Write-Host "vcpkg installed" -ForegroundColor Green
 }
 Pop-Location
