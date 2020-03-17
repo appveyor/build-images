@@ -158,6 +158,7 @@ for:
 
     build_script:
 
+    - ps: .\install_java_7_8.ps1
     - ps: .\install_jdk14.ps1
     - ps: .\install_maven.ps1
     - ps: .\install_gitversion.ps1
@@ -214,7 +215,6 @@ for:
     # - ps: .\install_nsis.ps1
     # - ps: .\install_octo.ps1
     # - ps: .\install_meson_and_ninja.ps1
-    # - ps: .\install_java_7_8.ps1
     # - ps: .\install_jdk11.ps1
     # - ps: .\install_jdk12.ps1
     # - ps: .\install_jdk13.ps1    
