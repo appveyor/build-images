@@ -139,6 +139,9 @@ install_cvs ||
 install_gitlfs ||
     _abort $?
 
+install_azurecli ||
+    _abort $?
+
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f configure_svn)
