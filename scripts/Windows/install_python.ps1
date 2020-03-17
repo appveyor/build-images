@@ -78,6 +78,8 @@ function InstallPythonMSI($version, $platform, $targetPath) {
 
     Start-ProcessWithOutput "$targetPath\python.exe --version"
 
+    dir $targetPath
+
     Write-Host "Installed Python $version" -ForegroundColor Green
 }
 
