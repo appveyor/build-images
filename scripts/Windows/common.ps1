@@ -68,6 +68,7 @@ function Start-ProcessWithOutput {
     $psi.CreateNoWindow = $true
     $psi.UseShellExecute = $false
     $psi.Arguments = $arguments
+    $psi.WorkingDirectory = (pwd).Path
     $process = New-Object System.Diagnostics.Process
     $process.StartInfo = $psi
 
