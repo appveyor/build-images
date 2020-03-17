@@ -47,13 +47,13 @@ function UpdatePip($pythonPath) {
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-Write-Host "Downloading get-pip.py..." -ForegroundColor Cyan
-$pipPath = "$env:TEMP\get-pip.py"
-(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/get-pip.py', $pipPath)
+# Write-Host "Downloading get-pip.py..." -ForegroundColor Cyan
+# $pipPath = "$env:TEMP\get-pip.py"
+# (New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/get-pip.py', $pipPath)
 
-Write-Host "Downloading get-pip.py v2.6..." -ForegroundColor Cyan
-$pipPath26 = "$env:TEMP\get-pip-26.py"
-(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/2.6/get-pip.py', $pipPath26)
+# Write-Host "Downloading get-pip.py v2.6..." -ForegroundColor Cyan
+# $pipPath26 = "$env:TEMP\get-pip-26.py"
+# (New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/2.6/get-pip.py', $pipPath26)
 
 Write-Host "Downloading get-pip.py v3.3..." -ForegroundColor Cyan
 $pipPath33 = "$env:TEMP\get-pip-33.py"
@@ -112,21 +112,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
         InstallPythonMSI "2.6.6" "x86" "$env:SystemDrive\Python26"
         InstallPythonMSI "2.6.6" "x64" "$env:SystemDrive\Python26-x64"
-
-        # install pip for python 3.3
-        Write-Host "Installing pip for Python 2.6..." -ForegroundColor Cyan
-
-        # Python 2.6
-        UpdatePythonPath "$env:SystemDrive\Python26"
-        Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode
-
-        # Python 2.6 x64
-        UpdatePythonPath "$env:SystemDrive\Python26-x64"
-        Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode
     }
-
-    UpdatePip "$env:SystemDrive\Python26"
-    UpdatePip "$env:SystemDrive\Python26-x64"
 }
 
 # Python 2.7.17
