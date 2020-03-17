@@ -23,8 +23,8 @@ function InstallJDKVersion($javaVersion, $jdkVersion, $url, $fileName, $jdkPath,
 
     # download
     Write-Host "Downloading installer"
-    $exePath = "$env:USERPROFILE\$fileName"
-    $logPath = "$env:USERPROFILE\$fileName-install.log"
+    $exePath = "$env:TEMP\$fileName"
+    $logPath = "$env:TEMP\$fileName-install.log"
     [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
     $client = New-Object Net.WebClient
     $client.Headers.Add('Cookie', 'gpw_e24=http://www.oracle.com; oraclelicense=accept-securebackup-cookie')
@@ -45,7 +45,7 @@ function InstallJDKVersion($javaVersion, $jdkVersion, $url, $fileName, $jdkPath,
     $proc.WaitForExit()
 
     # cleanup
-    del $exePath
+    Remove-Item $exePath -ErrorAction SilentlyContinue
     Write-Host "$javaVersion installed" -ForegroundColor Green
 }
 
@@ -118,14 +118,14 @@ Disable-ScheduledTask -TaskPath '\' -TaskName 'JavaUpdateSched'
 $env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
 
 # Fix Java installs
-Remove-Path "C:\ProgramData\Oracle\Java\javapath"
-Remove-Path "${env:ProgramFiles(x86)}\Common Files\Oracle\Java\javapath"
-Remove-Path "${env:ProgramFiles}\Java\jdk1.7.0\bin"
+Remove-Path "C:\ProgramData\Oracle\Java\javapath" -ErrorAction Ignore
+Remove-Path "${env:ProgramFiles(x86)}\Common Files\Oracle\Java\javapath" -ErrorAction Ignore
+Remove-Path "${env:ProgramFiles}\Java\jdk1.7.0\bin" -ErrorAction Ignore
 Add-Path "${env:ProgramFiles}\Java\jdk1.8.0\bin"
-del "C:\Windows\System32\java.exe"
-del "C:\Windows\System32\javaw.exe"
-del "C:\Windows\SysWOW64\java.exe"
-del "C:\Windows\SysWOW64\javaw.exe"
+Remove-Item "C:\Windows\System32\java.exe" -ErrorAction Ignore
+Remove-Item "C:\Windows\System32\javaw.exe" -ErrorAction Ignore
+Remove-Item "C:\Windows\SysWOW64\java.exe" -ErrorAction Ignore
+Remove-Item "C:\Windows\SysWOW64\javaw.exe" -ErrorAction Ignore
 
 # Remove Java 6 from Registry (to get rid of Xamarin/Android warning)
 Remove-Item -Path 'hklm:\Software\JavaSoft\Java Development Kit\1.6' -Force

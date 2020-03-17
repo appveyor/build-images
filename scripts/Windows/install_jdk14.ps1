@@ -13,10 +13,11 @@ $zipPath = "$env:TEMP\openjdk-14_windows-x64_bin.zip"
 (New-Object Net.WebClient).DownloadFile('https://download.java.net/java/GA/jdk14/076bab302c7b4508975440c56f6cc26a/36/GPL/openjdk-14_windows-x64_bin.zip', $zipPath)
 
 Write-Host "Unpacking..."
-7z x $zipPath -oC:\jdk14_temp | Out-Null
-[IO.Directory]::Move('C:\jdk14_temp\jdk-14', $jdkPath)
-Remove-Item 'C:\jdk14_temp' -Recurse -Force
-Remove-Item $zipPath
+$tempPath = "$env:TEMP\jdk14_temp"
+7z x $zipPath -o"$tempPath" | Out-Null
+[IO.Directory]::Move("$tempPath\jdk-14", $jdkPath)
+Remove-Item $tempPath -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item $zipPath -ErrorAction SilentlyContinue
 
 cmd /c "`"$jdkPath\bin\java`" --version"
 
