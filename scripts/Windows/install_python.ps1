@@ -118,11 +118,11 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
         # Python 2.6
         UpdatePythonPath "$env:SystemDrive\Python26"
-        Start-ProcessWithOutput "python $pipPath26"
+        Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode
 
         # Python 2.6 x64
         UpdatePythonPath "$env:SystemDrive\Python26-x64"
-        Start-ProcessWithOutput "python $pipPath26"
+        Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode
     }
 
     UpdatePip "$env:SystemDrive\Python26"
@@ -163,11 +163,11 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
         # Python 3.3
         UpdatePythonPath "C:\Python33"
-        Start-ProcessWithOutput "python $pipPath33"
+        Start-ProcessWithOutput "python $pipPath33" -IgnoreExitCode
 
         # Python 3.3 x64
         UpdatePythonPath "C:\Python33-x64"
-        Start-ProcessWithOutput "python $pipPath33"
+        Start-ProcessWithOutput "python $pipPath33" -IgnoreExitCode
     }
 
     UpdatePip "$env:SystemDrive\Python33"
@@ -288,8 +288,6 @@ if($python38_x64) {
 
 UpdatePip "$env:SystemDrive\Python38"
 UpdatePip "$env:SystemDrive\Python38-x64"
-
-Remove-Item $pipPath
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     Add-Path C:\Python27
