@@ -157,6 +157,7 @@ for:
         - bake_phase: 3
 
     build_script:
+    - ps: .\install_mysql.ps1
     - ps: .\install_miniconda.ps1
     - ps: .\install_python.ps1
     - ps: .\install_nodejs_latest.ps1
@@ -171,7 +172,6 @@ for:
     - ps: .\install_postgres10.ps1
     - ps: .\install_postgres11.ps1
     - ps: .\install_postgres12.ps1
-    - ps: .\install_mysql.ps1
     - ps: .\install_aws_cli.ps1
     - ps: .\install_aws_powershell.ps1
     - ps: .\install_azure_cli.ps1
