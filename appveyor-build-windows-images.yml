@@ -158,17 +158,6 @@ for:
 
     build_script:
 
-    - ps: .\install_vcpkg.ps1
-    - ps: .\install_innosetup.ps1
-    - ps: .\install_coverity.ps1
-    - ps: .\install_iis_win2019.ps1
-    - ps: .\install_nsis.ps1
-    - ps: .\install_octo.ps1
-    - ps: .\install_meson_and_ninja.ps1
-    - ps: .\install_java_7_8.ps1
-    - ps: .\install_jdk11.ps1
-    - ps: .\install_jdk12.ps1
-    - ps: .\install_jdk13.ps1
     - ps: .\install_jdk14.ps1
     - ps: .\install_maven.ps1
     - ps: .\install_gitversion.ps1
@@ -182,42 +171,53 @@ for:
     - ps: .\install_sql_server_2019.ps1
 
 #---- tested
-    - ps: .\install_miniconda.ps1
-    - ps: .\install_python.ps1
-    - ps: .\install_nodejs_latest.ps1
-    - ps: .\install_yarn.ps1
-    - ps: .\install_service_fabric.ps1
-    - ps: .\install_ssis_vs2019.ps1
-    - ps: .\install_go.ps1
-    - ps: .\install_rust.ps1
-    - ps: .\install_openssl.ps1
-    - ps: .\install_cmake.ps1
-    - ps: .\install_postgres96.ps1
-    - ps: .\install_postgres10.ps1
-    - ps: .\install_postgres11.ps1
-    - ps: .\install_postgres12.ps1
-    - ps: .\install_azure_powershell.ps1
-    - ps: .\install_mysql.ps1
-    - ps: .\install_aws_cli.ps1
-    - ps: .\install_aws_powershell.ps1
-    - ps: .\install_azure_cli.ps1
-    - ps: .\install_azure_cosmosdb_emulator.ps1
-    - ps: .\install_gcloud_sdk.ps1
-    - ps: .\install_erlang.ps1
-    - ps: .\install_mongo.ps1
-    - ps: .\install_winsdk_81.ps1
-    - ps: .\install_wdk_1809.ps1
-    - ps: .\install_wdk_1903.ps1
-    - ps: .\install_dxsdk.ps1
-    - ps: .\install_vdproj_vs2019.ps1
-    - ps: .\install_wix311.ps1
-    - ps: .\install_wix_toolset_vs2019.ps1
-    - ps: .\install_chrome_browser.ps1
-    - ps: .\install_firefox_browser.ps1
-    - ps: .\install_edge_browser.ps1
-    - ps: .\install_selenium_drivers.ps1
-    - ps: .\install_llvm.ps1
-    - ps: .\install_llvm_extension_vs2019.ps1    
+    # - ps: .\install_miniconda.ps1
+    # - ps: .\install_python.ps1
+    # - ps: .\install_nodejs_latest.ps1
+    # - ps: .\install_yarn.ps1
+    # - ps: .\install_service_fabric.ps1
+    # - ps: .\install_ssis_vs2019.ps1
+    # - ps: .\install_go.ps1
+    # - ps: .\install_rust.ps1
+    # - ps: .\install_openssl.ps1
+    # - ps: .\install_cmake.ps1
+    # - ps: .\install_postgres96.ps1
+    # - ps: .\install_postgres10.ps1
+    # - ps: .\install_postgres11.ps1
+    # - ps: .\install_postgres12.ps1
+    # - ps: .\install_azure_powershell.ps1
+    # - ps: .\install_mysql.ps1
+    # - ps: .\install_aws_cli.ps1
+    # - ps: .\install_aws_powershell.ps1
+    # - ps: .\install_azure_cli.ps1
+    # - ps: .\install_azure_cosmosdb_emulator.ps1
+    # - ps: .\install_gcloud_sdk.ps1
+    # - ps: .\install_erlang.ps1
+    # - ps: .\install_mongo.ps1
+    # - ps: .\install_winsdk_81.ps1
+    # - ps: .\install_wdk_1809.ps1
+    # - ps: .\install_wdk_1903.ps1
+    # - ps: .\install_dxsdk.ps1
+    # - ps: .\install_vdproj_vs2019.ps1
+    # - ps: .\install_wix311.ps1
+    # - ps: .\install_wix_toolset_vs2019.ps1
+    # - ps: .\install_chrome_browser.ps1
+    # - ps: .\install_firefox_browser.ps1
+    # - ps: .\install_edge_browser.ps1
+    # - ps: .\install_selenium_drivers.ps1
+    # - ps: .\install_llvm.ps1
+    # - ps: .\install_llvm_extension_vs2019.ps1
+    # - ps: .\install_vcpkg.ps1
+    # - ps: .\install_innosetup.ps1
+    # - ps: .\install_coverity.ps1
+    # - ps: .\install_iis_win2019.ps1
+    # - ps: .\install_nsis.ps1
+    # - ps: .\install_octo.ps1
+    # - ps: .\install_meson_and_ninja.ps1
+    # - ps: .\install_java_7_8.ps1
+    # - ps: .\install_jdk11.ps1
+    # - ps: .\install_jdk12.ps1
+    # - ps: .\install_jdk13.ps1    
 #---- tested      
     
     - ps: .\install_dotnet_core_sdks.ps1
