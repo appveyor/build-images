@@ -27,9 +27,9 @@ function Start-ProcessWithOutput {
 
     if ($command.startsWith('"')) {
         $idx = $command.indexOf('"', 1)
-        $fileName = $command.substring(1, $idx)
-        if ($idx -lt ($command.length - 1)) {
-            $arguments = $command.substring($idx + 1)
+        $fileName = $command.substring(1, $idx - 1)
+        if ($idx -lt ($command.length - 2)) {
+            $arguments = $command.substring($idx + 2)
         }
     } else {
         $idx = $command.indexOf(' ')
