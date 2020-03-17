@@ -1,4 +1,6 @@
-﻿Write-Host "Installing Cygwin x86..." -ForegroundColor Cyan
+﻿. "$PSScriptRoot\common.ps1"
+
+Write-Host "Installing Cygwin x86..." -ForegroundColor Cyan
 
 if(Test-Path C:\cygwin) {
     Write-Host "Deleting existing installation..."
@@ -49,9 +51,9 @@ Write-Host "Installed Cygwin x64" -ForegroundColor Green
 
 # compact folders
 Write-Host "Compacting C:\cygwin..." -NoNewline
-compact /c /i /s:C:\cygwin | Out-Null
+Start-ProcessWithOutput "compact /c /i /q /s:C:\cygwin"
 Write-Host "OK" -ForegroundColor Green
 
 Write-Host "Compacting C:\cygwin64..." -NoNewline
-compact /c /i /s:C:\cygwin64 | Out-Null
+Start-ProcessWithOutput "compact /c /i /q /s:C:\cygwin64"
 Write-Host "OK" -ForegroundColor Green
