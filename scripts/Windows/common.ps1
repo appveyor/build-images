@@ -77,17 +77,22 @@ function Start-ProcessWithOutput {
     $stdOutEvent = Register-ObjectEvent -InputObject $process -Action $outScripBlock -EventName 'OutputDataReceived'
     $stdErrEvent = Register-ObjectEvent -InputObject $process -Action $errScripBlock -EventName 'ErrorDataReceived'
 
-    $process.Start() | Out-Null
+    try {
+        $process.Start() | Out-Null
 
-    $process.BeginOutputReadLine()
-    $process.BeginErrorReadLine()
-    [Void]$process.WaitForExit()
-
-    # Unregistering events to retrieve process output.
-    Unregister-Event -SourceIdentifier $stdOutEvent.Name
-    Unregister-Event -SourceIdentifier $stdErrEvent.Name    
-
-    if ($ignoreExitCode -eq $false -and $process.ExitCode -ne 0) {
-        exit $process.ExitCode
+        $process.BeginOutputReadLine()
+        $process.BeginErrorReadLine()
+        [Void]$process.WaitForExit()
+    
+        # Unregistering events to retrieve process output.
+        Unregister-Event -SourceIdentifier $stdOutEvent.Name
+        Unregister-Event -SourceIdentifier $stdErrEvent.Name    
+    
+        if ($ignoreExitCode -eq $false -and $process.ExitCode -ne 0) {
+            exit $process.ExitCode
+        }
+    } catch {
+        Write-Host "Error running '$($psi.FileName) $($psi.Arguments)' command: $($_.Exception.Message)" -ForegroundColor Red
+        throw $_
     }
 }
