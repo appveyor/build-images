@@ -315,13 +315,18 @@ $r = (py.exe --version)
 $r
 
 function CheckPython($path) {
-    if (-not (Test-Path "$path\python.exe")) { throw "python.exe is missing in $path"; }
-    elseif (-not (Test-Path "$path\Scripts\pip.exe")) { Write-Host "pip.exe is missing in $path" -ForegroundColor Red; }
-    else { Write-Host "$path is OK" -ForegroundColor Green; }
+    if (Test-Path "$path\python.exe") {
+        Start-ProcessWithOutput "$path\python.exe --version"
+    } else {
+        throw "python.exe is missing in $path"
+    }
 
-    Start-ProcessWithOutput "$path\python.exe --version"
-    Start-ProcessWithOutput "$path\Scripts\pip.exe --version"
-    Start-ProcessWithOutput "$path\Scripts\virtualenv.exe --version"
+    if (Test-Path "$path\Scripts\pip.exe") {
+        Start-ProcessWithOutput "$path\Scripts\pip.exe --version"
+        Start-ProcessWithOutput "$path\Scripts\virtualenv.exe --version"
+    } else {
+        Write-Host "pip.exe is missing in $path" -ForegroundColor Red
+    }
 }
 
 if (-not $env:INSTALL_LATEST_ONLY) {
