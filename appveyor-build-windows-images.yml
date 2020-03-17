@@ -160,6 +160,7 @@ for:
 
     - ps: .\install_java_7_8.ps1
     - ps: .\install_android_sdk.ps1
+    - ps: Push-AppveyorArtifact $env:TEMP\android-sdkmanager.log.zip
     - ps: .\install_msys64.ps1
     - ps: .\install_cygwin.ps1
     - ps: .\install_mingw-w64.ps1

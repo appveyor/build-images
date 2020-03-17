@@ -59,7 +59,7 @@ if ($env:INSTALL_LATEST_ONLY) {
             "add-ons;addon-google_apis-google-22" `
             "add-ons;addon-google_apis-google-21" `
             "cmake;3.6.4111459" `
-            "patcher;v4" | Out-File -FilePath .\android-sdkmanager.log
+            "patcher;v4" | Out-File -FilePath "$env:TEMP\android-sdkmanager.log"
 } else {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
             "platform-tools" `
@@ -114,12 +114,10 @@ if ($env:INSTALL_LATEST_ONLY) {
             "add-ons;addon-google_apis-google-22" `
             "add-ons;addon-google_apis-google-21" `
             "cmake;3.6.4111459" `
-            "patcher;v4" | Out-File -FilePath .\android-sdkmanager.log
+            "patcher;v4" | Out-File -FilePath "$env:TEMP\android-sdkmanager.log"
 }
 
-dir
-
-Push-AppveyorArtifact .\android-sdkmanager.log
+7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
 
 Pop-Location
 
