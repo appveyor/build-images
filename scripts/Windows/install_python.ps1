@@ -172,8 +172,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         UninstallPython "Python 3.4.3"
         UninstallPython "Python 3.4.3 (64-bit)"
 
+        InstallPythonMSI "3.4.4" "x64" "$env:SystemDrive\Python34-x64"
         InstallPythonMSI "3.4.4" "x86" "$env:SystemDrive\Python34"
-        InstallPythonMSI "3.4.4" "x64" "$env:SystemDrive\Python34-x64"  
     }
 
     UpdatePip "$env:SystemDrive\Python34"
