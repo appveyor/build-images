@@ -59,6 +59,10 @@ Write-Host "Downloading get-pip.py v3.3..." -ForegroundColor Cyan
 $pipPath33 = "$env:TEMP\get-pip-33.py"
 (New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/3.3/get-pip.py', $pipPath33)
 
+Write-Host "Downloading get-pip.py v3.4..." -ForegroundColor Cyan
+$pipPath34 = "$env:TEMP\get-pip-34.py"
+(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/3.4/get-pip.py', $pipPath34)
+
 function InstallPythonMSI($version, $platform, $targetPath) {
     $urlPlatform = ""
     if ($platform -eq 'x64') {
@@ -166,9 +170,6 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         UpdatePythonPath "$env:SystemDrive\Python33-x64"
         Start-ProcessWithOutput "python $pipPath33" -IgnoreExitCode
     }
-
-    UpdatePip "$env:SystemDrive\Python33"
-    UpdatePip "$env:SystemDrive\Python33-x64"
 }
 
 if (-not $env:INSTALL_LATEST_ONLY) {
@@ -183,10 +184,18 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
         InstallPythonMSI "3.4.4" "x64" "$env:SystemDrive\Python34-x64"
         InstallPythonMSI "3.4.4" "x86" "$env:SystemDrive\Python34"
-    }
 
-    UpdatePip "$env:SystemDrive\Python34"
-    UpdatePip "$env:SystemDrive\Python34-x64" 
+        # install pip for python 3.4
+        Write-Host "Installing pip for 3.4..." -ForegroundColor Cyan
+
+        # Python 3.4
+        UpdatePythonPath "$env:SystemDrive\Python34"
+        Start-ProcessWithOutput "python $pipPath34" -IgnoreExitCode
+
+        # Python 3.4 x64
+        UpdatePythonPath "$env:SystemDrive\Python34-x64"
+        Start-ProcessWithOutput "python $pipPath34" -IgnoreExitCode        
+    }
 }
 
 if (-not $env:INSTALL_LATEST_ONLY) {
