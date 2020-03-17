@@ -170,6 +170,9 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         UpdatePythonPath "$env:SystemDrive\Python33-x64"
         Start-ProcessWithOutput "python $pipPath33" -IgnoreExitCode
     }
+
+    UpdatePip "$env:SystemDrive\Python33"
+    UpdatePip "$env:SystemDrive\Python33-x64"
 }
 
 if (-not $env:INSTALL_LATEST_ONLY) {
@@ -196,6 +199,9 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         UpdatePythonPath "$env:SystemDrive\Python34-x64"
         Start-ProcessWithOutput "python $pipPath34" -IgnoreExitCode        
     }
+
+    UpdatePip "$env:SystemDrive\Python34"
+    UpdatePip "$env:SystemDrive\Python34-x64" 
 }
 
 if (-not $env:INSTALL_LATEST_ONLY) {
