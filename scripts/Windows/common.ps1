@@ -20,7 +20,8 @@ function GetProductVersion ($partialName) {
 function Start-ProcessWithOutput {
     param(
         $command,
-        [switch]$ignoreExitCode
+        [switch]$ignoreExitCode,
+        [switch]$ignoreStdOut
     )
     $fileName = $command
     $arguments = $null
@@ -74,12 +75,12 @@ function Start-ProcessWithOutput {
 
     # Adding event handers for stdout and stderr.
     $outScripBlock = {
-        if (! [String]::IsNullOrEmpty($EventArgs.Data)) {
+        if (-not [String]::IsNullOrEmpty($EventArgs.Data) -and $ignoreStdOut -eq $false) {
             Write-Host "$($EventArgs.Data)"
         }
     }
     $errScripBlock = {
-        if (! [String]::IsNullOrEmpty($EventArgs.Data)) {
+        if (-not [String]::IsNullOrEmpty($EventArgs.Data)) {
             Write-Host "$($EventArgs.Data)" -ForegroundColor Red
         }
     }    

@@ -51,9 +51,9 @@ Write-Host "Installed Cygwin x64" -ForegroundColor Green
 
 # compact folders
 Write-Host "Compacting C:\cygwin..." -NoNewline
-Start-ProcessWithOutput "compact /c /i /q /s:C:\cygwin"
+Start-ProcessWithOutput "compact /c /i /q /s:C:\cygwin" -IgnoreStdOut
 Write-Host "OK" -ForegroundColor Green
 
 Write-Host "Compacting C:\cygwin64..." -NoNewline
-Start-ProcessWithOutput "compact /c /i /q /s:C:\cygwin64"
+Start-ProcessWithOutput "compact /c /i /q /s:C:\cygwin64" -IgnoreStdOut
 Write-Host "OK" -ForegroundColor Green

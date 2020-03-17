@@ -25,4 +25,4 @@ if ($env:INSTALL_LATEST_ONLY) {
     Add-Path "$jdkPath\bin"
 }
 
-Write-Host "JDK 13 installed" -ForegroundColor Green
+Write-Host "JDK 14 installed" -ForegroundColor Green

@@ -161,18 +161,23 @@ for:
 
     build_script:
 
-    - ps: .\install_java_7_8.ps1
-    - ps: .\install_jdk11.ps1
-    - ps: .\install_jdk12.ps1
-    - ps: .\install_jdk13.ps1
-    - ps: .\install_jdk14.ps1
-
     - ps: .\install_cygwin.ps1
-    - ps: .\install_mingw-w64.ps1
-    - ps: .\install_boost_1.71.0_vs2019.ps1
-    
+   
     - ps: .\install_sql_server_2017.ps1
+
+    # Restart VM
+    - ps: Start-Sleep -s 5; Restart-Computer
+    - ps: Start-Sleep -s 5
+
+    - ps: .\install_sql_server_2017_after_restart.ps1
+
     - ps: .\install_sql_server_2019.ps1
+
+    # Restart VM
+    - ps: Start-Sleep -s 5; Restart-Computer
+    - ps: Start-Sleep -s 5
+
+    - ps: .\install_sql_server_2019_after_restart.ps1    
 
 #---- tested
     # - ps: .\install_miniconda.ps1
@@ -223,7 +228,16 @@ for:
     # - ps: .\install_msys64.ps1
 
     # - ps: .\install_android_sdk.ps1
-    # - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip    
+    # - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
+
+    # - ps: .\install_java_7_8.ps1
+    # - ps: .\install_jdk11.ps1
+    # - ps: .\install_jdk12.ps1
+    # - ps: .\install_jdk13.ps1
+    # - ps: .\install_jdk14.ps1
+
+    # - ps: .\install_mingw-w64.ps1
+    # - ps: .\install_boost_1.71.0_vs2019.ps1    
 #---- tested      
     
     - ps: .\install_dotnet_core_sdks.ps1
