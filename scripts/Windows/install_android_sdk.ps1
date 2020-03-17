@@ -117,6 +117,8 @@ if ($env:INSTALL_LATEST_ONLY) {
             "patcher;v4" | Out-File -FilePath .\android-sdkmanager.log
 }
 
+dir
+
 Push-AppveyorArtifact .\android-sdkmanager.log
 
 Pop-Location
