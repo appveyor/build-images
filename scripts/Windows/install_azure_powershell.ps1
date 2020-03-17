@@ -10,6 +10,11 @@ Write-Host "Creating AzurePSDataCollectionProfile.json"
 New-Item -path "$env:APPDATA\Windows Azure Powershell" -Type directory -Force | Out-Null
 Set-Content -path $azureCollectionProfilePath -value '{"enableAzureDataCollection":false}' -Force
 
-# test installation
+Write-Host "Testing new cmdlets"
+Get-Command Connect-AzAccount
+Get-Command Get-AzRmStorageContainer
+
+Write-Host "Testing cmdlets in compatibility mode"
+Enable-AzureRmAlias
 Get-Command Login-AzureRmAccount
 Get-Command Get-AzureRmApiManagementBackend

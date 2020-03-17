@@ -157,13 +157,12 @@ for:
         - bake_phase: 3
 
     build_script:
+    - ps: .\install_azure_powershell.ps1
     - ps: .\install_mysql.ps1
-
     - ps: .\install_aws_cli.ps1
     - ps: .\install_aws_powershell.ps1
     - ps: .\install_azure_cli.ps1
     - ps: .\install_azure_cosmosdb_emulator.ps1
-    - ps: .\install_azure_powershell.ps1
     - ps: .\install_gcloud_sdk.ps1
     - ps: .\install_erlang.ps1
     - ps: .\install_mongo.ps1
