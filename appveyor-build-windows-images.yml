@@ -171,7 +171,7 @@ for:
     - ps: .\install_nodejs_latest.ps1
     - ps: .\install_yarn.ps1
     - ps: .\install_go.ps1
-    - ps: .\install_rust.ps1
+    #- ps: .\install_rust.ps1
     - ps: .\install_java_7_8.ps1
     - ps: .\install_jdk11.ps1
     - ps: .\install_jdk12.ps1

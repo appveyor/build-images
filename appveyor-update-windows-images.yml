@@ -42,7 +42,7 @@ build_script:
 - ps: .\install_meson_and_ninja.ps1
 - ps: if ($env:VS_VERSION -ne '2013') { .\install_vcpkg.ps1 }
 - ps: .\install_cmake.ps1
-- ps: .\install_rust.ps1
+#- ps: .\install_rust.ps1
 - ps: .\install_python.ps1
 - ps: .\install_mingw-w64.ps1
 
