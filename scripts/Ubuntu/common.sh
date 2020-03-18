@@ -1671,7 +1671,7 @@ function install_virtualbox() {
 
 function install_rust() {
     echo "[INFO] Running install_rust..."
-    curl https://sh.rustup.rs -sSf | sh ||
+    curl https://sh.rustup.rs -sSf | sh -y ||
         { echo "[ERROR] Cannot install Rust." 1>&2; return 10; }
 
     log_version cargo --version
