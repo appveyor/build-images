@@ -1,0 +1,74 @@
+environment:
+  matrix:
+  - job_name: VS 2013 on GCE us-central1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-vs2013-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: vs2013-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+    VS_VERSION: 2013
+
+  - job_name: VS 2015 on GCE us-central1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-vs2015-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: vs2015-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+    VS_VERSION: 2015
+
+  - job_name: VS 2017 on GCE us-central1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-vs2017-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: vs2017-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+    VS_VERSION: 2017
+
+  # - job_name: VS 2019 on Azure West US
+  #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-azure-westus
+  #   APPVEYOR_BAKE_IMAGE: vs2019-azure-westus
+
+  # - job_name: VS 2019 on Hyper-V
+  #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
+  #   APPVEYOR_BAKE_IMAGE: vs2019
+
+  base_dir: scripts\Windows
+
+init:
+- appveyor version
+- ps: $ErrorActionPreference = 'Stop'
+- ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
+- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+build_script:
+- cd %base_dir%
+- ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
+- ps: . .\common.ps1
+- ps: DisplayDiskInfo
+
+- ps: if ($env:VS_VERSION -ne '2013') { .\update_qt_5.12.ps1 }
+- ps: .\install_nuget.ps1
+- ps: .\install_meson_and_ninja.ps1
+- ps: if ($env:VS_VERSION -ne '2013') { .\install_vcpkg.ps1 }
+- ps: .\install_cmake.ps1
+- ps: .\install_rust.ps1
+- ps: .\install_python.ps1
+- ps: .\install_mingw-w64.ps1
+
+- ps: .\install_edge_browser.ps1
+- ps: .\install_chrome_browser.ps1
+- ps: .\install_firefox_browser.ps1
+- ps: .\install_selenium_drivers.ps1
+
+# Main block
+- ps: .\add_ssh_known_hosts.ps1
+- ps: if ($env:VS_VERSION -ne '2013') { .\install_powershell_core.ps1 }
+- ps: .\install_miniconda.ps1
+- ps: .\install_go.ps1
+- ps: .\install_msys64.ps1
+- ps: if ($env:VS_VERSION -ne '2013') { .\install_azure_storage_emulator.ps1 }
+- ps: .\install_ruby.ps1
+- ps: .\install_nodejs.ps1
+
+# Restart VM
+- ps: Start-Sleep -s 5; Restart-Computer
+- ps: Start-Sleep -s 5
+- cd %base_dir%
+
+- appveyor version
+- ps: .\disable_windows_background_services.ps1
+- ps: .\enforce_windows_firewall.ps1
+- ps: .\cleanup_windows.ps1
+
+test: off

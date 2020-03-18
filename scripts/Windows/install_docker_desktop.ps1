@@ -1,14 +1,14 @@
-Write-Host "Installing Docker Desktop 2.1.0.5"
+Write-Host "Installing Docker Desktop 2.2.0.4"
 
 #choco install docker-desktop
 
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Docker-Desktop-Installer.exe"
-(New-Object Net.WebClient).DownloadFile('https://download.docker.com/win/stable/40693/Docker%20Desktop%20Installer.exe', $exePath)
+(New-Object Net.WebClient).DownloadFile('https://download.docker.com/win/stable/43472/Docker%20Desktop%20Installer.exe', $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath install --quiet
-del $exePath
+Remove-Item $exePath
 
 Write-Host "Docker Desktop installed" -ForegroundColor Green
 
@@ -20,7 +20,7 @@ Write-Host "Installing docker-appveyor PowerShell module..."
 $dockerAppVeyorPath = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\docker-appveyor"
 New-Item $dockerAppVeyorPath -ItemType Directory -Force
 
-Copy-Item "$env:TEMP\docker-appveyor.psm1" -Destination $dockerAppVeyorPath
+Copy-Item "$PSScriptRoot\docker-appveyor.psm1" -Destination $dockerAppVeyorPath
 
 Remove-Module docker-appveyor -ErrorAction SilentlyContinue
 Import-Module docker-appveyor

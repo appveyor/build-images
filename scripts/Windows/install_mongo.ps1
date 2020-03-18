@@ -74,9 +74,9 @@ Get-Process "MongoDBCompassCommunity" | Stop-Process
 UninstallMongoCompass
 
 # remove SSL libs from System32
-Remove-Item 'C:\Windows\System32\libcrypto-1_1-x64.dll' -Force
-Remove-Item 'C:\Windows\System32\libeay32.dll' -Force
-Remove-Item 'C:\Windows\System32\libssl-1_1-x64.dll' -Force
-Remove-Item 'C:\Windows\System32\libssl32.dll' -Force
+Remove-Item 'C:\Windows\System32\libcrypto-1_1-x64.dll' -Force -ErrorAction SilentlyContinue
+Remove-Item 'C:\Windows\System32\libeay32.dll' -Force -ErrorAction SilentlyContinue
+Remove-Item 'C:\Windows\System32\libssl-1_1-x64.dll' -Force -ErrorAction SilentlyContinue
+Remove-Item 'C:\Windows\System32\libssl32.dll' -Force -ErrorAction SilentlyContinue
 
 Write-Host "MongoDB installed" -ForegroundColor Green

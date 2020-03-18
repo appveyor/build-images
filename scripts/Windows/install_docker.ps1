@@ -1,7 +1,7 @@
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # What Windows is that?
-$osVer = [System.Environment]::OSVersion.Version
+$osVerBuild = (Get-CimInstance Win32_OperatingSystem).BuildNumber
 
 # Major  Minor  Build  Revision
 # -----  -----  -----  --------
@@ -50,7 +50,7 @@ Install-Package -Name docker -ProviderName DockerMsftProvider -Force
 $hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
 $hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
 
-if ($hypervInstalled -and $osVer.Major -eq 10 -and $osVer.Build -ge 16299) {
+if ($hypervInstalled -and $osVerBuild -ge 16299) {
 	# 1709 and above is required for LCOW and if only Hyper-V enabled
 	
 	Write-Host "Enable LCOW"

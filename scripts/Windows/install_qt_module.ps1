@@ -1,28 +1,55 @@
+# Mirrors: http://download.qt.io/static/mirrorlist/
+# Mirrors2: https://download.qt.io/official_releases/qt/5.14/5.14.1/qt-opensource-windows-x86-5.14.1.exe.mirrorlist
+
 $QT_INSTALL_DIR = "C:\Qt"
-$QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/windows_x86/desktop'
+#$QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/windows_x86/desktop'
+$QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/desktop'
+
+if ($isLinux) {
+    $QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/linux_x64/desktop'
+} elseif ($isMacOS) {
+    $QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/mac_x64/desktop'
+}
 
 $TOOL_IDS = @(
-    "vcredist"
-    "telemetry"
-    "qtcreator"
-    "qt3dstudio_runtime_240"
-    "qt3dstudio_runtime_230"
-    "qt3dstudio_runtime_220"
-    "qt3dstudio_runtime_210"
-    "qt3dstudio_runtime"
-    "qt3dstudio_openglruntime_250"
-    "qt3dstudio_openglruntime_240"
-    "qt3dstudio"
-    "openssl_x86"
-    "openssl_x64"
-    "openssl_src"
-    "mingw"
-    "maintenance_update_reminder"
-    "maintenance"
-    "ifw"
-    "generic"
     "cmake"
+    "generic"
+    "ifw"
+    "maintenance"
+    "maintenance_update_reminder"
+    "ninja"
+    "qt3dstudio"
+    "qt3dstudio_openglruntime_240"
+    "qt3dstudio_openglruntime_250"
+    "qt3dstudio_openglruntime_260"    
+    "qt3dstudio_runtime_220"
+    "qt3dstudio_runtime_230"
+    "qt3dstudio_runtime_240"
+    "qtcreator"
+    "telemetry"
 )
+
+if ($isLinux) {
+    $TOOL_IDS += @(
+        "openssl_src"
+        "openssl_x64"        
+    )
+} elseif ($isMacOS) {
+    $TOOL_IDS += @(
+        "qt3dstudio_runtime"
+        "qt3dstudio_runtime_210"
+    )
+} else {
+    $TOOL_IDS += @(
+        "mingw"
+        "openssl_src"
+        "openssl_x64"        
+        "openssl_x86"
+        "qt3dstudio_runtime"
+        "qt3dstudio_runtime_210"
+        "vcredist"
+        )
+}
 
 $package_updates = @{}
 $feeds_cache = @{}
@@ -52,6 +79,14 @@ function SplitString($str) {
         }
     }
     return $arr
+}
+
+function GetTempDir() {
+    if ($isLinux -or $isMacOS) {
+        return "/tmp"
+    } else {
+        return $env:TEMP
+    }
 }
 
 function FetchUpdatePackages($feedRootUrl) {
@@ -150,12 +185,23 @@ function InstallComponentById {
         $downloadUrl = "$($comp.BaseUrl)/$($comp.Name)/$fileName"
         $sha1 = (New-Object Net.WebClient).DownloadString("$downloadUrl.sha1")
 
-        $tempDir = "$env:TEMP\qt5-installer-temp"
+        $tempDir = [IO.Path]::Combine((GetTempDir), "qt5-installer-temp")
         New-Item $tempDir -ItemType Directory -Force | Out-Null
 
         Write-Host "$($comp.Name)/$fileName - Downloading..." -NoNewline
-        $tempFileName = "$tempDir\$fileName"
-        (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
+        $tempFileName = [IO.Path]::Combine($tempDir, $fileName)
+
+        try {
+            (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
+        } catch {
+            Write-Host "Error downloading $($downloadUrl): $($_.Exception.Message)" -ForegroundColor Red
+
+            # retrying
+            Write-Host "Re-trying to download $($downloadUrl) in 5 seconds"
+            Start-Sleep -s 5
+            (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
+        }
+
         $downloadedSha1 = (Get-FileHash -Algorithm SHA1 $tempFileName).Hash.ToLowerInvariant()
 
         if ($sha1 -ne $downloadedSha1) {
@@ -163,7 +209,11 @@ function InstallComponentById {
         }
 
         Write-Host "Extracting..." -NoNewline
-        7z x $tempFileName -aoa -o"$destPath" | Out-Null
+        if ($isLinux -or $isMacOS) {
+            7za x $tempFileName -aoa -o"$destPath" | Out-Null
+        } else {
+            7z x $tempFileName -aoa -o"$destPath" | Out-Null
+        }
 
         Write-Host "OK" -ForegroundColor Green
         $comp.Installed = $true

@@ -1,7 +1,7 @@
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # What Windows is that?
-$osVer = [System.Environment]::OSVersion.Version
+$osVerBuild = (Get-CimInstance Win32_OperatingSystem).BuildNumber
 
 # Major  Minor  Build  Revision
 # -----  -----  -----  --------
@@ -15,19 +15,22 @@ $osVer = [System.Environment]::OSVersion.Version
 $hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
 $hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
 function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
-	if ($osVer.Build -ge $minOsBuild) {
+	if ($osVerBuild -ge $minOsBuild) {
 		# Windows Server 2016 or above
 		
 		$isolation = $null
-		if ($osVer.Build -gt $minOsBuild -and $hypervInstalled) {
+		if ($osVerBuild -gt $minOsBuild -and $hypervInstalled) {
 			$isolation = 'hyperv'
-		} elseif ($osVer.Build -eq $minOsBuild) {
+		} elseif ($osVerBuild -eq $minOsBuild) {
 			$isolation = 'default'
 		}
 		
 		if ($isolation) {
 			Write-Host "Pulling and running '$serverCoreTag' images in '$isolation' mode"
+			docker pull mcr.microsoft.com/windows/servercore:$serverCoreTag
 			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
+
+			docker pull mcr.microsoft.com/windows/nanoserver:$nanoServerTag
 			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
 		}
 	}
@@ -37,3 +40,5 @@ PullRunDockerImages 14393 'ltsc2016' 'sac2016'
 PullRunDockerImages 16299 '1709' '1709'
 PullRunDockerImages 17134 '1803' '1803'
 PullRunDockerImages 17763 'ltsc2019' '1809'
+
+docker pull mcr.microsoft.com/dotnet/framework/aspnet:4.8

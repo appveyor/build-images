@@ -144,6 +144,7 @@ function write_line() {
 
 # check_apt_locks waits for LOCK_TIMEOUT seconds for apt locks released
 function check_apt_locks() {
+    echo "[INFO] check_apt_locks..."
     local LOCK_TIMEOUT=60
     local START_TIME
     START_TIME=$(date +%s)
@@ -157,7 +158,7 @@ function check_apt_locks() {
         if lsof /var/lib/apt/lists/lock; then
             sleep 1
         else
-            #apt succcessfully unlocked
+            echo "[INFO] apt succcessfully unlocked"
             return 0
         fi
     done
@@ -166,6 +167,7 @@ function check_apt_locks() {
 }
 
 function add_user() {
+    echo "[INFO] Creating user account..."
     local USER_PASSWORD_LENGTH=${1:-32}
     save_bash_attributes
     set +o xtrace
@@ -255,7 +257,23 @@ function wait_cloudinit () {
     fi
 }
 
+function disable_automatic_apt_updates() {
+    echo "[INFO] Disabling automatic apt updates..."
+    # https://askubuntu.com/questions/1059971/disable-updates-from-command-line-in-ubuntu-16-04
+    # https://stackoverflow.com/questions/45269225/ansible-playbook-fails-to-lock-apt/51919678#51919678
+    
+    systemctl stop apt-daily.timer
+    systemctl disable apt-daily.timer
+    systemctl disable apt-daily.service
+    systemctl stop apt-daily-upgrade.timer
+    systemctl disable apt-daily-upgrade.timer
+    systemctl disable apt-daily-upgrade.service
+    systemctl daemon-reload
+    apt-get -y purge unattended-upgrades
+}
+
 function configure_apt() {
+    echo "[INFO] Running configure_apt..."
     dpkg --add-architecture i386
     export DEBIAN_FRONTEND=noninteractive
     export ACCEPT_EULA=Y
@@ -266,8 +284,6 @@ function configure_apt() {
     apt-get -y -q install software-properties-common ||
         { echo "[ERROR] Cannot install software-properties-common package." 1>&2; return 10; }
 
-    # Disable daily apt unattended updates.
-    write_line /etc/apt/apt.conf.d/10periodic 'APT::Periodic::Enable "0";' 'APT::Periodic::Enable '
     # configure appveyor env variables for future apt-get upgrades
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         write_line "$USER_HOME/.profile" 'export DEBIAN_FRONTEND=noninteractive'
@@ -334,6 +350,7 @@ function install_KVP_packages(){
         echo "[ERROR] Cannot get kernels version." 1>&2;
         return 1
     fi
+    sudo touch /var/lib/hyperv/.kvp_pool_1
 }
 
 # this package is required to communicate with Azure
@@ -655,9 +672,10 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.10" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" å"3.8.0" "3.8.1" "3.8.2rc2" "3.9.0a3" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.10" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.7.7" "3.8.0" "3.8.1" "3.8.2" "3.9.0a4" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
+        VENV_MINOR_PATH=${HOME}/venv${i%.*}
         if [ ! -d ${VENV_PATH} ]; then
         curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
             { echo "[WARNING] Cannot download Python ${i}."; continue; }
@@ -678,6 +696,9 @@ function install_pythons(){
         virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
         popd
+        echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
+        rm -f ${VENV_MINOR_PATH}
+        ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
         fi
     done
     find "${HOME}" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
@@ -1043,7 +1064,7 @@ function install_rubies() {
         return 1
     fi
     local DEFAULT_RUBY
-    DEFAULT_RUBY="ruby-2.6"
+    DEFAULT_RUBY="ruby-2.7"
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
@@ -1117,7 +1138,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.8" "go1.14rc1" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.8" "go1.14" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1446,12 +1467,18 @@ function install_gcloud() {
 }
 
 function install_azurecli() {
+    # https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
     echo "[INFO] Running install_azurecli..."
     AZ_REPO=${OS_CODENAME}
-    add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" ||
-        { echo "[ERROR] Cannot add azure-cli repository to APT sources." 1>&2; return 10; }
-    apt-key adv --keyserver packages.microsoft.com --recv-keys 52E16F86FEE04B979B07E28DB02C46DF417A0893 &&
-    apt-get -y -q install apt-transport-https &&
+    sudo apt-get -y -q install ca-certificates curl apt-transport-https gnupg
+
+    # curl -sL https://packages.microsoft.com/keys/microsoft.asc | 
+    #     gpg --dearmor | 
+    #     sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | 
+        sudo tee /etc/apt/sources.list.d/azure-cli.list
+
     apt-get -y -qq update &&
     apt-get -y -q install azure-cli ||
         { echo "[ERROR] Cannot instal azure-cli."; return 20; }
@@ -1642,6 +1669,15 @@ function install_virtualbox() {
     log_version vboxmanage --version
 }
 
+function install_rust() {
+    echo "[INFO] Running install_rust..."
+    curl https://sh.rustup.rs -sSf | sh -y ||
+        { echo "[ERROR] Cannot install Rust." 1>&2; return 10; }
+
+    log_version cargo --version
+    log_version rustc --version
+}
+
 function install_clang() {
     echo "[INFO] Running install_clang..."
     curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&
@@ -1766,8 +1802,8 @@ function install_qt(){
 }
 
 function add_ssh_known_hosts() {
-    if [ -f "add_ssh_known_hosts.ps1" ] && command -v pwsh; then
-        pwsh ./add_ssh_known_hosts.ps1
+    if [ -f "../Windows/add_ssh_known_hosts.ps1" ] && command -v pwsh; then
+        pwsh -nol -noni ../Windows/add_ssh_known_hosts.ps1
     else
         echo '[ERROR] Cannot run add_ssh_known_hosts.ps1: Either Powershell is not installed or add_ssh_known_hosts.ps1 does not exist.' 1>&2;
         return 10;
@@ -1859,5 +1895,4 @@ function cleanup() {
     log_version ls -ltra "${HOME}"
     log_version check_folders ${HOME}/.*
     log_version check_folders "/*" "/opt/*" "/var/*" "/var/lib/*" "/var/cache/*" "/usr/*" "/usr/lib/*" "/usr/share/*"
-
 }

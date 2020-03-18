@@ -32,7 +32,7 @@ if (-not $finished) {
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # What Windows is that?
-$osVer = [System.Environment]::OSVersion.Version
+$osVerBuild = (Get-CimInstance Win32_OperatingSystem).BuildNumber
 
 # Major  Minor  Build  Revision
 # -----  -----  -----  --------
@@ -47,19 +47,22 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 	$hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
 	$hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
 
-	if ($osVer.Build -ge $minOsBuild) {
+	if ($osVerBuild -ge $minOsBuild) {
 		# Windows Server 2016 or above
 		
 		$isolation = $null
-		if ($osVer.Build -gt $minOsBuild -and $hypervInstalled) {
+		if ($osVerBuild -gt $minOsBuild -and $hypervInstalled) {
 			$isolation = 'hyperv'
-		} elseif ($osVer.Build -eq $minOsBuild) {
+		} elseif ($osVerBuild -eq $minOsBuild) {
 			$isolation = 'default'
 		}
 		
 		if ($isolation) {
 			Write-Host "Pulling and running '$serverCoreTag' images in '$isolation' mode"
+			docker pull mcr.microsoft.com/windows/servercore:$serverCoreTag
 			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
+
+			docker pull mcr.microsoft.com/windows/nanoserver:$nanoServerTag
 			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
 		}
 	}
@@ -79,12 +82,18 @@ if (Test-Path $configPath) {
 Write-Host "Switching Docker to Linux mode..."
 Switch-DockerLinux
 docker version
+
+docker pull busybox
 docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
+
+docker pull alpine
 docker run --rm alpine echo hello_world
 
 Write-Host "Switching Docker to Windows mode..."
 Switch-DockerWindows
 docker version
+
+docker pull busybox
 docker run --rm -v "$env:USERPROFILE`:/user-profile" busybox ls /user-profile
 
 if (-not $env:INSTALL_LATEST_ONLY) {
@@ -92,6 +101,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 	PullRunDockerImages 17134 '1803' '1803'
 }
 PullRunDockerImages 17763 'ltsc2019' '1809'
+
+docker pull mcr.microsoft.com/dotnet/framework/aspnet:4.8
 
 Write-Host "Disable SMB share for disk C:"
 Remove-SmbShare -Name C -ErrorAction SilentlyContinue -Force

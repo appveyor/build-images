@@ -13,7 +13,7 @@ CURRENT_NODEJS=8
 AGENT_DIR=/opt/appveyor/build-agent
 WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 LOG_FILE=$HOME/$(basename $0)-$DATEMARK.log
-VERSIONS_FILE=$HOME/versions-$DATEMARK.log
+VERSIONS_FILE=$HOME/versions.log
 LOGGING=true
 SCRIPT_PID=$$
 
@@ -32,20 +32,22 @@ if [[ -z "${IS_DOCKER-}" || "${#IS_DOCKER}" = "0" ]]; then
     fi
 fi
 
-case  ${PACKER_BUILDER_TYPE-} in
-    googlecompute )
-        BUILD_AGENT_MODE=GCE;;
-    hyperv* )
-        BUILD_AGENT_MODE=HyperV;;
-    azure* )
-        BUILD_AGENT_MODE=Azure;;
-    amazon-* )
-        BUILD_AGENT_MODE=AmazonEC2;;
-    * )
-        BUILD_AGENT_MODE=''
-        echo "[WARNING] Unknown packer builder '${PACKER_BUILDER_TYPE-}'. BUILD_AGENT_MODE variable not set." 1>&2
-        ;;
-esac
+if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
+    case  ${PACKER_BUILDER_TYPE-} in
+        googlecompute )
+            BUILD_AGENT_MODE=GCE;;
+        hyperv* )
+            BUILD_AGENT_MODE=HyperV;;
+        azure* )
+            BUILD_AGENT_MODE=Azure;;
+        amazon-* )
+            BUILD_AGENT_MODE=AmazonEC2;;
+        * )
+            BUILD_AGENT_MODE=''
+            echo "[WARNING] Unknown packer builder '${PACKER_BUILDER_TYPE-}'. BUILD_AGENT_MODE variable not set." 1>&2
+            ;;
+    esac
+fi
 
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )
@@ -88,15 +90,17 @@ init_logging
 
 configure_path
 
-apt-get -y -qq update && apt-get install -y -q sudo ||
-    _continue $?
-
-add_user ||
-    _abort $?
+if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
+    add_user ||
+        _abort $?
+fi
 
 if ! $IS_DOCKER; then
     wait_cloudinit || _continue
 fi
+
+disable_automatic_apt_updates ||
+    _abort $?
 
 configure_apt ||
     _abort $?
@@ -120,8 +124,10 @@ if $IS_DOCKER; then
     copy_appveyoragent ||
         _abort $?
 else
-    install_appveyoragent "${BUILD_AGENT_MODE}" ||
-        _abort $?
+    if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
+        install_appveyoragent "${BUILD_AGENT_MODE}" ||
+            _abort $?
+    fi
 fi
 
 install_powershell ||
@@ -132,6 +138,21 @@ install_cvs ||
 
 install_gitlfs ||
     _abort $?
+
+# ====================================
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_rust)
+        install_rust" ||
+    _abort $?
+
+install_azurecli ||
+    _abort $?
+
+# ====================================
+
+
+
 
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}

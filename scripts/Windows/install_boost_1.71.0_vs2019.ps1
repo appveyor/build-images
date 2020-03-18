@@ -1,4 +1,6 @@
-﻿Write-Host "Installing boost 1.71.0..." -ForegroundColor Cyan
+﻿. "$PSScriptRoot\common.ps1"
+
+Write-Host "Installing boost 1.71.0..." -ForegroundColor Cyan
 
 $StopWatch = New-Object System.Diagnostics.Stopwatch
 $StopWatch.Start()
@@ -31,7 +33,7 @@ Measure-Command {
 
     Write-Host "Compressing..."
 
-    compact /c /i /s:C:\Libraries\boost_1_71_0 | Out-Null
+    Start-ProcessWithOutput "compact /c /i /q /s:C:\Libraries\boost_1_71_0" -IgnoreStdOut
 }
 
 $StopWatch.Stop()

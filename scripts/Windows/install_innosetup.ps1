@@ -7,6 +7,6 @@ Write-Host "Downloading..."
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-
-del $exePath
+Remove-Item $exePath
 
 Write-Host "InnoSetup installed" -ForegroundColor Green

@@ -6,7 +6,7 @@
 <#
 Write-Host "Downloading..."
 
-$exePath = "$env:USERPROFILE\SQLEXPRADV_x64_ENU.exe"
+$exePath = "$env:TEMP\SQLEXPRADV_x64_ENU.exe"
 (New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/1/5/6/156992E6-F7C7-4E55-833D-249BD2348138/ENU/x64/SQLEXPRADV_x64_ENU.exe', $exePath)
 
 

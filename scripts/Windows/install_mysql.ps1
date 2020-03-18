@@ -1,4 +1,6 @@
-﻿$mySqlRoot = "$($env:ProgramFiles)\MySQL"
+﻿. "$PSScriptRoot\common.ps1"
+
+$mySqlRoot = "$($env:ProgramFiles)\MySQL"
 $mySqlPath = "$mySqlRoot\MySQL Server 5.7"
 $mySqlIniPath = "$mySqlPath\my.ini"
 $mySqlDataPath = "$mySqlPath\data"
@@ -17,7 +19,7 @@ New-Item $mySqlRoot -ItemType Directory -Force | Out-Null
 7z x $zipPath -o"$mySqlTemp" | Out-Null
 [IO.Directory]::Move("$mySqlTemp\mysql-5.7.27-winx64", $mySqlPath)
 Remove-Item $mySqlTemp -Recurse -Force
-del $zipPath
+Remove-Item $zipPath
 
 Write-Host "Installing MySQL..."
 New-Item $mySqlDataPath -ItemType Directory -Force | Out-Null
@@ -29,17 +31,17 @@ datadir=$($mySqlDataPath.Replace("\","\\"))
 "@ | Out-File $mySqlIniPath -Force -Encoding ASCII
 
 Write-Host "Initializing MySQL..."
-cmd /c "`"$mySqlPath\bin\mysqld`" --defaults-file=`"$mySqlIniPath`" --initialize-insecure"
+Start-ProcessWithOutput "`"$mySqlPath\bin\mysqld`" --defaults-file=`"$mySqlIniPath`" --initialize-insecure"
 
 Write-Host "Installing MySQL as a service..."
-cmd /c "`"$mySqlPath\bin\mysqld`" --install $mySqlServiceName"
+Start-ProcessWithOutput "`"$mySqlPath\bin\mysqld`" --install $mySqlServiceName"
 Start-Service $mySqlServiceName
 Set-Service -Name $mySqlServiceName -StartupType Manual
 
 Write-Host "Setting root password..."
-cmd /c "`"$mySqlPath\bin\mysql`" -u root --skip-password -e `"ALTER USER 'root'@'localhost' IDENTIFIED BY '$mySqlRootPassword';`""
+Start-ProcessWithOutput "`"$mySqlPath\bin\mysql`" -u root --skip-password -e `"ALTER USER 'root'@'localhost' IDENTIFIED BY '$mySqlRootPassword';`""
 
 Write-Host "Verifying connection..."
-(cmd /c "`"$mySqlPath\bin\mysql`" -u root --password=`"$mySqlRootPassword`" -e `"SHOW DATABASES;`" 2>&1")
+Start-ProcessWithOutput "`"$mySqlPath\bin\mysql`" -u root --password=`"$mySqlRootPassword`" -e `"SHOW DATABASES;`""
 
 Write-Host "MySQL Server installed" -ForegroundColor Green

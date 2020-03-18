@@ -1,4 +1,6 @@
-﻿$started = Get-Date
+﻿. "$PSScriptRoot\common.ps1"
+
+$started = Get-Date
 
 # download SSL certificates
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -21,6 +23,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "version" = "Ruby 2.0.0-p648"
             "install_path" = "C:\Ruby200"
             "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.0.0-p648-i386-mingw32.7z"
+            "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe"
+            "devkit_paths" = @("C:/Ruby200")
             "install_psych" = "true"
             "rubygemsUpdate" = $true
         }
@@ -72,37 +76,53 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "bundlerV2" = $true
         }
         @{
-            "version" = "Ruby 2.4.6-1"
+            "version" = "Ruby 2.4.9-1"
             "install_path" = "C:\Ruby24"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.6-1/rubyinstaller-2.4.6-1-x86.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.9-1/rubyinstaller-2.4.9-1-x86.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
         }
         @{
-            "version" = "Ruby 2.4.6-1 (x64)"
+            "version" = "Ruby 2.4.9-1 (x64)"
             "install_path" = "C:\Ruby24-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.6-1/rubyinstaller-2.4.6-1-x64.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.9-1/rubyinstaller-2.4.9-1-x64.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
         }
         @{
-            "version" = "Ruby 2.5.5-1"
+            "version" = "Ruby 2.5.7-1"
             "install_path" = "C:\Ruby25"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.5-1/rubyinstaller-2.5.5-1-x86.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.7-1/rubyinstaller-2.5.7-1-x86.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
         }
         @{
-            "version" = "Ruby 2.5.5-1 (x64)"
+            "version" = "Ruby 2.5.7-1 (x64)"
             "install_path" = "C:\Ruby25-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.5-1/rubyinstaller-2.5.5-1-x64.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.7-1/rubyinstaller-2.5.7-1-x64.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
-        }   
+        }
+        @{
+            "version" = "Ruby 2.6.5-1"
+            "install_path" = "C:\Ruby26"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.5-1/rubyinstaller-2.6.5-1-x86.exe"
+            "devkit_url" = ""
+            "devkit_paths" = @()
+            "bundlerV2" = $true
+        }    
+        @{
+            "version" = "Ruby 2.6.5-1 (x64)"
+            "install_path" = "C:\Ruby26-x64"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.5-1/rubyinstaller-2.6.5-1-x64.exe"
+            "devkit_url" = ""
+            "devkit_paths" = @()
+            "bundlerV2" = $true
+        }        
     )
 } else {
     $rubies = @()
@@ -110,17 +130,17 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
 $rubies = $rubies + @(
     @{
-        "version" = "Ruby 2.6.3-1"
-        "install_path" = "C:\Ruby26"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.3-1/rubyinstaller-2.6.3-1-x86.exe"
+        "version" = "Ruby 2.7.0-1"
+        "install_path" = "C:\Ruby27"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.0-1/rubyinstaller-2.7.0-1-x86.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
     }    
     @{
-        "version" = "Ruby 2.6.3-1 (x64)"
-        "install_path" = "C:\Ruby26-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.3-1/rubyinstaller-2.6.3-1-x64.exe"
+        "version" = "Ruby 2.7.0-1 (x64)"
+        "install_path" = "C:\Ruby27-x64"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.0-1/rubyinstaller-2.7.0-1-x64.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
@@ -288,10 +308,10 @@ function Update-Ruby($ruby) {
 
     if ($ruby.install_psych) {
         Write-Host "gem install psych -v 2.2.4" -ForegroundColor Gray
-        cmd /c gem install psych -v 2.2.4 --no-rdoc
+        Start-ProcessWithOutput "gem install psych -v 2.2.4 --no-rdoc"
     } elseif ($ruby.update_psych) {
         Write-Host "gem update psych" -ForegroundColor Gray
-        cmd /c gem update psych
+        Start-ProcessWithOutput "gem update psych"
     }
 
     if (-not $ruby.dontUpdateRubygems) {
@@ -301,7 +321,7 @@ function Update-Ruby($ruby) {
             cmd /c gem install rubygems-update -v `"~>2.7`" --no-rdoc
             
             Write-Host "update_rubygems" -ForegroundColor Gray
-            cmd /c update_rubygems        
+            & "$($ruby.install_path)\bin\ruby.exe" "$($ruby.install_path)\bin\update_rubygems" --silent
         } else {
             # Ruby > 2.3
             Write-Host "gem update --system" -ForegroundColor Gray
@@ -336,8 +356,6 @@ function Update-Ruby($ruby) {
 }
 
 # save current directory
-$currentDir = (pwd).Path
-
 for($i = 0; $i -lt $rubies.Count; $i++) {
     Install-Ruby $rubies[$i]
 }
@@ -354,17 +372,17 @@ for($i = 0; $i -lt $rubies.Count; $i++) {
     $ruby = $rubies[$i]
     UpdateRubyPath "$($ruby.install_path)\bin"
     Write-Host "$($ruby.version)" -ForegroundColor Cyan
-    Write-Host "ruby --version: $(cmd /c ruby --version)"
-    Write-Host "gem --version: $(cmd /c gem --version)"
-    Write-Host "gem list bundler --local: $(cmd /c gem list bundler --local)"
-    Write-Host "bundle --version: $(cmd /c bundle --version)"
-    Write-Host "bundler --version: $(cmd /c bundler --version)"
+    Write-Host "  ruby --version: $(cmd /c ruby --version)"
+    Write-Host "  gem --version: $(cmd /c gem --version)"
+    Write-Host "  gem list bundler --local: $(cmd /c gem list bundler --local)"
+    Write-Host "  bundle --version: $(cmd /c bundle --version)"
+    Write-Host "  bundler --version: $(cmd /c bundler --version)"
 }
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     Add-Path 'C:\Ruby193\bin'
 } else {
-    Add-Path 'C:\Ruby26\bin'
+    Add-Path 'C:\Ruby27\bin'
 }
 
 ((Get-Date) - $started)

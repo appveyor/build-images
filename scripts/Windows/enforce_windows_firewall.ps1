@@ -1,5 +1,4 @@
-﻿Write-Host "Disabling all inbound Windows Firewall Rules except WinRM (5985, 5986 ports)"
+﻿Write-Host "Disabling all inbound Windows Firewall Rules"
 
-Get-NetFirewallPortFilter | Where-Object { $_.LocalPort -ne 5985 -and $_.LocalPort -ne 5986 } | `
-    Get-NetFirewallRule | Where-Object { $_.Direction -eq 'Inbound' } | `
+Get-NetFirewallPortFilter | Get-NetFirewallRule | Where-Object { $_.Direction -eq 'Inbound' } | `
     Disable-NetFirewallRule

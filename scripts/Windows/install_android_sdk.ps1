@@ -1,5 +1,7 @@
 # https://github.com/microsoft/azure-pipelines-image-generation/blob/master/images/win/scripts/Installers/Update-AndroidSDK.ps1
 
+$ErrorActionPreference = 'SilentlyContinue'
+
 $sdk_root = Join-Path ${env:ProgramFiles(x86)} "Android\android-sdk"
 $ndk_root = Join-Path  $env:SystemDrive "Microsoft\AndroidNDK64\"
 $zipPath = "$env:temp\android-sdk-tools.zip"
@@ -57,7 +59,7 @@ if ($env:INSTALL_LATEST_ONLY) {
             "add-ons;addon-google_apis-google-22" `
             "add-ons;addon-google_apis-google-21" `
             "cmake;3.6.4111459" `
-            "patcher;v4"
+            "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 } else {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
             "platform-tools" `
@@ -112,9 +114,13 @@ if ($env:INSTALL_LATEST_ONLY) {
             "add-ons;addon-google_apis-google-22" `
             "add-ons;addon-google_apis-google-21" `
             "cmake;3.6.4111459" `
-            "patcher;v4"
+            "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 }
+
+7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
 
 Pop-Location
 
 Remove-Item $sdkPath -Recurse -Force -ErrorAction Ignore
+
+$ErrorActionPreference = 'Stop'

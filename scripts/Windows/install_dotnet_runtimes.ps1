@@ -8,7 +8,6 @@ function install-runtime ($version, $location, $release) {
   if (runtime-installed -release $release) {
     Write-Host ".NET Framework $($version) runtime already installed." -ForegroundColor Cyan
   }
-
   else {
     Write-Host ".NET Framework $($version) runtime..." -ForegroundColor Cyan
     Write-Host "Downloading..."
@@ -18,7 +17,6 @@ function install-runtime ($version, $location, $release) {
     cmd /c start /wait "$exePath" /quiet /norestart
     Remove-Item $exePath -Force -ErrorAction Ignore
     Write-Host "Installed" -ForegroundColor Green
-    Set-Content -Path $env:SystemDrive\dotnet-runtime-installed.txt -Value installed
   }
 }
 

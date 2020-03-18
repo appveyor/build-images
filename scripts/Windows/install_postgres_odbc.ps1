@@ -1,8 +1,8 @@
 ﻿Write-Host "Installing PostgreSQL ODBC drivers..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
-$zipPath = "$($env:USERPROFILE)\psqlodbc_09_03_0300-x64-1.zip"
-$zipOut = "$($env:USERPROFILE)\psqlodbc"
+$zipPath = "$env:TEMP\psqlodbc_09_03_0300-x64-1.zip"
+$zipOut = "$env:TEMP\psqlodbc"
 (New-Object Net.WebClient).DownloadFile('https://ftp.postgresql.org/pub/odbc/versions/msi/psqlodbc_09_03_0300-x64-1.zip', $zipPath)
 
 Write-Host "Unpacking..."
