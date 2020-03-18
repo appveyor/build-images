@@ -1669,6 +1669,15 @@ function install_virtualbox() {
     log_version vboxmanage --version
 }
 
+function install_rust() {
+    echo "[INFO] Running install_rust..."
+    curl https://sh.rustup.rs -sSf | sh ||
+        { echo "[ERROR] Cannot install Rust." 1>&2; return 10; }
+
+    log_version cargo --version
+    log_version rustc --version
+}
+
 function install_clang() {
     echo "[INFO] Running install_clang..."
     curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&

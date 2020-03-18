@@ -140,6 +140,9 @@ install_gitlfs ||
     _abort $?
 
 # ====================================
+install_rust ||
+    _abort $?
+
 install_azurecli ||
     _abort $?
 
