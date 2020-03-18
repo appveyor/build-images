@@ -161,6 +161,11 @@ for:
 
     build_script:
 
+    - ps: .\install_chrome_browser.ps1
+    - ps: .\install_firefox_browser.ps1
+    - ps: .\install_edge_browser.ps1
+    - ps: .\install_selenium_drivers.ps1
+
     - ps: .\install_miniconda.ps1
     - ps: .\install_python.ps1
     - ps: .\install_nodejs_latest.ps1
@@ -191,10 +196,10 @@ for:
     - ps: Start-Sleep -s 5
     - ps: .\install_sql_server_2019_after_restart.ps1    
 
-    - ps: .\install_azure_powershell.ps1
     - ps: .\install_aws_cli.ps1
     - ps: .\install_aws_powershell.ps1
     - ps: .\install_azure_cli.ps1
+    - ps: .\install_azure_powershell.ps1    
     - ps: .\install_azure_cosmosdb_emulator.ps1
     - ps: .\install_gcloud_sdk.ps1
     - ps: .\install_winsdk_81.ps1
@@ -203,13 +208,9 @@ for:
     - ps: .\install_dxsdk.ps1
     - ps: .\install_vdproj_vs2019.ps1
     - ps: .\install_service_fabric.ps1
-    - ps: .\install_ssis_vs2019.ps1    
+    - ps: .\install_ssis_vs2019.ps1
     - ps: .\install_wix311.ps1
     - ps: .\install_wix_toolset_vs2019.ps1
-    - ps: .\install_chrome_browser.ps1
-    - ps: .\install_firefox_browser.ps1
-    - ps: .\install_edge_browser.ps1
-    - ps: .\install_selenium_drivers.ps1
     - ps: .\install_openssl.ps1
     - ps: .\install_cmake.ps1    
     - ps: .\install_llvm.ps1
@@ -232,15 +233,15 @@ for:
     - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 
     - ps: .\install_dotnet_core_sdks.ps1
-    - ps: .\install_dotnet_devpacks.ps1
     - ps: .\install_dotnet_runtimes.ps1
-    - ps: .\optimize_dotnet_runtime.ps1
+    - ps: .\install_dotnet_devpacks.ps1
 
     # Restart VM
     - ps: Start-Sleep -s 5; Restart-Computer
     - ps: Start-Sleep -s 5
 
     - appveyor version
+    - ps: .\optimize_dotnet_runtime.ps1    
     - ps: .\disable_windows_background_services.ps1
     - ps: .\enforce_windows_firewall.ps1
     - ps: .\cleanup_windows.ps1
