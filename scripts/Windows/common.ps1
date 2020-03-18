@@ -75,7 +75,7 @@ function Start-ProcessWithOutput {
 
     # Adding event handers for stdout and stderr.
     $outScripBlock = {
-        if (-not [String]::IsNullOrEmpty($EventArgs.Data) -and $ignoreStdOut -eq $false) {
+        if ((-not [String]::IsNullOrEmpty($EventArgs.Data)) -and ($ignoreStdOut -eq $false)) {
             Write-Host "$($EventArgs.Data)"
         }
     }
