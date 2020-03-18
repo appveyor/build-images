@@ -1,6 +1,6 @@
 Write-Host "Installing WiX Toolset Visual Studio 2019..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$vsixPath = "$($env:USERPROFILE)\Votive2019.vsix"
+$vsixPath = "$env:TEMP\Votive2019.vsix"
 (New-Object Net.WebClient).DownloadFile('https://github.com/wixtoolset/VisualStudioExtension/releases/download/v1.0.0.3/Votive2019.vsix', $vsixPath)
 Write-Host "Installing..."
 

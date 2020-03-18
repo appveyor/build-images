@@ -1,4 +1,4 @@
-$vsixPath = "$($env:USERPROFILE)\llvm.vsix"
+$vsixPath = "$env:TEMP\llvm.vsix"
 Write-Host "Downloading llvm.vsix..."
 (New-Object Net.WebClient).DownloadFile('https://llvmextensions.gallerycdn.vsassets.io/extensions/llvmextensions/llvm-toolchain/1.0.359557/1556628491732/llvm.vsix', $vsixPath)
 

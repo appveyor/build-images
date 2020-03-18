@@ -1,7 +1,7 @@
 ﻿Write-Host "Installing Azure CLI..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
-$msiPath = "$($env:USERPROFILE)\installazurecliwindows.msi"
+$msiPath = "$env:TEMP\installazurecliwindows.msi"
 (New-Object Net.WebClient).DownloadFile('https://aka.ms/installazurecliwindows', $msiPath)
 
 Write-Host "Installing..."

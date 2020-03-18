@@ -1,7 +1,7 @@
 ﻿Write-Host "Installing AWS SDK..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
-$msiPath = "$($env:USERPROFILE)\AWSToolsAndSDKForNet.msi"
+$msiPath = "$env:TEMP\AWSToolsAndSDKForNet.msi"
 (New-Object Net.WebClient).DownloadFile('http://sdk-for-net.amazonwebservices.com/latest/AWSToolsAndSDKForNet.msi', $msiPath)
 
 Write-Host "Installing..."
