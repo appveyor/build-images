@@ -1,6 +1,6 @@
 ﻿Write-Host "Installing MSpec..." -ForegroundColor Cyan
 $mspecPath = "$env:SYSTEMDRIVE\Tools\MSpec"
-$tempPath = "$env:USERPROFILE\MSpec"
+$tempPath = "$env:TEMP\MSpec"
 nuget install Machine.Specifications.Runner.Console -excludeversion -outputdirectory $tempPath
 
 [IO.Directory]::Move("$tempPath\Machine.Specifications.Runner.Console\tools", $mspecPath)

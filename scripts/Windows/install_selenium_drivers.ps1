@@ -39,7 +39,7 @@ Write-Host "Installing FireFox Selenium driver..." -ForegroundColor Cyan
 
 # https://github.com/mozilla/geckodriver/releases
 
-$zipPath = "$env:USERPROFILE\geckodriver-v0.26.0-win32.zip"
+$zipPath = "$env:TEMP\geckodriver-v0.26.0-win32.zip"
 (New-Object Net.WebClient).DownloadFile('https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-win32.zip', $zipPath)
 7z x $zipPath -o"$destPath" -aoa
 Remove-Item $zipPath

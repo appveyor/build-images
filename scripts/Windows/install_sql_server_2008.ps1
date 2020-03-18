@@ -5,7 +5,7 @@ Write-Host "Installing SQL Server 2008 R2..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
 
-$exePath = "$env:USERPROFILE\SQLEXPRADV_x64_ENU.exe"
+$exePath = "$env:TEMP\SQLEXPRADV_x64_ENU.exe"
 (New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/0/4/B/04BE03CD-EAF3-4797-9D8D-2E08E316C998/SQLEXPRADV_x64_ENU.exe', $exePath)
 
 
