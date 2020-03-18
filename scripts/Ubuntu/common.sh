@@ -1793,9 +1793,7 @@ function install_qt(){
 }
 
 function add_ssh_known_hosts() {
-    if [ -f "add_ssh_known_hosts.ps1" ] && command -v pwsh; then
-        pwsh --version
-        ls ../Windows
+    if [ -f "../Windows/add_ssh_known_hosts.ps1" ] && command -v pwsh; then
         pwsh ../Windows/add_ssh_known_hosts.ps1
     else
         echo '[ERROR] Cannot run add_ssh_known_hosts.ps1: Either Powershell is not installed or add_ssh_known_hosts.ps1 does not exist.' 1>&2;

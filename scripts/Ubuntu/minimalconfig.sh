@@ -143,17 +143,6 @@ install_gitlfs ||
 install_azurecli ||
     _abort $?
 
-install_pip ||
-    _abort $?
-
-install_virtualenv ||
-    _abort $?
-
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_pythons)
-        install_pythons" ||
-    _abort $?
 # ====================================
 
 
