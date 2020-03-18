@@ -75,16 +75,19 @@ function Start-ProcessWithOutput {
 
     # Adding event handers for stdout and stderr.
     $outScripBlock = {
-        if ((-not [String]::IsNullOrEmpty($EventArgs.Data)) -and ($ignoreStdOut -eq $false)) {
+        if (![String]::IsNullOrEmpty($EventArgs.Data)) {
             Write-Host "$($EventArgs.Data)"
         }
     }
     $errScripBlock = {
-        if (-not [String]::IsNullOrEmpty($EventArgs.Data)) {
+        if (![String]::IsNullOrEmpty($EventArgs.Data)) {
             Write-Host "$($EventArgs.Data)" -ForegroundColor Red
         }
-    }    
-    $stdOutEvent = Register-ObjectEvent -InputObject $process -Action $outScripBlock -EventName 'OutputDataReceived'
+    }
+
+    if ($ignoreStdOut -eq $false) {
+        $stdOutEvent = Register-ObjectEvent -InputObject $process -Action $outScripBlock -EventName 'OutputDataReceived'
+    }
     $stdErrEvent = Register-ObjectEvent -InputObject $process -Action $errScripBlock -EventName 'ErrorDataReceived'
 
     try {
@@ -95,7 +98,9 @@ function Start-ProcessWithOutput {
         [Void]$process.WaitForExit()
     
         # Unregistering events to retrieve process output.
-        Unregister-Event -SourceIdentifier $stdOutEvent.Name
+        if ($ignoreStdOut -eq $false) {
+            Unregister-Event -SourceIdentifier $stdOutEvent.Name
+        }
         Unregister-Event -SourceIdentifier $stdErrEvent.Name    
     
         if ($ignoreExitCode -eq $false -and $process.ExitCode -ne 0) {
