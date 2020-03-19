@@ -8,29 +8,23 @@ if(Test-Path $mingwPath) {
 }
 
 # download installer
-$zipPath = "$($env:TEMP)\mingw-get-0.6.2-mingw32-beta-20131004-1-bin.tar.xz"
-$tarPath = "$($env:TEMP)\mingw-get-0.6.2-mingw32-beta-20131004-1-bin.tar"
+$zipPath = "$env:TEMP\mingw-get-0.6.3-mingw32-pre-20170905-1-bin.zip"
 Write-Host "Downloading..."
-(New-Object Net.WebClient).DownloadFile('http://sourceforge.net/projects/mingw/files/Installer/mingw-get/mingw-get-0.6.2-beta-20131004-1/mingw-get-0.6.2-mingw32-beta-20131004-1-bin.tar.xz/download', $zipPath)
-
-Write-Host "Untaring..."
-7z x $zipPath -y -o"$env:TEMP" | Out-Null
+(New-Object Net.WebClient).DownloadFile('https://osdn.net/frs/redir.php?m=plug&f=mingw%2F68260%2Fmingw-get-0.6.3-mingw32-pre-20170905-1-bin.zip', $zipPath)
 
 Write-Host "Unzipping..."
-7z x $tarPath -y -o"$mingwPath" | Out-Null
-del $zipPath
-del $tarPath
+7z x $zipPath -y -o"$mingwPath" | Out-Null
+Remove-Item $zipPath
 
 # install MinGW
-
-$log = "C:\users\appveyor\downloads\install-log.txt"
+$logsDir = "$env:TEMP\mingw-install-logs"
+New-Item $logsDir -ItemType Directory -Force | Out-Null
 
 function InstallPackage($packageName) {
     Write-Host "Installing package $packageName..." -NoNewline
-    C:\MinGW\bin\mingw-get install $packageName 1> $log 2>&1
+    C:\MinGW\bin\mingw-get install $packageName 1> "$logsDir\$packageName.log" 2>&1
     Write-Host "OK"
 }
-
 
 InstallPackage mingw-get
 InstallPackage mingw-developer-toolkit
@@ -43,8 +37,6 @@ InstallPackage msys-rxvt
 InstallPackage msys-unzip
 InstallPackage msys-wget
 InstallPackage msys-zip
-
-del "C:\Windows\System32\install-log.txt"
 
 Write-Host "Installed MinGW" -ForegroundColor Green
 
