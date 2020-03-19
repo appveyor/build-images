@@ -10,7 +10,7 @@ $exePath = "$env:TEMP\postgresql-10.6-1-windows-x64.exe"
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath --mode unattended --install_runtimes 0 --superpassword Password12!
-del $exePath
+Remove-Item $exePath -ErrorAction SilentlyContinue
 
 Write-Host "Setting up services..."
 Stop-Service postgresql-x64-10
