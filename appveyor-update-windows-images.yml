@@ -44,6 +44,7 @@ build_script:
 - ps: .\install_cmake.ps1
 #- ps: .\install_rust.ps1
 - ps: .\install_python.ps1
+- ps: .\install_mingw.ps1
 - ps: .\install_mingw-w64.ps1
 
 - ps: .\install_edge_browser.ps1

@@ -225,7 +225,8 @@ for:
     - ps: .\install_maven.ps1
     - ps: .\install_gitversion.ps1
     - ps: .\install_cygwin.ps1
-    - ps: .\install_mingw-w64.ps1    
+    - ps: .\install_mingw.ps1
+    - ps: .\install_mingw-w64.ps1
     - ps: .\install_msys64.ps1
     - ps: .\install_boost_1.71.0_vs2019.ps1
 
