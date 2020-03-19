@@ -12,4 +12,9 @@ if (-not (Test-Path $vsPath)) {
 Start-Process "$vsPath\Common7\IDE\VSIXInstaller.exe" "/q /a $vsixPath" -Wait
 Remove-Item $vsixPath -Force -ErrorAction Ignore
 
+# Enable VDPROJ support in the Registry
+Push-Location "$vsPath\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild"
+& .\DisableOutOfProcBuild.exe
+Pop-Location
+
 Write-Host "Installed" -ForegroundColor Green
