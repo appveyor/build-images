@@ -255,8 +255,13 @@ $ErrorActionPreference = 'Stop'
 # Install VS
 $exitCode = InstallVS -WorkLoads $WorkLoads -Sku $Sku -VSBootstrapperURL $VSBootstrapperURL
 
+$vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community"
+if (-not (Test-Path $vsPath)) {
+    $vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview"
+}
+
 Write-Host "Initializing Visual Studio Experimental Instance"
-& "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\devenv.exe" /RootSuffix Exp /ResetSettings General.vssettings /Command File.Exit
+& "$vsPath\Common7\IDE\devenv.exe" /RootSuffix Exp /ResetSettings General.vssettings /Command File.Exit
 
 Write-Host "Disabling VS-related services"
 if (get-Service SQLWriterw -ErrorAction Ignore) {
@@ -269,11 +274,6 @@ if (get-Service IpOverUsbSvc -ErrorAction Ignore) {
 }
 
 Write-Host "Adding Visual Studio 2019 current MSBuild to PATH..." -ForegroundColor Cyan
-
-$vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community"
-if (-not (Test-Path $vsPath)) {
-    $vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview"
-}
 
 Add-Path "$vsPath\MSBuild\Current\Bin"
 Add-Path "$vsPath\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150"
