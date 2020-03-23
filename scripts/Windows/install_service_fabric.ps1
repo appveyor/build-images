@@ -1,5 +1,6 @@
 ﻿if (-not ((test-path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community") -or
-    (test-path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community")))
+    (test-path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community") -or
+    (test-path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview")))
 {
     Write-Host "Service Fabric requires VS 2017 or VS 2019" -ForegroundColor Yellow
     return
