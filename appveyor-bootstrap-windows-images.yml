@@ -49,4 +49,7 @@ build_script:
 - ps: .\enforce_windows_firewall.ps1
 - ps: .\cleanup_windows.ps1
 
+on_failure:
+- ps: Start-Sleep -s 1200
+
 test: off
