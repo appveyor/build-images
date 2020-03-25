@@ -40,9 +40,9 @@ build_script:
 # - ps: .\install_webpi.ps1
 # - ps: .\install_nuget.ps1
 
-# - ps: .\install_git.ps1
-# - ps: .\install_git_lfs.ps1
-# - ps: .\add_ssh_known_hosts.ps1
+- ps: .\install_git.ps1
+- ps: .\install_git_lfs.ps1
+- ps: .\add_ssh_known_hosts.ps1
 
 - appveyor version
 - ps: .\disable_windows_background_services.ps1
