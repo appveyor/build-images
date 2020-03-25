@@ -224,19 +224,19 @@ function fix_sqlserver() {
 
 }
 
-function install_azurecli() {
-    echo "[INFO] Running install_azurecli..."
-    AZ_REPO=$OS_CODENAME
-    apt-key adv --keyserver packages.microsoft.com --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF ||
-        { echo "[ERROR] Cannot add microsoft's repository key." 1>&2; return 5; }
-    add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" ||
-        { echo "[ERROR] Cannot add azure-cli repository to APT sources." 1>&2; return 10; }
-    apt-get -y -q install apt-transport-https &&
-    apt-get -y -qq update &&
-    apt-get -y -q install azure-cli ||
-        { echo "[ERROR] Cannot instal azure-cli."; return 20; }
-    log_version az --version
-}
+# function install_azurecli() {
+#     echo "[INFO] Running install_azurecli..."
+#     AZ_REPO=$OS_CODENAME
+#     apt-key adv --keyserver packages.microsoft.com --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF ||
+#         { echo "[ERROR] Cannot add microsoft's repository key." 1>&2; return 5; }
+#     add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" ||
+#         { echo "[ERROR] Cannot add azure-cli repository to APT sources." 1>&2; return 10; }
+#     apt-get -y -q install apt-transport-https &&
+#     apt-get -y -qq update &&
+#     apt-get -y -q install azure-cli ||
+#         { echo "[ERROR] Cannot instal azure-cli."; return 20; }
+#     log_version az --version
+# }
 
 function prerequisites_dotnetv3_preview () {
     # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
