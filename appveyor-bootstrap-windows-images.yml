@@ -36,7 +36,7 @@ build_script:
 - ps: .\install_powershell_core.ps1
 - ps: .\install_powershell_get.ps1
 - ps: .\install_7zip.ps1
-- ps: .\install_chocolatey.ps1
+#- ps: .\install_chocolatey.ps1
 # - ps: .\install_webpi.ps1
 # - ps: .\install_nuget.ps1
 
