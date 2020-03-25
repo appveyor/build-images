@@ -75,12 +75,14 @@ environment:
   #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-gce-us-central1
   #   APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-gce-us-central1
 
+clone_folder: '%TEMP%\build-image-scripts'
+
 init:
   - appveyor version
   - ps: $ErrorActionPreference = 'Stop'
   - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
   - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
-  
+
 clone_script:
 - ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_COMMIT).zip" -OutFile "$env:temp\scripts.zip"
 - ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
