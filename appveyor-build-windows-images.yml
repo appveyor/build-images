@@ -75,11 +75,8 @@ environment:
   #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-gce-us-central1
   #   APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-gce-us-central1
 
-clone_folder: '%TEMP%\build-image-scripts'
-
 init:
   - appveyor version
-  - echo %APPVEYOR_BUILD_FOLDER%
   - ps: $ErrorActionPreference = 'Stop'
   - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
   - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'

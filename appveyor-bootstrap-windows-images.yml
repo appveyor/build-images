@@ -12,6 +12,8 @@ environment:
     APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
     APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}
 
+clone_folder: '%TEMP%\build-image-scripts'
+
 init:
 - appveyor version
 - ps: $ErrorActionPreference = 'Stop'
