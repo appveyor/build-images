@@ -34,6 +34,8 @@ environment:
   BASE_DIR: src/build-images-${APPVEYOR_REPO_COMMIT}/scripts/Ubuntu
   BOOTSTRAP: true
 
+clone_folder: ${HOME}/bake-scripts
+
 init:
 - appveyor version
 #- ls /opt/appveyor/build-agent

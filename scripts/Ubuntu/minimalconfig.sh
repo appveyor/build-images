@@ -83,9 +83,6 @@ function _continue() {
     echo "Continue installation..." 1>&2
 }
 
-# we have to create pwd.log, otherwise packer will fail on provisioner which downloads it.
-touch ${HOME}/pwd-${DATEMARK}.log
-
 init_logging
 
 configure_path
