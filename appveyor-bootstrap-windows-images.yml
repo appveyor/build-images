@@ -36,13 +36,17 @@ build_script:
 - ps: .\install_powershell_core.ps1
 - ps: .\install_powershell_get.ps1
 - ps: .\install_7zip.ps1
-#- ps: .\install_chocolatey.ps1
-# - ps: .\install_webpi.ps1
-# - ps: .\install_nuget.ps1
+- ps: .\install_chocolatey.ps1
+- ps: .\install_webpi.ps1
+- ps: .\install_nuget.ps1
 
-#- ps: .\install_git.ps1
-#- ps: .\install_git_lfs.ps1
-#- ps: .\add_ssh_known_hosts.ps1
+- ps: .\install_git.ps1
+- ps: .\install_git_lfs.ps1
+- ps: .\add_ssh_known_hosts.ps1
+
+# Restart VM
+- ps: Start-Sleep -s 5; Restart-Computer
+- ps: Start-Sleep -s 5
 
 - appveyor version
 - ps: .\disable_windows_background_services.ps1
