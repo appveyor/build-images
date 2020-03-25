@@ -1469,19 +1469,23 @@ function install_gcloud() {
 function install_azurecli() {
     # https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
     echo "[INFO] Running install_azurecli..."
-    AZ_REPO=${OS_CODENAME}
-    sudo apt-get -y -q install ca-certificates curl apt-transport-https gnupg
 
-    # curl -sL https://packages.microsoft.com/keys/microsoft.asc | 
-    #     gpg --dearmor | 
-    #     sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
-    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | 
-        sudo tee /etc/apt/sources.list.d/azure-cli.list
+    # AZ_REPO=${OS_CODENAME}
+    # sudo apt-get -y -q install ca-certificates curl apt-transport-https gnupg
 
-    apt-get -y -qq update &&
-    apt-get -y -q install azure-cli ||
-        { echo "[ERROR] Cannot instal azure-cli."; return 20; }
+    # # curl -sL https://packages.microsoft.com/keys/microsoft.asc | 
+    # #     gpg --dearmor | 
+    # #     sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+
+    # echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | 
+    #     sudo tee /etc/apt/sources.list.d/azure-cli.list
+
+    # apt-get -y -qq update &&
+    # apt-get -y -q install azure-cli ||
+    #     { echo "[ERROR] Cannot instal azure-cli."; return 20; }
+
     log_version az --version
 }
 
