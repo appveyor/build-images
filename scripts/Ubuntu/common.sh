@@ -1492,8 +1492,6 @@ function install_azurecli() {
     #sudo apt-key add microsoft.asc
     #rm microsoft.asc
 
-    apt-get -y -update
-
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | 
         sudo tee /etc/apt/sources.list.d/azure-cli.list
 
