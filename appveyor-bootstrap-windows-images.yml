@@ -44,24 +44,8 @@ build_script:
 - ps: .\install_git_lfs.ps1
 - ps: .\add_ssh_known_hosts.ps1
 
-- ps: .\install_docker_hyperv_wsl_features.ps1
-    
-# Restart VM
-- ps: Start-Sleep -s 5; Restart-Computer
-- ps: Start-Sleep -s 5
-
-- ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 } else { .\install_docker_desktop.ps1 }
-
-# Restart VM
-- ps: Start-Sleep -s 5; Restart-Computer
-- ps: Start-Sleep -s 5
-
-# Finalize Docker installation
-- ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
-- ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
-
-# WSL
-- ps: .\install_wsl.ps1
+- ps: .\install_qt_fast.ps1
+- ps: .\install_ruby.ps1
 
 # Restart VM
 - ps: Start-Sleep -s 5; Restart-Computer
