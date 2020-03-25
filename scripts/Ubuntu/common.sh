@@ -1472,19 +1472,25 @@ function install_azurecli() {
 
     # curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
+    sudo apt-key --keyring /etc/apt/trusted.gpg.d/Microsoft.gpg adv \
+        --keyserver packages.microsoft.com \
+        --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF
+
+    sudo apt-get -y -update
+
     AZ_REPO=${OS_CODENAME}
-    sudo apt-get -y -q install ca-certificates curl apt-transport-https gnupg
+    # sudo apt-get -y -q install ca-certificates curl apt-transport-https gnupg
 
     # curl -sL https://packages.microsoft.com/keys/microsoft.asc | 
     #     gpg --dearmor | 
     #     sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
 
-    echo "[INFO] Downloading microsoft.asc..."
-    wget https://packages.microsoft.com/keys/microsoft.asc
+    #echo "[INFO] Downloading microsoft.asc..."
+    #wget https://packages.microsoft.com/keys/microsoft.asc
 
-    echo "[INFO] Installing microsoft.asc..."
-    sudo apt-key add microsoft.asc
-    rm microsoft.asc
+    #echo "[INFO] Installing microsoft.asc..."
+    #sudo apt-key add microsoft.asc
+    #rm microsoft.asc
 
     apt-get -y -update
 
