@@ -1479,12 +1479,18 @@ function install_azurecli() {
     #     gpg --dearmor | 
     #     sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
 
-    curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+    echo "[INFO] Downloading microsoft.asc..."
+    wget https://packages.microsoft.com/keys/microsoft.asc
+
+    echo "[INFO] Installing microsoft.asc..."
+    sudo apt-key add microsoft.asc
+    rm microsoft.asc
+
+    apt-get -y -update
 
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | 
         sudo tee /etc/apt/sources.list.d/azure-cli.list
 
-    apt-get -y -qq update &&
     apt-get -y -q install azure-cli ||
         { echo "[ERROR] Cannot instal azure-cli."; return 20; }
 
