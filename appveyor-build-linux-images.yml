@@ -45,7 +45,7 @@ clone_script:
 - mkdir src && tar -zxf scripts.tar.gz -C $APPVEYOR_BUILD_FOLDER/src
 
 build_script:
-- cd $BASE_DIR
+- cd $BASE_DIR && pwd
 - sudo -E ./minimalconfig.sh
 - appveyor PushArtifact versions.log
 - appveyor PushArtifact bake.log
