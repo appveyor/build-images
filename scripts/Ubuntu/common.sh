@@ -1470,33 +1470,33 @@ function install_azurecli() {
     # https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
     echo "[INFO] Running install_azurecli..."
 
-    # curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
-    sudo apt-key --keyring /etc/apt/trusted.gpg.d/Microsoft.gpg adv \
-        --keyserver packages.microsoft.com \
-        --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF
+    # sudo apt-key --keyring /etc/apt/trusted.gpg.d/Microsoft.gpg adv \
+    #     --keyserver packages.microsoft.com \
+    #     --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF
 
-    sudo apt-get -y -update
+    # sudo apt-get -y -update
 
-    AZ_REPO=${OS_CODENAME}
-    # sudo apt-get -y -q install ca-certificates curl apt-transport-https gnupg
+    # AZ_REPO=${OS_CODENAME}
+    # # sudo apt-get -y -q install ca-certificates curl apt-transport-https gnupg
 
-    # curl -sL https://packages.microsoft.com/keys/microsoft.asc | 
-    #     gpg --dearmor | 
-    #     sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+    # # curl -sL https://packages.microsoft.com/keys/microsoft.asc | 
+    # #     gpg --dearmor | 
+    # #     sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
 
-    #echo "[INFO] Downloading microsoft.asc..."
-    #wget https://packages.microsoft.com/keys/microsoft.asc
+    # #echo "[INFO] Downloading microsoft.asc..."
+    # #wget https://packages.microsoft.com/keys/microsoft.asc
 
-    #echo "[INFO] Installing microsoft.asc..."
-    #sudo apt-key add microsoft.asc
-    #rm microsoft.asc
+    # #echo "[INFO] Installing microsoft.asc..."
+    # #sudo apt-key add microsoft.asc
+    # #rm microsoft.asc
 
-    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | 
-        sudo tee /etc/apt/sources.list.d/azure-cli.list
+    # echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | 
+    #     sudo tee /etc/apt/sources.list.d/azure-cli.list
 
-    apt-get -y -q install azure-cli ||
-        { echo "[ERROR] Cannot instal azure-cli."; return 20; }
+    # apt-get -y -q install azure-cli ||
+    #     { echo "[ERROR] Cannot instal azure-cli."; return 20; }
 
     log_version az --version
 }
