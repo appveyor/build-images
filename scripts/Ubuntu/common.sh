@@ -190,9 +190,9 @@ function add_user() {
     fi
 
     echo -e "${USER_PASSWORD}\n${USER_PASSWORD}\n" | passwd "${USER_NAME}"
-    if "${LOGGING}"; then
-        echo "USER_PASSWORD=${USER_PASSWORD}" >${HOME}/pwd-$DATEMARK.log
-    fi
+    # if "${LOGGING}"; then
+    #     echo "USER_PASSWORD=${USER_PASSWORD}" >${HOME}/pwd-$DATEMARK.log
+    # fi
     restore_bash_attributes
     return 0
 }

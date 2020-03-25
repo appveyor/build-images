@@ -45,6 +45,7 @@ clone_script:
 build_script:
 - cd $BASE_DIR
 - sudo -E ./minimalconfig.sh
-- appveyor PushArtifact $HOME/versions.log
+- appveyor PushArtifact versions.log
+- appveyor PushArtifact bake.log
 
 test: off
