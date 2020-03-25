@@ -140,11 +140,6 @@ install_gitlfs ||
     _abort $?
 
 # ====================================
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_rust)
-        install_rust" ||
-    _abort $?
 
 install_azurecli ||
     _abort $?
