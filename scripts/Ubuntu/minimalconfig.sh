@@ -130,6 +130,13 @@ else
     fi
 fi
 
+# ====================================
+
+install_azurecli ||
+    _abort $?
+
+# ====================================
+
 install_powershell ||
     _abort $?
 
@@ -138,13 +145,6 @@ install_cvs ||
 
 install_gitlfs ||
     _abort $?
-
-# ====================================
-
-install_azurecli ||
-    _abort $?
-
-# ====================================
 
 
 
