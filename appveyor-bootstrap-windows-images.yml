@@ -41,11 +41,11 @@ build_script:
 - ps: .\install_nuget.ps1
 - ps: .\install_pstools.ps1
 
-- ps: .\install_git.ps1
-- ps: .\install_git_lfs.ps1
-- ps: .\install_mercurial.ps1
-- ps: .\install_subversion.ps1
-- ps: .\add_ssh_known_hosts.ps1
+# - ps: .\install_git.ps1
+# - ps: .\install_git_lfs.ps1
+# - ps: .\install_mercurial.ps1
+# - ps: .\install_subversion.ps1
+# - ps: .\add_ssh_known_hosts.ps1
 
 # - ps: .\install_docker_hyperv_wsl_features.ps1
 
