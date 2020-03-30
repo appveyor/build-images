@@ -418,7 +418,7 @@ json.dump(a,open('${CONFIG_FILE}','w'))" &&
             cat ${CONFIG_FILE} ||
                 { echo "[ERROR] Cannot update config file '${CONFIG_FILE}'." 1>&2; popd; return 40; }
         else
-            echo "[ERROR] Cannot update config file '${CONFIG_FILE}'. Python is not installed." 1>&2; popd; return 40; }
+            echo "[ERROR] Cannot update config file '${CONFIG_FILE}'. Python is not installed." 1>&2; popd; return 40;
         fi
     else
         echo "[WARNING] AGENT_MODE variable not set"
