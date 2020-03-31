@@ -33,6 +33,7 @@ environment:
 
   BASE_DIR: src/build-images-${APPVEYOR_REPO_COMMIT}/scripts/Ubuntu
   BOOTSTRAP: true
+  APPVEYOR_CONSOLE_DISABLE_PTY: true
 
 clone_folder: ${HOME}/bake-scripts
 
