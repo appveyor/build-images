@@ -13,8 +13,8 @@ POSTGRES_ROOT_PASSWORD=Password12!
 CURRENT_NODEJS=8
 AGENT_DIR=/opt/appveyor/build-agent
 WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-LOG_FILE=$HOME/$(basename $0)-$DATEMARK.log
-VERSIONS_FILE=$HOME/versions.log
+LOG_FILE=$WORK_DIR/bake.log
+VERSIONS_FILE=$WORK_DIR/versions.log
 LOGGING=true
 SCRIPT_PID=$$
 
@@ -86,9 +86,6 @@ function _continue() {
     monitoring_host
     echo "Continue installation..." 1>&2
 }
-
-# we have to create pwd.log, otherwise packer will fail on provisioner which downloads it.
-touch ${HOME}/pwd-${DATEMARK}.log
 
 init_logging
 

@@ -80,7 +80,7 @@ init:
   - ps: $ErrorActionPreference = 'Stop'
   - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
   - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
-  
+
 clone_script:
 - ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_COMMIT).zip" -OutFile "$env:temp\scripts.zip"
 - ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
