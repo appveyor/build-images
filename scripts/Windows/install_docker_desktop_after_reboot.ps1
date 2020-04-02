@@ -113,6 +113,17 @@ Remove-SmbShare -Name C -ErrorAction SilentlyContinue -Force
 Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Docker Desktop" `
 	-Value "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
 
+Write-Host "Disabling automatic updates and usage statistics"
+$settingsPath = "$env:appdata\Docker\settings.json"
+if (Test-Path $settingsPath) {
+	$dockerSettings = Get-Content $settingsPath | ConvertFrom-Json
+	$dockerSettings | Add-Member NoteProperty "checkForUpdates" $false -force
+	$dockerSettings | Add-Member NoteProperty "analyticsEnabled" $false -force
+	$dockerSettings | ConvertTo-Json -Depth 20 | Set-Content -Path $settingsPath
+} else {
+	Write-Warning "$settingsPath was not found!"
+}
+
 Write-Host "Docker CE installed and configured"
 
 #Switch-DockerLinux
