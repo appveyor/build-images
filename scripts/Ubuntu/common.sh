@@ -524,6 +524,14 @@ function install_nvm_nodejs() {
 
 }
 
+function update_git() {
+    echo "[INFO] Updating Git to the latest version.";
+    add-apt-repository -y ppa:git-core/ppa
+    apt-get update
+    apt-get -y -q install git
+    log_version git --version
+}
+
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then

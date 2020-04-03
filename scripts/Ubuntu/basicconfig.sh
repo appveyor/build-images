@@ -205,7 +205,7 @@ su -l ${USER_NAME} -c "
 install_powershell ||
     _abort $?
 
-make_git ||
+update_git ||
     _abort $?
 
 install_gitlfs ||
