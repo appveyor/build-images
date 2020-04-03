@@ -524,6 +524,15 @@ function install_nvm_nodejs() {
 
 }
 
+function update_git() {
+    # https://itsfoss.com/install-git-ubuntu/
+    echo "[INFO] Updating Git to the latest version.";
+    add-apt-repository -y ppa:git-core/ppa
+    apt-get update
+    apt-get -y -q install git
+    log_version git --version
+}
+
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
@@ -1794,8 +1803,11 @@ function install_qt(){
 }
 
 function add_ssh_known_hosts() {
+    echo "[INFO] Configuring ~/.ssh/known_hosts..."
     if [ -f "../Windows/add_ssh_known_hosts.ps1" ] && command -v pwsh; then
         pwsh -nol -noni ../Windows/add_ssh_known_hosts.ps1
+        echo $HOME
+        chmod 700 $HOME/.ssh
     else
         echo '[ERROR] Cannot run add_ssh_known_hosts.ps1: Either Powershell is not installed or add_ssh_known_hosts.ps1 does not exist.' 1>&2;
         return 10;
