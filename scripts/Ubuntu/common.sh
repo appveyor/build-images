@@ -525,6 +525,7 @@ function install_nvm_nodejs() {
 }
 
 function update_git() {
+    # https://itsfoss.com/install-git-ubuntu/
     echo "[INFO] Updating Git to the latest version.";
     add-apt-repository -y ppa:git-core/ppa
     apt-get update
