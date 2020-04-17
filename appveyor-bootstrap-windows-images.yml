@@ -64,9 +64,6 @@ build_script:
 - ps: .\enforce_windows_firewall.ps1
 - ps: .\cleanup_windows.ps1
 
-# Remove image baking scripts
-- ps: if (Test-Path $env:APPVEYOR_BUILD_FOLDER) { Remove-Item $env:APPVEYOR_BUILD_FOLDER -Force -Recurse }
-
 # on_failure:
 # - ps: Start-Sleep -s 1200
 
