@@ -53,11 +53,11 @@ build_script:
 - ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
 
-- ps: .\install_vs2019.ps1
+#- ps: .\install_vs2019.ps1
 - ps: .\install_nunit3.ps1
 - ps: .\install_cmake.ps1
 - ps: .\install_llvm.ps1
-- ps: .\install_llvm_extension_vs2019.ps1
+#- ps: .\install_llvm_extension_vs2019.ps1
 - ps: .\install_perl.ps1
 
 - ps: .\disable_windows_background_services.ps1
