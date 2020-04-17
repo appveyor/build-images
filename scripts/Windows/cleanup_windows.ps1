@@ -57,6 +57,12 @@ Clear-EventLog -LogName Security
 Clear-EventLog -LogName System
 Clear-EventLog -LogName AppVeyor
 
+# Cleanup NuGet cache
+Write-Host "Deleting NuGet cache..."
+if (Test-Path "$env:USERPROFILE\.nuget\packages") {
+    Remove-Item "$env:USERPROFILE.nuget\packages" -Force -Recurse
+}
+
 DisplayDiskInfo
 
 Write-Host "Done cleaning up Windows" -ForegroundColor Green
