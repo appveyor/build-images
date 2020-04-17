@@ -18,6 +18,8 @@ init:
 - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
 - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
 
+clone_folder: '%USERPROFILE%\image-bake-scripts'
+
 clone_script:
 - ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_BRANCH).zip" -OutFile "$env:temp\scripts.zip"
 - ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
@@ -45,45 +47,25 @@ build_script:
 # - ps: .\install_git_lfs.ps1
 # - ps: .\install_mercurial.ps1
 # - ps: .\install_subversion.ps1
-# - ps: .\add_ssh_known_hosts.ps1
-
-# - ps: .\install_docker_hyperv_wsl_features.ps1
-
-# # Restart VM
-# - ps: Start-Sleep -s 5; Restart-Computer
-# - ps: Start-Sleep -s 5
-
-# - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 } else { .\install_docker_desktop.ps1 }
-
-# # Restart VM
-# - ps: Start-Sleep -s 5; Restart-Computer
-# - ps: Start-Sleep -s 5
-
-# # Finalize Docker installation
-# - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
-# - ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
-
-# # WSL
-# - ps: .\install_wsl.ps1
+- ps: .\add_ssh_known_hosts.ps1
 
 # Restart VM
 - ps: Start-Sleep -s 5; Restart-Computer
 - ps: Start-Sleep -s 5
 
 - ps: .\install_vs2019.ps1
-# - ps: .\update_msbuild_path.ps1
-# - ps: .\install_xunit_192.ps1
-# - ps: .\install_xunit_20.ps1
-# - ps: .\install_nunit.ps1
-# - ps: .\install_nunit3.ps1
-# - ps: .\install_vstest_console_logger.ps1
-
-# - ps: .\install_qt_fast.ps1
-# - ps: .\install_ruby.ps1
+- ps: .\install_nunit3.ps1
+- ps: .\install_cmake.ps1
+- ps: .\install_llvm.ps1
+- ps: .\install_llvm_extension_vs2019.ps1
+- ps: .\install_perl.ps1
 
 - ps: .\disable_windows_background_services.ps1
 - ps: .\enforce_windows_firewall.ps1
 - ps: .\cleanup_windows.ps1
+
+# Remove image baking scripts
+- ps: if (Test-Path $env:APPVEYOR_BUILD_FOLDER) { Remove-Item $env:APPVEYOR_BUILD_FOLDER -Force -Recurse }
 
 # on_failure:
 # - ps: Start-Sleep -s 1200
