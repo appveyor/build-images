@@ -837,7 +837,7 @@ function install_dotnetv5_preview() {
     echo "[INFO] Running install_dotnetv5_preview..."
     local DOTNET5_SDK_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOTNET5_SDK_URL="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-sdk-latest-linux-x64.tar.gz"
+        DOTNET5_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/727a5825-d29a-4f45-beaa-053399f8b5ee/5f15827ceb4851ef87a008f5de0acf6c/dotnet-sdk-5.0.100-preview.2.20176.6-linux-x64.tar.gz"
     else
         DOTNET5_SDK_URL=$1
     fi
@@ -850,54 +850,6 @@ function install_dotnetv5_preview() {
     curl -fsSL -O "${DOTNET5_SDK_URL}" &&
     tar -zxf "${DOTNET5_SDK_TAR}" -C /usr/share/dotnet/ ||
         { echo "[ERROR] Cannot download and unpack .NET SDK 5.0 preview from url '${DOTNET5_SDK_URL}'." 1>&2; popd; return 20; }
-
-    popd &&
-    rm -rf "${TMP_DIR}"
-    log_version dotnet --list-sdks
-    log_version dotnet --list-runtimes
-}
-
-function prerequisites_dotnetv3_preview () {
-    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
-    echo "libicu"
-}
-
-function install_dotnetv3_preview() {
-    echo "[INFO] Running install_dotnetv3_preview..."
-    local DOTNET3_SDK_URL
-    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOTNET3_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/a0e368ac-7161-4bde-a139-1a3ef5a82bbe/439cdbb58950916d3718771c5d986c35/dotnet-sdk-3.0.100-preview8-013656-linux-x64.tar.gz"
-    else
-        DOTNET3_SDK_URL=$1
-    fi
-    local DOTNET3_SDK_TAR=${DOTNET3_SDK_URL##*/}
-
-    # install Prerequisites
-    local DOTNET3_PRE
-    DOTNET3_PRE=$(prerequisites_dotnetv3_preview)
-    apt-get -y -q install $DOTNET3_PRE ||
-        { echo "[ERROR] Cannot install prerequisites for .NET SDK 3.0 :  ." 1>&2; return 10; }
-
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
-
-    curl -fsSL -O "${DOTNET3_SDK_URL}" &&
-    tar -zxf "${DOTNET3_SDK_TAR}" -C /usr/share/dotnet/ ||
-        { echo "[ERROR] Cannot download and unpack .NET SDK 3.0 preview from url '${DOTNET3_SDK_URL}'." 1>&2; popd; return 20; }
-
-    #install runtimes
-    local DOTNET3_RUNTIME_URL
-    if [[ -z "${2-}" || "${#2}" = "0" ]]; then
-        DOTNET3_RUNTIME_URL="https://download.visualstudio.microsoft.com/download/pr/3873ce54-438c-43bd-871b-0472e4d5462b/01353d2e8c4289bb344d935c4bf4de3e/dotnet-runtime-3.0.0-preview8-28405-07-linux-x64.tar.gz"
-    else
-        DOTNET3_RUNTIME_URL=$2
-    fi
-    DOTNET3_RUNTIME_TAR=${DOTNET3_RUNTIME_URL##*/}
-
-    curl -fsSL -O "${DOTNET3_RUNTIME_URL}" &&
-    tar -zxf "${DOTNET3_RUNTIME_TAR}" -C /usr/share/dotnet/ ||
-        { echo "[ERROR] Cannot download and unpack .NET Runtime 3.0 preview from url '${DOTNET3_RUNTIME_URL}'." 1>&2; popd; return 30; }
 
     popd &&
     rm -rf "${TMP_DIR}"
