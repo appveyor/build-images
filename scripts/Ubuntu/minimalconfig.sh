@@ -141,8 +141,8 @@ install_gitlfs ||
 update_git ||
     _abort $?
 
-# install_erlang ||
-#     _abort $?
+install_erlang ||
+    _abort $?
 
 install_rabbitmq ||
     _abort $?  
