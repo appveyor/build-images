@@ -39,6 +39,7 @@ clone_folder: ${HOME}/bake-scripts
 
 init:
 - appveyor version
+- sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 #- ls /opt/appveyor/build-agent
 
 clone_script:
