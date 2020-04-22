@@ -3,7 +3,7 @@ environment:
   matrix:
   - job_name: Ubuntu 18.04 on GCE us-central1
     APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1804-gce-us-central1
-    APPVEYOR_BAKE_IMAGE: ubuntu1804-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+    #APPVEYOR_BAKE_IMAGE: ubuntu1804-${APPVEYOR_REPO_BRANCH}-gce-us-central1
     BUILD_AGENT_MODE: GCE
 
   # - job_name: Ubuntu 16.04 on GCE us-central1
