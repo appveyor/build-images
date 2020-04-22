@@ -1338,12 +1338,11 @@ Restart=always" > /etc/systemd/system/redis.service
 
 function install_rabbitmq() {
     echo "[INFO] Running install_rabbitmq..."
-    curl -fsSL https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc | apt-key add - &&
-    curl -fsSL http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key add - &&
-    add-apt-repository "deb http://www.rabbitmq.com/debian/ testing main" ||
+    curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | sudo apt-key add - &&
+    add-apt-repository "deb http://www.rabbitmq.com/debian/ ${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
-    apt-get -y -q install rabbitmq-server ||
+    apt-get -y --fix-missing install rabbitmq-server ||
         { echo "[ERROR] Cannot install rabbitmq." 1>&2; return 20; }
     sed -ibak -E -e 's/#\s*ulimit/ulimit/' /etc/default/rabbitmq-server &&
     systemctl start rabbitmq-server &&
@@ -1517,7 +1516,7 @@ function install_erlang() {
     apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
     apt-get -y install apt-transport-https
 
-    echo "deb http://dl.bintray.com/rabbitmq-erlang/debian ${OS_CODENAME} erlang-21.x" | tee /etc/apt/sources.list.d/rabbitmq-erlang.list
+    echo "deb http://dl.bintray.com/rabbitmq-erlang/debian ${OS_CODENAME} erlang" | tee /etc/apt/sources.list.d/rabbitmq-erlang.list
     apt-get -y update
 
     apt-get install -y erlang-base \
