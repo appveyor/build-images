@@ -75,20 +75,6 @@ function install_pip() {
     rm get-pip.py
 }
 
-function prepare_dotnet_packages() {
-    declare SDK_VERSIONS=( "2.1.105" "2.1.200" "2.1.201" "2.1" "2.2" "3.0" "3.1" )
-    dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
-
-    declare RUNTIME_VERSIONS=( "2.0.7" "2.1" "2.2" )
-    dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
-
-    declare RUNTIME_VERSIONS=( "2.1" "2.2" "3.0" )
-    dotnet_packages "aspnetcore-runtime-" RUNTIME_VERSIONS[@]
-
-    declare DEV_VERSIONS=( "1.1.5" "1.1.6" "1.1.7" "1.1.8" "1.1.9" "1.1.11" )
-    dotnet_packages "dotnet-dev-" DEV_VERSIONS[@]
-}
-
 function config_dotnet_repository() {
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg &&
     mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/ &&
