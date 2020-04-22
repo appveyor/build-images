@@ -1352,6 +1352,7 @@ function install_rabbitmq() {
     systemctl disable rabbitmq-server ||
         { echo "[ERROR] Cannot configure rabbitmq." 1>&2; return 30; }
     log_version dpkg -l rabbitmq-server
+    log_version erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' -noshell
 }
 
 function install_p7zip() {
@@ -1510,14 +1511,15 @@ function install_kubectl() {
 
 function install_erlang() {
     echo "[INFO] Installing Erlang..."
-    
+    # https://www.rabbitmq.com/install-debian.html#apt-bintray-erlang
+
     curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
     apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
     apt-get -y install apt-transport-https
 
     echo "deb http://dl.bintray.com/rabbitmq-erlang/debian ${OS_CODENAME} erlang" | tee /etc/apt/sources.list.d/rabbitmq-erlang.list
     apt-get -y update
-    
+
     apt-get install -y erlang-base \
                         erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
                         erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
