@@ -1533,9 +1533,6 @@ function install_gcc() {
     apt-get -y -q install gcc-9 g++-9 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9 ||
         { echo "[ERROR] Cannot install gcc-8." 1>&2; return 40; }
-
-    echo "[INFO] GCC installed:"
-    apt-get list gcc*
 }
 
 function install_curl() {
