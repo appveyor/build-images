@@ -1517,7 +1517,7 @@ function install_erlang() {
     apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
     apt-get -y install apt-transport-https
 
-    echo "deb http://dl.bintray.com/rabbitmq-erlang/debian ${OS_CODENAME} erlang" | tee /etc/apt/sources.list.d/rabbitmq-erlang.list
+    echo "deb http://dl.bintray.com/rabbitmq-erlang/debian ${OS_CODENAME} erlang-21.x" | tee /etc/apt/sources.list.d/rabbitmq-erlang.list
     apt-get -y update
 
     apt-get install -y erlang-base \
