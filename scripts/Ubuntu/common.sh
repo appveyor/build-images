@@ -511,7 +511,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -897,9 +897,9 @@ function install_jdks() {
         return $?
     install_jdk 13 https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 14 https://download.java.net/java/GA/jdk14/076bab302c7b4508975440c56f6cc26a/36/GPL/openjdk-14_linux-x64_bin.tar.gz ||
+    install_jdk 14 https://download.java.net/java/GA/jdk14.0.1/664493ef4a6946b186ff29eb326336a2/7/GPL/openjdk-14.0.1_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 15 https://download.java.net/java/early_access/jdk15/10/GPL/openjdk-15-ea+10_linux-x64_bin.tar.gz ||
+    install_jdk 15 https://download.java.net/java/early_access/jdk15/19/GPL/openjdk-15-ea+19_linux-x64_bin.tar.gz ||
         return $?
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
@@ -1100,7 +1100,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.8" "go1.14" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.10" "go1.14.2" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1528,6 +1528,8 @@ function install_gcc() {
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9 ||
         { echo "[ERROR] Cannot install gcc-8." 1>&2; return 40; }
 
+    echo "[INFO] GCC installed:"
+    apt-get list gcc*
 }
 
 function install_curl() {
@@ -1632,19 +1634,29 @@ function install_rust() {
 
 function install_clang() {
     echo "[INFO] Running install_clang..."
-    curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&
-    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-9 main" ||
-        { echo "[ERROR] Cannot add llvm repository to APT sources." 1>&2; return 10; }
-    apt-get -y -qq update &&
-    apt-get -y -q install clang-9 ||
-        { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 20; }
+    curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-9 1000
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-9 1000
+    install_clang_version 9
+    install_clang_version 10
+
+    # make clang 10 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-10 1000
     update-alternatives --config clang
     update-alternatives --config clang++
 
     log_version clang --version
+}
+
+function install_clang_version() {
+    local LLVM_VERSION=$1
+    echo "[INFO] Installing clang ${LLVM_VERSION}..."
+
+    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-${LLVM_VERSION} main" ||
+        { echo "[ERROR] Cannot add llvm ${LLVM_VERSION} repository to APT sources." 1>&2; return 10; }
+    apt-get -y -qq update &&
+    apt-get -y -q install clang-$LLVM_VERSION lldb-$LLVM_VERSION lld-$LLVM_VERSION clangd-$LLVM_VERSION ||
+        { echo "[ERROR] Cannot install clang-${LLVM_VERSION}." 1>&2; return 20; }    
 }
 
 function install_octo() {
