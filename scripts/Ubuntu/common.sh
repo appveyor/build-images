@@ -1490,7 +1490,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.17.0-rc1
+        VERSION=3.17.1
     else
         VERSION=$1
     fi
