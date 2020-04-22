@@ -1547,7 +1547,7 @@ function install_curl() {
     echo "[INFO] Running install_curl..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=7.67.0
+        VERSION=7.69.1
     else
         VERSION=$1
     fi
@@ -1563,7 +1563,7 @@ function install_curl() {
         { echo "[ERROR] Cannot change directory to ${DIR_NAME}." 1>&2; popd; return 20; }
 
     # purge all installed curl packages
-    for p in $(dpkg --get-selections|grep -v deinstall|grep curl|cut -f1); do  apt-get purge -y $p; done
+    #for p in $(dpkg --get-selections|grep -v deinstall|grep curl|cut -f1); do  apt-get purge -y $p; done
 
     apt-get install -y libldap2-dev libssh2-1-dev libpsl-dev libidn2-dev libnghttp2-dev librtmp-dev ||
         { echo "[ERROR] Cannot install additional libraries for curl." 1>&2; popd; return 20; }
