@@ -1508,6 +1508,17 @@ function install_kubectl() {
         { echo "[ERROR] Cannot download and install kubectl."; return 10; }
 }
 
+function install_erlang() {
+    echo "[INFO] Installing Erlang..."
+    
+    wget -O- https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc | apt-key add -
+    echo "deb https://packages.erlang-solutions.com/ubuntu ${OS_CODENAME} contrib" | tee /etc/apt/sources.list.d/esl-erlang.list
+    apt-get -y update
+    apt-get -y install erlang
+
+    log_version erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' -noshell
+}
+
 function install_gcc() {
     echo "[INFO] Running install_gcc..."
     # add existing gcc's to alternatives

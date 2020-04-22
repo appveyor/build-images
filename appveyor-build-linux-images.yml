@@ -48,7 +48,7 @@ clone_script:
 
 build_script:
 - cd $BASE_DIR && pwd
-- sudo -E ./basicconfig.sh
+- sudo -E ./minimalconfig.sh
 - appveyor PushArtifact versions.log
 - appveyor PushArtifact bake.log
 
