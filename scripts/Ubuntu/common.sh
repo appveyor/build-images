@@ -1511,10 +1511,18 @@ function install_kubectl() {
 function install_erlang() {
     echo "[INFO] Installing Erlang..."
     
-    wget -O- https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc | apt-key add -
-    echo "deb https://packages.erlang-solutions.com/ubuntu ${OS_CODENAME} contrib" | tee /etc/apt/sources.list.d/esl-erlang.list
+    curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
+    apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
+    apt-get -y install apt-transport-https
+
+    echo "deb http://dl.bintray.com/rabbitmq-erlang/debian ${OS_CODENAME} erlang" | tee /etc/apt/sources.list.d/rabbitmq-erlang.list
     apt-get -y update
-    apt-get -y install erlang
+    
+    apt-get install -y erlang-base \
+                        erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
+                        erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
+                        erlang-runtime-tools erlang-snmp erlang-ssl \
+                        erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
 
     log_version erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' -noshell
 }
