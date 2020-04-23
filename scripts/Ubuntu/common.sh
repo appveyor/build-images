@@ -856,8 +856,6 @@ function install_dotnetv5_preview() {
 
     popd &&
     rm -rf "${TMP_DIR}"
-    log_version dotnet --list-sdks
-    log_version dotnet --list-runtimes
 }
 
 function install_mono() {
