@@ -141,7 +141,7 @@ install_gitlfs ||
 update_git ||
     _abort $?
 
-install_rabbitmq ||
+install_dotnets ||
     _abort $?  
 
 # ====================================

@@ -779,17 +779,14 @@ function preheat_dotnet_sdks() {
 }
 
 function prepare_dotnet_packages() {
-    declare SDK_VERSIONS=( "2.1.202" "2.1" "2.2" "3.0" "3.1" )
+    declare SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
-    declare RUNTIME_VERSIONS=( "2.0.9" "2.1" "2.2" )
+    declare RUNTIME_VERSIONS=( "2.1" "2.2" )
     dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
     dotnet_packages "aspnetcore-runtime-" RUNTIME_VERSIONS[@]
-
-    declare DEV_VERSIONS=( "1.1.14" )
-    dotnet_packages "dotnet-dev-" DEV_VERSIONS[@]
 }
 
 function config_dotnet_repository() {
