@@ -242,32 +242,34 @@ Documentation=../../Docs/Qt-$version
 Examples=../../Examples/Qt-$version
 Prefix=.."
         
-            $qtEnvPath = [IO.Path]::Combine($componentBin, 'qtenv2.bat')
-            Write-Host "Creating $qtEnvPath"
-
-            $mingwDir = $null
-            if ($componentDir.Name -eq 'mingw73_32') {
-                $mingwDir = 'mingw730_32'
-            } elseif ($componentDir.Name -eq 'mingw73_64') {
-                $mingwDir = 'mingw730_64'
-            } elseif ($componentDir.Name -eq 'mingw53_32') {
-                $mingwDir = 'mingw530_32'
-            } elseif ($componentDir.Name -eq 'mingw53_64') {
-                $mingwDir = 'mingw530_64'
-            }
-
-            if ($mingwDir) {
-                $mingwBin = [IO.Path]::Combine($qtRoot, 'Tools', $mingwDir, 'bin')
-                Set-Content -Path $qtEnvPath -Value "@echo off
-echo Setting up environment for Qt usage...
-set PATH=$componentBin;$mingwBin;%PATH%
-cd /D $componentPath"
-            } else {
-                Set-Content -Path $qtEnvPath -Value "@echo off
-echo Setting up environment for Qt usage...
-set PATH=$componentBin;%PATH%
-cd /D $componentPath
-echo Remember to call vcvarsall.bat to complete environment setup!"
+            if (-not $isLinux -and -not $isMacOS) {
+                $qtEnvPath = [IO.Path]::Combine($componentBin, 'qtenv2.bat')
+                Write-Host "Creating $qtEnvPath"
+    
+                $mingwDir = $null
+                if ($componentDir.Name -eq 'mingw73_32') {
+                    $mingwDir = 'mingw730_32'
+                } elseif ($componentDir.Name -eq 'mingw73_64') {
+                    $mingwDir = 'mingw730_64'
+                } elseif ($componentDir.Name -eq 'mingw53_32') {
+                    $mingwDir = 'mingw530_32'
+                } elseif ($componentDir.Name -eq 'mingw53_64') {
+                    $mingwDir = 'mingw530_64'
+                }
+    
+                if ($mingwDir) {
+                    $mingwBin = [IO.Path]::Combine($qtRoot, 'Tools', $mingwDir, 'bin')
+                    Set-Content -Path $qtEnvPath -Value "@echo off
+    echo Setting up environment for Qt usage...
+    set PATH=$componentBin;$mingwBin;%PATH%
+    cd /D $componentPath"
+                } else {
+                    Set-Content -Path $qtEnvPath -Value "@echo off
+    echo Setting up environment for Qt usage...
+    set PATH=$componentBin;%PATH%
+    cd /D $componentPath
+    echo Remember to call vcvarsall.bat to complete environment setup!"
+                }
             }
         }
 
