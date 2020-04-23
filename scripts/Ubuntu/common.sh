@@ -1756,30 +1756,6 @@ function install_doxygen() {
     log_version doxygen --version
 }
 
-function install_qt(){
-    echo "[INFO] Running install_qt..."
-    local QT_VERSION QT_PACKAGE QT_URL
-    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        QT_VERSION=5.14.1
-    else
-        QT_VERSION=$1
-    fi
-    QT_PACKAGE=qt-opensource-linux-x64-${QT_VERSION}.run
-    QT_URL=http://download.qt.io/official_releases/qt/${QT_VERSION%.*}/${QT_VERSION}/
-
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
-    curl -fsSL -O "${QT_URL}${QT_PACKAGE}" &&
-    curl -fsSL -O "${QT_URL}md5sums.txt" &&
-    md5sum -c --ignore-missing "md5sums.txt" ||
-        { echo "[ERROR] Cannot download and test QT package version $QT_VERSION from '${QT_URL}${QT_PACKAGE}'." 1>&2; popd; return 10; }
-    chmod +x "$QT_PACKAGE"
-    "./$QT_PACKAGE"
-    popd
-    log_version qmake --version
-}
-
 function add_ssh_known_hosts() {
     echo "[INFO] Configuring ~/.ssh/known_hosts..."
     if [ -f "../Windows/add_ssh_known_hosts.ps1" ] && command -v pwsh; then
