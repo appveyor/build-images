@@ -141,11 +141,8 @@ install_gitlfs ||
 update_git ||
     _abort $?
 
-install_dotnets ||
-    _abort $?
-
-install_dotnetv5_preview ||
-    _abort $?      
+install_qt ||
+    _abort $? 
 
 # ====================================
 

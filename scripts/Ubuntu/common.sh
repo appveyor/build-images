@@ -1725,6 +1725,16 @@ function install_vcpkg() {
     log_version vcpkg version
 }
 
+function install_qt() {
+    echo "[INFO] Installing Qt..."
+    if [ -f "../Windows/install_qt_fast_linux.ps1" ] && command -v pwsh; then
+        pwsh -nol -noni ../Windows/install_qt_fast_linux.ps1
+    else
+        echo '[ERROR] Cannot run install_qt_fast_linux.ps1: Either PowerShell is not installed or install_qt_fast_linux.ps1 does not exist.' 1>&2;
+        return 10;
+    fi
+}
+
 function install_doxygen() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
     local DOXYGEN_VERSION
