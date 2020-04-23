@@ -142,7 +142,10 @@ update_git ||
     _abort $?
 
 install_dotnets ||
-    _abort $?  
+    _abort $?
+
+install_dotnetv5_preview ||
+    _abort $?      
 
 # ====================================
 
