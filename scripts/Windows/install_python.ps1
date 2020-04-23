@@ -131,19 +131,21 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 }
 
 # Python 2.7.17
-$python27 = (GetUninstallString 'Python 2.7.17')
+$python27 = (GetUninstallString 'Python 2.7.18')
 if($python27) {
-    Write-Host 'Python 2.7.17 already installed'
+    Write-Host 'Python 2.7.18 already installed'
 } else {
     UninstallPython "Python 2.7.14"
     UninstallPython "Python 2.7.14 (64-bit)"
     UninstallPython "Python 2.7.15"
     UninstallPython "Python 2.7.15 (64-bit)"    
     UninstallPython "Python 2.7.16"
-    UninstallPython "Python 2.7.16 (64-bit)"   
+    UninstallPython "Python 2.7.16 (64-bit)"
+    UninstallPython "Python 2.7.18"
+    UninstallPython "Python 2.7.18 (64-bit)"    
 
-    InstallPythonMSI "2.7.17" "x64" "$env:SystemDrive\Python27-x64"
-    InstallPythonMSI "2.7.17" "x86" "$env:SystemDrive\Python27"
+    InstallPythonMSI "2.7.18" "x64" "$env:SystemDrive\Python27-x64"
+    InstallPythonMSI "2.7.18" "x86" "$env:SystemDrive\Python27"
 }
 
 UpdatePip "$env:SystemDrive\Python27"

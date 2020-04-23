@@ -23,30 +23,13 @@ function Install-SDK($sdkVersion) {
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     Install-SDK "1.1.14"
-    Install-SDK "2.1.503"
-    Install-SDK "2.1.507"
-    Install-SDK "2.1.603"
-    Install-SDK "2.1.604"
-    Install-SDK "2.1.701"
-    Install-SDK "2.1.803"
-    Install-SDK "2.2.103"
-    Install-SDK "2.2.107"
-    Install-SDK "2.2.108"
-    Install-SDK "2.2.109"
-    Install-SDK "2.2.110"
-    Install-SDK "2.2.203"
-    Install-SDK "2.2.204"
-    Install-SDK "2.2.206"
-    Install-SDK "2.2.207"
-    Install-SDK "2.2.301"
+    Install-SDK "2.1.202"
+    Install-SDK "2.1.805"
 }
 Install-SDK "2.2.402"
 
 # VS 2019 images only
 if (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019") {
-    if (-not $env:INSTALL_LATEST_ONLY) {
-        Install-SDK "3.0.100"
-    }
-    Install-SDK "3.0.102"
-    Install-SDK "3.1.101"
+    Install-SDK "3.0.103"
+    Install-SDK "3.1.201"
 }
