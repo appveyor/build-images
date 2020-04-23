@@ -300,15 +300,18 @@ function install_tools() {
     # utilities
     tools_array=( "zip" "unzip" "wget" "curl" "time" "tree" "telnet" "dnsutils" "net-tools" "file" "ftp" "lftp" )
     tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
+
     # build tools
     tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" "ninja-build" )
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
+
     # python packages
     tools_array+=( "python" "python-dev" "python3" )
     tools_array+=( "python-setuptools" )
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
     tools_array+=( "libbz2-dev" "python3-tk" "tk-dev" "libsqlite3-dev" )
+
     # 32bit support
     tools_array+=( "libc6:i386" "libncurses5:i386" "libstdc++6:i386" )
 
@@ -320,6 +323,7 @@ function install_tools() {
     # next packages required by KVP to communicate with HyperV
     if [ "${BUILD_AGENT_MODE}" = "HyperV" ]; then
         tools_array+=( "linux-tools-generic" "linux-cloud-tools-generic" )
+        tools_array+=( "openssh-server" )
     fi
 
     #APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
