@@ -827,6 +827,13 @@ function install_dotnets() {
 
     #cleanup
     if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
+
+    # install outdated 1.1 and 2.1 releases using install script
+    wget https://dotnet.microsoft.com/download/dotnet-core/scripts/v1/dotnet-install.sh
+    chmod +x dotnet-install.sh
+    ./dotnet-install.sh --version 1.1.14 --install-dir /usr/share/dotnet
+    ./dotnet-install.sh --version 2.1.202 --install-dir /usr/share/dotnet
+    if [ -f dotnet-install.sh ]; then rm dotnet-install.sh; fi
 }
 
 function install_dotnetv5_preview() {
