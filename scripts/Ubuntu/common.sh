@@ -1359,7 +1359,7 @@ function install_rabbitmq() {
         { echo "[ERROR] Cannot configure rabbitmq." 1>&2; return 30; }
     
     log_version dpkg -l rabbitmq-server
-    log_version erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' -noshell
+    log_version erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), io:fwrite(Version), halt().' -noshell
 }
 
 function install_p7zip() {
