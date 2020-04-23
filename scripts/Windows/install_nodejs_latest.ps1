@@ -3,8 +3,9 @@
     $avvmRoot = "$env:SYSTEMDRIVE\avvm\node"
 
     $nodeVersions = @(
-        "13.11.0",
-        "12.16.1"
+        "14.0.0",
+        "13.13.0",
+        "12.16.2"
         )
 
     if (-not $env:INSTALL_LATEST_ONLY) {
@@ -22,7 +23,7 @@
             "6.17.1",
             "7.10.1",
             "9.11.2",
-            "10.19.0",
+            "10.20.1",
             "11.15.0"
         ) + $nodeVersions + @(
             "8.17.0"
