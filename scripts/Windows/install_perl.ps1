@@ -9,6 +9,10 @@ Write-Host "Installing..."
 cmd /c start /wait msiexec /i "$msiPath" /qn /norestart
 Remove-Item $msiPath
 
+Remove-Path 'C:\Strawberry\c\bin'
+Remove-Path 'C:\Strawberry\perl\bin'
+Remove-Path 'C:\Strawberry\perl\site\bin'
+
 C:\Strawberry\perl\bin\perl.exe --version
 
 Write-Host "Strawberry Perl installed" -ForegroundColor Green
