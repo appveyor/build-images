@@ -76,7 +76,7 @@ function install_pip() {
 }
 
 function config_dotnet_repository() {
-    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb &&
+    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb &&
     dpkg -i packages-microsoft-prod.deb &&
     apt-get -y -qq update ||
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
