@@ -844,7 +844,7 @@ function install_dotnetv5_preview() {
     echo "[INFO] Running install_dotnetv5_preview..."
     local DOTNET5_SDK_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOTNET5_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/727a5825-d29a-4f45-beaa-053399f8b5ee/5f15827ceb4851ef87a008f5de0acf6c/dotnet-sdk-5.0.100-preview.2.20176.6-linux-x64.tar.gz"
+        DOTNET5_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/7ceba34e-5d50-4b23-b326-0a7d02b4decd/62dd73db9be67127a5645ef0efb0bba4/dotnet-sdk-5.0.100-preview.3.20216.6-linux-x64.tar.gz"
     else
         DOTNET5_SDK_URL=$1
     fi
