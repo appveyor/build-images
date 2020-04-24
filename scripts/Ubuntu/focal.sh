@@ -75,6 +75,18 @@ function install_pip() {
     rm get-pip.py
 }
 
+function install_powershell() {
+    # https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7#snap-package
+    # https://docs.microsoft.com/en-us/powershell/scripting/powershell-support-lifecycle?view=powershell-7#supported-platforms
+
+    snap install powershell --classic
+
+    configure_powershell
+
+    # Start PowerShell
+    log_version pwsh --version
+}
+
 function config_dotnet_repository() {
     curl -fsSL -O https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb &&
     dpkg -i packages-microsoft-prod.deb &&
