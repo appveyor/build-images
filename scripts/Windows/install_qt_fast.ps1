@@ -6,7 +6,7 @@ $installDir = "C:\Qt"
 
 $component_groups = @(
     @{
-        version = "5.14.1"
+        version = "5.14.2"
         components = @(
             "win32_msvc2017",
             "win64_msvc2017_64",
@@ -133,7 +133,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             )
         }
         @{
-            version = "5.12.7"
+            version = "5.12.8"
             components = @(
                 "win32_mingw73",
                 "win32_msvc2017",
@@ -260,10 +260,10 @@ compact /c /i /s:C:\Qt | Out-Null
 Write-Host "OK" -ForegroundColor Green
 
 # set aliases
-cmd /c mklink /J C:\Qt\latest C:\Qt\5.14.1
-cmd /c mklink /J C:\Qt\5.14 C:\Qt\5.14.1
+cmd /c mklink /J C:\Qt\latest C:\Qt\5.14.2
+cmd /c mklink /J C:\Qt\5.14 C:\Qt\5.14.2
 cmd /c mklink /J C:\Qt\5.13 C:\Qt\5.13.2
-cmd /c mklink /J C:\Qt\5.12 C:\Qt\5.12.7
+cmd /c mklink /J C:\Qt\5.12 C:\Qt\5.12.8
 cmd /c mklink /J C:\Qt\5.9 C:\Qt\5.9.9
 
 Write-Host "Qt 5.x installed" -ForegroundColor Green

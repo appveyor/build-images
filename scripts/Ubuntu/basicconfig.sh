@@ -259,6 +259,9 @@ install_mongodb ||
 install_rabbitmq ||
     _abort $?
 
+install_qt ||
+    _abort $? 
+
 # Go lang
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}

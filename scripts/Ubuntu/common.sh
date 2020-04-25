@@ -300,15 +300,18 @@ function install_tools() {
     # utilities
     tools_array=( "zip" "unzip" "wget" "curl" "time" "tree" "telnet" "dnsutils" "net-tools" "file" "ftp" "lftp" )
     tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
+
     # build tools
     tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" "ninja-build" )
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
+
     # python packages
     tools_array+=( "python" "python-dev" "python3" )
     tools_array+=( "python-setuptools" )
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
     tools_array+=( "libbz2-dev" "python3-tk" "tk-dev" "libsqlite3-dev" )
+
     # 32bit support
     tools_array+=( "libc6:i386" "libncurses5:i386" "libstdc++6:i386" )
 
@@ -320,6 +323,7 @@ function install_tools() {
     # next packages required by KVP to communicate with HyperV
     if [ "${BUILD_AGENT_MODE}" = "HyperV" ]; then
         tools_array+=( "linux-tools-generic" "linux-cloud-tools-generic" )
+        tools_array+=( "openssh-server" )
     fi
 
     #APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
@@ -511,7 +515,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -683,7 +687,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.10" "3.7.0" "3.7.1" "3.7.2" "3.7.3" "3.7.4" "3.7.5" "3.7.7" "3.8.0" "3.8.1" "3.8.2" "3.9.0a4" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.9" "3.6.10" "3.7.7" "3.8.2" "3.9.0a5" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -779,18 +783,14 @@ function preheat_dotnet_sdks() {
 }
 
 function prepare_dotnet_packages() {
-    #shellcheck disable=SC2034
-    SDK_VERSIONS=( "2.0.0" "2.0.2" "2.0.3" "2.1.2" "2.1.3" "2.1.4" "2.1.101" "2.1.103" "2.1.104" "2.1.105" "2.1.200" "2.1.201" "2.1.202" "2.1" "2.2" "3.0" "3.1" )
+    declare SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
-    #shellcheck disable=SC2034
-    declare RUNTIME_VERSIONS=( "2.0.0" "2.0.3" "2.0.4" "2.0.5" "2.0.6" "2.0.7" "2.0.9" "2.1" "2.2" )
+
+    declare RUNTIME_VERSIONS=( "2.1" "2.2" )
     dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
-    #shellcheck disable=SC2034
-    declare RUNTIME_VERSIONS=( "2.1" "2.2" "3.0" )
+
+    declare RUNTIME_VERSIONS=( "2.1" "2.2" )
     dotnet_packages "aspnetcore-runtime-" RUNTIME_VERSIONS[@]
-    #shellcheck disable=SC2034
-    declare DEV_VERSIONS=( "1.1.5" "1.1.6" "1.1.7" "1.1.8" "1.1.9" "1.1.10" "1.1.11" "1.1.12" )
-    dotnet_packages "dotnet-dev-" DEV_VERSIONS[@]
 }
 
 function config_dotnet_repository() {
@@ -831,13 +831,20 @@ function install_dotnets() {
 
     #cleanup
     if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
+
+    # install outdated 1.1 and 2.1 releases using install script
+    wget https://dotnet.microsoft.com/download/dotnet-core/scripts/v1/dotnet-install.sh
+    chmod +x dotnet-install.sh
+    ./dotnet-install.sh --version 1.1.14 --install-dir /usr/share/dotnet
+    ./dotnet-install.sh --version 2.1.202 --install-dir /usr/share/dotnet
+    if [ -f dotnet-install.sh ]; then rm dotnet-install.sh; fi
 }
 
 function install_dotnetv5_preview() {
     echo "[INFO] Running install_dotnetv5_preview..."
     local DOTNET5_SDK_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOTNET5_SDK_URL="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-sdk-latest-linux-x64.tar.gz"
+        DOTNET5_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/7ceba34e-5d50-4b23-b326-0a7d02b4decd/62dd73db9be67127a5645ef0efb0bba4/dotnet-sdk-5.0.100-preview.3.20216.6-linux-x64.tar.gz"
     else
         DOTNET5_SDK_URL=$1
     fi
@@ -853,56 +860,6 @@ function install_dotnetv5_preview() {
 
     popd &&
     rm -rf "${TMP_DIR}"
-    log_version dotnet --list-sdks
-    log_version dotnet --list-runtimes
-}
-
-function prerequisites_dotnetv3_preview () {
-    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
-    echo "libicu"
-}
-
-function install_dotnetv3_preview() {
-    echo "[INFO] Running install_dotnetv3_preview..."
-    local DOTNET3_SDK_URL
-    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOTNET3_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/a0e368ac-7161-4bde-a139-1a3ef5a82bbe/439cdbb58950916d3718771c5d986c35/dotnet-sdk-3.0.100-preview8-013656-linux-x64.tar.gz"
-    else
-        DOTNET3_SDK_URL=$1
-    fi
-    local DOTNET3_SDK_TAR=${DOTNET3_SDK_URL##*/}
-
-    # install Prerequisites
-    local DOTNET3_PRE
-    DOTNET3_PRE=$(prerequisites_dotnetv3_preview)
-    apt-get -y -q install $DOTNET3_PRE ||
-        { echo "[ERROR] Cannot install prerequisites for .NET SDK 3.0 :  ." 1>&2; return 10; }
-
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
-
-    curl -fsSL -O "${DOTNET3_SDK_URL}" &&
-    tar -zxf "${DOTNET3_SDK_TAR}" -C /usr/share/dotnet/ ||
-        { echo "[ERROR] Cannot download and unpack .NET SDK 3.0 preview from url '${DOTNET3_SDK_URL}'." 1>&2; popd; return 20; }
-
-    #install runtimes
-    local DOTNET3_RUNTIME_URL
-    if [[ -z "${2-}" || "${#2}" = "0" ]]; then
-        DOTNET3_RUNTIME_URL="https://download.visualstudio.microsoft.com/download/pr/3873ce54-438c-43bd-871b-0472e4d5462b/01353d2e8c4289bb344d935c4bf4de3e/dotnet-runtime-3.0.0-preview8-28405-07-linux-x64.tar.gz"
-    else
-        DOTNET3_RUNTIME_URL=$2
-    fi
-    DOTNET3_RUNTIME_TAR=${DOTNET3_RUNTIME_URL##*/}
-
-    curl -fsSL -O "${DOTNET3_RUNTIME_URL}" &&
-    tar -zxf "${DOTNET3_RUNTIME_TAR}" -C /usr/share/dotnet/ ||
-        { echo "[ERROR] Cannot download and unpack .NET Runtime 3.0 preview from url '${DOTNET3_RUNTIME_URL}'." 1>&2; popd; return 30; }
-
-    popd &&
-    rm -rf "${TMP_DIR}"
-    log_version dotnet --list-sdks
-    log_version dotnet --list-runtimes
 }
 
 function install_mono() {
@@ -946,9 +903,9 @@ function install_jdks() {
         return $?
     install_jdk 13 https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 14 https://download.java.net/java/GA/jdk14/076bab302c7b4508975440c56f6cc26a/36/GPL/openjdk-14_linux-x64_bin.tar.gz ||
+    install_jdk 14 https://download.java.net/java/GA/jdk14.0.1/664493ef4a6946b186ff29eb326336a2/7/GPL/openjdk-14.0.1_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 15 https://download.java.net/java/early_access/jdk15/10/GPL/openjdk-15-ea+10_linux-x64_bin.tar.gz ||
+    install_jdk 15 https://download.java.net/java/early_access/jdk15/19/GPL/openjdk-15-ea+19_linux-x64_bin.tar.gz ||
         return $?
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
@@ -1149,7 +1106,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.8" "go1.14" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.10" "go1.14.2" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1387,12 +1344,16 @@ Restart=always" > /etc/systemd/system/redis.service
 
 function install_rabbitmq() {
     echo "[INFO] Running install_rabbitmq..."
-    curl -fsSL https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc | apt-key add - &&
-    curl -fsSL http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key add - &&
-    add-apt-repository "deb http://www.rabbitmq.com/debian/ testing main" ||
+    curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
+    
+    add-apt-repository "deb https://dl.bintray.com/rabbitmq-erlang/debian ${OS_CODENAME} erlang" ||
+        { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
+
+    add-apt-repository "deb https://dl.bintray.com/rabbitmq/debian ${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
+
     apt-get -y -qq update &&
-    apt-get -y -q install rabbitmq-server ||
+    apt-get -y install rabbitmq-server ||
         { echo "[ERROR] Cannot install rabbitmq." 1>&2; return 20; }
     sed -ibak -E -e 's/#\s*ulimit/ulimit/' /etc/default/rabbitmq-server &&
     systemctl start rabbitmq-server &&
@@ -1400,7 +1361,9 @@ function install_rabbitmq() {
     systemctl enable rabbitmq-server &&
     systemctl disable rabbitmq-server ||
         { echo "[ERROR] Cannot configure rabbitmq." 1>&2; return 30; }
+    
     log_version dpkg -l rabbitmq-server
+    log_version erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), io:fwrite(Version), halt().' -noshell
 }
 
 function install_p7zip() {
@@ -1490,7 +1453,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.17.0-rc1
+        VERSION=3.17.1
     else
         VERSION=$1
     fi
@@ -1576,14 +1539,13 @@ function install_gcc() {
     apt-get -y -q install gcc-9 g++-9 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9 ||
         { echo "[ERROR] Cannot install gcc-8." 1>&2; return 40; }
-
 }
 
 function install_curl() {
     echo "[INFO] Running install_curl..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=7.67.0
+        VERSION=7.69.1
     else
         VERSION=$1
     fi
@@ -1599,7 +1561,7 @@ function install_curl() {
         { echo "[ERROR] Cannot change directory to ${DIR_NAME}." 1>&2; popd; return 20; }
 
     # purge all installed curl packages
-    for p in $(dpkg --get-selections|grep -v deinstall|grep curl|cut -f1); do  apt-get purge -y $p; done
+    #for p in $(dpkg --get-selections|grep -v deinstall|grep curl|cut -f1); do  apt-get purge -y $p; done
 
     apt-get install -y libldap2-dev libssh2-1-dev libpsl-dev libidn2-dev libnghttp2-dev librtmp-dev ||
         { echo "[ERROR] Cannot install additional libraries for curl." 1>&2; popd; return 20; }
@@ -1681,19 +1643,29 @@ function install_rust() {
 
 function install_clang() {
     echo "[INFO] Running install_clang..."
-    curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&
-    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-9 main" ||
-        { echo "[ERROR] Cannot add llvm repository to APT sources." 1>&2; return 10; }
-    apt-get -y -qq update &&
-    apt-get -y -q install clang-9 ||
-        { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 20; }
+    curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-9 1000
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-9 1000
+    install_clang_version 9
+    install_clang_version 10
+
+    # make clang 10 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-10 1000
     update-alternatives --config clang
     update-alternatives --config clang++
 
     log_version clang --version
+}
+
+function install_clang_version() {
+    local LLVM_VERSION=$1
+    echo "[INFO] Installing clang ${LLVM_VERSION}..."
+
+    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-${LLVM_VERSION} main" ||
+        { echo "[ERROR] Cannot add llvm ${LLVM_VERSION} repository to APT sources." 1>&2; return 10; }
+    apt-get -y -qq update &&
+    apt-get -y -q install clang-$LLVM_VERSION lldb-$LLVM_VERSION lld-$LLVM_VERSION clangd-$LLVM_VERSION ||
+        { echo "[ERROR] Cannot install clang-${LLVM_VERSION}." 1>&2; return 20; }    
 }
 
 function install_octo() {
@@ -1757,6 +1729,16 @@ function install_vcpkg() {
     log_version vcpkg version
 }
 
+function install_qt() {
+    echo "[INFO] Installing Qt..."
+    if [ -f "../Windows/install_qt_fast_linux.ps1" ] && command -v pwsh; then
+        pwsh -nol -noni ../Windows/install_qt_fast_linux.ps1
+    else
+        echo '[ERROR] Cannot run install_qt_fast_linux.ps1: Either PowerShell is not installed or install_qt_fast_linux.ps1 does not exist.' 1>&2;
+        return 10;
+    fi
+}
+
 function install_doxygen() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
     local DOXYGEN_VERSION
@@ -1776,30 +1758,6 @@ function install_doxygen() {
     cp -a doxygen-${DOXYGEN_VERSION}/bin/doxy* /usr/local/bin
     popd
     log_version doxygen --version
-}
-
-function install_qt(){
-    echo "[INFO] Running install_qt..."
-    local QT_VERSION QT_PACKAGE QT_URL
-    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        QT_VERSION=5.14.1
-    else
-        QT_VERSION=$1
-    fi
-    QT_PACKAGE=qt-opensource-linux-x64-${QT_VERSION}.run
-    QT_URL=http://download.qt.io/official_releases/qt/${QT_VERSION%.*}/${QT_VERSION}/
-
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
-    curl -fsSL -O "${QT_URL}${QT_PACKAGE}" &&
-    curl -fsSL -O "${QT_URL}md5sums.txt" &&
-    md5sum -c --ignore-missing "md5sums.txt" ||
-        { echo "[ERROR] Cannot download and test QT package version $QT_VERSION from '${QT_URL}${QT_PACKAGE}'." 1>&2; popd; return 10; }
-    chmod +x "$QT_PACKAGE"
-    "./$QT_PACKAGE"
-    popd
-    log_version qmake --version
 }
 
 function add_ssh_known_hosts() {
