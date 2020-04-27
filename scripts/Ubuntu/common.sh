@@ -862,11 +862,18 @@ function install_dotnetv5_preview() {
     rm -rf "${TMP_DIR}"
 }
 
-function install_mono() {
+function configure_mono_repository () {
     echo "[INFO] Running install_mono..."
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF &&
     add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
+}
+
+function install_mono() {
+    echo "[INFO] Running install_mono..."
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+
+    configure_mono_repository
+
     apt-get -y -qq update &&
     apt-get -y -q install mono-complete mono-dbg referenceassemblies-pcl mono-xsp4 ||
         { echo "[ERROR] Cannot install Mono." 1>&2; return 20; }

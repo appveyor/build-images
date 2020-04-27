@@ -142,54 +142,6 @@ function install_jdks_from_repository() {
     fi
 }
 
-#this function deprecated
-function install_sqlserver_deprecated() {
-    echo "[INFO] Running install_sqlserver..."
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
-    local DEB_NAME
-    DEB_NAME=mssql-server_14.0.3238.1-19_amd64.deb
-
-    #download package
-    curl -fsSL -O "https://packages.microsoft.com/ubuntu/16.04/mssql-server-2017/pool/main/m/mssql-server/${DEB_NAME}"
-    # since build 3045 there is no need to repack package
-    # dpkg-deb -x "${DEB_NAME}" newpkg/
-    # dpkg-deb -e "${DEB_NAME}" newpkg/DEBIAN/
-
-    # # change dependencies
-    # sed -i -e 's#openssl (<= 1.1.0)#openssl (<= 1.1.1)#g' newpkg/DEBIAN/control
-    # sed -i -e 's#libcurl3#libcurl4#g' newpkg/DEBIAN/control
-
-    # #Repackage
-    # dpkg-deb -b newpkg/ "18.04-${DEB_NAME}"
-    # #install
-    # apt-get install -y -qq libjemalloc1 libc++1 gdb libcurl4 libsss-nss-idmap0 gawk
-    # dpkg -i "18.04-${DEB_NAME}"
-    apt-get install -y -qq libjemalloc1 libc++1 gdb python libsss-nss-idmap0 libsasl2-modules-gssapi-mit
-    dpkg -i "${DEB_NAME}"
-
-    MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD \
-        MSSQL_PID=developer \
-        /opt/mssql/bin/mssql-conf -n setup accept-eula ||
-        { echo "[ERROR] Cannot configure mssql-server." 1>&2; popd; return 30; }
-
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -  &&
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/18.04/prod.list)" ||
-        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 35; }
-
-    ACCEPT_EULA=Y apt-get -y -q install mssql-tools unixodbc-dev
-    systemctl restart mssql-server
-    systemctl is-active mssql-server ||
-        { echo "[ERROR] mssql-server service failed to start." 1>&2; popd; return 40; }
-
-
-
-    popd &&
-    rm -rf "${TMP_DIR}"
-    log_version dpkg -l mssql-server
-}
-
 function fix_sqlserver() {
     echo "[INFO] Running fix_sqlserver..."
 
