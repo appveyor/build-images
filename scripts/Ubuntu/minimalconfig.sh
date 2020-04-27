@@ -138,21 +138,21 @@ install_gitlfs ||
 
 # ====================================
 
-# update_git ||
-#     _abort $?
+update_git ||
+    _abort $?
 
 add_ssh_known_hosts ||
     _continue $?
 
-# # .NET stuff
-# install_dotnets ||
-#     _abort $?
-# install_dotnetv5_preview ||
-#     _abort $?
-# preheat_dotnet_sdks &&
-# log_version dotnet --list-sdks &&
-# log_version dotnet --list-runtimes ||
-#     _abort $?
+# .NET stuff
+install_dotnets ||
+    _abort $?
+install_dotnetv5_preview ||
+    _abort $?
+preheat_dotnet_sdks &&
+log_version dotnet --list-sdks &&
+log_version dotnet --list-runtimes ||
+    _abort $?
 
 # ====================================
 

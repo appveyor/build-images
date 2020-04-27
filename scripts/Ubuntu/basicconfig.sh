@@ -202,6 +202,7 @@ su -l ${USER_NAME} -c "
         $(declare -f configure_nuget)
         configure_nuget" ||
     _abort $?
+
 install_powershell ||
     _abort $?
 

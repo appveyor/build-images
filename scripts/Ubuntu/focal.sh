@@ -117,7 +117,12 @@ function install_powershell() {
 }
 
 function config_dotnet_repository() {
-    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb &&
+    # temp hack from here: https://github.com/dotnet/core/issues/4360#issuecomment-619598884
+    wget http://mirrors.edge.kernel.org/ubuntu/pool/main/i/icu/libicu63_63.2-2_amd64.deb
+    dpkg -i libicu63_63.2-2_amd64.deb
+    rm libicu63_63.2-2_amd64.deb
+
+    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb &&
     dpkg -i packages-microsoft-prod.deb &&
     apt-get -y -qq update ||
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
