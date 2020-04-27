@@ -161,6 +161,23 @@ function install_cvs() {
     fi
 }
 
+function configure_rabbitmq_repositories() {
+    echo "[INFO] Running configure_rabbitmq_repositories..."
+
+    add-apt-repository "deb https://dl.bintray.com/rabbitmq-erlang/debian bionic erlang" ||
+        { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
+
+    add-apt-repository "deb https://dl.bintray.com/rabbitmq/debian bionic main" ||
+        { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
+}
+
+function configure_virtualbox_repository() {
+    echo "[INFO] Running configure_virtualbox_repository on Ubuntu 20.04..."
+
+    add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian bionic contrib" ||
+        { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }    
+}
+
 function install_mongodb() {
     echo "[INFO] Running install_mongodb..."
     apt install -yqq mongodb ||

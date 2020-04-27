@@ -1132,11 +1132,11 @@ function pull_dockerimages() {
 
 function install_docker() {
     echo "[INFO] Running install_docker..."
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
-        { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }
+    # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
+    # add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
+    #     { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
-    apt-get -y -q install docker-ce ||
+    apt-get -y -q install docker.io ||
         { echo "[ERROR] Cannot install Docker." 1>&2; return 20; }
     systemctl start docker &&
     systemctl is-active docker ||
@@ -1342,15 +1342,21 @@ Restart=always" > /etc/systemd/system/redis.service
     log_version redis-server --version
 }
 
-function install_rabbitmq() {
-    echo "[INFO] Running install_rabbitmq..."
-    curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
-    
+function configure_rabbitmq_repositories() {
+    echo "[INFO] Running configure_rabbitmq_repositories..."
+
     add-apt-repository "deb https://dl.bintray.com/rabbitmq-erlang/debian ${OS_CODENAME} erlang" ||
         { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
 
     add-apt-repository "deb https://dl.bintray.com/rabbitmq/debian ${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
+}
+
+function install_rabbitmq() {
+    echo "[INFO] Running install_rabbitmq..."
+    curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
+    
+    configure_rabbitmq_repositories
 
     apt-get -y -qq update &&
     apt-get -y install rabbitmq-server ||
@@ -1590,6 +1596,13 @@ function install_browsers() {
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }
 
+function configure_virtualbox_repository() {
+    echo "[INFO] Running configure_virtualbox_repository..."
+
+    add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
+        { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }    
+}
+
 # they have changed versioning and made Debain Repo. see https://www.virtualbox.org/wiki/Linux_Downloads
 # https://download.virtualbox.org/virtualbox/6.0.6/virtualbox-6.0_6.0.6-130049~Ubuntu~bionic_amd64.deb
 # https://download.virtualbox.org/virtualbox/6.0.6/virtualbox-6.0_6.0.6-130049~Ubuntu~xenial_amd64.deb
@@ -1604,9 +1617,10 @@ function install_virtualbox() {
     local VB_VERSION=${VERSION%.*}
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
-    echo "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" >/etc/apt/sources.list.d/virtualboxorg.list &&
-    curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add - ||
-        { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }
+    curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
+
+    configure_virtualbox_repository
+
     apt-get -y -qq update &&
     apt-get -y -q install virtualbox-${VB_VERSION} ||
         { echo "[ERROR] Cannot install virtualbox-${VB_VERSION}." 1>&2; return 20; }
