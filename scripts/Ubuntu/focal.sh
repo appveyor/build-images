@@ -76,14 +76,23 @@ function install_pip() {
 }
 
 function install_powershell() {
-    # https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7#snap-package
-    # https://docs.microsoft.com/en-us/powershell/scripting/powershell-support-lifecycle?view=powershell-7#supported-platforms
+    echo "[INFO] Install PowerShell on Ubuntu 20.04..."
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+    local DEB_NAME
+    DEB_NAME=powershell-lts_7.0.0-1.ubuntu.18.04_amd64.deb
 
-    snap install powershell --classic
+    #download package
+    curl -fsSL -O "https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/${DEB_NAME}"
+
+    # install
+    dpkg -i "${DEB_NAME}"
 
     configure_powershell
 
-    # Start PowerShell
+    popd &&
+    rm -rf "${TMP_DIR}"
     log_version pwsh --version
 }
 
