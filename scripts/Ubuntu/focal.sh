@@ -75,19 +75,39 @@ function install_pip() {
     rm get-pip.py
 }
 
+function install_gitlfs() {
+    echo "[INFO] Running install_gitlfs on Ubuntu 20.04..."
+    command -v git || apt-get -y -q install git
+    #curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash &&
+    apt-get -y -q install git-lfs ||
+        { echo "Failed to install git lfs." 1>&2; return 10; }
+    log_version dpkg -l git-lfs
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l "${USER_NAME}" -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_gitlfs)
+            configure_gitlfs"  ||
+                return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_gitlfs"
+    fi
+}
+
 function install_powershell() {
     echo "[INFO] Install PowerShell on Ubuntu 20.04..."
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
-    local DEB_NAME
-    DEB_NAME=powershell-lts_7.0.0-1.ubuntu.18.04_amd64.deb
+    local PWSH_INSTALL_DIR=/opt/microsoft/powershell/7-focal
+    local TAR_NAME=powershell-7.0.0-linux-x64.tar.gz
 
     #download package
-    curl -fsSL -O "https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/${DEB_NAME}"
+    curl -fsSL -O "https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/${TAR_NAME}"
 
     # install
-    dpkg -i "${DEB_NAME}"
+    mkdir -p ${PWSH_INSTALL_DIR}
+    tar -zxf "${TAR_NAME}" -C ${PWSH_INSTALL_DIR}
+    ln -s ${PWSH_INSTALL_DIR}/pwsh /usr/bin/pwsh
 
     configure_powershell
 
