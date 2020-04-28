@@ -1619,6 +1619,7 @@ function install_browsers() {
         { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 10; }
     curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
     dpkg -i ${DEBNAME}
+    apt-get -y --fix-broken install
     apt-get -y -q install firefox
     log_version dpkg -l firefox google-chrome-stable
     #cleanup
