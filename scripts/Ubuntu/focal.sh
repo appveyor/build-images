@@ -178,6 +178,13 @@ function configure_virtualbox_repository() {
         { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }    
 }
 
+function configure_firefox_repository() {
+    echo "[INFO] Running configure_firefox_repository..."
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F
+    add-apt-repository "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu bionic main"
+    apt-get -y update
+}
+
 function install_mongodb() {
     echo "[INFO] Running install_mongodb..."
     apt install -yqq mongodb ||

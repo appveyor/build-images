@@ -1601,11 +1601,19 @@ function install_curl() {
     rm -rf "${TMP_DIR}"
 }
 
+function configure_firefox_repository() {
+    echo "[INFO] Running configure_firefox_repository..."
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F
+    add-apt-repository "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu ${OS_CODENAME} main"
+    apt-get -y update
+}
+
 function install_browsers() {
     echo "[INFO] Running install_browsers..."
     local DEBNAME=google-chrome-stable_current_amd64.deb
-    add-apt-repository -y ppa:ubuntu-mozilla-security/ppa &&
-    apt-get -y -qq update &&
+
+    configure_firefox_repository
+
     apt-get -y -q install libappindicator1 fonts-liberation xvfb ||
         { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 10; }
     curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
