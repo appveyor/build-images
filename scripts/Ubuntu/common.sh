@@ -791,6 +791,9 @@ function prepare_dotnet_packages() {
 
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
     dotnet_packages "aspnetcore-runtime-" RUNTIME_VERSIONS[@]
+
+    # required by Ubuntu 16.04 for .NET SDK 1.1.14
+    PACKAGES+=( "libunwind-dev" )
 }
 
 function config_dotnet_repository() {
