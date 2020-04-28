@@ -249,6 +249,11 @@ function prerequisites_dotnetv3_preview () {
     echo "libicu60 openssl1.0"
 }
 
+function configure_azurecli_repository() {
+    echo "[INFO] Running configure_azurecli_repository..."
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" > /etc/apt/sources.list.d/azure-cli.list
+}
+
 function install_browsers() {
     echo "[INFO] Running install_browsers..."
     local DEBNAME=google-chrome-stable_current_amd64.deb

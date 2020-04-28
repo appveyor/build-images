@@ -1453,11 +1453,24 @@ function install_gcloud() {
     log_version gcloud version
 }
 
+function configure_azurecli_repository() {
+    echo "[INFO] Running configure_azurecli_repository..."
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ ${OS_CODENAME} main" > /etc/apt/sources.list.d/azure-cli.list
+}
+
 function install_azurecli() {
     # https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
     echo "[INFO] Running install_azurecli..."
 
-    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    apt-get update
+    apt-get install -y apt-transport-https gnupg
+
+    curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+
+    configure_azurecli_repository
+    
+    apt-get update
+    apt-get install -y azure-cli
 
     log_version az --version
 }
