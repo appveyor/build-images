@@ -179,7 +179,7 @@ function configure_virtualbox_repository() {
 }
 
 function configure_firefox_repository() {
-    echo "[INFO] Running configure_firefox_repository..."
+    echo "[INFO] Running configure_firefox_repository on Ubuntu 20.04..."
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F
     add-apt-repository "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu bionic main"
     apt-get -y update
