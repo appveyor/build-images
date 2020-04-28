@@ -16,10 +16,10 @@ function disable_automatic_apt_updates() {
     systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
     apt-get -y purge unattended-upgrades
 
-    echo "APT::Periodic::Update-Package-Lists "0";
+    echo 'APT::Periodic::Update-Package-Lists "0";
 APT::Periodic::Download-Upgradeable-Packages "0";
 APT::Periodic::AutocleanInterval "0";
-APT::Periodic::Unattended-Upgrade "1";" > /etc/apt/apt.conf.d/20auto-upgrades
+APT::Periodic::Unattended-Upgrade "1";' > /etc/apt/apt.conf.d/20auto-upgrades
 }
 
 function add_releasespecific_tools() {
