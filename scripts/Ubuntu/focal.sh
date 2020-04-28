@@ -2,7 +2,7 @@
 #shellcheck disable=SC2086,SC2015,SC2164
 
 function disable_automatic_apt_updates() {
-    echo "[INFO] Disabling automatic apt updates..."
+    echo "[INFO] Disabling automatic apt updates on Ubuntu 20.04..."
     # https://askubuntu.com/questions/1059971/disable-updates-from-command-line-in-ubuntu-16-04
     # https://stackoverflow.com/questions/45269225/ansible-playbook-fails-to-lock-apt/51919678#51919678
     
