@@ -1612,6 +1612,7 @@ function install_browsers() {
     echo "[INFO] Running install_browsers..."
     local DEBNAME=google-chrome-stable_current_amd64.deb
 
+    echo "[INFO] Running configure_firefox_repository..."
     configure_firefox_repository
 
     apt-get -y -q install libappindicator1 fonts-liberation xvfb ||

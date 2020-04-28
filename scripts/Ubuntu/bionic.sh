@@ -159,23 +159,3 @@ function fix_sqlserver() {
         { echo "[ERROR] Cannot configure workaround for mssql-server." 1>&2; return 45; }
 
 }
-
-function prerequisites_dotnetv3_preview () {
-    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
-    echo "libicu60 openssl1.0"
-}
-
-function install_browsers() {
-    echo "[INFO] Running install_browsers..."
-    local DEBNAME=google-chrome-stable_current_amd64.deb
-    add-apt-repository -y ppa:ubuntu-mozilla-security/ppa &&
-    apt-get -y -qq update &&
-    apt-get -y -q install libappindicator3-1 libu2f-udev fonts-liberation xvfb ||
-        { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 10; }
-    curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
-    dpkg -i ${DEBNAME}
-    apt-get -y -q install firefox
-    log_version dpkg -l firefox google-chrome-stable
-    #cleanup
-    [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
-}

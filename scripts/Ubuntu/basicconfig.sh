@@ -222,8 +222,9 @@ su -l ${USER_NAME} -c "
 install_docker ||
     _abort $?
 
-install_nodejs ||
-    _abort $?
+# install_nodejs ||
+#     _abort $?
+
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f install_nvm)
