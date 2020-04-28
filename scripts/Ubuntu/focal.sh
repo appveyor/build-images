@@ -205,6 +205,21 @@ function install_jdks_from_repository() {
     fi
 }
 
+function install_sqlserver() {
+    echo "[INFO] Running install_sqlserver..."
+    echo "[WARNING] SQL Server is not supported on Ubuntu 20.04 yet"
+}
+
+function configure_sqlserver() {
+    echo "[INFO] Running configure_sqlserver..."
+    echo "[WARNING] SQL Server is not supported on Ubuntu 20.04 yet"
+}
+
+function disable_sqlserver() {
+    echo "[INFO] Running disable_sqlserver..."
+    echo "[WARNING] SQL Server is not supported on Ubuntu 20.04 yet"
+}
+
 function fix_sqlserver() {
     echo "[INFO] Running fix_sqlserver..."
 

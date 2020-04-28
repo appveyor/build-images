@@ -141,19 +141,52 @@ install_gitlfs ||
 update_git ||
     _abort $?
 
-add_ssh_known_hosts ||
-    _continue $?
-
-# .NET stuff
-install_dotnets ||
-    _abort $?
-install_dotnetv5_preview ||
-    _abort $?
-preheat_dotnet_sdks &&
-log_version dotnet --list-sdks &&
-log_version dotnet --list-runtimes ||
+install_sqlserver ||
     _abort $?
 
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+        $(declare -f configure_sqlserver)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        configure_sqlserver" ||
+    _abort $?
+
+disable_sqlserver ||
+    _abort $?
+
+install_yarn ||
+    _abort $?
+
+install_packer ||
+    _abort $?
+install_doxygen ||
+    _abort $?
+install_awscli ||
+    _abort $?
+install_localstack || _continue
+install_azurecli ||
+    _abort $?
+install_gcloud ||
+    _abort $?
+install_kubectl ||
+    _abort $?
+install_cmake ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+        $(declare -f install_vcpkg)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f log_version)
+        install_vcpkg" ||
+    _abort $?
+install_browsers ||
+    _abort $?
 # ====================================
 
 su -l ${USER_NAME} -c "

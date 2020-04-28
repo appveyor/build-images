@@ -314,6 +314,7 @@ install_mono ||
 
 install_sqlserver ||
     _abort $?
+
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
@@ -323,11 +324,13 @@ su -l ${USER_NAME} -c "
         $(declare -f replace_line)
         configure_sqlserver" ||
     _abort $?
+
 disable_sqlserver ||
     _abort $?
 
 install_yarn ||
     _abort $?
+
 install_packer ||
     _abort $?
 install_doxygen ||
