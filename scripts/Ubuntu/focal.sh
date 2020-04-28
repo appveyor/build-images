@@ -133,6 +133,11 @@ function config_dotnet_repository() {
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
 }
 
+function install_outdated_dotnets() {
+    echo "[INFO] Running install_outdated_dotnets on Ubuntu 20.04..."
+    echo "[WARNING] Skipped!"
+}
+
 function install_nodejs() {
     echo "[INFO] Running install_nodejs..."
     apt-get -y -q install nodejs npm &&
