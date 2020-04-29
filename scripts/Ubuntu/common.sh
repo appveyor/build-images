@@ -783,17 +783,14 @@ function preheat_dotnet_sdks() {
 }
 
 function prepare_dotnet_packages() {
-    #shellcheck disable=SC2034
-    SDK_VERSIONS=( "2.0.0" "2.0.2" "2.0.3" "2.1.2" "2.1.3" "2.1.4" "2.1.101" "2.1.103" "2.1.104" "2.1.105" "2.1.200" "2.1.201" "2.1.202" "2.1" "2.2" "3.0" "3.1" )
+
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
-    #shellcheck disable=SC2034
-    declare RUNTIME_VERSIONS=( "2.0.0" "2.0.3" "2.0.4" "2.0.5" "2.0.6" "2.0.7" "2.0.9" "2.1" "2.2" )
+
+    declare RUNTIME_VERSIONS=( "2.1" "2.2" )
     dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
-    #shellcheck disable=SC2034
-    declare RUNTIME_VERSIONS=( "2.1" "2.2" "3.0" )
-    dotnet_packages "aspnetcore-runtime-" RUNTIME_VERSIONS[@]
-    #shellcheck disable=SC2034
-    declare DEV_VERSIONS=( "1.1.5" "1.1.6" "1.1.7" "1.1.8" "1.1.9" "1.1.10" "1.1.11" "1.1.12" )
+
+    declare DEV_VERSIONS=( "1.1.12" )
     dotnet_packages "dotnet-dev-" DEV_VERSIONS[@]
 }
 

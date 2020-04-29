@@ -133,6 +133,14 @@ function config_dotnet_repository() {
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
 }
 
+function prepare_dotnet_packages() {
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
+    dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
+
+    declare RUNTIME_VERSIONS=( "2.1" "2.2" )
+    dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
+}
+
 function install_outdated_dotnets() {
     echo "[INFO] Running install_outdated_dotnets on Ubuntu 20.04..."
     echo "[WARNING] Skipped!"
