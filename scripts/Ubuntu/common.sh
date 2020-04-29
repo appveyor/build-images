@@ -451,15 +451,6 @@ WantedBy=multi-user.target" > /etc/systemd/system/${SERVICE_NAME} &&
 
 }
 
-function install_nodejs() {
-    echo "[INFO] Running install_nodejs..."
-    curl -fsSL https://deb.nodesource.com/setup_6.x | bash - &&
-    apt-get -y -q install nodejs &&
-    npm install -g pm2 ||
-        { echo "[ERROR] Something went wrong."; return 100; }
-    log_version dpkg -l nodejs
-}
-
 function install_nvm_and_nodejs() {
     echo "[INFO] Running install_nvm_and_nodejs..."
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
@@ -947,11 +938,13 @@ function install_jdks() {
 }
 
 function install_jdk() {
-    echo "[INFO] Running install_jdk..."
     local JDK_VERSION=$1
     local JDK_URL="$2"
     local JDK_ARCHIVE=${JDK_URL##*/}
     local JDK_PATH JDK_LINK
+
+    echo "[INFO] Running install_jdk ${JDK_VERSION}..."
+
     JDK_PATH=/usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64/
     JDK_LINK=/usr/lib/jvm/java-1.${JDK_VERSION}.0-openjdk-amd64
 

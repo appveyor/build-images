@@ -70,19 +70,6 @@ function configure_mercurial_repository() {
     echo "[INFO] Running configure_mercurial_repository on Ubuntu 20.04...skipped"
 }
 
-function install_pip() {
-    echo "[INFO] Running install_pip..."
-    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
-        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    python get-pip.py ||
-        { echo "[WARNING] Cannot install pip." ; return 10; }
-
-    log_version pip --version
-
-    #cleanup
-    rm get-pip.py
-}
-
 function install_gitlfs() {
     echo "[INFO] Running install_gitlfs on Ubuntu 20.04..."
     command -v git || apt-get -y -q install git
@@ -145,39 +132,7 @@ function prepare_dotnet_packages() {
 }
 
 function install_outdated_dotnets() {
-}
-
-function install_nodejs() {
-    echo "[INFO] Running install_nodejs..."
-    apt-get -y -q install nodejs npm &&
-    npm install -g pm2 ||
-        { echo "[ERROR] Something went wrong."; return 100; }
-    log_version dpkg -l nodejs
-}
-
-function install_cvs() {
-    echo "[INFO] Running install_cvs..."
-    # install git
-    # at this time there is git version 2.7.4 in apt repos
-    # in case if we need recent version we have to run make_git function
-    apt-get -y -q install git
-
-    #install Mercurial
-    apt-get -y -q install mercurial
-
-    #install subversion
-    apt-get -y -q install subversion
-
-    log_version dpkg -l git mercurial subversion
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        su -l ${USER_NAME} -c "
-            USER_NAME=${USER_NAME}
-            $(declare -f configure_svn)
-            configure_svn" ||
-                return $?
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_svn"
-    fi
+    echo "[INFO] Running install_outdated_dotnets on Ubuntu 20.04...skipped"
 }
 
 function configure_rabbitmq_repositories() {
@@ -247,21 +202,7 @@ function disable_sqlserver() {
 }
 
 function fix_sqlserver() {
-    echo "[INFO] Running fix_sqlserver..."
-
-    # disable updates of the SQL Server
-    apt-mark hold mssql-server
-
-    # Workaround https://stackoverflow.com/a/57453901
-    ln -sf /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0 /opt/mssql/lib/libcrypto.so &&
-    ln -sf /usr/lib/x86_64-linux-gnu/libssl.so.1.0.0 /opt/mssql/lib/libssl.so &&
-    mkdir -p /etc/systemd/system/mssql-server.service.d/ &&
-    (
-        echo '[Service]'
-        echo 'Environment="LD_LIBRARY_PATH=/opt/mssql/lib"'
-    ) > /etc/systemd/system/mssql-server.service.d/override.conf ||
-        { echo "[ERROR] Cannot configure workaround for mssql-server." 1>&2; return 45; }
-
+    echo "[INFO] Running fix_sqlserver on Ubuntu 20.04...skipped"
 }
 
 function configure_mono_repository () {

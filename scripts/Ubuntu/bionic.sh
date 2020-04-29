@@ -65,19 +65,6 @@ function configure_mercurial_repository() {
     echo "[INFO] Running configure_mercurial_repository on Ubuntu 18.04...skipped"
 }
 
-function install_pip() {
-    echo "[INFO] Running install_pip..."
-    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
-        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    python get-pip.py ||
-        { echo "[WARNING] Cannot install pip." ; return 10; }
-
-    log_version pip --version
-
-    #cleanup
-    rm get-pip.py
-}
-
 function config_dotnet_repository() {
     curl -fsSL -O https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb &&
     dpkg -i packages-microsoft-prod.deb &&
@@ -106,39 +93,6 @@ function prepare_dotnet_packages() {
 
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
     dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
-}
-
-function install_nodejs() {
-    echo "[INFO] Running install_nodejs..."
-    apt-get -y -q install nodejs npm &&
-    npm install -g pm2 ||
-        { echo "[ERROR] Something went wrong."; return 100; }
-    log_version dpkg -l nodejs
-}
-
-function install_cvs() {
-    echo "[INFO] Running install_cvs..."
-    # install git
-    # at this time there is git version 2.7.4 in apt repos
-    # in case if we need recent version we have to run make_git function
-    apt-get -y -q install git
-
-    #install Mercurial
-    apt-get -y -q install mercurial
-
-    #install subversion
-    apt-get -y -q install subversion
-
-    log_version dpkg -l git mercurial subversion
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        su -l ${USER_NAME} -c "
-            USER_NAME=${USER_NAME}
-            $(declare -f configure_svn)
-            configure_svn" ||
-                return $?
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_svn"
-    fi
 }
 
 function install_mongodb() {

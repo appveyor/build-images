@@ -173,6 +173,26 @@ install_clang ||
 
 install_p7zip
 
+install_powershell ||
+    _abort $?
+
+install_cvs ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_svn)
+        configure_svn" ||
+    _abort $?
+
+update_git ||
+    _abort $?
+
+install_gitlfs ||
+    _abort $?
+
+install_gitversion ||
+    _abort $?
+
 install_pip ||
     _abort $?
 
@@ -203,27 +223,12 @@ su -l ${USER_NAME} -c "
         configure_nuget" ||
     _abort $?
 
-install_powershell ||
-    _abort $?
-
-update_git ||
-    _abort $?
-
-install_gitlfs ||
-    _abort $?
-
-install_gitversion ||
-    _abort $?
-
 su -l ${USER_NAME} -c "
         curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
     _abort $?
 
 install_docker ||
     _abort $?
-
-# install_nodejs ||
-#     _abort $?
 
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
@@ -241,13 +246,6 @@ su -l ${USER_NAME} -c "
         install_nvm_nodejs ${CURRENT_NODEJS}" ||
     _abort $?
 
-install_cvs ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_svn)
-        configure_svn" ||
-    _abort $?
 install_virtualbox ||
     _continue $?
 install_mysql ||
