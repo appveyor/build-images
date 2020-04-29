@@ -206,8 +206,8 @@ function fix_sqlserver() {
 }
 
 function configure_mono_repository () {
-    echo "[INFO] Running install_mono..."
-    add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-bionic main" ||
+    echo "[INFO] Running install_mono on Ubuntu 20.04..."
+    add-apt-repository "deb http://download.mono-project.com/repo/ubuntu preview-${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
 }
 
