@@ -803,12 +803,16 @@ function config_dotnet_repository() {
 
 function install_outdated_dotnets() {
     echo "[INFO] Running install_outdated_dotnets..."
-    # install outdated 1.1 and 2.1 releases using install script
-    wget https://dotnet.microsoft.com/download/dotnet-core/scripts/v1/dotnet-install.sh
-    chmod +x dotnet-install.sh
-    ./dotnet-install.sh --version 1.1.14 --install-dir /usr/share/dotnet
-    ./dotnet-install.sh --version 2.1.202 --install-dir /usr/share/dotnet
-    if [ -f dotnet-install.sh ]; then rm dotnet-install.sh; fi
+
+    # .NET SDK 1.1.14 with 1.1.13 & 1.0.16 runtimes
+    wget -O dotnet-sdk.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/1.1.14/dotnet-dev-ubuntu.16.04-x64.1.1.14.tar.gz
+    sudo tar zxf dotnet-sdk.tar.gz -C /usr/share/dotnet
+
+    # .NET SDK 2.1.202 with 2.0.9 runtime
+    wget -O dotnet-sdk.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/2.1.202/dotnet-sdk-2.1.202-linux-x64.tar.gz
+    sudo tar zxf dotnet-sdk.tar.gz -C /usr/share/dotnet    
+
+    rm dotnet-sdk.tar.gz
 }
 
 function install_dotnets() {
