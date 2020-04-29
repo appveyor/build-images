@@ -793,7 +793,7 @@ function prepare_dotnet_packages() {
     declare RUNTIME_VERSIONS=( "2.1" "2.2" "3.0" )
     dotnet_packages "aspnetcore-runtime-" RUNTIME_VERSIONS[@]
     #shellcheck disable=SC2034
-    declare DEV_VERSIONS=( "1.1.5" "1.1.6" "1.1.7" "1.1.8" "1.1.9" "1.1.10" "1.1.11" "1.1.12" "1.1.12" "1.1.13" "1.1.14" )
+    declare DEV_VERSIONS=( "1.1.5" "1.1.6" "1.1.7" "1.1.8" "1.1.9" "1.1.10" "1.1.11" "1.1.12" )
     dotnet_packages "dotnet-dev-" DEV_VERSIONS[@]
 }
 
