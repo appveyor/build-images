@@ -61,6 +61,9 @@ network:
     fi
 }
 
+function configure_mercurial_repository() {
+    echo "[INFO] Running configure_mercurial_repository on Ubuntu 18.04...skipped"
+}
 
 function install_pip() {
     echo "[INFO] Running install_pip..."

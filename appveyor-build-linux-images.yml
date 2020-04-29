@@ -49,6 +49,7 @@ clone_folder: ${HOME}/bake-scripts
 
 init:
 - appveyor version
+- source /etc/os-release && echo $PRETTY_NAME
 #- sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 #- ls /opt/appveyor/build-agent
 
@@ -58,7 +59,7 @@ clone_script:
 
 build_script:
 - cd $BASE_DIR && pwd
-- sudo -E ./basicconfig.sh
+- sudo -E ./minimalconfig.sh
 - appveyor PushArtifact versions.log
 - appveyor PushArtifact bake.log
 

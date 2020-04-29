@@ -619,6 +619,12 @@ function install_gitversion() {
     [ -d /var/tmp/.net/ ] && rm -rf /var/tmp/.net/
 }
 
+function configure_mercurial_repository() {
+    echo "[INFO] Running configure_mercurial_repository..."
+    add-apt-repository -y ppa:mercurial-ppa/releases
+    apt-get -y -qq update
+}
+
 function install_cvs() {
     echo "[INFO] Running install_cvs..."
     # install git
@@ -627,8 +633,7 @@ function install_cvs() {
     apt-get -y -q install git
 
     #install Mercurial
-    add-apt-repository -y ppa:mercurial-ppa/releases
-    apt-get -y -qq update
+    configure_mercurial_repository
     apt-get -y -q install mercurial
 
     #install subversion
