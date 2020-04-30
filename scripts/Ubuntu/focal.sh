@@ -16,7 +16,7 @@ function disable_automatic_apt_updates() {
     systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
     apt-get -y purge unattended-upgrades
     #apt-get -y remove update-notifier update-notifier-common
-    #apt-get -y install python
+    apt-get -y install python
     sudo rm /etc/cron.daily/update-notifier-common
 
     echo 'APT::Periodic::Update-Package-Lists "0";
