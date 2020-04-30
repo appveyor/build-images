@@ -1637,8 +1637,7 @@ function install_browsers() {
 function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
 
-    local VERSION=6.1.6
-    local VB_VERSION=${VERSION%.*}
+    local VB_VERSION=6.1
     curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
 
     add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
@@ -1655,6 +1654,7 @@ function install_virtualbox_core() {
 function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
 
+    local VERSION=6.1.6
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
     install_virtualbox_core
