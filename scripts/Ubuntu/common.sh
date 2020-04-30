@@ -1634,11 +1634,19 @@ function install_browsers() {
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }
 
-function configure_virtualbox_repository() {
-    echo "[INFO] Running configure_virtualbox_repository..."
+function install_virtualbox_core() {
+    echo "[INFO] Running install_virtualbox_core..."
+
+    local VERSION=6.1.6
+    local VB_VERSION=${VERSION%.*}
+    curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
 
     add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
         { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }    
+
+    apt-get -y -qq update &&
+    apt-get -y -q install virtualbox-${VB_VERSION} ||
+        { echo "[ERROR] Cannot install virtualbox-${VB_VERSION}." 1>&2; return 20; }
 }
 
 # they have changed versioning and made Debain Repo. see https://www.virtualbox.org/wiki/Linux_Downloads
@@ -1646,22 +1654,11 @@ function configure_virtualbox_repository() {
 # https://download.virtualbox.org/virtualbox/6.0.6/virtualbox-6.0_6.0.6-130049~Ubuntu~xenial_amd64.deb
 function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
-    local VERSION
-    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=6.1.4
-    else
-        VERSION=$1
-    fi
-    local VB_VERSION=${VERSION%.*}
+
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
-    curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
+    install_virtualbox_core
 
-    configure_virtualbox_repository
-
-    apt-get -y -qq update &&
-    apt-get -y -q install virtualbox-${VB_VERSION} ||
-        { echo "[ERROR] Cannot install virtualbox-${VB_VERSION}." 1>&2; return 20; }
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         usermod -aG vboxusers "${USER_NAME}"
     fi

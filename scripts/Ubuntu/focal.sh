@@ -15,9 +15,9 @@ function disable_automatic_apt_updates() {
     systemctl daemon-reload
     systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
     apt-get -y purge unattended-upgrades
-    #apt-get -y remove update-notifier update-notifier-common
+    apt-get -y remove update-notifier update-notifier-common
     apt-get -y install python
-    sudo rm /etc/cron.daily/update-notifier-common
+    #sudo rm /etc/cron.daily/update-notifier-common
 
     echo 'APT::Periodic::Update-Package-Lists "0";
 APT::Periodic::Download-Upgradeable-Packages "0";
@@ -152,11 +152,12 @@ function configure_rabbitmq_repositories() {
         { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
 }
 
-function configure_virtualbox_repository() {
-    echo "[INFO] Running configure_virtualbox_repository on Ubuntu 20.04..."
+function install_virtualbox_core() {
+    echo "[INFO] Running install_virtualbox_core on Ubuntu 20.04..."
 
-    add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian bionic contrib" ||
-        { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }    
+    apt-get -y -qq update &&
+    apt-get -y install virtualbox ||
+        { echo "[ERROR] Cannot install virtualbox." 1>&2; return 20; }
 }
 
 function configure_firefox_repository() {
