@@ -1,22 +1,6 @@
 #!/bin/bash
 #shellcheck disable=SC2086,SC2015,SC2164
 
-function disable_automatic_apt_updates() {
-    echo "[INFO] Disabling automatic apt updates..."
-    # https://askubuntu.com/questions/1059971/disable-updates-from-command-line-in-ubuntu-16-04
-    # https://stackoverflow.com/questions/45269225/ansible-playbook-fails-to-lock-apt/51919678#51919678
-    
-    systemctl stop apt-daily.timer
-    systemctl disable apt-daily.timer
-    systemctl disable apt-daily.service
-    systemctl stop apt-daily-upgrade.timer
-    systemctl disable apt-daily-upgrade.timer
-    systemctl disable apt-daily-upgrade.service
-    systemctl daemon-reload
-    systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
-    apt-get -y purge unattended-upgrades
-}
-
 function add_releasespecific_tools() {
     # 32bit support
     tools_array+=( "libcurl4:i386" "libcurl4-gnutls-dev" )
@@ -61,18 +45,8 @@ network:
     fi
 }
 
-
-function install_pip() {
-    echo "[INFO] Running install_pip..."
-    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
-        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    python get-pip.py ||
-        { echo "[WARNING] Cannot install pip." ; return 10; }
-
-    log_version pip --version
-
-    #cleanup
-    rm get-pip.py
+function configure_mercurial_repository() {
+    echo "[INFO] Running configure_mercurial_repository on Ubuntu 18.04...skipped"
 }
 
 function config_dotnet_repository() {
@@ -82,37 +56,27 @@ function config_dotnet_repository() {
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
 }
 
-function install_nodejs() {
-    echo "[INFO] Running install_nodejs..."
-    apt-get -y -q install nodejs npm &&
-    npm install -g pm2 ||
-        { echo "[ERROR] Something went wrong."; return 100; }
-    log_version dpkg -l nodejs
+function install_outdated_dotnets() {
+    echo "[INFO] Running install_outdated_dotnets..."
+
+    # .NET SDK 1.1.14 with 1.1.13 & 1.0.16 runtimes
+    wget -O dotnet-sdk.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/1.1.14/dotnet-dev-ubuntu.18.04-x64.1.1.14.tar.gz
+    sudo tar zxf dotnet-sdk.tar.gz -C /usr/share/dotnet
+
+    # .NET SDK 2.1.202 with 2.0.9 runtime
+    wget -O dotnet-sdk.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/2.1.202/dotnet-sdk-2.1.202-linux-x64.tar.gz
+    sudo tar zxf dotnet-sdk.tar.gz -C /usr/share/dotnet    
+
+    rm dotnet-sdk.tar.gz
 }
 
-function install_cvs() {
-    echo "[INFO] Running install_cvs..."
-    # install git
-    # at this time there is git version 2.7.4 in apt repos
-    # in case if we need recent version we have to run make_git function
-    apt-get -y -q install git
+function prepare_dotnet_packages() {
 
-    #install Mercurial
-    apt-get -y -q install mercurial
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
+    dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
-    #install subversion
-    apt-get -y -q install subversion
-
-    log_version dpkg -l git mercurial subversion
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        su -l ${USER_NAME} -c "
-            USER_NAME=${USER_NAME}
-            $(declare -f configure_svn)
-            configure_svn" ||
-                return $?
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_svn"
-    fi
+    declare RUNTIME_VERSIONS=( "2.1" "2.2" )
+    dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
 }
 
 function install_mongodb() {
@@ -142,54 +106,6 @@ function install_jdks_from_repository() {
     fi
 }
 
-#this function deprecated
-function install_sqlserver_deprecated() {
-    echo "[INFO] Running install_sqlserver..."
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
-    local DEB_NAME
-    DEB_NAME=mssql-server_14.0.3238.1-19_amd64.deb
-
-    #download package
-    curl -fsSL -O "https://packages.microsoft.com/ubuntu/16.04/mssql-server-2017/pool/main/m/mssql-server/${DEB_NAME}"
-    # since build 3045 there is no need to repack package
-    # dpkg-deb -x "${DEB_NAME}" newpkg/
-    # dpkg-deb -e "${DEB_NAME}" newpkg/DEBIAN/
-
-    # # change dependencies
-    # sed -i -e 's#openssl (<= 1.1.0)#openssl (<= 1.1.1)#g' newpkg/DEBIAN/control
-    # sed -i -e 's#libcurl3#libcurl4#g' newpkg/DEBIAN/control
-
-    # #Repackage
-    # dpkg-deb -b newpkg/ "18.04-${DEB_NAME}"
-    # #install
-    # apt-get install -y -qq libjemalloc1 libc++1 gdb libcurl4 libsss-nss-idmap0 gawk
-    # dpkg -i "18.04-${DEB_NAME}"
-    apt-get install -y -qq libjemalloc1 libc++1 gdb python libsss-nss-idmap0 libsasl2-modules-gssapi-mit
-    dpkg -i "${DEB_NAME}"
-
-    MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD \
-        MSSQL_PID=developer \
-        /opt/mssql/bin/mssql-conf -n setup accept-eula ||
-        { echo "[ERROR] Cannot configure mssql-server." 1>&2; popd; return 30; }
-
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -  &&
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/18.04/prod.list)" ||
-        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 35; }
-
-    ACCEPT_EULA=Y apt-get -y -q install mssql-tools unixodbc-dev
-    systemctl restart mssql-server
-    systemctl is-active mssql-server ||
-        { echo "[ERROR] mssql-server service failed to start." 1>&2; popd; return 40; }
-
-
-
-    popd &&
-    rm -rf "${TMP_DIR}"
-    log_version dpkg -l mssql-server
-}
-
 function fix_sqlserver() {
     echo "[INFO] Running fix_sqlserver..."
 
@@ -206,24 +122,4 @@ function fix_sqlserver() {
     ) > /etc/systemd/system/mssql-server.service.d/override.conf ||
         { echo "[ERROR] Cannot configure workaround for mssql-server." 1>&2; return 45; }
 
-}
-
-function prerequisites_dotnetv3_preview () {
-    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
-    echo "libicu60 openssl1.0"
-}
-
-function install_browsers() {
-    echo "[INFO] Running install_browsers..."
-    local DEBNAME=google-chrome-stable_current_amd64.deb
-    add-apt-repository -y ppa:ubuntu-mozilla-security/ppa &&
-    apt-get -y -qq update &&
-    apt-get -y -q install libappindicator3-1 libu2f-udev fonts-liberation xvfb ||
-        { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 10; }
-    curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
-    dpkg -i ${DEBNAME}
-    apt-get -y -q install firefox
-    log_version dpkg -l firefox google-chrome-stable
-    #cleanup
-    [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }

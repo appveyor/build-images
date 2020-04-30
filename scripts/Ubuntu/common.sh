@@ -269,7 +269,20 @@ function disable_automatic_apt_updates() {
     systemctl disable apt-daily-upgrade.timer
     systemctl disable apt-daily-upgrade.service
     systemctl daemon-reload
+    systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
     apt-get -y purge unattended-upgrades
+    apt-get -y remove update-notifier update-notifier-common
+    apt-get -y install python
+    sudo rm /etc/cron.daily/update-notifier-common
+
+    echo 'APT::Periodic::Update-Package-Lists "0";
+APT::Periodic::Download-Upgradeable-Packages "0";
+APT::Periodic::AutocleanInterval "0";
+APT::Periodic::Unattended-Upgrade "0";' > /etc/apt/apt.conf.d/20auto-upgrades
+
+    echo 'APT::Periodic::Update-Package-Lists "0";
+APT::Periodic::Download-Upgradeable-Packages "0";
+APT::Periodic::AutocleanInterval "0";' > /etc/apt/apt.conf.d/10periodic
 }
 
 function configure_apt() {
@@ -451,15 +464,6 @@ WantedBy=multi-user.target" > /etc/systemd/system/${SERVICE_NAME} &&
 
 }
 
-function install_nodejs() {
-    echo "[INFO] Running install_nodejs..."
-    curl -fsSL https://deb.nodesource.com/setup_6.x | bash - &&
-    apt-get -y -q install nodejs &&
-    npm install -g pm2 ||
-        { echo "[ERROR] Something went wrong."; return 100; }
-    log_version dpkg -l nodejs
-}
-
 function install_nvm_and_nodejs() {
     echo "[INFO] Running install_nvm_and_nodejs..."
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
@@ -619,6 +623,12 @@ function install_gitversion() {
     [ -d /var/tmp/.net/ ] && rm -rf /var/tmp/.net/
 }
 
+function configure_mercurial_repository() {
+    echo "[INFO] Running configure_mercurial_repository..."
+    add-apt-repository -y ppa:mercurial-ppa/releases
+    apt-get -y -qq update
+}
+
 function install_cvs() {
     echo "[INFO] Running install_cvs..."
     # install git
@@ -627,8 +637,7 @@ function install_cvs() {
     apt-get -y -q install git
 
     #install Mercurial
-    add-apt-repository -y ppa:mercurial-ppa/releases
-    apt-get -y -qq update
+    configure_mercurial_repository
     apt-get -y -q install mercurial
 
     #install subversion
@@ -783,14 +792,15 @@ function preheat_dotnet_sdks() {
 }
 
 function prepare_dotnet_packages() {
-    declare SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
+
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
     dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
 
-    declare RUNTIME_VERSIONS=( "2.1" "2.2" )
-    dotnet_packages "aspnetcore-runtime-" RUNTIME_VERSIONS[@]
+    declare DEV_VERSIONS=( "1.1.12" )
+    dotnet_packages "dotnet-dev-" DEV_VERSIONS[@]
 }
 
 function config_dotnet_repository() {
@@ -798,6 +808,20 @@ function config_dotnet_repository() {
     dpkg -i packages-microsoft-prod.deb &&
     apt-get -y -qq update ||
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
+}
+
+function install_outdated_dotnets() {
+    echo "[INFO] Running install_outdated_dotnets..."
+
+    # .NET SDK 1.1.14 with 1.1.13 & 1.0.16 runtimes
+    wget -O dotnet-sdk.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/1.1.14/dotnet-dev-ubuntu.16.04-x64.1.1.14.tar.gz
+    sudo tar zxf dotnet-sdk.tar.gz -C /usr/share/dotnet
+
+    # .NET SDK 2.1.202 with 2.0.9 runtime
+    wget -O dotnet-sdk.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/2.1.202/dotnet-sdk-2.1.202-linux-x64.tar.gz
+    sudo tar zxf dotnet-sdk.tar.gz -C /usr/share/dotnet    
+
+    rm dotnet-sdk.tar.gz
 }
 
 function install_dotnets() {
@@ -832,12 +856,7 @@ function install_dotnets() {
     #cleanup
     if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
 
-    # install outdated 1.1 and 2.1 releases using install script
-    wget https://dotnet.microsoft.com/download/dotnet-core/scripts/v1/dotnet-install.sh
-    chmod +x dotnet-install.sh
-    ./dotnet-install.sh --version 1.1.14 --install-dir /usr/share/dotnet
-    ./dotnet-install.sh --version 2.1.202 --install-dir /usr/share/dotnet
-    if [ -f dotnet-install.sh ]; then rm dotnet-install.sh; fi
+    install_outdated_dotnets
 }
 
 function install_dotnetv5_preview() {
@@ -862,11 +881,18 @@ function install_dotnetv5_preview() {
     rm -rf "${TMP_DIR}"
 }
 
-function install_mono() {
+function configure_mono_repository () {
     echo "[INFO] Running install_mono..."
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF &&
     add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
+}
+
+function install_mono() {
+    echo "[INFO] Running install_mono..."
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+
+    configure_mono_repository
+
     apt-get -y -qq update &&
     apt-get -y -q install mono-complete mono-dbg referenceassemblies-pcl mono-xsp4 ||
         { echo "[ERROR] Cannot install Mono." 1>&2; return 20; }
@@ -925,11 +951,13 @@ function install_jdks() {
 }
 
 function install_jdk() {
-    echo "[INFO] Running install_jdk..."
     local JDK_VERSION=$1
     local JDK_URL="$2"
     local JDK_ARCHIVE=${JDK_URL##*/}
     local JDK_PATH JDK_LINK
+
+    echo "[INFO] Running install_jdk ${JDK_VERSION}..."
+
     JDK_PATH=/usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64/
     JDK_LINK=/usr/lib/jvm/java-1.${JDK_VERSION}.0-openjdk-amd64
 
@@ -1132,11 +1160,11 @@ function pull_dockerimages() {
 
 function install_docker() {
     echo "[INFO] Running install_docker..."
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
-        { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }
+    # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
+    # add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
+    #     { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
-    apt-get -y -q install docker-ce ||
+    apt-get -y -q install docker.io ||
         { echo "[ERROR] Cannot install Docker." 1>&2; return 20; }
     systemctl start docker &&
     systemctl is-active docker ||
@@ -1342,15 +1370,21 @@ Restart=always" > /etc/systemd/system/redis.service
     log_version redis-server --version
 }
 
-function install_rabbitmq() {
-    echo "[INFO] Running install_rabbitmq..."
-    curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
-    
+function configure_rabbitmq_repositories() {
+    echo "[INFO] Running configure_rabbitmq_repositories..."
+
     add-apt-repository "deb https://dl.bintray.com/rabbitmq-erlang/debian ${OS_CODENAME} erlang" ||
         { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
 
     add-apt-repository "deb https://dl.bintray.com/rabbitmq/debian ${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
+}
+
+function install_rabbitmq() {
+    echo "[INFO] Running install_rabbitmq..."
+    curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
+    
+    configure_rabbitmq_repositories
 
     apt-get -y -qq update &&
     apt-get -y install rabbitmq-server ||
@@ -1440,11 +1474,24 @@ function install_gcloud() {
     log_version gcloud version
 }
 
+function configure_azurecli_repository() {
+    echo "[INFO] Running configure_azurecli_repository..."
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ ${OS_CODENAME} main" > /etc/apt/sources.list.d/azure-cli.list
+}
+
 function install_azurecli() {
     # https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
     echo "[INFO] Running install_azurecli..."
 
-    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    apt-get update
+    apt-get install -y apt-transport-https gnupg
+
+    curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+
+    configure_azurecli_repository
+    
+    apt-get update
+    apt-get install -y azure-cli
 
     log_version az --version
 }
@@ -1575,19 +1622,43 @@ function install_curl() {
     rm -rf "${TMP_DIR}"
 }
 
+function configure_firefox_repository() {
+    echo "[INFO] Running configure_firefox_repository..."
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F
+    add-apt-repository "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu ${OS_CODENAME} main"
+    apt-get -y update
+}
+
 function install_browsers() {
     echo "[INFO] Running install_browsers..."
     local DEBNAME=google-chrome-stable_current_amd64.deb
-    add-apt-repository -y ppa:ubuntu-mozilla-security/ppa &&
-    apt-get -y -qq update &&
+
+    echo "[INFO] Running configure_firefox_repository..."
+    configure_firefox_repository
+
     apt-get -y -q install libappindicator1 fonts-liberation xvfb ||
         { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 10; }
     curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
     dpkg -i ${DEBNAME}
+    apt-get -y --fix-broken install
     apt-get -y -q install firefox
     log_version dpkg -l firefox google-chrome-stable
     #cleanup
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
+}
+
+function install_virtualbox_core() {
+    echo "[INFO] Running install_virtualbox_core..."
+
+    local VB_VERSION=6.1
+    curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
+
+    add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
+        { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }    
+
+    apt-get -y -qq update &&
+    apt-get -y -q install virtualbox-${VB_VERSION} ||
+        { echo "[ERROR] Cannot install virtualbox-${VB_VERSION}." 1>&2; return 20; }
 }
 
 # they have changed versioning and made Debain Repo. see https://www.virtualbox.org/wiki/Linux_Downloads
@@ -1595,21 +1666,12 @@ function install_browsers() {
 # https://download.virtualbox.org/virtualbox/6.0.6/virtualbox-6.0_6.0.6-130049~Ubuntu~xenial_amd64.deb
 function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
-    local VERSION
-    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=6.1.4
-    else
-        VERSION=$1
-    fi
-    local VB_VERSION=${VERSION%.*}
+
+    local VERSION=6.1.6
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
-    echo "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" >/etc/apt/sources.list.d/virtualboxorg.list &&
-    curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add - ||
-        { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }
-    apt-get -y -qq update &&
-    apt-get -y -q install virtualbox-${VB_VERSION} ||
-        { echo "[ERROR] Cannot install virtualbox-${VB_VERSION}." 1>&2; return 20; }
+    install_virtualbox_core
+
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         usermod -aG vboxusers "${USER_NAME}"
     fi

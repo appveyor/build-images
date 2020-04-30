@@ -1,22 +1,6 @@
 #!/bin/bash
 #shellcheck disable=SC2086,SC2015,SC2164
 
-function disable_automatic_apt_updates() {
-    echo "[INFO] Disabling automatic apt updates..."
-    # https://askubuntu.com/questions/1059971/disable-updates-from-command-line-in-ubuntu-16-04
-    # https://stackoverflow.com/questions/45269225/ansible-playbook-fails-to-lock-apt/51919678#51919678
-    
-    systemctl stop apt-daily.timer
-    systemctl disable apt-daily.timer
-    systemctl disable apt-daily.service
-    systemctl stop apt-daily-upgrade.timer
-    systemctl disable apt-daily-upgrade.timer
-    systemctl disable apt-daily-upgrade.service
-    systemctl daemon-reload
-    systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
-    apt-get -y purge unattended-upgrades
-}
-
 function add_releasespecific_tools() {
     # 32bit support
     tools_array+=( "libcurl4:i386" "libcurl4-gnutls-dev" )
@@ -61,70 +45,98 @@ network:
     fi
 }
 
+function configure_mercurial_repository() {
+    echo "[INFO] Running configure_mercurial_repository on Ubuntu 20.04...skipped"
+}
 
-function install_pip() {
-    echo "[INFO] Running install_pip..."
-    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
-        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    python get-pip.py ||
-        { echo "[WARNING] Cannot install pip." ; return 10; }
-
-    log_version pip --version
-
-    #cleanup
-    rm get-pip.py
+function install_gitlfs() {
+    echo "[INFO] Running install_gitlfs on Ubuntu 20.04..."
+    command -v git || apt-get -y -q install git
+    #curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash &&
+    apt-get -y -q install git-lfs ||
+        { echo "Failed to install git lfs." 1>&2; return 10; }
+    log_version dpkg -l git-lfs
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        su -l "${USER_NAME}" -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_gitlfs)
+            configure_gitlfs"  ||
+                return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_gitlfs"
+    fi
 }
 
 function install_powershell() {
-    # https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7#snap-package
-    # https://docs.microsoft.com/en-us/powershell/scripting/powershell-support-lifecycle?view=powershell-7#supported-platforms
+    echo "[INFO] Install PowerShell on Ubuntu 20.04..."
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+    local PWSH_INSTALL_DIR=/opt/microsoft/powershell/7-focal
+    local TAR_NAME=powershell-7.0.0-linux-x64.tar.gz
 
-    snap install powershell --classic
+    #download package
+    curl -fsSL -O "https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/${TAR_NAME}"
+
+    # install
+    mkdir -p ${PWSH_INSTALL_DIR}
+    tar -zxf "${TAR_NAME}" -C ${PWSH_INSTALL_DIR}
+    ln -s ${PWSH_INSTALL_DIR}/pwsh /usr/bin/pwsh
 
     configure_powershell
 
-    # Start PowerShell
+    popd &&
+    rm -rf "${TMP_DIR}"
     log_version pwsh --version
 }
 
 function config_dotnet_repository() {
-    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb &&
+    # temp hack from here: https://github.com/dotnet/core/issues/4360#issuecomment-619598884
+    wget http://mirrors.edge.kernel.org/ubuntu/pool/main/i/icu/libicu63_63.2-2_amd64.deb
+    dpkg -i libicu63_63.2-2_amd64.deb
+    rm libicu63_63.2-2_amd64.deb
+
+    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb &&
     dpkg -i packages-microsoft-prod.deb &&
     apt-get -y -qq update ||
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
 }
 
-function install_nodejs() {
-    echo "[INFO] Running install_nodejs..."
-    apt-get -y -q install nodejs npm &&
-    npm install -g pm2 ||
-        { echo "[ERROR] Something went wrong."; return 100; }
-    log_version dpkg -l nodejs
+function prepare_dotnet_packages() {
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
+    dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
+
+    declare RUNTIME_VERSIONS=( "2.1" "2.2" )
+    dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
 }
 
-function install_cvs() {
-    echo "[INFO] Running install_cvs..."
-    # install git
-    # at this time there is git version 2.7.4 in apt repos
-    # in case if we need recent version we have to run make_git function
-    apt-get -y -q install git
+function install_outdated_dotnets() {
+    echo "[INFO] Running install_outdated_dotnets on Ubuntu 20.04...skipped"
+}
 
-    #install Mercurial
-    apt-get -y -q install mercurial
+function configure_rabbitmq_repositories() {
+    echo "[INFO] Running configure_rabbitmq_repositories..."
 
-    #install subversion
-    apt-get -y -q install subversion
+    add-apt-repository "deb https://dl.bintray.com/rabbitmq-erlang/debian bionic erlang" ||
+        { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
 
-    log_version dpkg -l git mercurial subversion
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        su -l ${USER_NAME} -c "
-            USER_NAME=${USER_NAME}
-            $(declare -f configure_svn)
-            configure_svn" ||
-                return $?
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_svn"
-    fi
+    add-apt-repository "deb https://dl.bintray.com/rabbitmq/debian bionic main" ||
+        { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
+}
+
+function install_virtualbox_core() {
+    echo "[INFO] Running install_virtualbox_core on Ubuntu 20.04..."
+
+    apt-get -y -qq update &&
+    apt-get -y install virtualbox ||
+        { echo "[ERROR] Cannot install virtualbox." 1>&2; return 20; }
+}
+
+function configure_firefox_repository() {
+    echo "[INFO] Running configure_firefox_repository on Ubuntu 20.04..."
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F
+    add-apt-repository "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu bionic main"
+    apt-get -y update
 }
 
 function install_mongodb() {
@@ -154,88 +166,32 @@ function install_jdks_from_repository() {
     fi
 }
 
-#this function deprecated
-function install_sqlserver_deprecated() {
+function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
-    local DEB_NAME
-    DEB_NAME=mssql-server_14.0.3238.1-19_amd64.deb
+    echo "[WARNING] SQL Server is not supported on Ubuntu 20.04 yet"
+}
 
-    #download package
-    curl -fsSL -O "https://packages.microsoft.com/ubuntu/16.04/mssql-server-2017/pool/main/m/mssql-server/${DEB_NAME}"
-    # since build 3045 there is no need to repack package
-    # dpkg-deb -x "${DEB_NAME}" newpkg/
-    # dpkg-deb -e "${DEB_NAME}" newpkg/DEBIAN/
+function configure_sqlserver() {
+    echo "[INFO] Running configure_sqlserver..."
+    echo "[WARNING] SQL Server is not supported on Ubuntu 20.04 yet"
+}
 
-    # # change dependencies
-    # sed -i -e 's#openssl (<= 1.1.0)#openssl (<= 1.1.1)#g' newpkg/DEBIAN/control
-    # sed -i -e 's#libcurl3#libcurl4#g' newpkg/DEBIAN/control
-
-    # #Repackage
-    # dpkg-deb -b newpkg/ "18.04-${DEB_NAME}"
-    # #install
-    # apt-get install -y -qq libjemalloc1 libc++1 gdb libcurl4 libsss-nss-idmap0 gawk
-    # dpkg -i "18.04-${DEB_NAME}"
-    apt-get install -y -qq libjemalloc1 libc++1 gdb python libsss-nss-idmap0 libsasl2-modules-gssapi-mit
-    dpkg -i "${DEB_NAME}"
-
-    MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD \
-        MSSQL_PID=developer \
-        /opt/mssql/bin/mssql-conf -n setup accept-eula ||
-        { echo "[ERROR] Cannot configure mssql-server." 1>&2; popd; return 30; }
-
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -  &&
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/18.04/prod.list)" ||
-        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 35; }
-
-    ACCEPT_EULA=Y apt-get -y -q install mssql-tools unixodbc-dev
-    systemctl restart mssql-server
-    systemctl is-active mssql-server ||
-        { echo "[ERROR] mssql-server service failed to start." 1>&2; popd; return 40; }
-
-
-
-    popd &&
-    rm -rf "${TMP_DIR}"
-    log_version dpkg -l mssql-server
+function disable_sqlserver() {
+    echo "[INFO] Running disable_sqlserver..."
+    echo "[WARNING] SQL Server is not supported on Ubuntu 20.04 yet"
 }
 
 function fix_sqlserver() {
-    echo "[INFO] Running fix_sqlserver..."
-
-    # disable updates of the SQL Server
-    apt-mark hold mssql-server
-
-    # Workaround https://stackoverflow.com/a/57453901
-    ln -sf /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0 /opt/mssql/lib/libcrypto.so &&
-    ln -sf /usr/lib/x86_64-linux-gnu/libssl.so.1.0.0 /opt/mssql/lib/libssl.so &&
-    mkdir -p /etc/systemd/system/mssql-server.service.d/ &&
-    (
-        echo '[Service]'
-        echo 'Environment="LD_LIBRARY_PATH=/opt/mssql/lib"'
-    ) > /etc/systemd/system/mssql-server.service.d/override.conf ||
-        { echo "[ERROR] Cannot configure workaround for mssql-server." 1>&2; return 45; }
-
+    echo "[INFO] Running fix_sqlserver on Ubuntu 20.04...skipped"
 }
 
-function prerequisites_dotnetv3_preview () {
-    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
-    echo "libicu60 openssl1.0"
+function configure_mono_repository () {
+    echo "[INFO] Running install_mono on Ubuntu 20.04..."
+    add-apt-repository "deb http://download.mono-project.com/repo/ubuntu preview-${OS_CODENAME} main" ||
+        { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
 }
 
-function install_browsers() {
-    echo "[INFO] Running install_browsers..."
-    local DEBNAME=google-chrome-stable_current_amd64.deb
-    add-apt-repository -y ppa:ubuntu-mozilla-security/ppa &&
-    apt-get -y -qq update &&
-    apt-get -y -q install libappindicator3-1 libu2f-udev fonts-liberation xvfb ||
-        { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 10; }
-    curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
-    dpkg -i ${DEBNAME}
-    apt-get -y -q install firefox
-    log_version dpkg -l firefox google-chrome-stable
-    #cleanup
-    [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
+function configure_azurecli_repository() {
+    echo "[INFO] Running configure_azurecli_repository..."
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" > /etc/apt/sources.list.d/azure-cli.list
 }

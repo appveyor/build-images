@@ -138,18 +138,12 @@ install_gitlfs ||
 
 # ====================================
 
-update_git ||
-    _abort $?
-
-# .NET stuff
-install_dotnets ||
-    _abort $?
-install_dotnetv5_preview ||
-    _abort $?
-preheat_dotnet_sdks &&
-log_version dotnet --list-sdks &&
-log_version dotnet --list-runtimes ||
-    _abort $?
+# install_virtualbox ||
+#     _continue $?
+# install_mysql ||
+#     _abort $?
+# install_postgresql ||
+#     _abort $?
 
 # ====================================
 

@@ -7,8 +7,3 @@ function add_releasespecific_tools() {
     # HWE kernel
     tools_array+=( "linux-generic-hwe-16.04" )
 }
-
-function prerequisites_dotnetv3_preview () {
-    # https://github.com/dotnet/core/blob/master/Documentation/linux-prereqs.md
-    echo "libicu55"
-}
