@@ -269,7 +269,20 @@ function disable_automatic_apt_updates() {
     systemctl disable apt-daily-upgrade.timer
     systemctl disable apt-daily-upgrade.service
     systemctl daemon-reload
+    systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
     apt-get -y purge unattended-upgrades
+    apt-get -y remove update-notifier update-notifier-common
+    apt-get -y install python
+    sudo rm /etc/cron.daily/update-notifier-common
+
+    echo 'APT::Periodic::Update-Package-Lists "0";
+APT::Periodic::Download-Upgradeable-Packages "0";
+APT::Periodic::AutocleanInterval "0";
+APT::Periodic::Unattended-Upgrade "0";' > /etc/apt/apt.conf.d/20auto-upgrades
+
+    echo 'APT::Periodic::Update-Package-Lists "0";
+APT::Periodic::Download-Upgradeable-Packages "0";
+APT::Periodic::AutocleanInterval "0";' > /etc/apt/apt.conf.d/10periodic
 }
 
 function configure_apt() {

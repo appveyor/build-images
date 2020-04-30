@@ -1,22 +1,6 @@
 #!/bin/bash
 #shellcheck disable=SC2086,SC2015,SC2164
 
-function disable_automatic_apt_updates() {
-    echo "[INFO] Disabling automatic apt updates..."
-    # https://askubuntu.com/questions/1059971/disable-updates-from-command-line-in-ubuntu-16-04
-    # https://stackoverflow.com/questions/45269225/ansible-playbook-fails-to-lock-apt/51919678#51919678
-    
-    systemctl stop apt-daily.timer
-    systemctl disable apt-daily.timer
-    systemctl disable apt-daily.service
-    systemctl stop apt-daily-upgrade.timer
-    systemctl disable apt-daily-upgrade.timer
-    systemctl disable apt-daily-upgrade.service
-    systemctl daemon-reload
-    systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
-    apt-get -y purge unattended-upgrades
-}
-
 function add_releasespecific_tools() {
     # 32bit support
     tools_array+=( "libcurl4:i386" "libcurl4-gnutls-dev" )
