@@ -167,18 +167,31 @@ function check_apt_locks() {
 }
 
 function add_user() {
-    echo "[INFO] Creating user account..."
+    echo "[INFO] Running add_user..."
     local USER_PASSWORD_LENGTH=${1:-32}
     save_bash_attributes
     set +o xtrace
+
     #generate password if it was not set before
     if [[ -z "${USER_PASSWORD-}" || "${#USER_PASSWORD}" = "0" ]]; then
         USER_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${USER_PASSWORD_LENGTH};)
     fi
 
+    # create user
     id -u ${USER_NAME} >/dev/null 2>&1 || \
         useradd ${USER_NAME} --shell /bin/bash --create-home --password ${USER_NAME}
 
+    # change password
+    echo -e "${USER_PASSWORD}\n${USER_PASSWORD}\n" | passwd "${USER_NAME}"
+
+    configure_user
+
+    restore_bash_attributes
+    return 0
+}
+
+function configure_user() {
+    echo "[INFO] Running configure_user..."
     if command -v sudo >/dev/null; then
         usermod -aG sudo ${USER_NAME}
         # Add Appveyor user to sudoers.d
@@ -188,13 +201,6 @@ function add_user() {
             echo -e 'Defaults    env_keep += "DEBIAN_FRONTEND ACCEPT_EULA"'
         } > /etc/sudoers.d/${USER_NAME}
     fi
-
-    echo -e "${USER_PASSWORD}\n${USER_PASSWORD}\n" | passwd "${USER_NAME}"
-    # if "${LOGGING}"; then
-    #     echo "USER_PASSWORD=${USER_PASSWORD}" >${HOME}/pwd-$DATEMARK.log
-    # fi
-    restore_bash_attributes
-    return 0
 }
 
 function configure_network() {
@@ -259,30 +265,40 @@ function wait_cloudinit () {
 
 function disable_automatic_apt_updates() {
     echo "[INFO] Disabling automatic apt updates..."
+    # https://unix.stackexchange.com/questions/315502/how-to-disable-apt-daily-service-on-ubuntu-cloud-vm-image
     # https://askubuntu.com/questions/1059971/disable-updates-from-command-line-in-ubuntu-16-04
     # https://stackoverflow.com/questions/45269225/ansible-playbook-fails-to-lock-apt/51919678#51919678
     
     systemctl stop apt-daily.timer
-    systemctl disable apt-daily.timer
+    systemctl stop apt-daily-upgrade.timer    
+    systemctl stop apt-daily.service
+    systemctl kill --kill-who=all apt-daily.service
+
+    # wait until `apt-get updated` has been killed
+    while ! (systemctl list-units --all apt-daily.service | egrep -q '(dead|failed)')
+    do
+        sleep 1;
+    done
+
     systemctl disable apt-daily.service
-    systemctl stop apt-daily-upgrade.timer
-    systemctl disable apt-daily-upgrade.timer
-    systemctl disable apt-daily-upgrade.service
-    systemctl daemon-reload
-    systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
+    systemctl disable apt-daily.timer
+    systemctl disable apt-daily-upgrade.timer    
+
+    #systemctl daemon-reload
+    #systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
     apt-get -y purge unattended-upgrades
-    apt-get -y remove update-notifier update-notifier-common
-    apt-get -y install python
-    sudo rm /etc/cron.daily/update-notifier-common
+#     apt-get -y remove update-notifier update-notifier-common
+#     apt-get -y install python
+#     sudo rm /etc/cron.daily/update-notifier-common
 
     echo 'APT::Periodic::Update-Package-Lists "0";
 APT::Periodic::Download-Upgradeable-Packages "0";
 APT::Periodic::AutocleanInterval "0";
 APT::Periodic::Unattended-Upgrade "0";' > /etc/apt/apt.conf.d/20auto-upgrades
 
-    echo 'APT::Periodic::Update-Package-Lists "0";
-APT::Periodic::Download-Upgradeable-Packages "0";
-APT::Periodic::AutocleanInterval "0";' > /etc/apt/apt.conf.d/10periodic
+#     echo 'APT::Periodic::Update-Package-Lists "0";
+# APT::Periodic::Download-Upgradeable-Packages "0";
+# APT::Periodic::AutocleanInterval "0";' > /etc/apt/apt.conf.d/10periodic
 }
 
 function configure_apt() {
@@ -354,20 +370,9 @@ function install_tools() {
 # this exact packages required to communicate with HyperV
 function install_KVP_packages(){
     echo "[INFO] Running install_KVP_packages..."
-    local KERNEL_VERSION
-    # running kernel (which version returns uname -r) may differ from updated one
-    KERNEL_VERSION=$(ls -tr /boot/initrd.img-* | tail -n1)
-    KERNEL_VERSION=${KERNEL_VERSION#*-}
-    if [[ -n "${KERNEL_VERSION-}" ]]; then
-        declare tools_array
-        tools_array+=( "linux-tools-${KERNEL_VERSION}" "linux-cloud-tools-${KERNEL_VERSION}" )
-        apt-get -y -q install "${tools_array[@]}" --no-install-recommends  ||
-            { echo "[ERROR] Cannot install KVP packages." 1>&2; return 10; }
-    else
-        echo "[ERROR] Cannot get kernels version." 1>&2;
-        return 1
-    fi
-    sudo touch /var/lib/hyperv/.kvp_pool_1
+
+    apt-get -qq update
+    apt-get -y install linux-azure
 }
 
 # this package is required to communicate with Azure
