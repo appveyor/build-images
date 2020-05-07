@@ -1389,6 +1389,7 @@ function install_rabbitmq() {
     apt-get -y install rabbitmq-server ||
         { echo "[ERROR] Cannot install rabbitmq." 1>&2; return 20; }
     sed -ibak -E -e 's/#\s*ulimit/ulimit/' /etc/default/rabbitmq-server &&
+    echo 'NODENAME=rabbitmq@localhost' > /etc/rabbitmq/rabbitmq-env.conf
     systemctl start rabbitmq-server &&
     systemctl status rabbitmq-server --no-pager &&
     systemctl enable rabbitmq-server &&
