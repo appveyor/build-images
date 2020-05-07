@@ -138,12 +138,8 @@ install_gitlfs ||
 
 # ====================================
 
-# install_virtualbox ||
-#     _continue $?
-# install_mysql ||
-#     _abort $?
-# install_postgresql ||
-#     _abort $?
+install_rabbitmq ||
+    _abort $?
 
 # ====================================
 
