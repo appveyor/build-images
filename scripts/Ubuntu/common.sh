@@ -1239,7 +1239,7 @@ function configure_sqlserver() {
     
     local counter=1
     local errstatus=1
-    while [ $counter -le 30 ] && [ $errstatus = 1 ]; do
+    while [ $counter -le 5 ] && [ $errstatus = 1 ]; do
         echo Waiting for SQL Server to start...
         sleep 10s
         sqlcmd -S localhost -U SA -P ${MSSQL_SA_PASSWORD} -Q "SELECT @@VERSION"
