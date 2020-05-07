@@ -1385,8 +1385,8 @@ function install_rabbitmq() {
     
     configure_rabbitmq_repositories
 
-    mkdir -p /etc/rabbitmq
-    echo 'NODENAME=rabbitmq@localhost' > /etc/rabbitmq/rabbitmq-env.conf
+    # mkdir -p /etc/rabbitmq
+    # echo 'NODENAME=rabbitmq@localhost' > /etc/rabbitmq/rabbitmq-env.conf
 
     apt-get -y -qq update &&
     apt-get -y install rabbitmq-server ||
