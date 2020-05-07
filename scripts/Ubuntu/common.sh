@@ -1861,6 +1861,7 @@ function add2path_suffix() {
 
 function configure_sshd() {
     write_line /etc/ssh/sshd_config 'PasswordAuthentication no' '^PasswordAuthentication '
+    /etc/init.d/ssh restart
 }
 
 function configure_motd() {
@@ -1880,6 +1881,7 @@ function configure_firewall() {
     ufw default deny incoming
     ufw default allow outgoing
     ufw --force enable
+    ufw status verbose
 }
 
 function fix_grub_timeout() {
