@@ -138,11 +138,7 @@ install_gitlfs ||
 
 # ====================================
 
-# install_virtualbox ||
-#     _continue $?
-# install_mysql ||
-#     _abort $?
-# install_postgresql ||
+# install_rabbitmq ||
 #     _abort $?
 
 # ====================================
@@ -193,6 +189,8 @@ add_ssh_known_hosts ||
     _continue $?
 if ! $IS_DOCKER; then
     configure_sshd ||
+        _abort $?
+    configure_firewall ||
         _abort $?
     configure_uefi ||
         _abort $?

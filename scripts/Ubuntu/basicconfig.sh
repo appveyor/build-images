@@ -364,6 +364,8 @@ add_ssh_known_hosts ||
 fi
 configure_sshd ||
     _abort $?
+configure_firewall ||
+    _abort $?
 configure_motd ||
     _abort $?
 configure_uefi ||

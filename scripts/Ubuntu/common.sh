@@ -1385,10 +1385,15 @@ function install_rabbitmq() {
     
     configure_rabbitmq_repositories
 
+    mkdir -p /etc/rabbitmq
+    echo 'NODENAME=rabbitmq@localhost' > /etc/rabbitmq/rabbitmq-env.conf
+
     apt-get -y -qq update &&
     apt-get -y install rabbitmq-server ||
         { echo "[ERROR] Cannot install rabbitmq." 1>&2; return 20; }
+
     sed -ibak -E -e 's/#\s*ulimit/ulimit/' /etc/default/rabbitmq-server &&
+
     systemctl start rabbitmq-server &&
     systemctl status rabbitmq-server --no-pager &&
     systemctl enable rabbitmq-server &&
@@ -1856,6 +1861,7 @@ function add2path_suffix() {
 
 function configure_sshd() {
     write_line /etc/ssh/sshd_config 'PasswordAuthentication no' '^PasswordAuthentication '
+    /etc/init.d/ssh restart
 }
 
 function configure_motd() {
@@ -1868,6 +1874,14 @@ printf "OS %s (%s %s %s)\n" "$PRETTY_NAME" "$(uname -o)" "$(uname -r)" "$(uname 
 ' >/etc/update-motd.d/00-appveyor
 
     chmod +x /etc/update-motd.d/00-appveyor
+}
+
+function configure_firewall() {
+    echo "[INFO] Running configure_firewall..."
+    ufw default deny incoming
+    ufw default allow outgoing
+    ufw --force enable
+    ufw status verbose
 }
 
 function fix_grub_timeout() {
