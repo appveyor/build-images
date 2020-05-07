@@ -1875,6 +1875,13 @@ printf "OS %s (%s %s %s)\n" "$PRETTY_NAME" "$(uname -o)" "$(uname -r)" "$(uname 
     chmod +x /etc/update-motd.d/00-appveyor
 }
 
+function configure_firewall() {
+    echo "[INFO] Running configure_firewall..."
+    ufw default deny incoming
+    ufw default allow outgoing
+    ufw --force enable
+}
+
 function fix_grub_timeout() {
     # https://askubuntu.com/questions/1114797/grub-timeout-set-to-30-after-upgrade
     echo 'Fixing GRUB_TIMEOUT'

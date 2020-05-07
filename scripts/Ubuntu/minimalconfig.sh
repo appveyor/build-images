@@ -190,6 +190,8 @@ fi
 if ! $IS_DOCKER; then
     configure_sshd ||
         _abort $?
+    configure_firewall ||
+        _abort $?
     configure_uefi ||
         _abort $?
     configure_network ||
