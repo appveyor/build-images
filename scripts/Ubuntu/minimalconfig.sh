@@ -127,14 +127,14 @@ else
     fi
 fi
 
-install_powershell ||
-    _abort $?
+# install_powershell ||
+#     _abort $?
 
-install_cvs ||
-    _abort $?
+# install_cvs ||
+#     _abort $?
 
-install_gitlfs ||
-    _abort $?
+# install_gitlfs ||
+#     _abort $?
 
 # ====================================
 
@@ -185,8 +185,8 @@ if [ "$#" -gt 0 ]; then
     done
 fi
 
-add_ssh_known_hosts ||
-    _continue $?
+# add_ssh_known_hosts ||
+#     _continue $?
 if ! $IS_DOCKER; then
     configure_sshd ||
         _abort $?
