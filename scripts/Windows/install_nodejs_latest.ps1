@@ -3,7 +3,7 @@
     $avvmRoot = "$env:SYSTEMDRIVE\avvm\node"
 
     $nodeVersions = @(
-        "14.1.0",
+        "14.2.0",
         "13.14.0",
         "12.16.3"
         )
