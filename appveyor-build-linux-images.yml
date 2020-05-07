@@ -68,5 +68,5 @@ build_script:
 
 test: off
 
-on_failure:
+on_finish:
 - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e 
