@@ -64,7 +64,6 @@ build_script:
 - cd $BASE_DIR && pwd
 - sudo -E ./basicconfig.sh
 - appveyor PushArtifact versions.log
-- appveyor PushArtifact bake.log
 
 test: off
 

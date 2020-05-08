@@ -8,43 +8,6 @@ function add_releasespecific_tools() {
     tools_array+=( "linux-generic-hwe-18.04" )
 }
 
-function configure_network() {
-    # configure eth interface to manual
-    read -r IP_NUM IP_DEV IP_FAM IP_ADDR IP_REST <<< "$(ip -o -4 addr show up primary scope global)"
-echo "
-network:
-  version: 2
-  renderer: networkd
-  ethernets:
-    eth0:
-      addresses:
-        - 10.0.0.49/24
-      gateway4: 10.0.0.1
-      nameservers:
-          addresses: [10.10.10.10, 8.8.8.8]
-"
-    #lets just hope there is no other interfaces after IP_DEV
-    #sed -i -r -e "s/^(iface ${IP_DEV}).*/\\1 inet manual/;/^(iface ${IP_DEV}).*/q" /etc/network/interfaces
-    #
-    #log_exec cat /etc/network/interfaces
-    netplan apply
-
-    # remove host ip from /etc/hosts
-    sed -i -e "/ $(hostname)/d" -e "/^${IP_ADDR%/*}/d" /etc/hosts
-    if [[ -n "${HOST_NAME-}" ]]; then
-        write_line "/etc/hosts" "127.0.1.1       $HOST_NAME" "127.0.1.1"
-    else
-        echo "[ERROR] Variable HOST_NAME not defined. Cannot configure network."
-        return 10
-    fi
-    log_exec cat /etc/hosts
-
-    # rename host
-    if [[ -n "${HOST_NAME-}" ]]; then
-        echo "${HOST_NAME}" > /etc/hostname
-    fi
-}
-
 function configure_mercurial_repository() {
     echo "[INFO] Running configure_mercurial_repository on Ubuntu 20.04...skipped"
 }

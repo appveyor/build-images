@@ -12,7 +12,6 @@ POSTGRES_ROOT_PASSWORD=Password12!
 CURRENT_NODEJS=8
 AGENT_DIR=/opt/appveyor/build-agent
 WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-LOG_FILE=$WORK_DIR/bake.log
 VERSIONS_FILE=$WORK_DIR/versions.log
 LOGGING=true
 SCRIPT_PID=$$

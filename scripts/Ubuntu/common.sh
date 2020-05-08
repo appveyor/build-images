@@ -53,18 +53,6 @@ function chown_logfile() {
     fi
 }
 
-function log() {
-    local TIMESTAMP
-    TIMESTAMP=$(date +[%Y%m%d--%H:%M:%S])
-    echo "$TIMESTAMP (${SCRIPT_PID}): $*"
-    echo "$TIMESTAMP (${SCRIPT_PID}): $*" >> $LOG_FILE 2>&1
-}
-
-function log_exec() {
-    log "$@";
-    "$@" 2>&1 | tee -a "${LOG_FILE}"
-}
-
 function log_version() {
     if [ -n "${VERSIONS_FILE-}" ]; then
         {
@@ -204,13 +192,7 @@ function configure_user() {
 }
 
 function configure_network() {
-    # configure eth interface to manual
-    read -r IP_NUM IP_DEV IP_FAM IP_ADDR IP_REST <<< "$(ip -o -4 addr show up primary scope global)"
-
-    #lets just hope there is no other interfaces after IP_DEV
-    sed -i -r -e "s/^(iface ${IP_DEV}).*/\\1 inet manual/;/^(iface ${IP_DEV}).*/q" /etc/network/interfaces
-
-    log_exec cat /etc/network/interfaces
+    echo "[INFO] Running configure_network..."
 
     # remove host ip from /etc/hosts
     sed -i -e "/ $(hostname)/d" -e "/^${IP_ADDR%/*}/d" /etc/hosts
@@ -220,7 +202,8 @@ function configure_network() {
         echo "[ERROR] Variable HOST_NAME not defined. Cannot configure network."
         return 10
     fi
-    log_exec cat /etc/hosts
+
+    cat /etc/hosts
 
     # rename host
     if [[ -n "${HOST_NAME-}" ]]; then
@@ -229,6 +212,7 @@ function configure_network() {
 }
 
 function configure_uefi() {
+    echo "[INFO] Running configure_uefi..."
     if [ -d /boot/efi/EFI/ubuntu/ ] && [ ! -d /boot/efi/EFI/boot/ ]; then
         cp -r /boot/efi/EFI/ubuntu/ /boot/efi/EFI/boot/
     fi
@@ -241,6 +225,7 @@ function configure_uefi() {
 }
 
 function configure_locale() {
+    echo "[INFO] Running configure_locale..."
     echo LANG=C.UTF-8 >/etc/default/locale
     local lcl
     for lcl in en_US en_GB en_CA fr_CA ru_RU ru_UA uk_UA zh_CN zh_HK zh_TW; do
@@ -254,12 +239,11 @@ function configure_locale() {
 # https://askubuntu.com/a/755969
 function wait_cloudinit () {
     if [ -d /var/lib/cloud/instances ]; then
-        log "waiting 180 seconds for cloud-init to update /etc/apt/sources.list"
-        log_exec timeout 180 /bin/bash -c \
-            'until stat /var/lib/cloud/instance/boot-finished 2>/dev/null; do echo waiting for cloud-init to finish ...; sleep 1; done'
-        log "Wait for cloud-init finished."
+        echo "waiting 180 seconds for cloud-init to update /etc/apt/sources.list"
+        timeout 180 /bin/bash -c 'until stat /var/lib/cloud/instance/boot-finished 2>/dev/null; do echo waiting for cloud-init to finish ...; sleep 1; done'
+        echo "Wait for cloud-init finished."
     else
-        log "There is no cloud-init scripts."
+        echo "There are no cloud-init scripts."
     fi
 }
 
