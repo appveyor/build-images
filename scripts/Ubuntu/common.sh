@@ -195,6 +195,7 @@ function configure_network() {
     echo "[INFO] Running configure_network..."
 
     # remove host ip from /etc/hosts
+    read -r IP_NUM IP_DEV IP_FAM IP_ADDR IP_REST <<< "$(ip -o -4 addr show up primary scope global)"
     sed -i -e "/ $(hostname)/d" -e "/^${IP_ADDR%/*}/d" /etc/hosts
     if [[ -n "${HOST_NAME-}" ]]; then
         write_line "/etc/hosts" "127.0.1.1       $HOST_NAME" "127.0.1.1"
