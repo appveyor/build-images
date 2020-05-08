@@ -12,24 +12,6 @@ function configure_mercurial_repository() {
     echo "[INFO] Running configure_mercurial_repository on Ubuntu 20.04...skipped"
 }
 
-function install_gitlfs() {
-    echo "[INFO] Running install_gitlfs on Ubuntu 20.04..."
-    command -v git || apt-get -y -q install git
-    #curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash &&
-    apt-get -y -q install git-lfs ||
-        { echo "Failed to install git lfs." 1>&2; return 10; }
-    log_version dpkg -l git-lfs
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        su -l "${USER_NAME}" -c "
-            USER_NAME=${USER_NAME}
-            $(declare -f configure_gitlfs)
-            configure_gitlfs"  ||
-                return $?
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_gitlfs"
-    fi
-}
-
 function install_powershell() {
     echo "[INFO] Install PowerShell on Ubuntu 20.04..."
     local TMP_DIR
