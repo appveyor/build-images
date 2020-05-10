@@ -1,0 +1,30 @@
+environment:    
+  matrix:
+
+# GCE
+# =======
+
+  - job_name: Bake image with Agent v2
+    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
+    #APPVEYOR_BAKE_IMAGE: vs2019-temp-p1-gce-us-central1
+
+init:
+  - appveyor version
+  - ps: $ErrorActionPreference = 'Stop'
+  - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
+  - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
+
+clone_folder: '%USERPROFILE%\image-bake-scripts'
+
+clone_script:
+- ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_COMMIT).zip" -OutFile "$env:temp\scripts.zip"
+- ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
+- ps: Copy-Item -Path "$env:temp\scripts\build-images-$($env:APPVEYOR_REPO_COMMIT)\scripts\Windows\*" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
+
+test: off
+
+# on_failure:
+# - ps: Get-EventLog AppVeyor -newest 10 | Format-List
+
+build_script:
+- ps: .\cleanup_windows.ps1
