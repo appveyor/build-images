@@ -43,6 +43,6 @@ build_script:
             $lines[$i] = ''
           }
         }
-        $lines += "Import-Module '$appveyorPath\AppVeyor.BuildAgent.PowerShell.dll'"
+        $lines += "try { Import-Module '$appveyorPath\AppVeyor.BuildAgent.PowerShell.dll' } catch {}"
         $lines | Set-Content $pwshProfileFilename
     }

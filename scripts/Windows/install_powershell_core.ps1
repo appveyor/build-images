@@ -24,7 +24,7 @@ if (Test-Path $appveyorPath) {
 
     if (-not (Test-Path $pwshProfileFilename) -or (Get-Content $pwshProfileFilename | Where-Object { $_.Contains("AppVeyor.BuildAgent.PowerShell.dll") }).Count -eq 0) {
         Write-Host "Updating $pwshProfileFilename with AppVeyor PS Modules"
-        Add-Content $pwshProfileFilename "`nImport-Module '$appveyorPath\dotnetcore\AppVeyor.BuildAgent.PowerShell.dll'"
+        Add-Content $pwshProfileFilename "`ntry { Import-Module '$appveyorPath\dotnetcore\AppVeyor.BuildAgent.PowerShell.dll' } catch {}"
     } else {
         Write-Host "Import of AppVeyor Modules already exists in $pwshProfileFilename"
     }
