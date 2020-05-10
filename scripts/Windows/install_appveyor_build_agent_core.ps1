@@ -1,5 +1,9 @@
 $AGENT_VERSION = '7.0.2417'
 
+if ($env:AGENT_VERSION) {
+	$AGENT_VERSION = $env:AGENT_VERSION
+}
+
 Write-Host "Installing AppVeyor Build Agent Core"
 Write-Host "===================================="
 
@@ -9,6 +13,10 @@ $destPath = "$env:ProgramFiles\AppVeyor\BuildAgent"
 
 if (Test-Path $destPath) {
 	Remove-Item $destPath -Recurse -Force
+}
+
+if ($env:AGENT_INSTALL_DIR) {
+	$destPath = $env:AGENT_INSTALL_DIR
 }
 
 Write-Host "Downloading..."

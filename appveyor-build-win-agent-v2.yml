@@ -7,6 +7,9 @@ environment:
   - job_name: Bake image with Agent v2
     APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
     #APPVEYOR_BAKE_IMAGE: vs2019-temp-p1-gce-us-central1
+  
+  AGENT_VERSION: 7.0.2866
+  AGENT_INSTALL_DIR: "%ProgramFiles%\AppVeyor\BuildAgentCore"
 
 init:
   - appveyor version
@@ -27,4 +30,6 @@ test: off
 # - ps: Get-EventLog AppVeyor -newest 10 | Format-List
 
 build_script:
-- ps: .\cleanup_windows.ps1
+- ps: Get-ItemProperty "HKLM:\Software\AppVeyor\BuildAgent"
+- ps: Get-ItemProperty "HKCU:\Software\AppVeyor\BuildAgent"
+- ps: .\install_appveyor_build_agent_core.ps1
