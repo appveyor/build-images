@@ -9,7 +9,7 @@ environment:
     #APPVEYOR_BAKE_IMAGE: vs2019-temp-p1-gce-us-central1
   
   AGENT_VERSION: 7.0.2866
-  AGENT_INSTALL_DIR: "%ProgramFiles%\AppVeyor\BuildAgentCore"
+  AGENT_INSTALL_DIR: '%ProgramFiles%\AppVeyor\BuildAgentCore'
 
 init:
   - appveyor version
