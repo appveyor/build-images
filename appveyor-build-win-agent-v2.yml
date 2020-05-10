@@ -30,6 +30,6 @@ test: off
 # - ps: Get-EventLog AppVeyor -newest 10 | Format-List
 
 build_script:
-- ps: Get-ItemProperty "HKLM:\Software\AppVeyor\BuildAgent"
-- ps: Get-ItemProperty "HKCU:\Software\AppVeyor\BuildAgent"
+- ps: Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion"
+- ps: Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion"
 - ps: .\install_appveyor_build_agent_core.ps1
