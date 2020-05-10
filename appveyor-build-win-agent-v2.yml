@@ -32,5 +32,6 @@ test: off
 
 build_script:
 - ps: .\install_appveyor_build_agent_core.ps1
-- ps: Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
-- ps: Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run"
+- ps: Remove-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "AppVeyor.BuildAgent" -ErrorAction SilentlyContinue
+- ps: Remove-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "AppVeyor.BuildAgent" -ErrorAction SilentlyContinue
+- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
