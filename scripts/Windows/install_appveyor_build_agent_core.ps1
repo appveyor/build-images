@@ -11,12 +11,14 @@ Write-Host "===================================="
 
 $destPath = "$env:ProgramFiles\AppVeyor\BuildAgent"
 
-if (Test-Path $destPath) {
-	Remove-Item $destPath -Recurse -Force
-}
-
 if ($env:AGENT_INSTALL_DIR) {
 	$destPath = $env:AGENT_INSTALL_DIR
+}
+
+Write-Host "Installing Build Agent Core version $AGENT_VERSION to '$destPath'"
+
+if (Test-Path $destPath) {
+	Remove-Item $destPath -Recurse -Force
 }
 
 Write-Host "Downloading..."
