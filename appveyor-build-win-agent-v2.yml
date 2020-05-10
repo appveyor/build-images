@@ -33,16 +33,16 @@ test: off
 build_script:
 - ps: .\install_appveyor_build_agent_core.ps1
 - ps: |
-  $appveyorPath = "$env:ProgramFiles\AppVeyor\BuildAgentCore"
-  $pwshProfileFilename = "$env:USERPROFILE\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
+    $appveyorPath = "$env:ProgramFiles\AppVeyor\BuildAgentCore"
+    $pwshProfileFilename = "$env:USERPROFILE\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
 
-  if (Test-Path $pwshProfileFilename) {
-      $lines = Get-Content $pwshProfileFilename
-      for($i = 0; $i -lt $lines.length; $i++) {
-        if ($lines[$i] -contains '*AppVeyor.BuildAgent.PowerShell.dll*') {
-          $lines[$i] = ''
+    if (Test-Path $pwshProfileFilename) {
+        $lines = Get-Content $pwshProfileFilename
+        for($i = 0; $i -lt $lines.length; $i++) {
+          if ($lines[$i] -contains '*AppVeyor.BuildAgent.PowerShell.dll*') {
+            $lines[$i] = ''
+          }
         }
-      }
-      $lines += "Import-Module '$appveyorPath\AppVeyor.BuildAgent.PowerShell.dll'"
-      $lines | Set-Content $pwshProfileFilename
-  }
+        $lines += "Import-Module '$appveyorPath\AppVeyor.BuildAgent.PowerShell.dll'"
+        $lines | Set-Content $pwshProfileFilename
+    }
