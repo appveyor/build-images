@@ -38,6 +38,7 @@ New-Item "HKLM:\Software\AppVeyor" -Name "BuildAgent" -Force | Out-Null
 if ($env:appveyor_url) {$appVeyorUrl = $env:appveyor_url} else {$appVeyorUrl = 'https://ci.appveyor.com'}
 Set-ItemProperty "HKLM:\Software\AppVeyor\BuildAgent" -Name "AppVeyorUrl" -Value appVeyorUrl
 Set-ItemProperty "HKLM:\Software\AppVeyor\BuildAgent" -Name "Mode" -Value $env:BUILD_AGENT_MODE
+Set-ItemProperty "HKLM:\Software\AppVeyor\BuildAgent" -Name "ProjectBuildsDirectory" -Value ""
 
 # Enable auto load on system start
 New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "Run" -Force | Out-Null
