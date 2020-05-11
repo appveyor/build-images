@@ -8,7 +8,7 @@ environment:
     APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
     APPVEYOR_BAKE_IMAGE: win-agentv2
   
-  AGENT_VERSION: 7.0.2873
+  AGENT_VERSION: 7.0.2874
   AGENT_INSTALL_DIR: '%ProgramFiles%\AppVeyor\BuildAgentCore'
   BUILD_AGENT_MODE: GCE
 
