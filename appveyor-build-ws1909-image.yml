@@ -58,6 +58,3 @@ build_script:
   - ps: .\disable_windows_background_services.ps1
   - ps: .\enforce_windows_firewall.ps1
   - ps: .\cleanup_windows.ps1
-  
-  test: off
-  
