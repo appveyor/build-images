@@ -42,8 +42,10 @@ Write-Host "Cleaning up user's Downloads..."
 Get-ChildItem "$env:SystemDrive\Users\*\Downloads\*" -Recurse -Force -ErrorAction SilentlyContinue `
     | remove-item -force -recurse -ErrorAction SilentlyContinue
 
-Write-Host "Removing IE history..."
-cmd /c start /wait RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255
+if ((Get-ItemProperty "HKLM:\Software\Microsoft\Windows NT\CurrentVersion").InstallationType -ne 'Server Core') {
+    Write-Host "Removing IE history..."
+    cmd /c start /wait RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255
+}
 
 Write-Host "Removing contents of Recycle Bin..."
 $objShell = New-Object -ComObject Shell.Application  
@@ -58,8 +60,8 @@ Clear-EventLog -LogName System
 Clear-EventLog -LogName AppVeyor
 
 # Cleanup NuGet cache
-Write-Host "Deleting NuGet cache..."
 if (Test-Path "$env:USERPROFILE\.nuget\packages") {
+    Write-Host "Deleting NuGet cache..."
     Remove-Item "$env:USERPROFILE.nuget\packages" -Force -Recurse
 }
 

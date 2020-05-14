@@ -26,19 +26,42 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		}
 		
 		if ($isolation) {
-			Write-Host "Pulling and running '$serverCoreTag' images in '$isolation' mode"
+			Write-Host "Pulling and running 'mcr.microsoft.com/windows/servercore:$serverCoreTag' image in '$isolation' mode" -ForegroundColor Magenta
 			docker pull mcr.microsoft.com/windows/servercore:$serverCoreTag
 			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
 
+			Write-Host "Pulling and running 'mcr.microsoft.com/windows/nanoserver:$serverCoreTag' image in '$isolation' mode" -ForegroundColor Magenta
 			docker pull mcr.microsoft.com/windows/nanoserver:$nanoServerTag
 			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
 		}
 	}
 }
 
+function PullDockerImage($imageName) {
+	Write-Host "Pulling $imageName" -ForegroundColor Magenta
+	docker pull $imageName
+}
+
 PullRunDockerImages 14393 'ltsc2016' 'sac2016'
 PullRunDockerImages 16299 '1709' '1709'
 PullRunDockerImages 17134 '1803' '1803'
 PullRunDockerImages 17763 'ltsc2019' '1809'
+PullRunDockerImages 18362 '1903' '1903'
+PullRunDockerImages 18363 '1909' '1909'
 
-docker pull mcr.microsoft.com/dotnet/framework/aspnet:4.8
+if ($env:INSTALL_EXTRA_DOCKER_IMAGES) {
+	# https://hub.docker.com/_/microsoft-dotnet-framework-sdk/
+	PullDockerImage 'mcr.microsoft.com/dotnet/framework/sdk:4.8'
+	PullDockerImage 'mcr.microsoft.com/dotnet/framework/sdk:3.5'
+
+	# https://hub.docker.com/_/microsoft-dotnet-framework-aspnet/
+	PullDockerImage 'mcr.microsoft.com/dotnet/framework/aspnet:4.8'
+	PullDockerImage 'mcr.microsoft.com/dotnet/framework/aspnet:3.5'
+
+	# https://hub.docker.com/_/microsoft-dotnet-core-sdk/
+	PullDockerImage 'mcr.microsoft.com/dotnet/core/sdk:3.1'
+	PullDockerImage 'mcr.microsoft.com/dotnet/core/sdk:2.1'
+}
+
+Write-Host "Installed Docker images:" -ForegroundColor Yellow
+docker images --digests

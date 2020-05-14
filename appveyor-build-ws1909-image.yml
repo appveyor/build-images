@@ -50,6 +50,8 @@ build_script:
   # Docker images
   - ps: docker version
   - ps: docker info
+  - ps: $env:INSTALL_EXTRA_DOCKER_IMAGES = 'true'
+  - ps: .\install_docker_after_reboot.ps1
   
   # Restart VM
   - ps: Start-Sleep -s 5; Restart-Computer
