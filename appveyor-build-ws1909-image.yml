@@ -1,0 +1,63 @@
+environment:    
+  matrix:
+
+# Azure
+# =======
+
+  - job_name: Windows Server 1909 with Docker
+    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-1909-dc-azure-westus
+    APPVEYOR_BAKE_IMAGE: ws1909-${APPVEYOR_REPO_BRANCH}-azure-westus
+
+init:
+  - appveyor version
+  - ps: $ErrorActionPreference = 'Stop'
+  - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
+  - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
+
+clone_folder: '%USERPROFILE%\image-bake-scripts'
+
+clone_script:
+- ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_COMMIT).zip" -OutFile "$env:temp\scripts.zip"
+- ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
+- ps: Copy-Item -Path "$env:temp\scripts\build-images-$($env:APPVEYOR_REPO_COMMIT)\scripts\Windows\*" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
+
+test: off
+
+build_script:
+  - ps: .\init_server.ps1
+  - ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
+  
+  # Restart VM
+  - ps: Start-Sleep -s 5; Restart-Computer
+  - ps: Start-Sleep -s 5
+  
+  - appveyor version
+  - ps: .\install_path_utils.ps1
+  - ps: .\install_powershell_core.ps1
+  - ps: .\install_powershell_get.ps1
+  - ps: .\install_7zip.ps1
+  - ps: .\install_chocolatey.ps1
+  - ps: .\install_webpi.ps1
+  - ps: .\install_nuget.ps1
+  - ps: .\install_pstools.ps1
+  
+  - ps: .\install_git.ps1
+  - ps: .\install_git_lfs.ps1
+  - ps: .\install_mercurial.ps1
+  - ps: .\install_subversion.ps1
+  - ps: .\add_ssh_known_hosts.ps1
+
+  # Docker images
+  - ps: docker version
+  - ps: docker info
+  
+  # Restart VM
+  - ps: Start-Sleep -s 5; Restart-Computer
+  - ps: Start-Sleep -s 5
+  
+  - ps: .\disable_windows_background_services.ps1
+  - ps: .\enforce_windows_firewall.ps1
+  - ps: .\cleanup_windows.ps1
+  
+  test: off
+  
