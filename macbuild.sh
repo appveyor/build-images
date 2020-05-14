@@ -3,20 +3,23 @@
 
 function build_vm() {
     MACOS_VER=$1
-    [ -d "./output-parallels-pvm" ] && rm -rf "./output-parallels-pvm"
+    OUT_DIR="$HOME/output-parallels-pvm"
+    PACKER_CONFIG="$HOME/${MACOS_VER}-packer-config.json"
+
+    [ -d "${OUT_DIR}" ] && rm -rf "${OUT_DIR}"
     if [[ -z "${DATEMARK-}" || "${#DATEMARK}" = "0" ]]; then DATEMARK=$(date +%Y%m%d%H%M%S); fi
 
-    [ -f "${MACOS_VER}.json" ] || { echo "File '${MACOS_VER}.json' does not exist. Aborting"; return; }
-    export PACKER_LOG_PATH=${MACOS_VER}-${DATEMARK}.log
-    PACKER_LOG=1 packer build --only=parallels-pvm "-var-file=${MACOS_VER}.json" \
+    [ -f "${PACKER_CONFIG}" ] || { echo "File '${PACKER_CONFIG}' does not exist. Aborting"; return; }
+    export PACKER_LOG_PATH="${OUT_DIR}/${MACOS_VER}-${DATEMARK}.log"
+    PACKER_LOG=1 packer build --only=parallels-pvm "-var-file=${PACKER_CONFIG}" \
         -var "datemark=${DATEMARK}" \
         macos.json
-    [ -d "./output-parallels-pvm" ] && {
-        mv -fv ./output-parallels-pvm/packer-${MACOS_VER}-*.pvm "$HOME/Parallels/" &&
+    [ -d "${OUT_DIR}" ] && {
+        mv -fv "$OUT_DIR/packer-${MACOS_VER}-*.pvm" "$HOME/Parallels/" &&
         prlctl register $HOME/Parallels/packer-${MACOS_VER}-*.pvm ||
             { echo "failed to copy PVM. Aborting"; exit 1; }
     }
 }
 
 build_vm "catalina"
-build_vm "mojave"
+#build_vm "mojave"

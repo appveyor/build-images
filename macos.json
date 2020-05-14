@@ -5,10 +5,9 @@
     "datemark": "{{timestamp}}",
     "install_user": "appveyor",
     "install_password": "appveyor",
-    "appVeyorUrl": "https://ci.appveyor.com",
-    "hostAuthorizationToken": ""
+    "appVeyorUrl": "https://ci.appveyor.com"
   },
-  "sensitive-variables": ["hostAuthorizationToken", "install_password", "template_password", "appleIdUser", "appleIdPasswd"],
+  "sensitive-variables": ["install_password", "template_password", "appleIdUser", "appleIdPasswd"],
   "provisioners": [
     {
       "type": "shell",
