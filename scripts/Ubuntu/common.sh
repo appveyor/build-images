@@ -1142,13 +1142,21 @@ function pull_dockerimages() {
     log_version docker system df
 }
 
+function configure_docker_repository() {
+    echo "[INFO] Running configure_docker_repository..."
+
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
+        { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }    
+}
+
 function install_docker() {
     echo "[INFO] Running install_docker..."
-    # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
-    # add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
-    #     { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
+
+    configure_docker_repository
+
     apt-get -y -qq update &&
-    apt-get -y -q install docker.io ||
+    apt-get -y -q install docker-ce ||
         { echo "[ERROR] Cannot install Docker." 1>&2; return 20; }
     systemctl start docker &&
     systemctl is-active docker ||
@@ -1156,6 +1164,7 @@ function install_docker() {
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         usermod -aG docker ${USER_NAME}
     fi
+    docker info
     pull_dockerimages
     systemctl disable docker
 

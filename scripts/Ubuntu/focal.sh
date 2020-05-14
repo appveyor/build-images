@@ -69,6 +69,13 @@ function configure_rabbitmq_repositories() {
         { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
 }
 
+function configure_docker_repository() {
+    echo "[INFO] Running configure_docker_repository on Ubuntu 20.04..."
+
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
+        { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }    
+}
+
 function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core on Ubuntu 20.04..."
 

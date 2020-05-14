@@ -137,8 +137,8 @@ install_gitlfs ||
 
 # ====================================
 
-# install_rabbitmq ||
-#     _abort $?
+install_docker ||
+    _abort $?
 
 # ====================================
 
