@@ -11,10 +11,10 @@ environment:
     APPVEYOR_BAKE_IMAGE: ubuntu1804-${APPVEYOR_REPO_BRANCH}-gce-us-central1
     BUILD_AGENT_MODE: GCE
 
-  # - job_name: Ubuntu 16.04 on GCE us-central1
-  #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1604-gce-us-central1
-  #   APPVEYOR_BAKE_IMAGE: ubuntu1604-${APPVEYOR_REPO_BRANCH}-gce-us-central1
-  #   BUILD_AGENT_MODE: GCE
+  - job_name: Ubuntu 16.04 on GCE us-central1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1604-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: ubuntu1604-${APPVEYOR_REPO_BRANCH}-gce-us-central1
+    BUILD_AGENT_MODE: GCE
 
   # - job_name: Ubuntu 20.04 on Azure West US
   #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-2004-azure-westus
