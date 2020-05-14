@@ -6,7 +6,7 @@ function build_vm() {
     OUT_DIR="$HOME/output-parallels-pvm"
     PACKER_CONFIG="$HOME/${MACOS_VER}-packer-config.json"
 
-    [ -d "${OUT_DIR}" ] && rm -rf "${OUT_DIR}"
+    [ -d "${OUT_DIR}" ] && rm -rf "${OUT_DIR}" && mkdir "${OUT_DIR}"
     if [[ -z "${DATEMARK-}" || "${#DATEMARK}" = "0" ]]; then DATEMARK=$(date +%Y%m%d%H%M%S); fi
 
     [ -f "${PACKER_CONFIG}" ] || { echo "File '${PACKER_CONFIG}' does not exist. Aborting"; return; }
