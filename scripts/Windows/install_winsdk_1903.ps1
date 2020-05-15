@@ -1,7 +1,7 @@
 Write-Host "Installing Windows SDK 1903 (10.0.18362.1)..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
-$exePath = "$env:temp\wdksetup.exe"
+$exePath = "$env:temp\winsdksetup.exe"
 (New-Object Net.WebClient).DownloadFile('https://go.microsoft.com/fwlink/?linkid=2083338', $exePath)
 
 Write-Host "Installing..."
