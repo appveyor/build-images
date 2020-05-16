@@ -377,6 +377,8 @@ function copy_appveyoragent() {
         AGENT_DIR=/opt/appveyor/build-agent
     fi
 
+    [ -d "${AGENT_DIR}" ] && rm -rf "${AGENT_DIR}" || true
+
     mkdir -p "${AGENT_DIR}" &&
     #chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR} &&
     pushd -- "${AGENT_DIR}" ||
