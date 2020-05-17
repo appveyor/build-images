@@ -137,14 +137,20 @@ install_gitlfs ||
 
 # ====================================
 
-# .NET stuff
-install_dotnets ||
+install_sqlserver ||
     _abort $?
-install_dotnetv5_preview ||
+
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+        $(declare -f configure_sqlserver)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        configure_sqlserver" ||
     _abort $?
-preheat_dotnet_sdks &&
-log_version dotnet --list-sdks &&
-log_version dotnet --list-runtimes ||
+
+disable_sqlserver ||
     _abort $?
 
 # ====================================
