@@ -1160,7 +1160,11 @@ function install_docker() {
     apt-get -y -qq update &&
     apt-get -y -q install docker-ce ||
         { echo "[ERROR] Cannot install Docker." 1>&2; return 20; }
-    systemctl start docker &&
+
+    # Native Overlay Diff: true 
+    modprobe -r overlay && modprobe overlay redirect_dir=off
+
+    systemctl restart docker &&
     systemctl is-active docker ||
         { echo "[ERROR] Docker service failed to start." 1>&2; return 30; }
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
