@@ -1163,6 +1163,7 @@ function install_docker() {
 
     # Native Overlay Diff: true 
     modprobe -r overlay && modprobe overlay redirect_dir=off
+    echo 'options overlay redirect_dir=off' > /etc/modprobe.d/disable_overlay_redirect_dir.conf
 
     systemctl restart docker &&
     systemctl is-active docker ||
