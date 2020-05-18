@@ -86,6 +86,21 @@ init_logging
 
 configure_path
 
+if ! $IS_DOCKER; then
+    configure_sshd ||
+        _abort $?
+    configure_firewall ||
+        _abort $?
+    configure_uefi ||
+        _abort $?
+    configure_network ||
+        _abort $?
+    if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
+        fix_grub_timeout ||
+            _abort $?
+    fi
+fi
+
 if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
     add_user ||
         _abort $?
@@ -199,18 +214,5 @@ fi
 
 add_ssh_known_hosts ||
     _continue $?
-if ! $IS_DOCKER; then
-    configure_sshd ||
-        _abort $?
-    configure_firewall ||
-        _abort $?
-    configure_uefi ||
-        _abort $?
-    configure_network ||
-        _abort $?
-    if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
-        fix_grub_timeout ||
-            _abort $?
-    fi
-fi
+
 cleanup
