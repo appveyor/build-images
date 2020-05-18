@@ -140,20 +140,7 @@ install_gitlfs ||
 
 # ====================================
 
-install_sqlserver ||
-    _abort $?
-
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
-        $(declare -f configure_sqlserver)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_sqlserver" ||
-    _abort $?
-
-disable_sqlserver ||
+install_docker ||
     _abort $?
 
 # ====================================
@@ -215,3 +202,6 @@ if ! $IS_DOCKER; then
     fi
 fi
 cleanup
+
+systemctl restart docker
+docker info
