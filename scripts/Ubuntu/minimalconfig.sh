@@ -203,5 +203,6 @@ if ! $IS_DOCKER; then
 fi
 cleanup
 
+modprobe -r overlay && modprobe overlay redirect_dir=off
 systemctl restart docker
 docker info
