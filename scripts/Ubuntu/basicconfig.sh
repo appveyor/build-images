@@ -90,6 +90,9 @@ init_logging
 
 wait_cloudinit || _continue
 
+configure_network ||
+    _abort $?
+
 # execute optional Features
 if [[ -n "${OPT_FEATURES-}" && "${#OPT_FEATURES}" -gt "0" ]]; then
     echo "[DEBUG] There is OPT_FEATURES variable defined: '$OPT_FEATURES'"
@@ -368,8 +371,6 @@ configure_firewall ||
 configure_motd ||
     _abort $?
 configure_uefi ||
-    _abort $?
-configure_network ||
     _abort $?
 if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
     fix_grub_timeout ||
