@@ -109,6 +109,8 @@ configure_locale
 install_tools ||
     _abort $?
 
+curl -v https://www.virtualbox.org/download/oracle_vbox_2016.asc -o test.asc || exit 2
+
 if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
     install_KVP_packages ||
         _abort $?
