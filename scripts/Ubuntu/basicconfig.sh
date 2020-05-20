@@ -249,7 +249,7 @@ su -l ${USER_NAME} -c "
     _abort $?
 
 install_virtualbox ||
-    _continue $?
+    _abort $?
 install_mysql ||
     _abort $?
 install_postgresql ||

@@ -1678,7 +1678,11 @@ function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
 
     local VB_VERSION=6.1
-    retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
+    retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc -o oracle_vbox_2016.asc ||
+        { echo "[ERROR] Cannot download oracle_vbox_2016.asc." 1>&2; return 10; }   
+
+    apt-key add oracle_vbox_2016.asc
+    rm oracle_vbox_2016.asc
 
     add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
         { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }    
