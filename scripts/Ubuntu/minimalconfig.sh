@@ -104,6 +104,8 @@ disable_automatic_apt_updates ||
 configure_apt ||
     _abort $?
 
+curl --version
+curl --help
 curl -v --retry 5 --retry-delay 5 --retry-connrefused https://www.virtualbox.org/download/oracle_vbox_2016.asc -o test.asc || exit 2
 
 configure_locale
