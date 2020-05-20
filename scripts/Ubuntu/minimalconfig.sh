@@ -106,7 +106,7 @@ configure_apt ||
 
 curl --version
 curl --help
-curl -v --retry 5 --retry-delay 5 --retry-connrefused https://www.virtualbox.org/download/oracle_vbox_2016.asc -o test.asc || exit 2
+curl -v --retry 5 --retry-delay 5 https://www.virtualbox.org/download/oracle_vbox_2016.asc -o test.asc || exit 2
 
 configure_locale
 
