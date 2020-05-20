@@ -71,14 +71,6 @@ function configure_docker_repository() {
         { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }    
 }
 
-function install_virtualbox_core() {
-    echo "[INFO] Running install_virtualbox_core on Ubuntu 20.04..."
-
-    apt-get -y -qq update &&
-    apt-get -y install virtualbox ||
-        { echo "[ERROR] Cannot install virtualbox." 1>&2; return 20; }
-}
-
 function configure_firefox_repository() {
     echo "[INFO] Running configure_firefox_repository on Ubuntu 20.04..."
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F

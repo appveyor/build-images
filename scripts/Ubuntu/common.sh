@@ -62,6 +62,28 @@ function log_version() {
     fi
 }
 
+function fail {
+  echo $1 >&2
+  exit 1
+}
+
+function retry {
+  local n=1
+  local max=5
+  local delay=5
+  while true; do
+    "$@" && break || {
+      if [[ $n -lt $max ]]; then
+        ((n++))
+        echo "Command failed. Attempt $n/$max:"
+        sleep $delay;
+      else
+        fail "The command has failed after $n attempts."
+      fi
+    }
+  done
+}
+
 # Usage:
 # replace_line <file> <line> <regex> <globalflag>
 function replace_line() {
@@ -1656,7 +1678,11 @@ function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
 
     local VB_VERSION=6.1
-    curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
+    retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc -o oracle_vbox_2016.asc ||
+        { echo "[ERROR] Cannot download oracle_vbox_2016.asc." 1>&2; return 10; }   
+
+    apt-key add oracle_vbox_2016.asc
+    rm oracle_vbox_2016.asc
 
     add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
         { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }    
@@ -1675,7 +1701,7 @@ function install_virtualbox() {
     local VERSION=6.1.6
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
-    install_virtualbox_core
+    install_virtualbox_core || return $?
 
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         usermod -aG vboxusers "${USER_NAME}"
