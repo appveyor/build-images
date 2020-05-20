@@ -104,9 +104,6 @@ disable_automatic_apt_updates ||
 configure_apt ||
     _abort $?
 
-
-retry curl -v https://www.virtualbox.org/download/oracle_vbox_2016.asc -o test.asc
-
 configure_locale
 
 install_tools ||
