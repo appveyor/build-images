@@ -104,8 +104,8 @@ disable_automatic_apt_updates ||
 configure_apt ||
     _abort $?
 
-curl --version
-for i in 1 2 3 4 5; do curl -v https://www.virtualbox.org/download/oracle_vbox_2016.asc -o test.asc && exit 2 || sleep 5; done
+
+retry curl -v https://www.virtualbox.org/download/oracle_vbox_2016.asc -o test.asc
 
 configure_locale
 
