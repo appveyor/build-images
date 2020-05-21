@@ -973,7 +973,7 @@ function install_jdk() {
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
 
-    curl -fsSL -O "${JDK_URL}" &&
+    retry curl -fsSL -O "${JDK_URL}" &&
     tar zxf "${JDK_ARCHIVE}" ||
         { echo "[ERROR] Cannot download and unpack JDK ${JDK_VERSION}." 1>&2; popd; return 10; }
     DIR_NAME=$(tar tf "${JDK_ARCHIVE}" |cut -d'/' -f1|sort|uniq|head -n1)
