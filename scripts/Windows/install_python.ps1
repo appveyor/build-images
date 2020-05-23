@@ -130,7 +130,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     }
 }
 
-# Python 2.7.17
+# Python 2.7.18
 $python27 = (GetUninstallString 'Python 2.7.18')
 if($python27) {
     Write-Host 'Python 2.7.18 already installed'
@@ -284,26 +284,28 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     UpdatePip "$env:SystemDrive\Python37-x64"
 }
 
-# Python 3.8.0 x64
-$python38_x64 = (GetUninstallString 'Python 3.8.2 (64-bit)')
+# Python 3.8.3 x64
+$python38_x64 = (GetUninstallString 'Python 3.8.3 (64-bit)')
 if($python38_x64) {
-    Write-Host 'Python 3.8.2 x64 already installed'
+    Write-Host 'Python 3.8.3 x64 already installed'
 } else {
 
     UninstallPython "Python 3.8.0 (64-bit)"
+    UninstallPython "Python 3.8.2 (64-bit)"
 
-    InstallPythonEXE "3.8.2" "x64" "$env:SystemDrive\Python38-x64"
+    InstallPythonEXE "3.8.3" "x64" "$env:SystemDrive\Python38-x64"
 }
 
-# Python 3.8.0
-$python38 = (GetUninstallString 'Python 3.8.2 (32-bit)')
+# Python 3.8.3
+$python38 = (GetUninstallString 'Python 3.8.3 (32-bit)')
 if($python38) {
-    Write-Host 'Python 3.8.2 already installed'
+    Write-Host 'Python 3.8.3 already installed'
 } else {
 
     UninstallPython "Python 3.8.0 (32-bit)"
+    UninstallPython "Python 3.8.2 (32-bit)"
 
-    InstallPythonEXE "3.8.2" "x86" "$env:SystemDrive\Python38"
+    InstallPythonEXE "3.8.3" "x86" "$env:SystemDrive\Python38"
 }
 
 UpdatePip "$env:SystemDrive\Python38"
