@@ -63,6 +63,11 @@ if (Test-Path "$env:USERPROFILE\.nuget\packages") {
     Remove-Item "$env:USERPROFILE.nuget\packages" -Force -Recurse
 }
 
+# clean /etc/hosts
+$etcHosts = "$env:windir\System32\drivers\etc\hosts"
+Get-Content $etcHosts | Where-Object {$_ -notmatch 'host.docker.internal' -and $_ -notmatch 'gateway.docker.internal'} | Set-Content $etcHosts
+Get-Content $etcHosts
+
 DisplayDiskInfo
 
 Write-Host "Done cleaning up Windows" -ForegroundColor Green
