@@ -124,10 +124,6 @@ if (Test-Path $settingsPath) {
 	Write-Warning "$settingsPath was not found!"
 }
 
-# clean /etc/hosts
-$etcHosts = "$env:windir\System32\drivers\etc\hosts"
-Get-Content $etcHosts | Where-Object {$_ -notmatch 'docker.internal'} | Set-Content $etcHosts
-
 Write-Host "Docker CE installed and configured"
 
 #Switch-DockerLinux
