@@ -65,7 +65,8 @@ if (Test-Path "$env:USERPROFILE\.nuget\packages") {
 
 # clean /etc/hosts
 $etcHosts = "$env:windir\System32\drivers\etc\hosts"
-Get-Content $etcHosts | Where-Object {$_ -notmatch 'host.docker.internal' -and $_ -notmatch 'gateway.docker.internal'} | Set-Content $etcHosts
+$filteredLines = (Get-Content $etcHosts | Where-Object {($_ -notmatch 'host.docker.internal') -and ($_ -notmatch 'gateway.docker.internal') })
+Set-Content $etcHosts -Value $filteredLines
 Get-Content $etcHosts
 
 DisplayDiskInfo
