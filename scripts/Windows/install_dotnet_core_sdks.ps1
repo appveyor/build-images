@@ -24,12 +24,13 @@ function Install-SDK($sdkVersion) {
 if (-not $env:INSTALL_LATEST_ONLY) {
     Install-SDK "1.1.14"
     Install-SDK "2.1.202"
-    Install-SDK "2.1.805"
+    Install-SDK "2.1.806"
 }
 Install-SDK "2.2.402"
 
 # VS 2019 images only
 if (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019") {
     Install-SDK "3.0.103"
-    Install-SDK "3.1.201"
+    Install-SDK "3.1.202"
+    Install-SDK "3.1.300"
 }
