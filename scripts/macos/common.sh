@@ -365,7 +365,7 @@ function install_pythons(){
     LDFLAGS="-L${SSL_PATH}/lib -L${SQLITE_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.10" "3.7.5" "3.8.0" "3.8.1" "3.8.2rc2" "3.9.0a3" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.9" "3.6.10" "3.7.7" "3.8.3" "3.9.0b1" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         if [ ! -d ${VENV_PATH} ]; then
