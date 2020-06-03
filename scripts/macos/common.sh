@@ -618,6 +618,13 @@ function install_nvm_nodejs() {
 function install_xcode() {
     echo "[INFO] Running install_xcode..."
     XCODE_VERSION="11.3.1"
+
+    declare XCODE_VERSIONS=( "11.3.1" )
+
+    if [ "$OSX_VERS" -gt 14 ]; then
+        XCODE_VERSIONS+=( "11.4.1" "11.5" )
+    fi
+
     #check fastlane
     if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
         [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
@@ -625,7 +632,11 @@ function install_xcode() {
         export XCODE_INSTALL_USER=$APPLEID_USER
         export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
         export FASTLANE_DONT_STORE_PASSWORD=1
-        xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
+
+        for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
+            xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
+        done
+        
         xcversion simulators --install='iOS 12.4'
         xcversion simulators --install='tvOS 12.4'
         xcversion simulators --install='watchOS 5.3'
@@ -636,6 +647,38 @@ function install_xcode() {
         echo "[ERROR] Variables APPLEID_USER and/or APPLEID_PWD not set."
         return 10
     fi
+}
+
+function install_vcpkg() {
+    echo "[INFO] Running install_vcpkg..."
+
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    pushd "${HOME}"
+    command -v git ||
+        { echo "[ERROR] Cannot find git. Please install git first." 1>&2; return 10; }
+    local TOOL
+    for TOOL in curl unzip tar; do
+        command -v "${TOOL}" ||
+            { echo "[ERROR] Cannot find '${TOOL}'. Please install '${TOOL}' first." 1>&2; return 10; }
+    done
+
+    git clone --depth 1 https://github.com/Microsoft/vcpkg.git &&
+    pushd vcpkg
+    ./bootstrap-vcpkg.sh ||
+        { echo "[ERROR] Cannot bootstrap vcpkg." 1>&2; popd; return 10; }
+
+    write_line "${HOME}/.profile" 'add2path_suffix ${HOME}/vcpkg'
+    export PATH="$PATH:${HOME}/vcpkg"
+    vcpkg integrate install ||
+        { echo "[WARNING] 'vcpkg integrate install' Failed." 1>&2; }
+
+    popd
+    popd
+    log_version vcpkg version
 }
 
 function install_mono() {
