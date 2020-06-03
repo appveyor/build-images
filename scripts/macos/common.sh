@@ -217,7 +217,7 @@ function install_fastlane() {
         return 10
     fi
 
-    brew_cask_install fastlane
+    brew_install fastlane
     if check_user; then
         # shellcheck disable=SC2016
         write_line "${HOME}/.profile" 'export PATH="$HOME/.fastlane/bin:$PATH"'
