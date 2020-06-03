@@ -1,7 +1,7 @@
 Write-Host "Installing Visual Studio Installer Projects 2019..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $vsixPath = "$($env:TEMP)\InstallerProjects.vsix"
-(New-Object Net.WebClient).DownloadFile('https://visualstudioclient.gallerycdn.vsassets.io/extensions/visualstudioclient/microsoftvisualstudio2017installerprojects/0.9.3/1557425218768/InstallerProjects.vsix', $vsixPath)
+(New-Object Net.WebClient).DownloadFile('https://visualstudioclient.gallerycdn.vsassets.io/extensions/visualstudioclient/microsoftvisualstudio2017installerprojects/0.9.8/1588102164123/InstallerProjects.vsix', $vsixPath)
 Write-Host "Installing..."
 
 $vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community"

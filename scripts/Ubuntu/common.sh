@@ -62,6 +62,28 @@ function log_version() {
     fi
 }
 
+function fail {
+  echo $1 >&2
+  exit 1
+}
+
+function retry {
+  local n=1
+  local max=5
+  local delay=5
+  while true; do
+    "$@" && break || {
+      if [[ $n -lt $max ]]; then
+        ((n++))
+        echo "Command failed. Attempt $n/$max:"
+        sleep $delay;
+      else
+        fail "The command has failed after $n attempts."
+      fi
+    }
+  done
+}
+
 # Usage:
 # replace_line <file> <line> <regex> <globalflag>
 function replace_line() {
@@ -376,6 +398,8 @@ function copy_appveyoragent() {
         echo "[WARNING] AGENT_DIR variable is not set. Setting it to AGENT_DIR=/opt/appveyor/build-agent" 1>&2;
         AGENT_DIR=/opt/appveyor/build-agent
     fi
+
+    [ -d "${AGENT_DIR}" ] && rm -rf "${AGENT_DIR}" || true
 
     mkdir -p "${AGENT_DIR}" &&
     #chown -R ${USER_NAME}:${USER_NAME} ${AGENT_DIR} &&
@@ -949,7 +973,7 @@ function install_jdk() {
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
 
-    curl -fsSL -O "${JDK_URL}" &&
+    retry curl -fsSL -O "${JDK_URL}" &&
     tar zxf "${JDK_ARCHIVE}" ||
         { echo "[ERROR] Cannot download and unpack JDK ${JDK_VERSION}." 1>&2; popd; return 10; }
     DIR_NAME=$(tar tf "${JDK_ARCHIVE}" |cut -d'/' -f1|sort|uniq|head -n1)
@@ -1142,20 +1166,34 @@ function pull_dockerimages() {
     log_version docker system df
 }
 
+function configure_docker_repository() {
+    echo "[INFO] Running configure_docker_repository..."
+
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
+        { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }    
+}
+
 function install_docker() {
     echo "[INFO] Running install_docker..."
-    # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
-    # add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
-    #     { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
+
+    configure_docker_repository
+
     apt-get -y -qq update &&
-    apt-get -y -q install docker.io ||
+    apt-get -y -q install docker-ce ||
         { echo "[ERROR] Cannot install Docker." 1>&2; return 20; }
-    systemctl start docker &&
+
+    # Native Overlay Diff: true 
+    modprobe -r overlay && modprobe overlay redirect_dir=off
+    echo 'options overlay redirect_dir=off' > /etc/modprobe.d/disable_overlay_redirect_dir.conf
+
+    systemctl restart docker &&
     systemctl is-active docker ||
         { echo "[ERROR] Docker service failed to start." 1>&2; return 30; }
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         usermod -aG docker ${USER_NAME}
     fi
+    docker info
     pull_dockerimages
     systemctl disable docker
 
@@ -1489,7 +1527,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.17.1
+        VERSION=3.17.2
     else
         VERSION=$1
     fi
@@ -1640,7 +1678,11 @@ function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
 
     local VB_VERSION=6.1
-    curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
+    retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc -o oracle_vbox_2016.asc ||
+        { echo "[ERROR] Cannot download oracle_vbox_2016.asc." 1>&2; return 10; }   
+
+    apt-key add oracle_vbox_2016.asc
+    rm oracle_vbox_2016.asc
 
     add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
         { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }    
@@ -1659,7 +1701,7 @@ function install_virtualbox() {
     local VERSION=6.1.6
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
-    install_virtualbox_core
+    install_virtualbox_core || return $?
 
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         usermod -aG vboxusers "${USER_NAME}"

@@ -6,9 +6,10 @@ Function InstallVS
 {
   Param
   (
-    [String]$WorkLoads,
-    [String]$Sku,
-    [String] $VSBootstrapperURL
+    [String] $WorkLoads,
+    [String] $Sku,
+	[String] $VSBootstrapperURL,
+	[String] $ChannelUri
   )
 
   $exitCode = -1
@@ -19,7 +20,14 @@ Function InstallVS
     Invoke-WebRequest -Uri $VSBootstrapperURL -OutFile "${env:Temp}\vs_$Sku.exe"
 
     $FilePath = "${env:Temp}\vs_$Sku.exe"
-    $Arguments = ($WorkLoads, '--quiet', '--norestart', '--wait', '--nocache')
+	$Arguments = ($WorkLoads, '--quiet', '--norestart', '--wait', '--nocache')
+
+	if ($ChannelUri) {
+		$Arguments += (
+			'--channelUri', $ChannelUri,
+			'--installChannelUri', $ChannelUri
+		)
+	}
 
     Write-Host "Starting Install ..."
     $process = Start-Process -FilePath $FilePath -ArgumentList $Arguments -Wait -PassThru
@@ -197,6 +205,10 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.VisualStudio.Component.VC.Tools.ARM ' + `
 	'--add Microsoft.VisualStudio.Component.VC.Tools.ARM64 ' + `
 	'--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 ' + `
+	'--add Microsoft.VisualStudio.Component.VC.v141.ARM ' + `
+	'--add Microsoft.VisualStudio.Component.VC.v141.ARM.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.v141.ARM64 ' + `
+	'--add Microsoft.VisualStudio.Component.VC.v141.ARM64.Spectre ' + `
 	'--add Microsoft.VisualStudio.Component.VC.v141.ATL ' + `
 	'--add Microsoft.VisualStudio.Component.VC.v141.ATL.Spectre ' + `
 	'--add Microsoft.VisualStudio.Component.VC.v141.CLI.Support ' + `
@@ -212,6 +224,7 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.VisualStudio.Component.Windows10SDK.17134 ' + `
 	'--add Microsoft.VisualStudio.Component.Windows10SDK.17763 ' + `
 	'--add Microsoft.VisualStudio.Component.Windows10SDK.18362 ' + `
+	'--add Microsoft.VisualStudio.Component.Windows10SDK.19041 ' + `
 	'--add Microsoft.VisualStudio.Component.WinXP ' + `
 	'--add Microsoft.VisualStudio.Component.Workflow ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.Azure.CloudServices ' + `
@@ -244,18 +257,33 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 
 $Sku = 'Community'
 
+$ChannelUri = $null
+
 if ($env:install_vs2019_preview) {
 	Write-Host "Installing from 'Preview' channel"
 	$VSBootstrapperURL = 'https://aka.ms/vs/16/pre/vs_community.exe'
 } else {
 	Write-Host "Installing from 'Release' channel"
 	$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
+
+	# This is how to know channelUri for previous versions of VS 2019
+	# - Download previous bootstrapper for Professional edition: https://docs.microsoft.com/en-us/visualstudio/releases/2019/history#release-dates-and-build-numbers
+	# - Run `.\vs_Professional.exe --layout .\VSLayout
+	# - In the output log look for the first line with `/channel`, for example:
+	#
+	#      Download of 'https://aka.ms/vs/16/release/149189645_1152370582/channel' succeeded using engine 'WebClient'
+	# https://aka.ms/vs/16/release/149189645_1152370582/channel is the url to `VisualStudio.16.Release.chman` file.
+
+	# Pin VS 2019 16.5.5 for now because of issues with devenv.com: https://developercommunity.visualstudio.com/content/problem/1048804/cannot-build-project-with-devenvcom-in-visual-stud.html
+	$ChannelUri = 'https://aka.ms/vs/16/release/149189645_1152370582/channel'
+	
+	#$VSBootstrapperURL = 'https://download.visualstudio.microsoft.com/download/pr/68d6b204-9df0-4fcc-abcc-08ee0eff9cb2/b029547488a9383b0c8d8a9c813e246feb3ec19e0fe55020d4878fde5f0983fe/vs_Community.exe'
 }
 
 $ErrorActionPreference = 'Stop'
 
 # Install VS
-$exitCode = InstallVS -WorkLoads $WorkLoads -Sku $Sku -VSBootstrapperURL $VSBootstrapperURL
+$exitCode = InstallVS -WorkLoads $WorkLoads -Sku $Sku -VSBootstrapperURL $VSBootstrapperURL -ChannelUri $ChannelUri
 
 $vsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community"
 if (-not (Test-Path $vsPath)) {
