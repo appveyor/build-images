@@ -424,7 +424,7 @@ function install_dotnetv5_preview() {
     fi
     local DOTNET5_SDK_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOTNET5_SDK_URL="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-sdk-latest-osx-x64.tar.gz"
+        DOTNET5_SDK_URL="https://aka.ms/dotnet/net5/preview5/Sdk/dotnet-sdk-osx-x64.tar.gz"
     else
         DOTNET5_SDK_URL=$1
     fi
@@ -435,7 +435,7 @@ function install_dotnetv5_preview() {
     pushd -- "${TMP_DIR}"
 
     curl -fsSL -O "${DOTNET5_SDK_URL}" &&
-    tar -zxf "${DOTNET5_SDK_TAR}" -C "${HOME}/.dotnet" ||
+    sudo tar -zxf "${DOTNET5_SDK_TAR}" -C "/usr/local/share/dotnet" ||
         { echo "[ERROR] Cannot download and unpack .NET SDK 5.0 preview from url '${DOTNET5_SDK_URL}'." 1>&2; popd; return 20; }
 
     popd &&
@@ -444,6 +444,9 @@ function install_dotnetv5_preview() {
 
 function install_dotnets() {
     echo "[INFO] Running install_dotnets..."
+
+    local INSTALL_DIR="/usr/local/share/dotnet"
+
     # this must be executed as appveyor user
     if [ "$(whoami)" != "${USER_NAME}" ]; then
         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
@@ -459,17 +462,17 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" )
+    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1"  )
     for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
-        ./dotnet-install.sh -channel "$v"
+        sudo ./dotnet-install.sh -channel "$v" --install-dir "$INSTALL_DIR"
     done
 
     popd
 
     #shellcheck disable=SC2016
-    write_line "${HOME}/.profile" 'add2path_suffix $HOME/.dotnet'
-    export PATH="$PATH:$HOME/.dotnet"
+    write_line "${HOME}/.profile" "add2path_suffix $INSTALL_DIR"
+    export PATH="$PATH:$INSTALL_DIR"
 }
 
 function install_gvm_and_golangs() {
