@@ -93,6 +93,9 @@ fi
 
 if ! $IS_DOCKER; then
     wait_cloudinit || _continue
+
+    configure_network ||
+        _abort $?
 fi
 
 disable_automatic_apt_updates ||
@@ -137,8 +140,12 @@ install_gitlfs ||
 
 # ====================================
 
-# install_rabbitmq ||
-#     _abort $?
+install_virtualbox ||
+    _abort $?
+install_mysql ||
+    _abort $?
+install_postgresql ||
+    _abort $?    
 
 # ====================================
 
@@ -192,8 +199,6 @@ if ! $IS_DOCKER; then
     configure_firewall ||
         _abort $?
     configure_uefi ||
-        _abort $?
-    configure_network ||
         _abort $?
     if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
         fix_grub_timeout ||

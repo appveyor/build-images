@@ -36,12 +36,7 @@ function install_powershell() {
 }
 
 function config_dotnet_repository() {
-    # temp hack from here: https://github.com/dotnet/core/issues/4360#issuecomment-619598884
-    wget http://mirrors.edge.kernel.org/ubuntu/pool/main/i/icu/libicu63_63.2-2_amd64.deb
-    dpkg -i libicu63_63.2-2_amd64.deb
-    rm libicu63_63.2-2_amd64.deb
-
-    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb &&
+    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb &&
     dpkg -i packages-microsoft-prod.deb &&
     apt-get -y -qq update ||
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
@@ -69,12 +64,11 @@ function configure_rabbitmq_repositories() {
         { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
 }
 
-function install_virtualbox_core() {
-    echo "[INFO] Running install_virtualbox_core on Ubuntu 20.04..."
+function configure_docker_repository() {
+    echo "[INFO] Running configure_docker_repository on Ubuntu 20.04..."
 
-    apt-get -y -qq update &&
-    apt-get -y install virtualbox ||
-        { echo "[ERROR] Cannot install virtualbox." 1>&2; return 20; }
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" ||
+        { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }    
 }
 
 function configure_firefox_repository() {
