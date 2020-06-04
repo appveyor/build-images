@@ -318,6 +318,16 @@ function install_cmake() {
     rm -rf "${TMP_DIR}"
 }
 
+function install_qt() {
+    echo "[INFO] Installing Qt..."
+    if [ -f "../Windows/install_qt_fast_macos.ps1" ] && command -v pwsh; then
+        pwsh -nol -noni ../Windows/install_qt_fast_macos.ps1
+    else
+        echo '[ERROR] Cannot run install_qt_fast_macos.ps1: Either PowerShell is not installed or install_qt_fast_macos.ps1 does not exist.' 1>&2;
+        return 10;
+    fi
+}
+
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
     command -v pip || install_pip
@@ -729,12 +739,6 @@ function install_openjdk() {
     else
         echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
     fi
-}
-
-function install_qt() {
-    echo "[INFO] Running install_qt..."
-    brew_install qt
-    brew_link qt --force
 }
 
 function configure_autologin() {
