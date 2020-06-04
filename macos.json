@@ -47,6 +47,12 @@
       "destination": "./"
     },
     {
+      "type": "shell",
+      "inline": [
+        "mkdir windows-scripts"
+      ]
+    },
+    {
       "type": "file",
       "source": "{{ template_dir }}/scripts/Windows/",
       "destination": "./windows-scripts/"
