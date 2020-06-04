@@ -536,7 +536,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.8" "go1.14rc1" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.10" "go1.14.2" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
