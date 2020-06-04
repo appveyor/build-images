@@ -53,6 +53,13 @@
     },
     {
       "type": "shell",
+      "inline": [
+        "ls -al",
+        "pwsh --version"
+       ]
+    },
+    {
+      "type": "shell",
       "environment_vars": [
         "APPLEID_USER={{user `appleIdUser`}}",
         "APPLEID_PWD={{user `appleIdPasswd`}}",
@@ -72,8 +79,6 @@
     {
       "type": "shell",
       "inline": [
-        "ls -al",
-        "pwsh --version",
         "if [ -f .ssh/authorized_keys ]; then rm .ssh/authorized_keys; fi",
         "find . -maxdepth 1 -name 'script_*.sh-*.log' -delete"
        ]
