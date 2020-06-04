@@ -20,7 +20,7 @@ function build_vm() {
         macos.json
 
     [ -d "${OUT_DIR}" ] && {
-        mv -fv "$OUT_DIR/packer-${MACOS_VER}-*.pvm" "$HOME/Parallels/" &&
+        mv -fv $OUT_DIR/packer-${MACOS_VER}-*.pvm "$HOME/Parallels/" &&
         prlctl register $HOME/Parallels/packer-${MACOS_VER}-*.pvm ||
             { echo "failed to copy PVM. Aborting"; exit 1; }
     }
