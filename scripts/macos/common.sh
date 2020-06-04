@@ -320,8 +320,8 @@ function install_cmake() {
 
 function install_qt() {
     echo "[INFO] Installing Qt..."
-    if [ -f "../Windows/install_qt_fast_macos.ps1" ] && command -v pwsh; then
-        pwsh -nol -noni ../Windows/install_qt_fast_macos.ps1
+    if [ -f "./windows-scripts/install_qt_fast_macos.ps1" ] && command -v pwsh; then
+        pwsh -nol -noni ./windows-scripts/install_qt_fast_macos.ps1
     else
         echo '[ERROR] Cannot run install_qt_fast_macos.ps1: Either PowerShell is not installed or install_qt_fast_macos.ps1 does not exist.' 1>&2;
         return 10;
@@ -813,6 +813,9 @@ function cleanup() {
 
     # cleanup script guts
     find $HOME -maxdepth 1 -name "*.sh" -delete
+
+    # delete windows PS scripts
+    rm -rf "$HOME/windows-scripts"
 
     #log some data about image size
     log_version df -h

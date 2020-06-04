@@ -49,14 +49,7 @@
     {
       "type": "file",
       "source": "{{ template_dir }}/scripts/Windows/",
-      "destination": "./"
-    },
-    {
-      "type": "shell",
-      "inline": [
-        "ls -al",
-        "pwsh --version"
-       ]
+      "destination": "./windows-scripts/"
     },
     {
       "type": "shell",
