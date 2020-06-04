@@ -47,6 +47,11 @@
       "destination": "./"
     },
     {
+      "type": "file",
+      "source": "{{ template_dir }}/scripts/Windows/",
+      "destination": "./"
+    },
+    {
       "type": "shell",
       "environment_vars": [
         "APPLEID_USER={{user `appleIdUser`}}",
