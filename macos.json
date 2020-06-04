@@ -73,6 +73,7 @@
       "type": "shell",
       "inline": [
         "ls -al",
+        "pwsh --version",
         "if [ -f .ssh/authorized_keys ]; then rm .ssh/authorized_keys; fi",
         "find . -maxdepth 1 -name 'script_*.sh-*.log' -delete"
        ]

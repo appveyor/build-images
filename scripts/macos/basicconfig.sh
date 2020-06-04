@@ -39,6 +39,7 @@ configure_path
 configure_updates
 configure_sshd
 configure_autologin
+install_qt
 install_cvs
 install_gpg
 install_rvm_and_rubies
@@ -91,6 +92,5 @@ su -l ${USER_NAME} -c "
     _abort $?
 install_gvm_and_golangs
 install_nvm_and_nodejs
-install_qt
 configure_term
 cleanup
