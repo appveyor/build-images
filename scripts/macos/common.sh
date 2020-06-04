@@ -368,6 +368,7 @@ function install_pythons(){
     declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.9" "3.6.10" "3.7.7" "3.8.3" "3.9.0b1" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
+        VENV_MINOR_PATH=${HOME}/venv${i%.*}
         if [ ! -d ${VENV_PATH} ]; then
         curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
             { echo "[WARNING] Cannot download Python ${i}."; continue; }
@@ -388,6 +389,9 @@ function install_pythons(){
         virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
         popd
+        echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
+        rm -f ${VENV_MINOR_PATH}
+        ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
         fi
     done
     find "$HOME" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
