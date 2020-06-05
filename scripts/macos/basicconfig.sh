@@ -41,57 +41,57 @@ configure_sshd
 configure_autologin
 install_virtualenv
 install_gcc
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_pip)
-        $(declare -f fix_python_six)
-        $(declare -f install_virtualenv)
-        $(declare -f install_pythons)
-        install_pythons" ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        OSX_VERS=${OSX_VERS}
-        $(declare -f install_vcpkg)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        $(declare -f log_version)
-        install_vcpkg" ||
-    _abort $?
-install_qt
-install_cvs
-install_gpg
-install_rvm_and_rubies
-install_fastlane
-install_cmake
-install_openjdk
-install_xcode
+# su -l "${USER_NAME}" -c "
+#         PATH=$PATH
+#         USER_NAME=${USER_NAME}
+#         $(declare -f log_version)
+#         $(declare -f install_pip)
+#         $(declare -f fix_python_six)
+#         $(declare -f install_virtualenv)
+#         $(declare -f install_pythons)
+#         install_pythons" ||
+#     _abort $?
+# su -l ${USER_NAME} -c "
+#         PATH=$PATH
+#         USER_NAME=${USER_NAME}
+#         OSX_VERS=${OSX_VERS}
+#         $(declare -f install_vcpkg)
+#         $(declare -f write_line)
+#         $(declare -f add_line)
+#         $(declare -f replace_line)
+#         $(declare -f log_version)
+#         install_vcpkg" ||
+#     _abort $?
+# install_qt
+# install_cvs
+# install_gpg
+# install_rvm_and_rubies
+# install_fastlane
+# install_cmake
+# install_openjdk
+# install_xcode
 
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        VERSIONS_FILE=${VERSIONS_FILE}
-        $(declare -f log_version)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        $(declare -f write_line)
-        $(declare -f global_json)
-        $(declare -f preheat_dotnet_sdks)
-        $(declare -f install_dotnetv5_preview)
-        $(declare -f install_dotnets)
-        install_dotnets
-        install_dotnetv5_preview
-        preheat_dotnet_sdks
-        log_version dotnet --list-sdks
-        log_version dotnet --list-runtimes" ||
-    _abort $?
-install_cocoapods
-install_mono
-install_gvm_and_golangs
-install_nvm_and_nodejs
+# su -l "${USER_NAME}" -c "
+#         PATH=$PATH
+#         USER_NAME=${USER_NAME}
+#         VERSIONS_FILE=${VERSIONS_FILE}
+#         $(declare -f log_version)
+#         $(declare -f add_line)
+#         $(declare -f replace_line)
+#         $(declare -f write_line)
+#         $(declare -f global_json)
+#         $(declare -f preheat_dotnet_sdks)
+#         $(declare -f install_dotnetv5_preview)
+#         $(declare -f install_dotnets)
+#         install_dotnets
+#         install_dotnetv5_preview
+#         preheat_dotnet_sdks
+#         log_version dotnet --list-sdks
+#         log_version dotnet --list-runtimes" ||
+#     _abort $?
+# install_cocoapods
+# install_mono
+# install_gvm_and_golangs
+# install_nvm_and_nodejs
 configure_term
 cleanup
