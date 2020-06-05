@@ -368,6 +368,9 @@ function install_pythons(){
         xargs -I {} sudo installer -pkg {} -target /
 
     brew install openssl xz gdbm
+
+    sleep 3600
+
     SSL_PATH=$(brew --prefix openssl)
 
     CPPFLAGS="-I${SSL_PATH}/include"
