@@ -370,12 +370,11 @@ function install_pythons(){
     ls -al /Library/Developer/CommandLineTools/SDKs
     return 10
 
-    brew install openssl sqilte3
+    brew install openssl xz gdbm
     SSL_PATH=$(brew --prefix openssl)
-    SQLITE_PATH=$(brew --prefix sqlite3)
 
-    CPPFLAGS="-I${SSL_PATH}/include -I${SQLITE_PATH}/include -I$(xcrun --show-sdk-path)/usr/include"
-    LDFLAGS="-L${SSL_PATH}/lib -L${SQLITE_PATH}/lib"
+    CPPFLAGS="-I${SSL_PATH}/include"
+    LDFLAGS="-L${SSL_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
     declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.9" "3.6.10" "3.7.7" "3.8.3" "3.9.0b1" )
