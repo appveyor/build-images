@@ -39,6 +39,17 @@ configure_path
 configure_updates
 configure_sshd
 configure_autologin
+install_virtualenv
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_pip)
+        $(declare -f fix_python_six)
+        $(declare -f install_virtualenv)
+        $(declare -f install_pythons)
+        install_pythons" ||
+    _abort $?
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -58,17 +69,6 @@ install_fastlane
 install_cmake
 install_gcc
 install_openjdk
-install_virtualenv
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_pip)
-        $(declare -f fix_python_six)
-        $(declare -f install_virtualenv)
-        $(declare -f install_pythons)
-        install_pythons" ||
-    _abort $?
 install_xcode
 
 su -l "${USER_NAME}" -c "
