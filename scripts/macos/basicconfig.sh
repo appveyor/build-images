@@ -40,6 +40,7 @@ configure_updates
 configure_sshd
 configure_autologin
 su -l ${USER_NAME} -c "
+        PATH=$PATH
         USER_NAME=${USER_NAME}
         OSX_VERS=${OSX_VERS}
         $(declare -f install_vcpkg)
