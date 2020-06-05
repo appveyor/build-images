@@ -26,5 +26,5 @@ function build_vm() {
     }
 }
 
-build_vm "catalina"
+#build_vm "catalina"
 build_vm "mojave"

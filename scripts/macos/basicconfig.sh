@@ -39,6 +39,16 @@ configure_path
 configure_updates
 configure_sshd
 configure_autologin
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+        $(declare -f install_vcpkg)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f log_version)
+        install_vcpkg" ||
+    _abort $?
 install_qt
 install_cvs
 install_gpg
@@ -80,16 +90,6 @@ su -l "${USER_NAME}" -c "
     _abort $?
 install_cocoapods
 install_mono
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
-        $(declare -f install_vcpkg)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        $(declare -f log_version)
-        install_vcpkg" ||
-    _abort $?
 install_gvm_and_golangs
 install_nvm_and_nodejs
 configure_term

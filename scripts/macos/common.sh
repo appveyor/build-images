@@ -671,6 +671,11 @@ function install_vcpkg() {
         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
+
+    if [ "$OSX_VERS" -le 14 ]; then
+        brew install gcc
+    fi
+
     pushd "${HOME}"
     command -v git ||
         { echo "[ERROR] Cannot find git. Please install git first." 1>&2; return 10; }
