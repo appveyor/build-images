@@ -370,8 +370,9 @@ function install_pythons(){
     brew install openssl xz gdbm
 
     SSL_PATH=$(brew --prefix openssl)
+    SDK_PATH=$(xcrun --show-sdk-path)
 
-    CPPFLAGS="-I${SSL_PATH}/include"
+    CPPFLAGS="-I${SSL_PATH}/include -I${SDK_PATH}/usr/include"
     LDFLAGS="-L${SSL_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
@@ -387,7 +388,7 @@ function install_pythons(){
             { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
         PY_PATH=${HOME}/.localpython${i}
         mkdir -p "${PY_PATH}"
-        ./configure --enable-shared --silent "--prefix=${PY_PATH}" "CPPFLAGS=${CPPFLAGS}" "LDFLAGS=${LDFLAGS}" "--with-openssl=$SSL_PATH" &&
+        ./configure --silent "--prefix=${PY_PATH}" "CPPFLAGS=${CPPFLAGS}" "LDFLAGS=${LDFLAGS}" "--with-openssl=$SSL_PATH" &&
         make --silent &&
         make install --silent >/dev/null ||
             { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
