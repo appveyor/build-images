@@ -369,8 +369,6 @@ function install_pythons(){
 
     brew install openssl xz gdbm
 
-    sleep 3600
-
     SSL_PATH=$(brew --prefix openssl)
 
     CPPFLAGS="-I${SSL_PATH}/include"

@@ -40,6 +40,7 @@ configure_updates
 configure_sshd
 configure_autologin
 install_virtualenv
+install_gcc
 su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -67,7 +68,6 @@ install_gpg
 install_rvm_and_rubies
 install_fastlane
 install_cmake
-install_gcc
 install_openjdk
 install_xcode
 
