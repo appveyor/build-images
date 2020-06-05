@@ -91,7 +91,7 @@
       "source_path": "{{ user `pvm_path` }}",
       "ssh_username": "{{ user `template_user` }}",
       "ssh_password": "{{ user `template_password` }}",
-      "ssh_timeout": "30s",
+      "ssh_timeout": "120s",
       "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "skip_compaction": "false"
