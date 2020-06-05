@@ -672,7 +672,9 @@ function install_vcpkg() {
         return 1
     fi
 
+    echo "$OSX_VERS"
     if [ "$OSX_VERS" -le 14 ]; then
+        echo "Installing GCC"
         brew install gcc
     fi
 
