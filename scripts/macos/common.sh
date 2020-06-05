@@ -367,9 +367,6 @@ function install_pythons(){
     find /Library/Developer/CommandLineTools/Packages/ -name 'macOS_SDK_headers_*.pkg' |
         xargs -I {} sudo installer -pkg {} -target /
 
-    ls -al /Library/Developer/CommandLineTools/SDKs
-    return 10
-
     brew install openssl xz gdbm
     SSL_PATH=$(brew --prefix openssl)
 
