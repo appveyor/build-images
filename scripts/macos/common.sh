@@ -666,13 +666,9 @@ function install_xcode() {
 function install_vcpkg() {
     echo "[INFO] Running install_vcpkg..."
 
-    # this must be executed as appveyor user
-    if [ "$(whoami)" != "${USER_NAME}" ]; then
-        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
-        return 1
-    fi
+    echo "Home: $HOME"
 
-    echo "$OSX_VERS"
+    echo "macOS version: $OSX_VERS"
     if [ "$OSX_VERS" -le 14 ]; then
         echo "Installing GCC"
         brew install gcc
