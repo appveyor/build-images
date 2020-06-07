@@ -217,7 +217,7 @@ function install_fastlane() {
         return 10
     fi
 
-    brew_cask_install fastlane
+    brew_install fastlane
     if check_user; then
         # shellcheck disable=SC2016
         write_line "${HOME}/.profile" 'export PATH="$HOME/.fastlane/bin:$PATH"'
@@ -295,7 +295,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.17.0-rc1
+        VERSION=3.17.2
     else
         VERSION=$1
     fi
@@ -316,6 +316,16 @@ function install_cmake() {
     log_version cmake --version
     popd &&
     rm -rf "${TMP_DIR}"
+}
+
+function install_qt() {
+    echo "[INFO] Installing Qt..."
+    if [ -f "./windows-scripts/install_qt_fast_macos.ps1" ] && command -v pwsh; then
+        pwsh -nol -noni ./windows-scripts/install_qt_fast_macos.ps1
+    else
+        echo '[ERROR] Cannot run install_qt_fast_macos.ps1: Either PowerShell is not installed or install_qt_fast_macos.ps1 does not exist.' 1>&2;
+        return 10;
+    fi
 }
 
 function install_virtualenv() {
@@ -357,17 +367,19 @@ function install_pythons(){
     find /Library/Developer/CommandLineTools/Packages/ -name 'macOS_SDK_headers_*.pkg' |
         xargs -I {} sudo installer -pkg {} -target /
 
-    brew install openssl sqilte3
-    SSL_PATH=$(brew --prefix openssl)
-    SQLITE_PATH=$(brew --prefix sqlite3)
+    brew install openssl xz gdbm
 
-    CPPFLAGS="-I${SSL_PATH}/include -I${SQLITE_PATH}/include -I$(xcrun --show-sdk-path)/usr/include"
-    LDFLAGS="-L${SSL_PATH}/lib -L${SQLITE_PATH}/lib"
+    SSL_PATH=$(brew --prefix openssl)
+    SDK_PATH=$(xcrun --show-sdk-path)
+
+    CPPFLAGS="-I${SSL_PATH}/include -I${SDK_PATH}/usr/include"
+    LDFLAGS="-L${SSL_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.17" "3.4.10" "3.5.9" "3.6.10" "3.7.5" "3.8.0" "3.8.1" "3.8.2rc2" "3.9.0a3" )
+    declare PY_VERSIONS=( "3.8.3" "2.6.9" "2.7.18" "3.4.10" "3.5.9" "3.6.10" "3.7.7" "3.9.0b1" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
+        VENV_MINOR_PATH=${HOME}/venv${i%.*}
         if [ ! -d ${VENV_PATH} ]; then
         curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
             { echo "[WARNING] Cannot download Python ${i}."; continue; }
@@ -376,7 +388,7 @@ function install_pythons(){
             { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
         PY_PATH=${HOME}/.localpython${i}
         mkdir -p "${PY_PATH}"
-        ./configure --silent "--prefix=${PY_PATH}" "CPPFLAGS=${CPPFLAGS}" "LDFLAGS=${LDFLAGS}" "--with-openssl=$SSL_PATH" &&
+        ./configure --enable-shared --silent "--prefix=${PY_PATH}" "CPPFLAGS=${CPPFLAGS}" "LDFLAGS=${LDFLAGS}" "--with-openssl=$SSL_PATH" &&
         make --silent &&
         make install --silent >/dev/null ||
             { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
@@ -388,6 +400,9 @@ function install_pythons(){
         virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
         popd
+        echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
+        rm -f ${VENV_MINOR_PATH}
+        ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
         fi
     done
     find "$HOME" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
@@ -424,7 +439,7 @@ function install_dotnetv5_preview() {
     fi
     local DOTNET5_SDK_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOTNET5_SDK_URL="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-sdk-latest-osx-x64.tar.gz"
+        DOTNET5_SDK_URL="https://aka.ms/dotnet/net5/preview5/Sdk/dotnet-sdk-osx-x64.tar.gz"
     else
         DOTNET5_SDK_URL=$1
     fi
@@ -435,7 +450,7 @@ function install_dotnetv5_preview() {
     pushd -- "${TMP_DIR}"
 
     curl -fsSL -O "${DOTNET5_SDK_URL}" &&
-    tar -zxf "${DOTNET5_SDK_TAR}" -C "${HOME}/.dotnet" ||
+    sudo tar -zxf "${DOTNET5_SDK_TAR}" -C "/usr/local/share/dotnet" ||
         { echo "[ERROR] Cannot download and unpack .NET SDK 5.0 preview from url '${DOTNET5_SDK_URL}'." 1>&2; popd; return 20; }
 
     popd &&
@@ -444,6 +459,9 @@ function install_dotnetv5_preview() {
 
 function install_dotnets() {
     echo "[INFO] Running install_dotnets..."
+
+    local INSTALL_DIR="/usr/local/share/dotnet"
+
     # this must be executed as appveyor user
     if [ "$(whoami)" != "${USER_NAME}" ]; then
         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
@@ -459,17 +477,17 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" )
+    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1"  )
     for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
-        ./dotnet-install.sh -channel "$v"
+        sudo ./dotnet-install.sh -channel "$v" --install-dir "$INSTALL_DIR"
     done
 
     popd
 
     #shellcheck disable=SC2016
-    write_line "${HOME}/.profile" 'add2path_suffix $HOME/.dotnet'
-    export PATH="$PATH:$HOME/.dotnet"
+    write_line "${HOME}/.profile" "add2path_suffix $INSTALL_DIR"
+    export PATH="$PATH:$INSTALL_DIR"
 }
 
 function install_gvm_and_golangs() {
@@ -529,7 +547,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.8" "go1.14rc1" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.10" "go1.14.2" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -599,7 +617,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -615,6 +633,13 @@ function install_nvm_nodejs() {
 function install_xcode() {
     echo "[INFO] Running install_xcode..."
     XCODE_VERSION="11.3.1"
+
+    declare XCODE_VERSIONS=( "11.3.1" )
+
+    if [ "$OSX_VERS" -gt 14 ]; then
+        XCODE_VERSIONS+=( "11.4.1" "11.5" )
+    fi
+
     #check fastlane
     if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
         [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
@@ -622,7 +647,11 @@ function install_xcode() {
         export XCODE_INSTALL_USER=$APPLEID_USER
         export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
         export FASTLANE_DONT_STORE_PASSWORD=1
-        xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
+
+        for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
+            xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
+        done
+        
         xcversion simulators --install='iOS 12.4'
         xcversion simulators --install='tvOS 12.4'
         xcversion simulators --install='watchOS 5.3'
@@ -633,6 +662,41 @@ function install_xcode() {
         echo "[ERROR] Variables APPLEID_USER and/or APPLEID_PWD not set."
         return 10
     fi
+}
+
+function install_vcpkg() {
+    echo "[INFO] Running install_vcpkg..."
+
+    echo "Home: $HOME"
+
+    echo "macOS version: $OSX_VERS"
+    if [ "$OSX_VERS" -le 14 ]; then
+        echo "Installing GCC"
+        brew install gcc
+    fi
+
+    pushd "${HOME}"
+    command -v git ||
+        { echo "[ERROR] Cannot find git. Please install git first." 1>&2; return 10; }
+    local TOOL
+    for TOOL in curl unzip tar; do
+        command -v "${TOOL}" ||
+            { echo "[ERROR] Cannot find '${TOOL}'. Please install '${TOOL}' first." 1>&2; return 10; }
+    done
+
+    git clone --depth 1 https://github.com/Microsoft/vcpkg.git &&
+    pushd vcpkg
+    ./bootstrap-vcpkg.sh ||
+        { echo "[ERROR] Cannot bootstrap vcpkg." 1>&2; popd; return 10; }
+
+    write_line "${HOME}/.profile" 'add2path_suffix ${HOME}/vcpkg'
+    export PATH="$PATH:${HOME}/vcpkg"
+    vcpkg integrate install ||
+        { echo "[WARNING] 'vcpkg integrate install' Failed." 1>&2; }
+
+    popd
+    popd
+    log_version vcpkg version
 }
 
 function install_mono() {
@@ -679,12 +743,6 @@ function install_openjdk() {
     else
         echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
     fi
-}
-
-function install_qt() {
-    echo "[INFO] Running install_qt..."
-    brew_install qt
-    brew_link qt --force
 }
 
 function configure_autologin() {
@@ -759,6 +817,9 @@ function cleanup() {
 
     # cleanup script guts
     find $HOME -maxdepth 1 -name "*.sh" -delete
+
+    # delete windows PS scripts
+    rm -rf "$HOME/windows-scripts"
 
     #log some data about image size
     log_version df -h
