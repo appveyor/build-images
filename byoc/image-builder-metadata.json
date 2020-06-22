@@ -61,16 +61,20 @@
                "title":"Visual Studio 2019 Test Agent and Build Tools"
             },
             {
-               "id":"dotnet_devpack",
+               "id":"dotnet_devpacks",
                "title":".NET Framework Developer Packs (4.5.2 - 4.8)"
             },
             {
-               "id":"dotnet_sdk",
-               "title":"NET Core SDKs (1.1.14 - 2.2.301)"
+               "id":"dotnet_core_sdks",
+               "title":"NET Core SDKs (2.x - 3.x)"
             },
             {
                "id":"sql_server_2017",
                "title":"SQL Server 2017 Developer Edition"
+            },
+            {
+               "id":"sql_server_2019",
+               "title":"SQL Server 2019 Developer Edition"
             },
             {
                "id":"nodejs_latest",
@@ -126,11 +130,15 @@
             },
             {
                "id":"postgres10",
-               "title":"PostgreSQL 10.6 "
+               "title":"PostgreSQL 10.x"
             },
             {
                "id":"postgres11",
-               "title":"PostgreSQL 11.1"
+               "title":"PostgreSQL 11.x"
+            },
+            {
+               "id":"postgres12",
+               "title":"PostgreSQL 12.x"
             },
             {
                "id":"aws_cli",
@@ -158,12 +166,20 @@
             },
             {
                "id":"wdk_1903",
-               "title":"WDK  1903 (10.0.18362.1)"
+               "title":"WDK 1903 (10.0.18362.1)"
             },
             {
                "id":"winsdk_1903",
                "title":"Microsoft Windows SDK 1903 (10.0.18362.1)"
             },
+            {
+               "id":"wdk_2004",
+               "title":"WDK 2004 (10.0.19041.0)"
+            },
+            {
+               "id":"winsdk_2004",
+               "title":"Microsoft Windows SDK 2004 (10.0.19041.0)"
+            },            
             {
                "id":"yarn",
                "title":"Yarn 1.16.0"
