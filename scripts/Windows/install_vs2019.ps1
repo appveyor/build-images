@@ -275,7 +275,7 @@ if ($env:install_vs2019_preview) {
 	# https://aka.ms/vs/16/release/149189645_1152370582/channel is the url to `VisualStudio.16.Release.chman` file.
 
 	# Pin VS 2019 16.5.5 for now because of issues with devenv.com: https://developercommunity.visualstudio.com/content/problem/1048804/cannot-build-project-with-devenvcom-in-visual-stud.html
-	$ChannelUri = 'https://aka.ms/vs/16/release/149189645_1152370582/channel'
+	#$ChannelUri = 'https://aka.ms/vs/16/release/149189645_1152370582/channel'
 	
 	#$VSBootstrapperURL = 'https://download.visualstudio.microsoft.com/download/pr/68d6b204-9df0-4fcc-abcc-08ee0eff9cb2/b029547488a9383b0c8d8a9c813e246feb3ec19e0fe55020d4878fde5f0983fe/vs_Community.exe'
 }
