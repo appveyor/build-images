@@ -302,6 +302,8 @@ $component_groups += @(
             "qt.tools.win32_mingw530",
             "qt.tools.win32_mingw730",
             "qt.tools.win64_mingw730",
+            "qt.tools.win32_mingw810",
+            "qt.tools.win64_mingw810",            
             "qt.tools.ifw.32",
             "qt.license.thirdparty"
         )
