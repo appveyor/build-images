@@ -5,7 +5,7 @@ Write-Host "=========================="
 
 Write-Host "Downloading..."
 $msiPath = "$env:TEMP\PowerShell-Core.msi"
-(New-Object Net.WebClient).DownloadFile('https://github.com/PowerShell/PowerShell/releases/download/v7.0.1/PowerShell-7.0.1-win-x64.msi', $msiPath)
+(New-Object Net.WebClient).DownloadFile('https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-x64.msi', $msiPath)
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i $msiPath /quiet REGISTER_MANIFEST=1
