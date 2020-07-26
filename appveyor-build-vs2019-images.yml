@@ -183,6 +183,7 @@ for:
 
     build_script:
 
+    - ps: .\install_msys64.ps1
     - ps: .\install_chrome_browser.ps1
     - ps: .\install_firefox_browser.ps1
     - ps: .\install_edge_browser.ps1
@@ -253,7 +254,6 @@ for:
     - ps: .\install_cygwin.ps1
     - ps: .\install_mingw.ps1
     - ps: .\install_mingw-w64.ps1
-    - ps: .\install_msys64.ps1
     - ps: .\install_boost_1.71.0_vs2019.ps1
     - ps: .\install_boost_1.73.0_vs2019.ps1
 
