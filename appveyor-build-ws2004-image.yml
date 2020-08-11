@@ -4,9 +4,9 @@ environment:
 # Azure
 # =======
 
-  - job_name: Windows Server 1909 with Docker
-    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-1909-dc-azure-westus
-    APPVEYOR_BAKE_IMAGE: ws1909-${APPVEYOR_REPO_BRANCH}-azure-westus
+  - job_name: Windows Server 2004 with Docker
+    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2004-dc-azure-westus
+    APPVEYOR_BAKE_IMAGE: ws2004-${APPVEYOR_REPO_BRANCH}-azure-westus
 
 init:
   - appveyor version

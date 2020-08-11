@@ -48,6 +48,7 @@ PullRunDockerImages 17134 '1803' '1803'
 PullRunDockerImages 17763 'ltsc2019' '1809'
 PullRunDockerImages 18362 '1903' '1903'
 PullRunDockerImages 18363 '1909' '1909'
+PullRunDockerImages 19041 '2004' '2004'
 
 if ($env:INSTALL_EXTRA_DOCKER_IMAGES) {
 	# https://hub.docker.com/_/microsoft-dotnet-framework-sdk/
