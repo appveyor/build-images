@@ -236,6 +236,8 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.UWP.NetCoreAndStandard ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.UWP.Support ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.UWP.Xamarin ' + `
+	'--add Microsoft.VisualStudio.ComponentGroup.UWP.VC ' + `
+	'--add Microsoft.VisualStudio.ComponentGroup.UWP.VC.v141 ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.VisualStudioExtension.Prerequisites ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.Web ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.Web.CloudTools ' + `

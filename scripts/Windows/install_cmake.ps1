@@ -1,4 +1,4 @@
-﻿$cmakeVersion = "3.18.0"
+﻿$cmakeVersion = "3.18.2"
 
 $cmakeUninstallPath = "${env:ProgramFiles(x86)}\CMake\Uninstall.exe"
 if([IO.File]::Exists($cmakeUninstallPath)) {
