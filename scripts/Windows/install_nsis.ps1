@@ -1,8 +1,8 @@
-﻿Write-Host "Installing NSIS 3.04 ..." -ForegroundColor Cyan
+﻿Write-Host "Installing NSIS 3.06.01 ..." -ForegroundColor Cyan
 $exePath = "$($env:TEMP)\nsis-3.04-setup.exe"
 
 Write-Host "Downloading..."
-(New-Object Net.WebClient).DownloadFile('https://downloads.sourceforge.net/project/nsis/NSIS%203/3.04/nsis-3.04-setup.exe', $exePath)
+(New-Object Net.WebClient).DownloadFile('https://pilotfiber.dl.sourceforge.net/project/nsis/NSIS%203/3.06.1/nsis-3.06.1-setup.exe', $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath /S
