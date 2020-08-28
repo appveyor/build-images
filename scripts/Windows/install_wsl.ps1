@@ -67,6 +67,25 @@ $ubuntuExe = "C:\WSL\Ubuntu1804\ubuntu1804.exe"
 . $ubuntuExe config --default-user appveyor
 . $ubuntuExe run sudo apt-get update
 
+# Ubuntu 20.04
+# ============
+
+Write-warning "Installing Ubuntu 20.04 for WSL"
+
+(New-Object Net.WebClient).DownloadFile('https://aka.ms/wslubuntu2004', "$env:TEMP\wsl-ubuntu-2004.zip")
+Expand-Archive -Path "$env:TEMP\wsl-ubuntu-2004.zip" -DestinationPath "C:\WSL\Ubuntu2004" -Force
+Remove-Item "$env:TEMP\wsl-ubuntu-2004.zip"
+
+$ubuntuExe = "C:\WSL\Ubuntu2004\ubuntu2004.exe"
+. $ubuntuExe install --root
+. $ubuntuExe run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
+. $ubuntuExe run "echo 'appveyor:Password12!' | sudo chpasswd"
+. $ubuntuExe run usermod -aG sudo appveyor
+. $ubuntuExe run "echo -e `"`"appveyor\tALL=(ALL)\tNOPASSWD: ALL`"`" > /etc/sudoers.d/appveyor"
+. $ubuntuExe run chmod 0755 /etc/sudoers.d/appveyor
+. $ubuntuExe config --default-user appveyor
+. $ubuntuExe run sudo apt-get update
+
 
 # OpenSUSE
 # ========
@@ -97,6 +116,9 @@ wslconfig /setdefault ubuntu-16.04
 wsl lsb_release -a
 
 wslconfig /setdefault ubuntu-18.04
+wsl lsb_release -a
+
+wslconfig /setdefault ubuntu-20.04
 wsl lsb_release -a
 
 # Rename C:\Windows\System32\bash.exe to avoid conflicts with default Git's bash
