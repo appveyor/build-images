@@ -81,7 +81,7 @@ if (Test-Path $configPath) {
 
 Write-Host "Switching Docker to Linux mode..."
 Switch-DockerLinux
-Start-Sleep -s 20
+Start-Sleep -s 60
 docker version
 
 docker pull busybox
