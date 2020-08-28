@@ -8,6 +8,8 @@ function Switch-DockerLinux
     & $env:ProgramFiles\Docker\Docker\DockerCli.exe -Start --testftw!928374kasljf039 >$null 2>&1
     & $env:ProgramFiles\Docker\Docker\DockerCli.exe -Mount=C -Username="$env:computername\$deUsername" -Password="$dePsw" --testftw!928374kasljf039 >$null 2>&1
     Disable-NetFirewallRule -DisplayGroup "File and Printer Sharing" -Direction Inbound
+    New-SmbShare -Name C -Path "$env:systemdrive\" -ChangeAccess "$env:computername\$deUsername" | Out-Null
+    & "$env:ProgramFiles\Docker\Docker\DockerCli.exe" -SwitchLinuxEngine
 }
 
 function Switch-DockerWindows
