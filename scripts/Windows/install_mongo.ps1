@@ -70,7 +70,7 @@ cmd /c start /wait sc create MongoDB binPath= "$installDir\bin\mongod.exe --serv
 
 & $installDir\bin\mongod --version
 
-Get-Process "MongoDBCompassCommunity" | Stop-Process
+Get-Process "MongoDBCompassCommunity" -ErrorAction SilentlyContinue | Stop-Process
 UninstallMongoCompass
 
 # remove SSL libs from System32
