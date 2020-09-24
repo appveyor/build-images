@@ -2,7 +2,7 @@ Write-Host "Installing Yarn..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
 $msiPath = "$env:TEMP\yarn.msi"
-(New-Object Net.WebClient).DownloadFile('https://github.com/yarnpkg/yarn/releases/download/v1.21.1/yarn-1.21.1.msi', $msiPath)
+(New-Object Net.WebClient).DownloadFile('https://github.com/yarnpkg/yarn/releases/download/v1.22.5/yarn-1.22.5.msi', $msiPath)
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i "$msiPath" /quiet
