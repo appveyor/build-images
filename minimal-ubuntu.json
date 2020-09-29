@@ -1,7 +1,7 @@
 {
   "variables": {
-    "iso_url": "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.3-server-amd64.iso",
-    "iso_checksum": "7d8e0055d663bffa27c1718685085626cb59346e7626ba3d3f476322271f573e",
+    "iso_url": "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.5-server-amd64.iso",
+    "iso_checksum": "8c5fc24894394035402f66f3824beb7234b757dd2b5531379cb310cedfdf0996",
     "iso_checksum_type": "sha256"
   },
   "provisioners": [
@@ -35,18 +35,6 @@
         "scripts":[
             "{{ template_dir }}/scripts/Ubuntu/run_custom_scripts.sh"
         ]
-    },
-    {
-      "type": "file",
-      "direction": "download",
-      "source": "versions-{{ user `datemark` }}.log",
-      "destination": "./"
-    },
-    {
-      "type": "file",
-      "direction": "download",
-      "source": "pwd-{{ user `datemark` }}.log",
-      "destination": "./"
     },
     {
       "type": "shell",
