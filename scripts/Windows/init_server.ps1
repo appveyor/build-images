@@ -131,8 +131,10 @@ Write-Host "Time zone switched"
 
 # .NET 3.5
 
-Write-Host "Installing .NET 3.5"
-Write-Host "==================="
-
-Install-WindowsFeature NET-Framework-Core
-Write-Host ".NET 3.5 installed"
+if ((Get-ItemProperty "HKLM:\Software\Microsoft\Windows NT\CurrentVersion").InstallationType -ne 'Server Core') {
+    Write-Host "Installing .NET 3.5"
+    Write-Host "==================="
+    
+    Install-WindowsFeature NET-Framework-Core
+    Write-Host ".NET 3.5 installed"
+}

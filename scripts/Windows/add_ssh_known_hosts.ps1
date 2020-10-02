@@ -91,7 +91,7 @@ if(-not (Test-Path $sshPath)) {
 $contents = @()
 # GitHub IP addresses
 
-$gitHubMetaJson = (Invoke-WebRequest 'https://api.github.com/meta').Content
+$gitHubMetaJson = (Invoke-WebRequest 'https://api.github.com/meta' -UseBasicParsing).Content
 $GIthubIPs = (ConvertFrom-Json $gitHubMetaJson).git
 
 Get-IPs -subnets $GIthubIPs | ForEach-Object {
