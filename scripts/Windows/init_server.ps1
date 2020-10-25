@@ -136,3 +136,7 @@ Write-Host "==================="
 
 Install-WindowsFeature NET-Framework-Core
 Write-Host ".NET 3.5 installed"
+
+Write-Host "Disable .NET NGEN service and Windows updates"
+Get-ScheduledTask -TaskPath '\Microsoft\Windows\.NET Framework\*' | Disable-ScheduledTask -ErrorAction SilentlyContinue | ForEach-Object { $_.URI }
+Set-Service wuauserv -StartupType Disabled -ErrorAction SilentlyContinue

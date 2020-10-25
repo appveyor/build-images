@@ -161,6 +161,10 @@ for:
     - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
     - ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
     
+    # Restart VM
+    - ps: Start-Sleep -s 5; Restart-Computer
+    - ps: Start-Sleep -s 5
+
     # WSL
     - ps: .\install_wsl.ps1
     
