@@ -12,7 +12,7 @@ Add-Path $destPath
 Write-Host "Installing Chrome Selenium driver..." -ForegroundColor Cyan
 
 $zipPath = "$env:TEMP\chromedriver_win32.zip"
-(New-Object Net.WebClient).DownloadFile('http://chromedriver.storage.googleapis.com/85.0.4183.83/chromedriver_win32.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('http://chromedriver.storage.googleapis.com/86.0.4240.22/chromedriver_win32.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 Remove-Item $zipPath
 
