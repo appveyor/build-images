@@ -317,12 +317,37 @@ if($python38) {
 UpdatePip "$env:SystemDrive\Python38"
 UpdatePip "$env:SystemDrive\Python38-x64"
 
+# Python 3.9.0 x64
+$python39_x64 = (GetUninstallString 'Python 3.9.0 (64-bit)')
+if($python39_x64) {
+    Write-Host 'Python 3.9.0 x64 already installed'
+} else {
+
+    #UninstallPython "Python 3.8.5 (64-bit)"
+
+    InstallPythonEXE "3.9.0" "x64" "$env:SystemDrive\Python39-x64"
+}
+
+# Python 3.9.0
+$python39 = (GetUninstallString 'Python 3.9.0 (32-bit)')
+if($python39) {
+    Write-Host 'Python 3.9.0 already installed'
+} else {
+
+    #UninstallPython "Python 3.8.5 (32-bit)"
+
+    InstallPythonEXE "3.9.0" "x86" "$env:SystemDrive\Python39"
+}
+
+UpdatePip "$env:SystemDrive\Python39"
+UpdatePip "$env:SystemDrive\Python39-x64"
+
 if (-not $env:INSTALL_LATEST_ONLY) {
     Add-Path C:\Python27
     Add-Path C:\Python27\Scripts
 } else {
-    Add-Path C:\Python38
-    Add-Path C:\Python38\Scripts
+    Add-Path C:\Python39
+    Add-Path C:\Python39\Scripts
 }
 
 # restore .py file mapping
@@ -373,6 +398,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     CheckPython 'C:\Python36-x64'
     CheckPython 'C:\Python37'
     CheckPython 'C:\Python37-x64'
+    CheckPython 'C:\Python38'
+    CheckPython 'C:\Python38-x64'
 }
-CheckPython 'C:\Python38'
-CheckPython 'C:\Python38-x64'
+CheckPython 'C:\Python39'
+CheckPython 'C:\Python39-x64'
