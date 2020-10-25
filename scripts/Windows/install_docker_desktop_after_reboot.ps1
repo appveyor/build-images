@@ -60,10 +60,10 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		if ($isolation) {
 			Write-Host "Pulling and running '$serverCoreTag' images in '$isolation' mode"
 			docker pull mcr.microsoft.com/windows/servercore:$serverCoreTag
-			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
+			#docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
 
 			docker pull mcr.microsoft.com/windows/nanoserver:$nanoServerTag
-			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
+			#docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
 		}
 	}
 }
