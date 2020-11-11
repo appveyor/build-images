@@ -21,8 +21,4 @@ Remove-Item $zipPath -ErrorAction SilentlyContinue
 
 cmd /c "`"$jdkPath\bin\java`" --version"
 
-if ($env:INSTALL_LATEST_ONLY) {
-    Add-Path "$jdkPath\bin"
-}
-
 Write-Host "JDK 14 installed" -ForegroundColor Green
