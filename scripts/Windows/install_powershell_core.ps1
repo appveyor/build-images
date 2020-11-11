@@ -1,4 +1,4 @@
-﻿$version = '7.0.3'
+﻿$version = '7.1.0'
 
 Write-Host "Installing PowerShell Core $version"
 Write-Host "=========================="
