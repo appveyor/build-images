@@ -224,6 +224,7 @@ for:
     - ps: .\install_jdk12.ps1
     - ps: .\install_jdk13.ps1
     - ps: .\install_jdk14.ps1
+    - ps: .\install_jdk15.ps1
     - ps: .\install_erlang.ps1
 
     - ps: .\install_postgres96.ps1
