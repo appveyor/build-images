@@ -6,7 +6,7 @@ $installDir = "$env:HOME/Qt"
 
 $component_groups = @(
     @{
-        version = "5.14.2"
+        version = "5.15.1"
         components = @(
             "gcc_64",
             "debug_info",
@@ -42,7 +42,39 @@ $component_groups = @(
 if (-not $env:INSTALL_LATEST_ONLY) {
     $component_groups += @(
         @{
-            version = "5.12.8"
+            version = "5.14.2"
+            components = @(
+                "gcc_64",
+                "debug_info",
+                "debug_info.gcc_64",
+                "qtcharts",
+                "qtcharts.gcc_64",
+                "qtdatavis3d",
+                "qtdatavis3d.gcc_64",
+                "qtlottie",
+                "qtlottie.gcc_64"            
+                "qtnetworkauth",
+                "qtnetworkauth.gcc_64",
+                "qtpurchasing",
+                "qtpurchasing.gcc_64",
+                "qtquick3d",
+                "qtquick3d.gcc_64",
+                "qtquicktimeline",
+                "qtquicktimeline.gcc_64",                     
+                "qtscript",
+                "qtscript.gcc_64",
+                "qtvirtualkeyboard",
+                "qtvirtualkeyboard.gcc_64",
+                "qtwaylandcompositor",
+                "qtwaylandcompositor.gcc_64",            
+                "qtwebengine",
+                "qtwebengine.gcc_64",
+                "qtwebglplugin",
+                "qtwebglplugin.gcc_64"
+            )
+        }        
+        @{
+            version = "5.12.10"
             components = @(
                 "gcc_64",
                 "debug_info",
@@ -92,8 +124,9 @@ foreach($componentGroup in $component_groups) {
 }
 
 # set aliases
-ln -s "$HOME/Qt/5.14.2" "$HOME/Qt/latest"
+ln -s "$HOME/Qt/5.15.1" "$HOME/Qt/latest"
+ln -s "$HOME/Qt/5.15.1" "$HOME/Qt/5.15"
 ln -s "$HOME/Qt/5.14.2" "$HOME/Qt/5.14"
-ln -s "$HOME/Qt/5.12.8" "$HOME/Qt/5.12"
+ln -s "$HOME/Qt/5.12.10" "$HOME/Qt/5.12"
 
 Write-Host "Qt 5.x installed" -ForegroundColor Green
