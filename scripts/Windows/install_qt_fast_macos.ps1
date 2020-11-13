@@ -99,7 +99,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 $component_groups += @(
     @{
         components = @(
-            "qt.tools.ifw.32",
+            "qt.tools.ifw.40",
             "qt.license.thirdparty"
         )
     }
