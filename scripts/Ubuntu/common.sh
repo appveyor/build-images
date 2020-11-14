@@ -527,7 +527,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -552,7 +552,7 @@ function update_git() {
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        GIT_VERSION=2.25.1
+        GIT_VERSION=2.29.2
     else
         GIT_VERSION=$1
     fi
@@ -704,7 +704,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.9" "3.6.12" "3.7.9" "3.8.6" "3.9.0" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.12" "3.7.9" "3.8.6" "3.9.0" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -739,6 +739,7 @@ function install_pythons(){
 
 function install_powershell() {
     echo "[INFO] Running install_powershell..."
+
     # Import the public repository GPG keys
     curl -fsSL "https://packages.microsoft.com/keys/microsoft.asc" | apt-key add - &&
     # Register the Microsoft Ubuntu repository
@@ -801,7 +802,7 @@ function preheat_dotnet_sdks() {
 
 function prepare_dotnet_packages() {
 
-    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
@@ -812,7 +813,7 @@ function prepare_dotnet_packages() {
 }
 
 function config_dotnet_repository() {
-    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb &&
+    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/packages-microsoft-prod.deb &&
     dpkg -i packages-microsoft-prod.deb &&
     apt-get -y -qq update ||
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
@@ -867,28 +868,6 @@ function install_dotnets() {
     install_outdated_dotnets
 }
 
-function install_dotnetv5_preview() {
-    echo "[INFO] Running install_dotnetv5_preview..."
-    local DOTNET5_SDK_URL
-    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOTNET5_SDK_URL="https://download.visualstudio.microsoft.com/download/pr/7ceba34e-5d50-4b23-b326-0a7d02b4decd/62dd73db9be67127a5645ef0efb0bba4/dotnet-sdk-5.0.100-preview.3.20216.6-linux-x64.tar.gz"
-    else
-        DOTNET5_SDK_URL=$1
-    fi
-    local DOTNET5_SDK_TAR=${DOTNET5_SDK_URL##*/}
-
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
-
-    curl -fsSL -O "${DOTNET5_SDK_URL}" &&
-    tar -zxf "${DOTNET5_SDK_TAR}" -C /usr/share/dotnet/ ||
-        { echo "[ERROR] Cannot download and unpack .NET SDK 5.0 preview from url '${DOTNET5_SDK_URL}'." 1>&2; popd; return 20; }
-
-    popd &&
-    rm -rf "${TMP_DIR}"
-}
-
 function configure_mono_repository () {
     echo "[INFO] Running install_mono..."
     add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||
@@ -939,7 +918,7 @@ function install_jdks() {
         return $?
     install_jdk 14 https://download.java.net/java/GA/jdk14.0.1/664493ef4a6946b186ff29eb326336a2/7/GPL/openjdk-14.0.1_linux-x64_bin.tar.gz ||
         return $?
-    install_jdk 15 https://download.java.net/java/early_access/jdk15/19/GPL/openjdk-15-ea+19_linux-x64_bin.tar.gz ||
+    install_jdk 15 https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz ||
         return $?
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
@@ -1142,7 +1121,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.10" "go1.14.2" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.12" "go1.15.5" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1220,12 +1199,19 @@ function install_MSSQLServer() {
             return $?
 }
 
-function install_sqlserver() {
-    echo "[INFO] Running install_sqlserver..."
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - &&
+function configure_sqlserver_repository() {
+    echo "[INFO] Running configure_sqlserver_repository..."
     add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2019.list)" &&
     add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/prod.list)" ||
         { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
+}
+
+function install_sqlserver() {
+    echo "[INFO] Running install_sqlserver..."
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - &&
+
+    configure_sqlserver_repository
+
     apt-get -y -qq update &&
     apt-get -y -q install mssql-server ||
         { echo "[ERROR] Cannot install mssql-server." 1>&2; return 20; }
@@ -1447,7 +1433,7 @@ function install_packer() {
     echo "[INFO] Running install_packer..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=1.5.4
+        VERSION=1.6.5
     else
         VERSION=$1
     fi
@@ -1527,7 +1513,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.17.2
+        VERSION=3.18.4
     else
         VERSION=$1
     fi
@@ -1619,7 +1605,7 @@ function install_curl() {
     echo "[INFO] Running install_curl..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=7.69.1
+        VERSION=7.73.0
     else
         VERSION=$1
     fi
@@ -1698,7 +1684,7 @@ function install_virtualbox_core() {
 function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
 
-    local VERSION=6.1.6
+    local VERSION=6.1.16
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
     install_virtualbox_core || return $?
@@ -1740,6 +1726,7 @@ function install_clang() {
 
     install_clang_version 9
     install_clang_version 10
+    install_clang_version 11
 
     # make clang 10 default
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
@@ -1837,7 +1824,7 @@ function install_doxygen() {
     local DOXYGEN_VERSION
     local DOXYGEN_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOXYGEN_VERSION=1.8.17
+        DOXYGEN_VERSION=1.8.20
     else
         DOXYGEN_VERSION=$1
     fi

@@ -12,13 +12,6 @@ function configure_mercurial_repository() {
     echo "[INFO] Running configure_mercurial_repository on Ubuntu 18.04...skipped"
 }
 
-function config_dotnet_repository() {
-    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb &&
-    dpkg -i packages-microsoft-prod.deb &&
-    apt-get -y -qq update ||
-        { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
-}
-
 function install_outdated_dotnets() {
     echo "[INFO] Running install_outdated_dotnets..."
 
@@ -35,7 +28,7 @@ function install_outdated_dotnets() {
 
 function prepare_dotnet_packages() {
 
-    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
@@ -67,6 +60,12 @@ function install_jdks_from_repository() {
     if dpkg -l openjdk-11-jre-headless; then
         echo "openjdk-11-jre-headless hold" | dpkg --set-selections
     fi
+}
+
+function configure_sqlserver_repository() {
+    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 18.04..."
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/18.04/mssql-server-2019.list)" ||
+        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
 }
 
 function fix_sqlserver() {

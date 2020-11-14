@@ -12,38 +12,8 @@ function configure_mercurial_repository() {
     echo "[INFO] Running configure_mercurial_repository on Ubuntu 20.04...skipped"
 }
 
-function install_powershell() {
-    echo "[INFO] Install PowerShell on Ubuntu 20.04..."
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
-    local PWSH_INSTALL_DIR=/opt/microsoft/powershell/7-focal
-    local TAR_NAME=powershell-7.0.0-linux-x64.tar.gz
-
-    #download package
-    curl -fsSL -O "https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/${TAR_NAME}"
-
-    # install
-    mkdir -p ${PWSH_INSTALL_DIR}
-    tar -zxf "${TAR_NAME}" -C ${PWSH_INSTALL_DIR}
-    ln -s ${PWSH_INSTALL_DIR}/pwsh /usr/bin/pwsh
-
-    configure_powershell
-
-    popd &&
-    rm -rf "${TMP_DIR}"
-    log_version pwsh --version
-}
-
-function config_dotnet_repository() {
-    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb &&
-    dpkg -i packages-microsoft-prod.deb &&
-    apt-get -y -qq update ||
-        { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
-}
-
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" )
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
@@ -62,13 +32,6 @@ function configure_rabbitmq_repositories() {
 
     add-apt-repository "deb https://dl.bintray.com/rabbitmq/debian bionic main" ||
         { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
-}
-
-function configure_docker_repository() {
-    echo "[INFO] Running configure_docker_repository on Ubuntu 20.04..."
-
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" ||
-        { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }    
 }
 
 function configure_firefox_repository() {
@@ -105,32 +68,26 @@ function install_jdks_from_repository() {
     fi
 }
 
-function install_sqlserver() {
-    echo "[INFO] Running install_sqlserver..."
-    echo "[WARNING] SQL Server is not supported on Ubuntu 20.04 yet"
-}
-
-function configure_sqlserver() {
-    echo "[INFO] Running configure_sqlserver..."
-    echo "[WARNING] SQL Server is not supported on Ubuntu 20.04 yet"
-}
-
-function disable_sqlserver() {
-    echo "[INFO] Running disable_sqlserver..."
-    echo "[WARNING] SQL Server is not supported on Ubuntu 20.04 yet"
+function configure_sqlserver_repository() {
+    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 20.04..."
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/18.04/mssql-server-2019.list)" ||
+        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
 }
 
 function fix_sqlserver() {
-    echo "[INFO] Running fix_sqlserver on Ubuntu 20.04...skipped"
-}
+    echo "[INFO] Running fix_sqlserver..."
 
-function configure_mono_repository () {
-    echo "[INFO] Running install_mono on Ubuntu 20.04..."
-    add-apt-repository "deb http://download.mono-project.com/repo/ubuntu preview-${OS_CODENAME} main" ||
-        { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
-}
+    # disable updates of the SQL Server
+    apt-mark hold mssql-server
 
-function configure_azurecli_repository() {
-    echo "[INFO] Running configure_azurecli_repository..."
-    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" > /etc/apt/sources.list.d/azure-cli.list
+    # Workaround https://stackoverflow.com/a/57453901
+    ln -sf /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0 /opt/mssql/lib/libcrypto.so &&
+    ln -sf /usr/lib/x86_64-linux-gnu/libssl.so.1.0.0 /opt/mssql/lib/libssl.so &&
+    mkdir -p /etc/systemd/system/mssql-server.service.d/ &&
+    (
+        echo '[Service]'
+        echo 'Environment="LD_LIBRARY_PATH=/opt/mssql/lib"'
+    ) > /etc/systemd/system/mssql-server.service.d/override.conf ||
+        { echo "[ERROR] Cannot configure workaround for mssql-server." 1>&2; return 45; }
+
 }
