@@ -716,7 +716,7 @@ function install_pythons(){
             { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
         PY_PATH=${HOME}/.localpython${i}
         mkdir -p "${PY_PATH}"
-        ./configure --enable-shared --silent "--prefix=${PY_PATH}" &&
+        ./configure --enable-shared --silent "--prefix=${PY_PATH}" "LDFLAGS=-Wl,-rpath=${PY_PATH}/lib" &&
         make --silent &&
         make install --silent >/dev/null ||
             { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
