@@ -33,9 +33,9 @@ if (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019") {
     Install-SDK "3.0.103"
     Install-SDK "3.1.202"
     Install-SDK "3.1.404"
+    Install-SDK "5.0.100"
 }
 
 # VS 2019 Preview
 if ($env:install_vs2019_preview) {
-	Install-SDK "5.0.100-rc.2.20479.15"
 }
