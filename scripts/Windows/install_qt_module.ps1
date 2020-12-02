@@ -277,7 +277,10 @@ Prefix=.."
         if (Test-Path $mkspecPath) {
             Write-Host "Patching $mkspecPath"
             $spec = [IO.File]::ReadAllText($mkspecPath)
-            $spec = $spec.Replace('QT_EDITION = Enterprise', 'QT_EDITION = OpenSource').Replace('QT_LICHECK = licheck.exe', 'QT_LICHECK =').Replace('QT_LICHECK = licheck64', 'QT_LICHECK =')
+            $spec = $spec.Replace('QT_EDITION = Enterprise', 'QT_EDITION = OpenSource')
+                .Replace('QT_LICHECK = licheck.exe', 'QT_LICHECK =')
+                .Replace('QT_LICHECK = licheck64', 'QT_LICHECK =')
+                .Replace('QT_LICHECK = licheck_mac', 'QT_LICHECK =')
             [IO.File]::WriteAllText($mkspecPath, $spec)
         }
     }
