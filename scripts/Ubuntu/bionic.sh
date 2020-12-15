@@ -85,3 +85,8 @@ function fix_sqlserver() {
         { echo "[ERROR] Cannot configure workaround for mssql-server." 1>&2; return 45; }
 
 }
+
+function install_doxygen() {
+    echo "[INFO] Running ${FUNCNAME[0]}..."
+    install_doxygen_version '1.8.18'
+}

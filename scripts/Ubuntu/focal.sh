@@ -2,6 +2,8 @@
 #shellcheck disable=SC2086,SC2015,SC2164
 
 function add_releasespecific_tools() {
+    # doxygen support
+    tools_array+=( "libclang1-9" )
     # 32bit support
     tools_array+=( "libcurl4:i386" "libcurl4-gnutls-dev" )
     # HWE kernel

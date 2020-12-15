@@ -7,3 +7,8 @@ function add_releasespecific_tools() {
     # HWE kernel
     tools_array+=( "linux-generic-hwe-16.04" )
 }
+
+function install_doxygen() {
+    echo "[INFO] Running ${FUNCNAME[0]}..."
+    install_doxygen_version '1.8.17'
+}

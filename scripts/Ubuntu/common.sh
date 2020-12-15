@@ -340,7 +340,7 @@ function install_tools() {
     tools_array+=( "python-setuptools" )
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
-    tools_array+=( "libbz2-dev" "python3-tk" "tk-dev" "libsqlite3-dev" )
+    tools_array+=( "libbz2-dev" "liblzma-dev" "python3-tk" "tk-dev" "libsqlite3-dev" )
 
     # 32bit support
     tools_array+=( "libc6:i386" "libncurses5:i386" "libstdc++6:i386" )
@@ -704,7 +704,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.12" "3.7.9" "3.8.6" "3.9.0" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.12" "3.7.9" "3.8.7" "3.9.1" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -1121,7 +1121,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.12" "go1.15.5" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.13" "go1.15.6" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1513,7 +1513,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.18.4
+        VERSION=3.19.1
     else
         VERSION=$1
     fi
@@ -1821,6 +1821,11 @@ function install_qt() {
 
 function install_doxygen() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
+    install_doxygen_version '1.8.20'
+}
+
+function install_doxygen_version() {
+    echo "[INFO] Running ${FUNCNAME[0]}..."
     local DOXYGEN_VERSION
     local DOXYGEN_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
@@ -1828,7 +1833,7 @@ function install_doxygen() {
     else
         DOXYGEN_VERSION=$1
     fi
-    DOXYGEN_URL=http://doxygen.nl/files/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+    DOXYGEN_URL=https://phoenixnap.dl.sourceforge.net/project/doxygen/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
