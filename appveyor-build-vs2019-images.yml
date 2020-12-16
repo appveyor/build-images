@@ -31,11 +31,11 @@ environment:
   #   bake_phase: wait-15-min
   #   job_depends_on: VS 2019 on Azure West US - Part I
 
-  - job_name: VS 2019 on Azure West US - Part II
-    bake_phase: 3
-    job_depends_on: VS 2019 on Azure West US - Wait for Part I image to be ready
-    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-azure-westus
-    APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-azure-westus
+  # - job_name: VS 2019 on Azure West US - Part II
+  #   bake_phase: 3
+  #   job_depends_on: VS 2019 on Azure West US - Wait for Part I image to be ready
+  #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-azure-westus
+  #   APPVEYOR_BAKE_IMAGE: vs2019-${APPVEYOR_REPO_BRANCH}-azure-westus
 
 # GCE
 # =======
@@ -68,12 +68,12 @@ environment:
   #   bake_phase: wait-15-min
   #   job_depends_on: VS 2019 Preview on Azure West US - Part I
 
-  # - job_name: VS 2019 Preview on Azure West US - Part II
-  #   bake_phase: 3
-  #   job_depends_on: VS 2019 Preview on Azure West US - Wait for Part I image to be ready
-  #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-preview-temp-p1-azure-westus
-  #   APPVEYOR_BAKE_IMAGE: vs2019-preview-${APPVEYOR_REPO_BRANCH}-azure-westus
-  #   install_vs2019_preview: true
+  - job_name: VS 2019 Preview on Azure West US - Part II
+    bake_phase: 3
+    job_depends_on: VS 2019 Preview on Azure West US - Wait for Part I image to be ready
+    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-preview-temp-p1-azure-westus
+    APPVEYOR_BAKE_IMAGE: vs2019-preview-${APPVEYOR_REPO_BRANCH}-azure-westus
+    install_vs2019_preview: true
 
 # Hyper-V - Preview
 # ===============
