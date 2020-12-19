@@ -295,7 +295,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.17.2
+        VERSION=3.19.2
     else
         VERSION=$1
     fi
@@ -376,7 +376,7 @@ function install_pythons(){
     LDFLAGS="-L${SSL_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "3.8.6" "2.6.9" "2.7.18" "3.4.10" "3.5.9" "3.6.12" "3.7.9" "3.9.0" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.12" "3.7.9" "3.8.6" "3.9.1" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -450,7 +450,7 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1"  )
+    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" "5.0"  )
     for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
         sudo ./dotnet-install.sh -channel "$v" --install-dir "$INSTALL_DIR"
@@ -520,7 +520,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.10" "go1.14.2" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.13" "go1.15.6" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -590,7 +590,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -607,10 +607,10 @@ function install_xcode() {
     echo "[INFO] Running install_xcode..."
     XCODE_VERSION="11.3.1"
 
-    declare XCODE_VERSIONS=( "11.3.1" )
+    declare XCODE_VERSIONS=( "9.4.1" "10.3" "11.3.1" )
 
     if [ "$OSX_VERS" -gt 14 ]; then
-        XCODE_VERSIONS+=( "11.4.1" "11.5" )
+        XCODE_VERSIONS+=( "11.7" "12.3" )
     fi
 
     #check fastlane
@@ -703,13 +703,13 @@ function install_openjdk() {
     if check_user; then
         su -l ${USER_NAME} -c "
             $BREW_CMD tap AdoptOpenJDK/openjdk
-            $BREW_CMD cask install adoptopenjdk8 adoptopenjdk9 adoptopenjdk10 adoptopenjdk11 adoptopenjdk12 adoptopenjdk13
+            $BREW_CMD cask install adoptopenjdk8 adoptopenjdk9 adoptopenjdk10 adoptopenjdk11 adoptopenjdk12 adoptopenjdk13 adoptopenjdk14 adoptopenjdk15
         " ||
             { echo "[ERROR] Cannot install adoptopenjdk with Homebrew." 1>&2; return 20; }
 
         JDK_PATH=$(/usr/libexec/java_home -v $i)
         write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64='${JDK_PATH}
-        for i in 9 10 11 12 13; do
+        for i in 9 10 11 12 13 14 15; do
             JDK_PATH=$(/usr/libexec/java_home -v $i)
             write_line "${HOME}/.profile" "export JAVA_HOME_${i}_X64=${JDK_PATH}"
         done

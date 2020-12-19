@@ -62,10 +62,22 @@ su -l ${USER_NAME} -c "
         $(declare -f log_version)
         install_vcpkg" ||
     _abort $?
-install_qt
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_qt)
+        install_qt" ||
+    _abort $?
 install_cvs
 install_gpg
-install_rvm_and_rubies
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_rvm_and_rubies)
+        install_rvm_and_rubies" ||
+    _abort $?
 install_fastlane
 install_cmake
 install_openjdk
@@ -89,7 +101,19 @@ su -l "${USER_NAME}" -c "
     _abort $?
 install_cocoapods
 install_mono
-install_gvm_and_golangs
-install_nvm_and_nodejs
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_gvm_and_golangs)
+        install_gvm_and_golangs" ||
+    _abort $?
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_nvm_and_nodejs)
+        install_nvm_and_nodejs" ||
+    _abort $?
 configure_term
 cleanup
