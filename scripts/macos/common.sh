@@ -262,28 +262,15 @@ function install_rubies() {
 
 function install_rvm_and_rubies() {
     echo "[INFO] Running install_rvm_and_rubies..."
-    if check_user; then
-        su -l ${USER_NAME} -c "
-            PATH=$PATH
-            USER_NAME=${USER_NAME}
-            $(declare -f install_rvm)
-            install_rvm" &&
-        su -l ${USER_NAME} -c "
-            PATH=$PATH
-            USER_NAME=${USER_NAME}
-            VERSIONS_FILE=${VERSIONS_FILE}
-            [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
-            $(declare -f log_version)
-            $(declare -f install_rubies)
-            install_rubies" ||
-                return $?
-        # load RVM into current shell instance
-        export PATH="$PATH:$HOME/.rvm/bin"
-        #shellcheck disable=SC1090
-        [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install RVM and rubies"
-    fi
+    install_rvm
+
+    # load RVM into current shell instance
+    export PATH="$PATH:$HOME/.rvm/bin"
+
+    #shellcheck disable=SC1090
+    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+    install_rubies
 }
 
 function install_gcc() {
@@ -467,27 +454,11 @@ function install_gvm_and_golangs() {
     echo "[INFO] Running install_gvm_and_golangs..."
     # install go in system first
     brew_install go
-    if check_user; then
-        su -l ${USER_NAME} -c "
-            PATH=$PATH
-            USER_NAME=${USER_NAME}
-            $(declare -f install_gvm)
-            $(declare -f write_line)
-            $(declare -f add_line)
-            $(declare -f replace_line)
-            install_gvm" &&
-        su -l ${USER_NAME} -c "
-            PATH=$PATH
-            USER_NAME=${USER_NAME}
-            VERSIONS_FILE=${VERSIONS_FILE}
-            source \"${HOME}/.gvm/scripts/gvm\"
-            $(declare -f log_version)
-            $(declare -f install_golangs)
-            install_golangs" ||
-                return $?
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install GVM and Go Langs"
-    fi
+    install_gvm
+
+    source "${HOME}/.gvm/scripts/gvm"
+
+    install_golangs
 }
 
 function install_gvm() {
@@ -534,27 +505,11 @@ function install_golangs() {
 
 function install_nvm_and_nodejs() {
     echo "[INFO] Running install_nvm_and_nodejs..."
-    if check_user; then
-        su -l ${USER_NAME} -c "
-            PATH=$PATH
-            USER_NAME=${USER_NAME}
-            $(declare -f install_nvm)
-            $(declare -f write_line)
-            $(declare -f add_line)
-            $(declare -f replace_line)
-            install_nvm" &&
-        su -l ${USER_NAME} -c "
-            PATH=$PATH
-            [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
-            USER_NAME=${USER_NAME}
-            VERSIONS_FILE=${VERSIONS_FILE}
-            $(declare -f log_version)
-            $(declare -f install_nvm_nodejs)
-            install_nvm_nodejs ${CURRENT_NODEJS}" ||
-        return $?
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install NVM and Nodejs"
-    fi
+    install_nvm
+
+    [ -s "${HOME}/.nvm/nvm.sh" ] && . "${HOME}/.nvm/nvm.sh"
+
+    install_nvm_nodejs ${CURRENT_NODEJS}"
 }
 
 function install_nvm() {
@@ -600,7 +555,6 @@ function install_nvm_nodejs() {
 
     log_version nvm --version
     log_version nvm list
-
 }
 
 function install_xcode() {

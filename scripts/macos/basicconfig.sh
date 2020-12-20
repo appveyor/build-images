@@ -56,6 +56,35 @@ su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
         $(declare -f log_version)
+        $(declare -f install_rvm)
+        $(declare -f install_rubies)
+        $(declare -f install_rvm_and_rubies)
+        install_rvm_and_rubies" ||
+    _abort $?
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f brew_install)
+        $(declare -f install_gvm)
+        $(declare -f install_golangs)
+        $(declare -f install_gvm_and_golangs)
+        install_gvm_and_golangs" ||
+    _abort $?
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f write_line)
+        $(declare -f install_nvm)
+        $(declare -f install_nvm_nodejs)
+        $(declare -f install_nvm_and_nodejs)
+        install_nvm_and_nodejs" ||
+    _abort $?
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
         $(declare -f install_pip)
         $(declare -f fix_python_six)
         $(declare -f install_virtualenv)
@@ -71,18 +100,10 @@ su -l "${USER_NAME}" -c "
     _abort $?
 install_cvs
 install_gpg
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_rvm_and_rubies)
-        install_rvm_and_rubies" ||
-    _abort $?
 install_fastlane
 install_cmake
 install_openjdk
 install_xcode
-
 su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -101,19 +122,5 @@ su -l "${USER_NAME}" -c "
     _abort $?
 install_cocoapods
 install_mono
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_gvm_and_golangs)
-        install_gvm_and_golangs" ||
-    _abort $?
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_nvm_and_nodejs)
-        install_nvm_and_nodejs" ||
-    _abort $?
 configure_term
 cleanup
