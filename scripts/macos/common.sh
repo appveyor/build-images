@@ -218,11 +218,9 @@ function install_fastlane() {
     fi
 
     brew_install fastlane
-    if check_user; then
-        # shellcheck disable=SC2016
-        write_line "${HOME}/.profile" 'export PATH="$HOME/.fastlane/bin:$PATH"'
-    fi
-
+    
+    # shellcheck disable=SC2016
+    write_line "${HOME}/.profile" 'export PATH="$HOME/.fastlane/bin:$PATH"'
 }
 
 function install_rvm() {
