@@ -41,16 +41,6 @@ configure_sshd
 configure_autologin
 install_virtualenv
 install_gcc
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_pip)
-        $(declare -f fix_python_six)
-        $(declare -f install_virtualenv)
-        $(declare -f install_pythons)
-        install_pythons" ||
-    _abort $?
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -61,6 +51,16 @@ su -l ${USER_NAME} -c "
         $(declare -f replace_line)
         $(declare -f log_version)
         install_vcpkg" ||
+    _abort $?
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_pip)
+        $(declare -f fix_python_six)
+        $(declare -f install_virtualenv)
+        $(declare -f install_pythons)
+        install_pythons" ||
     _abort $?
 su -l "${USER_NAME}" -c "
         PATH=$PATH
