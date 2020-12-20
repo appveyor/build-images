@@ -41,6 +41,7 @@ configure_sshd
 configure_autologin
 install_virtualenv
 install_gcc
+install_gpg
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -99,7 +100,6 @@ su -l "${USER_NAME}" -c "
         install_qt" ||
     _abort $?
 install_cvs
-install_gpg
 install_fastlane
 install_cmake
 install_openjdk
