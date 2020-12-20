@@ -509,7 +509,7 @@ function install_nvm_and_nodejs() {
 
     [ -s "${HOME}/.nvm/nvm.sh" ] && . "${HOME}/.nvm/nvm.sh"
 
-    install_nvm_nodejs ${CURRENT_NODEJS}"
+    install_nvm_nodejs "${CURRENT_NODEJS}"
 }
 
 function install_nvm() {
