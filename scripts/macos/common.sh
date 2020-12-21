@@ -148,7 +148,7 @@ function brew_install() {
 }
 
 function brew_cask_install() {
-    BREW_CASK=cask run_brew install "$@"
+    BREW_CASK=--cask run_brew install "$@"
 }
 
 function run_brew() {
