@@ -284,11 +284,11 @@ function install_cmake() {
     else
         VERSION=$1
     fi
-    local TAR_FILE=cmake-${VERSION}-Darwin-x86_64.tar.gz
+    local TAR_FILE="cmake-${VERSION}-macos-universal.tar.gz"
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
-    curl -fsSL -O "https://cmake.org/files/v${VERSION%.*}/${TAR_FILE}" &&
+    curl -fsSL -O "https://github.com/Kitware/CMake/releases/download/v${VERSION}/${TAR_FILE}" &&
     tar -zxf "${TAR_FILE}" ||
         { echo "[ERROR] Cannot download and untar cmake." 1>&2; popd; return 10; }
     DIR_NAME=$(tar -ztf ${TAR_FILE} |cut -d'/' -f1|sort|uniq|head -n1)

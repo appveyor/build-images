@@ -62,6 +62,7 @@ su -l "${USER_NAME}" -c "
         $(declare -f install_rvm_and_rubies)
         install_rvm_and_rubies" ||
     _abort $?
+install_fastlane
 su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -100,15 +101,6 @@ su -l "${USER_NAME}" -c "
         install_qt" ||
     _abort $?
 install_cvs
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        $(declare -f write_line)
-        $(declare -f log_version)
-        $(declare -f brew_install)
-        $(declare -f install_fastlane)
-        install_fastlane" ||
-    _abort $?
 install_cmake
 install_openjdk
 install_xcode
