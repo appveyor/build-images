@@ -210,6 +210,8 @@ function install_fastlane() {
 
     brew_install ruby
 
+    export PATH="/usr/local/opt/ruby/bin:$PATH"
+
     brew_install fastlane
 
     # shellcheck disable=SC2016
