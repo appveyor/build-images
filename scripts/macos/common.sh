@@ -148,14 +148,14 @@ function brew_install() {
 }
 
 function brew_cask_install() {
-    BREW_CASK=--cask run_brew install "$@"
+    run_brew install --cask "$@"
 }
 
 function run_brew() {
     [ -x "${BREW_CMD-}" ] ||
         { echo "[ERROR] Cannot find brew. Install Homebrew first!" 1>&2; return 1; }
     if check_user; then
-        su -l ${USER_NAME} -c "$BREW_CMD ${BREW_CASK-} $*" ||
+        su -l ${USER_NAME} -c "$BREW_CMD $*" ||
             { echo "[ERROR] Cannot install '$*' with Homebrew." 1>&2; return 20; }
     else
         echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
