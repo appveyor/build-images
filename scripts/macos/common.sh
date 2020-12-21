@@ -208,12 +208,20 @@ function install_gpg() {
 function install_fastlane() {
     echo "[INFO] Running install_fastlane..."
 
-    ruby --version
+    # fastlane dependencies requires Ruby version >= 2.4.0.
+    if command -v rvm; then
+        # We take as granted that install_rubies set latest version as default
+        rvm use default
+    else
+        echo "Cannot find rvm. Install rvm first!" 1>&2
+        return 10
+    fi
 
     brew_install fastlane
-
-    # shellcheck disable=SC2016
-    write_line "${HOME}/.profile" 'export PATH="$HOME/.fastlane/bin:$PATH"'
+    if check_user; then
+        # shellcheck disable=SC2016
+        write_line "${HOME}/.profile" 'export PATH="$HOME/.fastlane/bin:$PATH"'
+    fi
 }
 
 function install_rvm() {
@@ -253,15 +261,28 @@ function install_rubies() {
 
 function install_rvm_and_rubies() {
     echo "[INFO] Running install_rvm_and_rubies..."
-    install_rvm
-
-    # load RVM into current shell instance
-    export PATH="$PATH:$HOME/.rvm/bin"
-
-    #shellcheck disable=SC1090
-    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
-    install_rubies
+    if check_user; then
+        su -l ${USER_NAME} -c "
+            PATH=$PATH
+            USER_NAME=${USER_NAME}
+            $(declare -f install_rvm)
+            install_rvm" &&
+        su -l ${USER_NAME} -c "
+            PATH=$PATH
+            USER_NAME=${USER_NAME}
+            VERSIONS_FILE=${VERSIONS_FILE}
+            [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
+            $(declare -f log_version)
+            $(declare -f install_rubies)
+            install_rubies" ||
+                return $?
+        # load RVM into current shell instance
+        export PATH="$PATH:$HOME/.rvm/bin"
+        #shellcheck disable=SC1090
+        [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install RVM and rubies"
+    fi
 }
 
 function install_gcc() {

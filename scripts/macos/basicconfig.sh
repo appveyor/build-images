@@ -42,32 +42,9 @@ configure_autologin
 install_virtualenv
 install_gcc
 install_gpg
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_rvm)
-        $(declare -f install_rubies)
-        $(declare -f install_rvm_and_rubies)
-        install_rvm_and_rubies" ||
-    _abort $?
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        APPLEID_USER=${APPLEID_USER}
-        APPLEID_PWD=${APPLEID_PWD}
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        $(declare -f log_version)
-        $(declare -f brew_install)
-        $(declare -f run_brew)
-        $(declare -f check_user)
-        $(declare -f install_fastlane)
-        $(declare -f install_xcode)
-        install_fastlane
-        install_xcode" ||
-    _abort $?    
+install_rvm_and_rubies
+install_fastlane
+install_xcode  
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
