@@ -247,7 +247,7 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-head" )
+    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -669,7 +669,7 @@ function install_openjdk() {
     if check_user; then
         su -l ${USER_NAME} -c "
             $BREW_CMD tap AdoptOpenJDK/openjdk
-            $BREW_CMD cask install adoptopenjdk8 adoptopenjdk9 adoptopenjdk10 adoptopenjdk11 adoptopenjdk12 adoptopenjdk13 adoptopenjdk14 adoptopenjdk15
+            $BREW_CMD install --cask adoptopenjdk8 adoptopenjdk9 adoptopenjdk10 adoptopenjdk11 adoptopenjdk12 adoptopenjdk13 adoptopenjdk14 adoptopenjdk15
         " ||
             { echo "[ERROR] Cannot install adoptopenjdk with Homebrew." 1>&2; return 20; }
 
@@ -747,6 +747,10 @@ function check_folders() {
 
 function cleanup() {
     echo "[INFO] Running cleanup..."
+
+    # fix $HOME permissions
+    sudo chown -R $(whoami) $HOME
+
     # clean bash_history
     [ -f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
