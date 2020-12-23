@@ -749,7 +749,7 @@ function cleanup() {
     echo "[INFO] Running cleanup..."
 
     # fix $HOME permissions
-    sudo chown -R $(whoami) $HOME
+    sudo chown -R ${USER_NAME} $HOME
 
     # clean bash_history
     [ -f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
