@@ -768,7 +768,7 @@ function cleanup() {
     log_version df -h
     log_version ls -ltra "${HOME}"
     log_version check_folders ${HOME}/.*
-
+    log_version ls -al /Applications
 }
 
 
