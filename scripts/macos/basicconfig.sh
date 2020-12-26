@@ -71,6 +71,8 @@ su -l "${USER_NAME}" -c "
         USER_NAME=${USER_NAME}
         $(declare -f log_version)
         $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
         $(declare -f install_nvm)
         $(declare -f install_nvm_nodejs)
         $(declare -f install_nvm_and_nodejs)
