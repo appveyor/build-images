@@ -505,7 +505,7 @@ function install_golangs() {
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
     declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.13" "go1.15.6" )
     for v in "${GO_VERSIONS[@]}"; do
-        gvm install "${v}" ||
+        gvm install "${v}" -B ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
     local index
