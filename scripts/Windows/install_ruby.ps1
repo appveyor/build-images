@@ -122,6 +122,22 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
+        }
+        @{
+            "version" = "Ruby 2.7.2-1"
+            "install_path" = "C:\Ruby27"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.2-1/rubyinstaller-2.7.2-1-x86.exe"
+            "devkit_url" = ""
+            "devkit_paths" = @()
+            "bundlerV2" = $true
+        }    
+        @{
+            "version" = "Ruby 2.7.2-1 (x64)"
+            "install_path" = "C:\Ruby27-x64"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.2-1/rubyinstaller-2.7.2-1-x64.exe"
+            "devkit_url" = ""
+            "devkit_paths" = @()
+            "bundlerV2" = $true
         }        
     )
 } else {
@@ -130,17 +146,17 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
 $rubies = $rubies + @(
     @{
-        "version" = "Ruby 2.7.1-1"
-        "install_path" = "C:\Ruby27"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.1-1/rubyinstaller-2.7.1-1-x86.exe"
+        "version" = "Ruby 3.0.0-1"
+        "install_path" = "C:\Ruby30"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.0-1/rubyinstaller-3.0.0-1-x86.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
     }    
     @{
-        "version" = "Ruby 2.7.1-1 (x64)"
-        "install_path" = "C:\Ruby27-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.1-1/rubyinstaller-2.7.1-1-x64.exe"
+        "version" = "Ruby 3.0.0-1 (x64)"
+        "install_path" = "C:\Ruby30-x64"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.0-1/rubyinstaller-3.0.0-1-x64.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
