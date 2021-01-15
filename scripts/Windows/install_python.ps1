@@ -288,55 +288,55 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     UpdatePip "$env:SystemDrive\Python37-x64"
 }
 
-# Python 3.8.6 x64
-$python38_x64 = (GetUninstallString 'Python 3.8.6 (64-bit)')
+# Python 3.8.7 x64
+$python38_x64 = (GetUninstallString 'Python 3.8.7 (64-bit)')
 if($python38_x64) {
-    Write-Host 'Python 3.8.6 x64 already installed'
+    Write-Host 'Python 3.8.7 x64 already installed'
 } else {
 
     UninstallPython "Python 3.8.0 (64-bit)"
     UninstallPython "Python 3.8.2 (64-bit)"
     UninstallPython "Python 3.8.5 (64-bit)"
 
-    InstallPythonEXE "3.8.6" "x64" "$env:SystemDrive\Python38-x64"
+    InstallPythonEXE "3.8.7" "x64" "$env:SystemDrive\Python38-x64"
 }
 
-# Python 3.8.6
-$python38 = (GetUninstallString 'Python 3.8.6 (32-bit)')
+# Python 3.8.7
+$python38 = (GetUninstallString 'Python 3.8.7 (32-bit)')
 if($python38) {
-    Write-Host 'Python 3.8.6 already installed'
+    Write-Host 'Python 3.8.7 already installed'
 } else {
 
     UninstallPython "Python 3.8.0 (32-bit)"
     UninstallPython "Python 3.8.2 (32-bit)"
     UninstallPython "Python 3.8.5 (32-bit)"
 
-    InstallPythonEXE "3.8.6" "x86" "$env:SystemDrive\Python38"
+    InstallPythonEXE "3.8.7" "x86" "$env:SystemDrive\Python38"
 }
 
 UpdatePip "$env:SystemDrive\Python38"
 UpdatePip "$env:SystemDrive\Python38-x64"
 
-# Python 3.9.0 x64
-$python39_x64 = (GetUninstallString 'Python 3.9.0 (64-bit)')
+# Python 3.9.1 x64
+$python39_x64 = (GetUninstallString 'Python 3.9.1 (64-bit)')
 if($python39_x64) {
-    Write-Host 'Python 3.9.0 x64 already installed'
+    Write-Host 'Python 3.9.1 x64 already installed'
 } else {
 
     #UninstallPython "Python 3.8.5 (64-bit)"
 
-    InstallPythonEXE "3.9.0" "x64" "$env:SystemDrive\Python39-x64"
+    InstallPythonEXE "3.9.1" "x64" "$env:SystemDrive\Python39-x64"
 }
 
-# Python 3.9.0
-$python39 = (GetUninstallString 'Python 3.9.0 (32-bit)')
+# Python 3.9.1
+$python39 = (GetUninstallString 'Python 3.9.1 (32-bit)')
 if($python39) {
-    Write-Host 'Python 3.9.0 already installed'
+    Write-Host 'Python 3.9.1 already installed'
 } else {
 
     #UninstallPython "Python 3.8.5 (32-bit)"
 
-    InstallPythonEXE "3.9.0" "x86" "$env:SystemDrive\Python39"
+    InstallPythonEXE "3.9.1" "x86" "$env:SystemDrive\Python39"
 }
 
 UpdatePip "$env:SystemDrive\Python39"
