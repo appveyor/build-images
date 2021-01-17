@@ -521,7 +521,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             $date_mark=Get-Date -UFormat "%Y%m%d%H%M%S"
 
             $env:PACKER_LOG=1
-            $env:PACKER_LOG_PATH="$(GetHomeDir)\packer-$date_mark.log"            
+            $env:PACKER_LOG_PATH= Join-Path $(GetHomeDir) "packer-$date_mark.log"
 
             & $packerPath build '--only=amazon-ebs' `
             -var "aws_access_key=$AccessKeyId" `
