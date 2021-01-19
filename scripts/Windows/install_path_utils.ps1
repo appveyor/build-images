@@ -4,7 +4,11 @@ Write-Host "====================="
 $pathUtilsPath = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\path-utils"
 New-Item $pathUtilsPath -ItemType Directory -Force
 
-Copy-Item "$PSScriptRoot\path-utils.psm1" -Destination $pathUtilsPath
+$srcPath = "$env:TEMP\path-utils.psm1"
+if (-not (Test-Path $srcPath)) {
+    $srcPath = "$PSScriptRoot\path-utils.psm1"
+}
+Copy-Item $srcPath -Destination $pathUtilsPath
 
 Remove-Module path-utils -ErrorAction SilentlyContinue
 Import-Module path-utils
