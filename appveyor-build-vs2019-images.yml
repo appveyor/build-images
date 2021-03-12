@@ -4,14 +4,14 @@ environment:
 # Hyper-V
 # =======
 
-  # - job_name: VS 2019 on Hyper-V - Part I
-  #   bake_phase: 1
-  #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
-  #   APPVEYOR_BAKE_IMAGE: vs2019-temp-p1
+  - job_name: VS 2019 on Hyper-V - Part I
+    bake_phase: 1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
+    APPVEYOR_BAKE_IMAGE: vs2019-temp-p1
 
-  # - job_name: VS 2019 on Hyper-V - Wait for Part I image to be ready
-  #   bake_phase: wait-50-min
-  #   job_depends_on: VS 2019 on Hyper-V - Part I
+  - job_name: VS 2019 on Hyper-V - Wait for Part I image to be ready
+    bake_phase: wait-50-min
+    job_depends_on: VS 2019 on Hyper-V - Part I
 
   - job_name: VS 2019 on Hyper-V - Part II
     bake_phase: 3
@@ -40,14 +40,14 @@ environment:
 # GCE
 # =======
 
-  # - job_name: VS 2019 on GCE us-central1 - Part I
-  #   bake_phase: 1
-  #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-gce-us-central1
-  #   APPVEYOR_BAKE_IMAGE: vs2019-temp-p1-gce-us-central1
+  - job_name: VS 2019 on GCE us-central1 - Part I
+    bake_phase: 1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: vs2019-temp-p1-gce-us-central1
 
-  # - job_name: VS 2019 on GCE us-central1 - Wait for Part I image to be ready
-  #   bake_phase: wait-15-min
-  #   job_depends_on: VS 2019 on GCE us-central1 - Part I
+  - job_name: VS 2019 on GCE us-central1 - Wait for Part I image to be ready
+    bake_phase: wait-15-min
+    job_depends_on: VS 2019 on GCE us-central1 - Part I
 
   - job_name: VS 2019 on GCE us-central1 - Part II
     bake_phase: 3
@@ -78,15 +78,15 @@ environment:
 # Hyper-V - Preview
 # ===============
 
-  # - job_name: VS 2019 Preview on Hyper-V - Part I
-  #   bake_phase: 1
-  #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
-  #   APPVEYOR_BAKE_IMAGE: vs2019-preview-temp-p1
-  #   install_vs2019_preview: true
+  - job_name: VS 2019 Preview on Hyper-V - Part I
+    bake_phase: 1
+    APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
+    APPVEYOR_BAKE_IMAGE: vs2019-preview-temp-p1
+    install_vs2019_preview: true
 
-  # - job_name: VS 2019 Preview on Hyper-V - Wait for Part I image to be ready
-  #   bake_phase: wait-50-min
-  #   job_depends_on: VS 2019 Preview on Hyper-V - Part I
+  - job_name: VS 2019 Preview on Hyper-V - Wait for Part I image to be ready
+    bake_phase: wait-50-min
+    job_depends_on: VS 2019 Preview on Hyper-V - Part I
 
   - job_name: VS 2019 Preview on Hyper-V - Part II
     bake_phase: 3
