@@ -1,5 +1,5 @@
 ﻿$110Letter = "L"
-$111Letter = "i"
+$111Letter = "j"
 $102Letter = "u"
 
 function GetUninstallString($productName) {
