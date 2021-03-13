@@ -9,7 +9,7 @@ if(-not (Test-Path $destPath)) {
 }
 
 $zipPath = "$env:TEMP\doxygen.zip"
-(New-Object Net.WebClient).DownloadFile('http://doxygen.nl/files/doxygen-1.8.20.windows.x64.bin.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://doxygen.nl/files/doxygen-1.9.1.windows.bin.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 Remove-Item $zipPath
 
