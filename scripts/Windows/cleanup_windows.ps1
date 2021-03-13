@@ -58,10 +58,10 @@ Clear-EventLog -LogName System
 Clear-EventLog -LogName AppVeyor
 
 # Cleanup NuGet cache
-Write-Host "Deleting NuGet cache..."
-if (Test-Path "$env:USERPROFILE\.nuget\packages") {
-    Remove-Item "$env:USERPROFILE.nuget\packages" -Force -Recurse
-}
+# Write-Host "Deleting NuGet cache..."
+# if (Test-Path "$env:USERPROFILE\.nuget\packages") {
+#     Remove-Item "$env:USERPROFILE.nuget\packages" -Force -Recurse
+# }
 
 # clean /etc/hosts
 $etcHosts = "$env:windir\System32\drivers\etc\hosts"
