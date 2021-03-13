@@ -13,17 +13,21 @@ $zipPath = "$env:TEMP\NUnit.Console-3.12.0.zip"
 $tempPath = "$env:TEMP\NUnit.Console"
 (New-Object Net.WebClient).DownloadFile('https://github.com/nunit/nunit-console/releases/download/v3.12/NUnit.Console-3.12.0.zip', $zipPath)
 7z x $zipPath -y -o"$tempPath" | Out-Null
-[IO.Directory]::Move("$tempPath\bin\net35", $nunitPath)
+New-Item -Path "$nunitPath" -ItemType Directory -Force | Out-Null
+[IO.Directory]::Move("$tempPath\bin\net35", "$nunitPath\bin")
+Copy-Item -Path "$tempPath\bin\agents" -Destination $nunitPath -Recurse
 Remove-Item $zipPath
 
 # logger
 $zipPath = "$($env:TEMP)\Appveyor.NUnit3Logger.zip"
 (New-Object Net.WebClient).DownloadFile('https://www.appveyor.com/downloads/Appveyor.NUnit3Logger.zip', $zipPath)
-7z x $zipPath -y -o"$nunitPath\addins" | Out-Null
-Move-Item "$nunitPath\addins\appveyor.addins" "$nunitPath\appveyor.addins"
+7z x $zipPath -y -o"$nunitPath\bin\addins" | Out-Null
+Move-Item "$nunitPath\bin\addins\appveyor.addins" "$nunitPath\bin\appveyor.addins"
 Remove-Item $zipPath -Force
 
+Remove-Path "$nunitPath"
 Remove-Path "$nunitPath\bin"
-Add-Path "$nunitPath"
+Add-Path "$nunitPath\bin"
+Add-SessionPath "$nunitPath\bin"
 
-Write-Host "NUnit 3.11.1 installed" -ForegroundColor Green
+Write-Host "NUnit installed" -ForegroundColor Green
