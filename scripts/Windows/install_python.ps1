@@ -53,15 +53,15 @@ function UpdatePip($pythonPath) {
 
 Write-Host "Downloading get-pip.py v2.6..." -ForegroundColor Cyan
 $pipPath26 = "$env:TEMP\get-pip-26.py"
-(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/2.6/get-pip.py', $pipPath26)
+(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/pip/2.6/get-pip.py', $pipPath26)
 
 Write-Host "Downloading get-pip.py v3.3..." -ForegroundColor Cyan
 $pipPath33 = "$env:TEMP\get-pip-33.py"
-(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/3.3/get-pip.py', $pipPath33)
+(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/pip/3.3/get-pip.py', $pipPath33)
 
 Write-Host "Downloading get-pip.py v3.4..." -ForegroundColor Cyan
 $pipPath34 = "$env:TEMP\get-pip-34.py"
-(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/3.4/get-pip.py', $pipPath34)
+(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/pip/3.4/get-pip.py', $pipPath34)
 
 function InstallPythonMSI($version, $platform, $targetPath) {
     $urlPlatform = ""
