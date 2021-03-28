@@ -1,7 +1,7 @@
 ﻿Write-Host "Installing Meson and Ninja..." -ForegroundColor Cyan
 
-$mesonUrl = 'https://github.com/mesonbuild/meson/releases/download/0.53.2/meson-0.53.2-64.msi'
-$ninjaUrl = 'https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-win.zip'
+$mesonUrl = 'https://github.com/mesonbuild/meson/releases/download/0.57.1/meson-0.57.1.1-64.msi'
+$ninjaUrl = 'https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip'
 
 Write-Host "Downloading..."
 $msiPath = "$env:TEMP\meson.msi"
