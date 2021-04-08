@@ -275,15 +275,15 @@ function disable_automatic_apt_updates() {
     # https://unix.stackexchange.com/questions/315502/how-to-disable-apt-daily-service-on-ubuntu-cloud-vm-image
     # https://askubuntu.com/questions/1059971/disable-updates-from-command-line-in-ubuntu-16-04
     # https://stackoverflow.com/questions/45269225/ansible-playbook-fails-to-lock-apt/51919678#51919678
-    
+
     systemctl stop apt-daily.timer
-    systemctl stop apt-daily-upgrade.timer    
+    systemctl stop apt-daily-upgrade.timer
     systemctl stop apt-daily.service
     systemctl kill --kill-who=all apt-daily.service
 
     systemctl disable apt-daily.service
     systemctl disable apt-daily.timer
-    systemctl disable apt-daily-upgrade.timer    
+    systemctl disable apt-daily-upgrade.timer
 
     systemctl daemon-reload
     systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
@@ -358,9 +358,9 @@ function install_tools() {
 
     #APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
     apt-get -y ${APT_GET_OPTIONS-} install "${tools_array[@]}" --no-install-recommends ||
-        { 
+        {
             echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2;
-            apt-cache policy gcc 
+            apt-cache policy gcc
             apt-cache policy zip
             apt-cache policy make
             return 10;
@@ -828,7 +828,7 @@ function install_outdated_dotnets() {
 
     # .NET SDK 2.1.202 with 2.0.9 runtime
     wget -O dotnet-sdk.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/2.1.202/dotnet-sdk-2.1.202-linux-x64.tar.gz
-    sudo tar zxf dotnet-sdk.tar.gz -C /usr/share/dotnet    
+    sudo tar zxf dotnet-sdk.tar.gz -C /usr/share/dotnet
 
     rm dotnet-sdk.tar.gz
 }
@@ -1149,7 +1149,7 @@ function configure_docker_repository() {
     echo "[INFO] Running configure_docker_repository..."
 
     add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
-        { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }    
+        { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }
 }
 
 function install_docker() {
@@ -1162,7 +1162,7 @@ function install_docker() {
     apt-get -y -q install docker-ce ||
         { echo "[ERROR] Cannot install Docker." 1>&2; return 20; }
 
-    # Native Overlay Diff: true 
+    # Native Overlay Diff: true
     modprobe -r overlay && modprobe overlay redirect_dir=off
     echo 'options overlay redirect_dir=off' > /etc/modprobe.d/disable_overlay_redirect_dir.conf
 
@@ -1245,7 +1245,7 @@ function configure_sqlserver() {
     # Add SQL Server tools to the path by default:
     write_line "${HOME}/.profile" 'add2path_suffix /opt/mssql-tools/bin'
     export PATH="$PATH:/opt/mssql-tools/bin"
-    
+
     local counter=1
     local errstatus=1
     while [ $counter -le 5 ] && [ $errstatus = 1 ]; do
@@ -1391,7 +1391,7 @@ function configure_rabbitmq_repositories() {
 function install_rabbitmq() {
     echo "[INFO] Running install_rabbitmq..."
     curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
-    
+
     configure_rabbitmq_repositories
 
     # mkdir -p /etc/rabbitmq
@@ -1408,7 +1408,7 @@ function install_rabbitmq() {
     systemctl enable rabbitmq-server &&
     systemctl disable rabbitmq-server ||
         { echo "[ERROR] Cannot configure rabbitmq." 1>&2; return 30; }
-    
+
     log_version dpkg -l rabbitmq-server
     log_version erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), io:fwrite(Version), halt().' -noshell
 }
@@ -1502,7 +1502,7 @@ function install_azurecli() {
     curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg
 
     configure_azurecli_repository
-    
+
     apt-get update
     apt-get install -y azure-cli
 
@@ -1513,7 +1513,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.19.1
+        VERSION=3.20.1
     else
         VERSION=$1
     fi
@@ -1665,13 +1665,13 @@ function install_virtualbox_core() {
 
     local VB_VERSION=6.1
     retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc -o oracle_vbox_2016.asc ||
-        { echo "[ERROR] Cannot download oracle_vbox_2016.asc." 1>&2; return 10; }   
+        { echo "[ERROR] Cannot download oracle_vbox_2016.asc." 1>&2; return 10; }
 
     apt-key add oracle_vbox_2016.asc
     rm oracle_vbox_2016.asc
 
     add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
-        { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }    
+        { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }
 
     apt-get -y -qq update &&
     apt-get -y -q install virtualbox-${VB_VERSION} ||
@@ -1745,7 +1745,7 @@ function install_clang_version() {
         { echo "[ERROR] Cannot add llvm ${LLVM_VERSION} repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install clang-$LLVM_VERSION lldb-$LLVM_VERSION lld-$LLVM_VERSION clangd-$LLVM_VERSION ||
-        { echo "[ERROR] Cannot install clang-${LLVM_VERSION}." 1>&2; return 20; }    
+        { echo "[ERROR] Cannot install clang-${LLVM_VERSION}." 1>&2; return 20; }
 }
 
 function install_octo() {

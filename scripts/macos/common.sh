@@ -294,7 +294,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.19.2
+        VERSION=3.20.1
     else
         VERSION=$1
     fi
@@ -590,7 +590,7 @@ function install_xcode() {
         for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
             xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
         done
-        
+
         xcversion simulators --install='iOS 12.4'
         xcversion simulators --install='tvOS 12.4'
         xcversion simulators --install='watchOS 5.3'
@@ -770,8 +770,3 @@ function cleanup() {
     log_version check_folders ${HOME}/.*
     log_version ls -al /Applications
 }
-
-
-
-
-
