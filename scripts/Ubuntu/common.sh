@@ -1517,7 +1517,7 @@ function install_cmake() {
     else
         VERSION=$1
     fi
-    local TAR_FILE=cmake-${VERSION}-Linux-x86_64.tar.gz
+    local TAR_FILE=cmake-${VERSION}-linux-x86_64.tar.gz
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"

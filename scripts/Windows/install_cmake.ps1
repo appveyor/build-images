@@ -15,7 +15,7 @@ $msiPath = "$env:TEMP\cmake-$cmakeVersion-win32-x86.msi"
 
 Write-Host "Downloading..."
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-(New-Object Net.WebClient).DownloadFile("https://github.com/Kitware/CMake/releases/download/v$cmakeVersion/cmake-$cmakeVersion-win32-x86.msi", $msiPath)
+(New-Object Net.WebClient).DownloadFile("https://github.com/Kitware/CMake/releases/download/v$cmakeVersion/cmake-$cmakeVersion-windows-x86_64.msi", $msiPath)
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i $msiPath /quiet
