@@ -11,7 +11,7 @@ if (test-path "${env:ProgramFiles(x86)}\Mozilla Firefox") {
 
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\firefox-installer.exe"
-(New-Object Net.WebClient).DownloadFile("https://download.mozilla.org/?product=firefox-86.0.1-ssl&os=$arch&lang=en-US", $exePath)
+(New-Object Net.WebClient).DownloadFile("https://download.mozilla.org/?product=firefox-87.0-ssl&os=$arch&lang=en-US", $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath -ms
