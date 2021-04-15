@@ -453,154 +453,6 @@
                "title":"AppVeyor Build Agent"
             }
          ]
-      },      
-      {
-         "name":"Ubuntu 18.04 Minimal",
-         "cloudTypes":[
-            "Docker"
-         ],
-         "operatingSystems":[
-            "Windows",
-            "Linux",
-            "MacOS"
-         ],
-         "imageOperatingSystem":"Linux",
-         "template":"appveyor/build-image:minimal-ubuntu-18.04",
-         "installedFeatures":[
-            {
-               "id":"git",
-               "title":"Git (latest)"
-            },
-            {
-               "id":"hg",
-               "title":"Mercurial (latest)"
-            },
-            {
-               "id":"svn",
-               "title":"Subversion (latest)"
-            },            
-            {
-               "id":"powershell_core",
-               "title":"PowerShell Core 6.2.2"
-            },
-            {
-               "id":"appveyor_build_agent",
-               "title":"AppVeyor Build Agent"
-            }
-         ]
-      },
-      {
-         "name":"Ubuntu 18.04 Full",
-         "cloudTypes":[
-            "Docker"
-         ],
-         "operatingSystems":[
-            "Windows",
-            "Linux",
-            "MacOS"
-         ],
-         "imageOperatingSystem":"Linux",
-         "template":"mcr.microsoft.com/powershell:ubuntu-18.04",
-         "installedFeatures":[
-            {
-               "id":"git",
-               "title":"Git (latest)"
-            },
-            {
-               "id":"hg",
-               "title":"Mercurial (latest)"
-            },
-            {
-               "id":"svn",
-               "title":"Subversion (latest)"
-            },            
-            {
-               "id":"powershell_core",
-               "title":"PowerShell Core 6.2.2"
-            },
-            {
-               "id":"appveyor_build_agent",
-               "title":"AppVeyor Build Agent"
-            }
-         ],
-         "optionalFeatures":[
-            {
-               "id": "install_nvm_and_nodejs",
-               "title": "Node.js with NVM"
-            },
-            {
-               "id": "install_pythons",
-               "title": "Pythons"
-            },
-            {
-               "id": "install_dotnets",
-               "title": ".NET Core SDKs"
-            },
-            {
-               "id": "install_dotnetv3_preview",
-               "title": ".NET Core 3.0 preview"
-            },
-            {
-               "id": "install_mono",
-               "title": "Mono framework (latest)"
-            },
-            {
-               "id": "install_jdks",
-               "title": "JDK 7, 8, 9, 10, 11, 12, 13, 14"
-            },
-            {
-               "id": "install_rvm_and_rubies",
-               "title": "Ruby (all 2.x versions) and RVM"
-            },
-            {
-               "id": "install_gvm_and_golangs",
-               "title": "Golang 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 1.12.x and GVM"
-            },          
-            {
-               "id": "install_p7zip",
-               "title": "p7zip"
-            },
-            {
-               "id": "install_packer",
-               "title": "Packer by Hashicorp"
-            },
-            {
-               "id": "install_yarn",
-               "title": "Yarn package manager"
-            },
-            {
-               "id": "install_awscli",
-               "title": "AWS CLI"
-            },
-            {
-               "id": "install_localstack",
-               "title": "Localstack"
-            },
-            {
-               "id": "install_gcloud",
-               "title": "gcloud command-line tool"
-            },
-            {
-               "id": "install_azurecli",
-               "title": "Azure CLI"
-            },
-            {
-               "id": "install_cmake",
-               "title": "CMake 3.15.2"
-            },
-            {
-               "id": "install_gcc",
-               "title": "GCC"
-            },
-            {
-               "id": "install_clang",
-               "title": "CLang"
-            },
-            {
-               "id": "install_octo",
-               "title": "OctopusTools"
-            }
-         ]         
       },
       {
          "name":"Ubuntu 20.04 Minimal",
@@ -749,6 +601,302 @@
                "title": "OctopusTools"
             }
          ]         
-      }             
+      },
+      {
+         "name":"Ubuntu 18.04 Minimal",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows",
+            "Linux",
+            "MacOS"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"appveyor/build-image:minimal-ubuntu-18.04",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git (latest)"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial (latest)"
+            },
+            {
+               "id":"svn",
+               "title":"Subversion (latest)"
+            },            
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.2"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      },
+      {
+         "name":"Ubuntu 18.04 Full",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows",
+            "Linux",
+            "MacOS"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"mcr.microsoft.com/powershell:ubuntu-18.04",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git (latest)"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial (latest)"
+            },
+            {
+               "id":"svn",
+               "title":"Subversion (latest)"
+            },            
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.2"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ],
+         "optionalFeatures":[
+            {
+               "id": "install_nvm_and_nodejs",
+               "title": "Node.js with NVM"
+            },
+            {
+               "id": "install_pythons",
+               "title": "Pythons"
+            },
+            {
+               "id": "install_dotnets",
+               "title": ".NET Core SDKs"
+            },
+            {
+               "id": "install_dotnetv3_preview",
+               "title": ".NET Core 3.0 preview"
+            },
+            {
+               "id": "install_mono",
+               "title": "Mono framework (latest)"
+            },
+            {
+               "id": "install_jdks",
+               "title": "JDK 7, 8, 9, 10, 11, 12, 13, 14"
+            },
+            {
+               "id": "install_rvm_and_rubies",
+               "title": "Ruby (all 2.x versions) and RVM"
+            },
+            {
+               "id": "install_gvm_and_golangs",
+               "title": "Golang 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 1.12.x and GVM"
+            },          
+            {
+               "id": "install_p7zip",
+               "title": "p7zip"
+            },
+            {
+               "id": "install_packer",
+               "title": "Packer by Hashicorp"
+            },
+            {
+               "id": "install_yarn",
+               "title": "Yarn package manager"
+            },
+            {
+               "id": "install_awscli",
+               "title": "AWS CLI"
+            },
+            {
+               "id": "install_localstack",
+               "title": "Localstack"
+            },
+            {
+               "id": "install_gcloud",
+               "title": "gcloud command-line tool"
+            },
+            {
+               "id": "install_azurecli",
+               "title": "Azure CLI"
+            },
+            {
+               "id": "install_cmake",
+               "title": "CMake 3.15.2"
+            },
+            {
+               "id": "install_gcc",
+               "title": "GCC"
+            },
+            {
+               "id": "install_clang",
+               "title": "CLang"
+            },
+            {
+               "id": "install_octo",
+               "title": "OctopusTools"
+            }
+         ]         
+      },      
+      {
+         "name":"Ubuntu 16.04 Minimal",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows",
+            "Linux",
+            "MacOS"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"appveyor/build-image:minimal-ubuntu-16.04",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git (latest)"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial (latest)"
+            },
+            {
+               "id":"svn",
+               "title":"Subversion (latest)"
+            },            
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ]
+      },
+      {
+         "name":"Ubuntu 16.04 Full",
+         "cloudTypes":[
+            "Docker"
+         ],
+         "operatingSystems":[
+            "Windows",
+            "Linux",
+            "MacOS"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"mcr.microsoft.com/powershell:ubuntu-16.04",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git (latest)"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial (latest)"
+            },
+            {
+               "id":"svn",
+               "title":"Subversion (latest)"
+            },            
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ],
+         "optionalFeatures":[
+            {
+               "id": "install_nvm_and_nodejs",
+               "title": "Node.js with NVM"
+            },
+            {
+               "id": "install_pythons",
+               "title": "Pythons"
+            },
+            {
+               "id": "install_dotnets",
+               "title": ".NET Core SDKs"
+            },
+            {
+               "id": "install_dotnetv3_preview",
+               "title": ".NET Core 3.0 preview"
+            },
+            {
+               "id": "install_mono",
+               "title": "Mono framework (latest)"
+            },
+            {
+               "id": "install_jdks",
+               "title": "JDK 7, 8, 9, 10, 11, 12, 13, 14"
+            },
+            {
+               "id": "install_rvm_and_rubies",
+               "title": "Ruby (all 2.x versions) and RVM"
+            },
+            {
+               "id": "install_gvm_and_golangs",
+               "title": "Golang 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 1.12.x and GVM"
+            },          
+            {
+               "id": "install_p7zip",
+               "title": "p7zip"
+            },
+            {
+               "id": "install_packer",
+               "title": "Packer by Hashicorp"
+            },
+            {
+               "id": "install_yarn",
+               "title": "Yarn package manager"
+            },
+            {
+               "id": "install_awscli",
+               "title": "AWS CLI"
+            },
+            {
+               "id": "install_localstack",
+               "title": "Localstack"
+            },
+            {
+               "id": "install_gcloud",
+               "title": "gcloud command-line tool"
+            },
+            {
+               "id": "install_azurecli",
+               "title": "Azure CLI"
+            },
+            {
+               "id": "install_cmake",
+               "title": "CMake 3.15.2"
+            },
+            {
+               "id": "install_gcc",
+               "title": "GCC"
+            },
+            {
+               "id": "install_clang",
+               "title": "CLang"
+            },
+            {
+               "id": "install_octo",
+               "title": "OctopusTools"
+            }
+         ]         
+      }                   
    ]
 }
