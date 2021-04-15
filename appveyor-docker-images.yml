@@ -31,6 +31,11 @@ environment:
       OS_NAME: linux
       BASE_IMAGE: mcr.microsoft.com/powershell:ubuntu-18.04
 
+    - IMAGE_TAG: appveyor/build-image:minimal-ubuntu-20.04
+      APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
+      OS_NAME: linux
+      BASE_IMAGE: mcr.microsoft.com/powershell:ubuntu-20.04      
+
 build_script:
 - cmd: docker build -t %IMAGE_TAG% --isolation %DOCKER_ISOLATION% --build-arg BUILD_IMAGE=%BUILD_IMAGE% --build-arg BASE_IMAGE=%BASE_IMAGE% -f .\docker\%OS_NAME%-build-image.Dockerfile .
 - sh: docker build -t ${IMAGE_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} -f ./docker/${OS_NAME}-build-image.Dockerfile .

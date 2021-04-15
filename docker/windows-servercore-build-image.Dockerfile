@@ -1,7 +1,7 @@
 ARG BASE_IMAGE=mcr.microsoft.com/windows/servercore:ltsc2019
 FROM $BASE_IMAGE
 
-ENV APPVEYOR_BUILD_AGENT_VERSION=7.0.2417
+ENV APPVEYOR_BUILD_AGENT_VERSION=7.0.2974
 
 COPY ./scripts/Windows ./scripts
 
