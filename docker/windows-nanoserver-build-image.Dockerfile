@@ -27,7 +27,7 @@ ENV ProgramFiles="C:\Program Files" \
     PSModuleAnalysisCachePath="$LOCALAPPDATA\Microsoft\Windows\PowerShell\docker\ModuleAnalysisCache" \
     PSCORE="$ProgramFiles\PowerShell\pwsh.exe"
 
-COPY --from=installer-env ["C:/Program Files/PowerShell/6", "C:/Program Files/PowerShell"]
+COPY --from=installer-env ["C:/Program Files/PowerShell/7", "C:/Program Files/PowerShell"]
 COPY --from=installer-env ["C:/Program Files/7-Zip", "C:/Program Files/7-Zip"]
 COPY --from=installer-env ["C:/Program Files/Git", "C:/Program Files/Git"]
 COPY --from=installer-env ["C:/Program Files/AppVeyor/BuildAgent", "C:/Program Files/AppVeyor/BuildAgent"]
