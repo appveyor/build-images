@@ -3,7 +3,7 @@ Write-Host "Installing SQL Server Integration Services Projects" -ForegroundColo
 # install runtime
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Microsoft.DataTools.IntegrationServices.exe"
-(New-Object Net.WebClient).DownloadFile('https://ssis.gallerycdn.vsassets.io/extensions/ssis/sqlserverintegrationservicesprojects/3.9/1598239170220/Microsoft.DataTools.IntegrationServices.exe', $exePath)
+(New-Object Net.WebClient).DownloadFile('https://ssis.gallerycdn.vsassets.io/extensions/ssis/sqlserverintegrationservicesprojects/3.12.1/1615963475094/Microsoft.DataTools.IntegrationServices.exe', $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath /quiet
@@ -17,7 +17,7 @@ Write-Host "Installing Microsoft Analysis Services Projects" -ForegroundColor Cy
 
 $vsixPath = "$env:TEMP\data-tools.vsix"
 Write-Host "Downloading VS extension package..."
-(New-Object Net.WebClient).DownloadFile('https://probitools.gallerycdn.vsassets.io/extensions/probitools/microsoftanalysisservicesmodelingprojects/2.9.13/1599609948622/Microsoft.DataTools.AnalysisServices.vsix', $vsixPath)
+(New-Object Net.WebClient).DownloadFile('https://probitools.gallerycdn.vsassets.io/extensions/probitools/microsoftanalysisservicesmodelingprojects/2.9.17/1617148425070/Microsoft.DataTools.AnalysisServices.vsix', $vsixPath)
 
 Write-Host "Installing package..."
 
