@@ -527,7 +527,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -704,7 +704,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.12" "3.7.9" "3.8.6" "3.9.1" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.13" "3.7.9" "3.8.9" "3.9.4" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
