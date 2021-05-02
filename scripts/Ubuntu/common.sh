@@ -691,7 +691,7 @@ function install_virtualenv() {
 
 function install_pip() {
     echo "[INFO] Running install_pip..."
-    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
+    curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py" ||
         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
     python get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
