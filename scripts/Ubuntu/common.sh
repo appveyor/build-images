@@ -1380,7 +1380,13 @@ Restart=always" > /etc/systemd/system/redis.service
 
 function install_rabbitmq() {
     echo "[INFO] Running install_rabbitmq..."
-    curl -1sLf 'https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey' | apt-key add -
+
+    ## Team RabbitMQ's main signing key
+    apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
+    ## Launchpad PPA that provides modern Erlang releases
+    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
+    ## PackageCloud RabbitMQ repository
+    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F6609E60DC62814E"
 
     add-apt-repository "deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu ${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
