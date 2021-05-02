@@ -1380,44 +1380,19 @@ Restart=always" > /etc/systemd/system/redis.service
 
 function install_rabbitmq() {
     echo "[INFO] Running install_rabbitmq..."
+    curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
 
-    ## Team RabbitMQ's main signing key
-    apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
+    add-apt-repository "deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu ${OS_CODENAME} main" ||
+        { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
 
-    ## Launchpad PPA that provides modern Erlang releases
-    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
+    add-apt-repository "deb https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ ${OS_CODENAME} main" ||
+        { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
 
-    ## PackageCloud RabbitMQ repository
-    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F6609E60DC62814E"
+    # mkdir -p /etc/rabbitmq
+    # echo 'NODENAME=rabbitmq@localhost' > /etc/rabbitmq/rabbitmq-env.conf
 
-    ## Add apt repositories maintained by Team RabbitMQ
-    tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
-## Provides modern Erlang/OTP releases
-##
-## "bionic" as distribution name should work for any reasonably recent Ubuntu or Debian release.
-## See the release to distribution mapping table in RabbitMQ doc guides to learn more.
-deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu bionic main
-deb-src http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu bionic main
-
-## Provides RabbitMQ
-##
-## "bionic" as distribution name should work for any reasonably recent Ubuntu or Debian release.
-## See the release to distribution mapping table in RabbitMQ doc guides to learn more.
-deb https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ bionic main
-deb-src https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ bionic main
-EOF
-
-    ## Update package indices
-    apt-get update -y
-
-    ## Install Erlang packages
-    apt-get install -y erlang-base \
-                            erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
-                            erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
-                            erlang-runtime-tools erlang-snmp erlang-ssl \
-                            erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
-
-    apt-get -y install rabbitmq-server --fix-missing ||
+    apt-get -y -qq update &&
+    apt-get -y install rabbitmq-server ||
         { echo "[ERROR] Cannot install rabbitmq." 1>&2; return 20; }
 
     sed -ibak -E -e 's/#\s*ulimit/ulimit/' /etc/default/rabbitmq-server &&
