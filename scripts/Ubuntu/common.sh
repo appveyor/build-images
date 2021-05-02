@@ -1380,7 +1380,7 @@ Restart=always" > /etc/systemd/system/redis.service
 
 function install_rabbitmq() {
     echo "[INFO] Running install_rabbitmq..."
-    curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
+    curl -1sLf 'https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey' | apt-key add -
 
     add-apt-repository "deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu ${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
