@@ -1417,7 +1417,7 @@ EOF
                             erlang-runtime-tools erlang-snmp erlang-ssl \
                             erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
 
-    apt-get -y install rabbitmq-server ||
+    apt-get -y install rabbitmq-server --fix-missing ||
         { echo "[ERROR] Cannot install rabbitmq." 1>&2; return 20; }
 
     sed -ibak -E -e 's/#\s*ulimit/ulimit/' /etc/default/rabbitmq-server &&
