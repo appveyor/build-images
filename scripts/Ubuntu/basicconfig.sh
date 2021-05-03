@@ -195,67 +195,67 @@ install_gitlfs ||
 install_gitversion ||
     _abort $?
 
-# install_pip ||
-#     _abort $?
+install_pip ||
+    _abort $?
 
-# install_octo ||
-#     _abort $?
+install_octo ||
+    _abort $?
 
-# install_virtualenv ||
-#     _abort $?
+install_virtualenv ||
+    _abort $?
 
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f install_pythons)
-#         install_pythons" ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_pythons)
+        install_pythons" ||
+    _abort $?
 
-# # .NET stuff
-# install_dotnets ||
-#     _abort $?
-# preheat_dotnet_sdks &&
-# log_version dotnet --list-sdks &&
-# log_version dotnet --list-runtimes ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f configure_nuget)
-#         configure_nuget" ||
-#     _abort $?
+# .NET stuff
+install_dotnets ||
+    _abort $?
+preheat_dotnet_sdks &&
+log_version dotnet --list-sdks &&
+log_version dotnet --list-runtimes ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_nuget)
+        configure_nuget" ||
+    _abort $?
 
-# su -l ${USER_NAME} -c "
-#         curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
+    _abort $?
 
-# install_docker ||
-#     _abort $?
+install_docker ||
+    _abort $?
 
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f install_nvm)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         install_nvm" ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
-#         USER_NAME=${USER_NAME}
-#         $(declare -f log_version)
-#         $(declare -f install_nvm_nodejs)
-#         install_nvm_nodejs ${CURRENT_NODEJS}" ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_nvm)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        install_nvm" ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_nvm_nodejs)
+        install_nvm_nodejs ${CURRENT_NODEJS}" ||
+    _abort $?
 
-# install_virtualbox ||
-#     _abort $?
-# install_mysql ||
-#     _abort $?
-# install_postgresql ||
-#     _abort $?
-# install_redis ||
-#     _abort $?
-# install_mongodb ||
-#     _abort $?
+install_virtualbox ||
+    _abort $?
+install_mysql ||
+    _abort $?
+install_postgresql ||
+    _abort $?
+install_redis ||
+    _abort $?
+install_mongodb ||
+    _abort $?
 install_rabbitmq ||
     _abort $?
 
