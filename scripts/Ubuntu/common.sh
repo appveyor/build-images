@@ -336,7 +336,7 @@ function install_tools() {
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
 
     # python packages
-    tools_array+=( "python" "python-dev" "python3", "python3-distutils" )
+    tools_array+=( "python" "python-dev" "python3", "python3-pip" )
     tools_array+=( "python-setuptools" )
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
@@ -683,7 +683,7 @@ password-stores =" > .subversion/config ||
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
     command -v pip || install_pip
-    pip install virtualenv ||
+    pip3 install virtualenv ||
         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
 
     log_version virtualenv --version
@@ -1459,17 +1459,17 @@ function install_yarn() {
 
 function install_awscli() {
     echo "[INFO] Running install_awscli..."
-    pip install awscli ||
+    pip3 install awscli ||
         { echo "[ERROR] Cannot install awscli." 1>&2; return 10; }
     log_version aws --version
 }
 
 function install_localstack() {
     echo "[INFO] Running install_localstack..."
-    pip install localstack ||
+    pip3 install localstack ||
         { echo "[ERROR] Cannot install localstack." 1>&2; return 10; }
     # since version 0.8.8 localstack requires but do not have in dependencies amazon_kclpy
-    pip install amazon_kclpy ||
+    pip3 install amazon_kclpy ||
         { echo "[ERROR] Cannot install amazon_kclpy which is required by localstack." 1>&2; return 20; }
     log_version localstack --version
 }
