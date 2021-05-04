@@ -337,7 +337,7 @@ function install_tools() {
 
     # python packages
     tools_array+=( "python" "python-dev" "python3-pip" )
-    tools_array+=( "python-setuptools" )
+    tools_array+=( "python-setuptools" "python3-setuptools" )
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
     tools_array+=( "libbz2-dev" "liblzma-dev" "python3-tk" "tk-dev" "libsqlite3-dev" )
