@@ -336,7 +336,7 @@ function install_tools() {
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
 
     # python packages
-    tools_array+=( "python" "python-dev" "python-pip" )
+    tools_array+=( "python" "python-dev" )
     tools_array+=( "python-setuptools" )
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
@@ -691,10 +691,11 @@ function install_virtualenv() {
 
 function install_pip() {
     echo "[INFO] Running install_pip..."
-    # curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py" ||
-    #     { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    # python get-pip.py ||
-    #     { echo "[WARNING] Cannot install pip." ; return 10; }
+    
+    curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py" ||
+        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
+    python get-pip.py ||
+        { echo "[WARNING] Cannot install pip." ; return 10; }
 
     python -m pip install --upgrade pip setuptools wheel
 
