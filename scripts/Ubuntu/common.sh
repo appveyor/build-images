@@ -691,9 +691,9 @@ function install_virtualenv() {
 
 function install_pip() {
     echo "[INFO] Running install_pip..."
-    curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py" ||
+    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    python get-pip.py ||
+    python3 get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
     log_version pip --version
@@ -1466,7 +1466,7 @@ function install_awscli() {
 
 function install_localstack() {
     echo "[INFO] Running install_localstack..."
-    pip install localstack --ignore-installed PyYAML ||
+    pip install localstack ||
         { echo "[ERROR] Cannot install localstack." 1>&2; return 10; }
     # since version 0.8.8 localstack requires but do not have in dependencies amazon_kclpy
     pip install amazon_kclpy ||
