@@ -173,36 +173,36 @@ install_gcc ||
 install_clang ||
     _abort $?
 
-install_p7zip
+# install_p7zip
 
-install_powershell ||
-    _abort $?
+# install_powershell ||
+#     _abort $?
 
-install_cvs ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_svn)
-        configure_svn" ||
-    _abort $?
+# install_cvs ||
+#     _abort $?
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         $(declare -f configure_svn)
+#         configure_svn" ||
+#     _abort $?
 
-update_git ||
-    _abort $?
+# update_git ||
+#     _abort $?
 
-install_gitlfs ||
-    _abort $?
+# install_gitlfs ||
+#     _abort $?
 
-install_gitversion ||
-    _abort $?
+# install_gitversion ||
+#     _abort $?
 
 install_pip ||
     _abort $?
 
-install_octo ||
-    _abort $?
-
 install_virtualenv ||
     _abort $?
+
+# install_octo ||
+#     _abort $?
 
 # su -l ${USER_NAME} -c "
 #         USER_NAME=${USER_NAME}
