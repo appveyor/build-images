@@ -699,7 +699,7 @@ function install_pip() {
     log_version pip3 --version
 
     #cleanup
-    rm get-pip.py
+    #rm get-pip.py
 }
 
 function install_pythons(){
