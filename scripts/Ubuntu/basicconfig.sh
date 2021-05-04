@@ -173,27 +173,27 @@ install_gcc ||
 install_clang ||
     _abort $?
 
-# install_p7zip
+install_p7zip
 
-# install_powershell ||
-#     _abort $?
+install_powershell ||
+    _abort $?
 
-# install_cvs ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f configure_svn)
-#         configure_svn" ||
-#     _abort $?
+install_cvs ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_svn)
+        configure_svn" ||
+    _abort $?
 
-# update_git ||
-#     _abort $?
+update_git ||
+    _abort $?
 
-# install_gitlfs ||
-#     _abort $?
+install_gitlfs ||
+    _abort $?
 
-# install_gitversion ||
-#     _abort $?
+install_gitversion ||
+    _abort $?
 
 install_pip ||
     _abort $?
@@ -201,139 +201,139 @@ install_pip ||
 install_virtualenv ||
     _abort $?
 
-# install_octo ||
-#     _abort $?
+install_octo ||
+    _abort $?
 
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f install_pythons)
-#         install_pythons" ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_pythons)
+        install_pythons" ||
+    _abort $?
 
-# # .NET stuff
-# install_dotnets ||
-#     _abort $?
-# preheat_dotnet_sdks &&
-# log_version dotnet --list-sdks &&
-# log_version dotnet --list-runtimes ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f configure_nuget)
-#         configure_nuget" ||
-#     _abort $?
+# .NET stuff
+install_dotnets ||
+    _abort $?
+preheat_dotnet_sdks &&
+log_version dotnet --list-sdks &&
+log_version dotnet --list-runtimes ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_nuget)
+        configure_nuget" ||
+    _abort $?
 
-# su -l ${USER_NAME} -c "
-#         curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
+    _abort $?
 
-# install_docker ||
-#     _abort $?
+install_docker ||
+    _abort $?
 
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f install_nvm)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         install_nvm" ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
-#         USER_NAME=${USER_NAME}
-#         $(declare -f log_version)
-#         $(declare -f install_nvm_nodejs)
-#         install_nvm_nodejs ${CURRENT_NODEJS}" ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_nvm)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        install_nvm" ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_nvm_nodejs)
+        install_nvm_nodejs ${CURRENT_NODEJS}" ||
+    _abort $?
 
-# install_virtualbox ||
-#     _abort $?
-# install_mysql ||
-#     _abort $?
-# install_postgresql ||
-#     _abort $?
-# install_redis ||
-#     _abort $?
-# install_mongodb ||
-#     _abort $?
-# install_rabbitmq ||
-#     _abort $?
+install_virtualbox ||
+    _abort $?
+install_mysql ||
+    _abort $?
+install_postgresql ||
+    _abort $?
+install_redis ||
+    _abort $?
+install_mongodb ||
+    _abort $?
+install_rabbitmq ||
+    _abort $?
 
-# install_qt ||
-#     _abort $? 
+install_qt ||
+    _abort $? 
 
-# # Go lang
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f install_gvm)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         install_gvm" ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         source \"${HOME}/.gvm/scripts/gvm\"
-#         $(declare -f log_version)
-#         $(declare -f install_golangs)
-#         install_golangs" ||
-#     _abort $?
+# Go lang
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_gvm)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        install_gvm" ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        source \"${HOME}/.gvm/scripts/gvm\"
+        $(declare -f log_version)
+        $(declare -f install_golangs)
+        install_golangs" ||
+    _abort $?
 
-# install_jdks ||
-#     _abort $?
+install_jdks ||
+    _abort $?
 
-# OFS=$IFS
-# IFS=$'\n'
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f configure_jdk)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         configure_jdk" <<< "${PROFILE_LINES[*]}" ||
-#     _abort $?
-# IFS=$OFS
+OFS=$IFS
+IFS=$'\n'
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_jdk)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
+    _abort $?
+IFS=$OFS
 
-# # Ruby
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f install_rvm)
-#         install_rvm" ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
-#         $(declare -f log_version)
-#         $(declare -f install_rubies)
-#         install_rubies" ||
-#     _abort $?
+# Ruby
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_rvm)
+        install_rvm" ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
+        $(declare -f log_version)
+        $(declare -f install_rubies)
+        install_rubies" ||
+    _abort $?
 
-# install_mono ||
-#     _abort $?
+install_mono ||
+    _abort $?
 
-# install_sqlserver ||
-#     _abort $?
+install_sqlserver ||
+    _abort $?
 
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
-#         $(declare -f configure_sqlserver)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         configure_sqlserver" ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+        $(declare -f configure_sqlserver)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        configure_sqlserver" ||
+    _abort $?
 
-# disable_sqlserver ||
-#     _abort $?
+disable_sqlserver ||
+    _abort $?
 
-# install_yarn ||
-#     _abort $?
+install_yarn ||
+    _abort $?
 
-# install_packer ||
-#     _abort $?
-# install_doxygen ||
-#     _abort $?
+install_packer ||
+    _abort $?
+install_doxygen ||
+    _abort $?
 install_awscli ||
     _abort $?
 install_localstack || _continue
