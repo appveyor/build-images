@@ -198,10 +198,10 @@ install_gitversion ||
 install_pip ||
     _abort $?
 
-install_octo ||
+install_virtualenv ||
     _abort $?
 
-install_virtualenv ||
+install_octo ||
     _abort $?
 
 su -l ${USER_NAME} -c "

@@ -336,7 +336,7 @@ function install_tools() {
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
 
     # python packages
-    tools_array+=( "python" "python-dev" "python3" )
+    tools_array+=( "python" "python-dev" )
     tools_array+=( "python-setuptools" )
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
@@ -527,7 +527,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "lts/argon" "lts/boron" "lts/carbon" "lts/dubnium" "lts/erbium" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -691,20 +691,23 @@ function install_virtualenv() {
 
 function install_pip() {
     echo "[INFO] Running install_pip..."
-    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
+    
+    curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py" ||
         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
     python get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
+    python -m pip install --upgrade pip setuptools wheel
+
     log_version pip --version
 
     #cleanup
-    rm get-pip.py
+    #rm get-pip.py
 }
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.12" "3.7.9" "3.8.6" "3.9.1" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.13" "3.7.9" "3.8.9" "3.9.4" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -1121,7 +1124,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.13" "go1.15.6" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.11" "go1.16.3" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1378,21 +1381,21 @@ Restart=always" > /etc/systemd/system/redis.service
     log_version redis-server --version
 }
 
-function configure_rabbitmq_repositories() {
-    echo "[INFO] Running configure_rabbitmq_repositories..."
-
-    add-apt-repository "deb https://dl.bintray.com/rabbitmq-erlang/debian ${OS_CODENAME} erlang" ||
-        { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
-
-    add-apt-repository "deb https://dl.bintray.com/rabbitmq/debian ${OS_CODENAME} main" ||
-        { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
-}
-
 function install_rabbitmq() {
     echo "[INFO] Running install_rabbitmq..."
-    curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | apt-key add -
 
-    configure_rabbitmq_repositories
+    ## Team RabbitMQ's main signing key
+    apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
+    ## Launchpad PPA that provides modern Erlang releases
+    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
+    ## PackageCloud RabbitMQ repository
+    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F6609E60DC62814E"
+
+    add-apt-repository "deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu ${OS_CODENAME} main" ||
+        { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
+
+    add-apt-repository "deb https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ ${OS_CODENAME} main" ||
+        { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
 
     # mkdir -p /etc/rabbitmq
     # echo 'NODENAME=rabbitmq@localhost' > /etc/rabbitmq/rabbitmq-env.conf
@@ -1466,7 +1469,7 @@ function install_awscli() {
 
 function install_localstack() {
     echo "[INFO] Running install_localstack..."
-    pip install localstack ||
+    pip install localstack --ignore-installed PyYAML ||
         { echo "[ERROR] Cannot install localstack." 1>&2; return 10; }
     # since version 0.8.8 localstack requires but do not have in dependencies amazon_kclpy
     pip install amazon_kclpy ||
@@ -1513,7 +1516,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.20.1
+        VERSION=3.20.2
     else
         VERSION=$1
     fi
