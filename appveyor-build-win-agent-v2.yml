@@ -1,0 +1,48 @@
+environment:    
+  matrix:
+
+# GCE
+# =======
+
+  - job_name: Bake image with Agent v2
+    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: win-agentv2
+  
+  AGENT_VERSION: 7.0.2879
+  AGENT_INSTALL_DIR: '%ProgramFiles%\AppVeyor\BuildAgentCore'
+  BUILD_AGENT_MODE: GCE
+
+init:
+  - appveyor version
+  - ps: $ErrorActionPreference = 'Stop'
+  - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
+  - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
+
+clone_folder: '%USERPROFILE%\image-bake-scripts'
+
+clone_script:
+- ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_COMMIT).zip" -OutFile "$env:temp\scripts.zip"
+- ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
+- ps: Copy-Item -Path "$env:temp\scripts\build-images-$($env:APPVEYOR_REPO_COMMIT)\scripts\Windows\*" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
+
+test: off
+
+# on_failure:
+# - ps: Get-EventLog AppVeyor -newest 10 | Format-List
+
+build_script:
+- ps: .\install_appveyor_build_agent_core.ps1
+- ps: |
+    $appveyorPath = "$env:ProgramFiles\AppVeyor\BuildAgentCore"
+    $pwshProfileFilename = "$env:USERPROFILE\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
+
+    if (Test-Path $pwshProfileFilename) {
+        $lines = Get-Content $pwshProfileFilename
+        for($i = 0; $i -lt $lines.length; $i++) {
+          if ($lines[$i] -contains '*AppVeyor.BuildAgent.PowerShell.dll*') {
+            $lines[$i] = ''
+          }
+        }
+        $lines += "try { Import-Module '$appveyorPath\AppVeyor.BuildAgent.PowerShell.dll' } catch {}"
+        $lines | Set-Content $pwshProfileFilename
+    }

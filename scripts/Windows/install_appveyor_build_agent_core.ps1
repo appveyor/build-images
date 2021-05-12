@@ -4,6 +4,10 @@ if ($env:AGENT_VERSION) {
 	$AGENT_VERSION = $env:AGENT_VERSION
 }
 
+if ($env:AGENT_VERSION) {
+	$AGENT_VERSION = $env:AGENT_VERSION
+}
+
 Write-Host "Installing AppVeyor Build Agent Core"
 Write-Host "===================================="
 
