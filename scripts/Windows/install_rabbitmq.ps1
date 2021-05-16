@@ -26,10 +26,8 @@ Write-Host "RabbitMQ installed and started" -ForegroundColor Green
 Write-Host "Installing RabbitMQ plugins..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
-$zipPath = "$env:TEMP\rabbitmq_delayed_message_exchange-20171201-3.7.x.zip"
-$pluginPath = "${env:ProgramFiles}\RabbitMQ Server\rabbitmq_server-$rabbitVersion\plugins"
-(New-Object Net.WebClient).DownloadFile('https://bintray.com/rabbitmq/community-plugins/download_file?file_path=3.7.x%2Frabbitmq_delayed_message_exchange%2Frabbitmq_delayed_message_exchange-20171201-3.7.x.zip', $zipPath)
-7z x $zipPath -y -o"$pluginPath" | Out-Null
+$pluginPath = "${env:ProgramFiles}\RabbitMQ Server\rabbitmq_server-$rabbitVersion\plugins\rabbitmq_delayed_message_exchange-3.8.0.ez"
+(New-Object Net.WebClient).DownloadFile('https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/v3.8.0/rabbitmq_delayed_message_exchange-3.8.0.ez', $pluginPath)
 
 Write-Host "Installing..."
 & "${env:ProgramFiles}\RabbitMQ Server\rabbitmq_server-$rabbitVersion\sbin\rabbitmq-plugins.bat" enable rabbitmq_delayed_message_exchange

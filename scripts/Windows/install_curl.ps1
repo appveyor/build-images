@@ -1,4 +1,4 @@
-﻿# Downloaded from: https://bintray.com/vszakats/generic/curl/7.55.1
+﻿# Downloaded from: https://curl.se/windows/
 
 Write-Host "Installing curl..." -ForegroundColor Cyan
 
@@ -8,11 +8,11 @@ if(Test-Path $destPath) {
     Remove-Item $destPath -Recurse -Force
 }
 
-$zipPath = "$env:TEMP\curl-7.55.1-win64-mingw.7z"
+$zipPath = "$env:TEMP\curl-7.76.1_2-win64-mingw.zip"
 $tempPath = "$env:TEMP\curl"
-(New-Object Net.WebClient).DownloadFile('https://bintray.com/vszakats/generic/download_file?file_path=curl-7.55.1-win64-mingw.7z', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://curl.se/windows/dl-7.76.1_2/curl-7.76.1_2-win64-mingw.zip', $zipPath)
 7z x $zipPath -aoa -o"$tempPath"
-[IO.Directory]::Move("$tempPath\curl-7.55.1-win64-mingw", $destPath)
+[IO.Directory]::Move("$tempPath\curl-7.76.1_2-win64-mingw", $destPath)
 
 del $zipPath
 Remove-Item $tempPath -Recurse -Force
