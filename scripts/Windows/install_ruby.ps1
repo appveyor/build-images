@@ -12,67 +12,72 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         @{
             "version" = "Ruby 1.9.3-p551"
             "install_path" = "C:\Ruby193"
-            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-1.9.3-p551-i386-mingw32.7z"
-            "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe"
-            "devkit_paths" = @("C:/Ruby193")
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby193.zip"
+            "devkit_paths" = @()
             "install_psych" = "true"
+            "dontUpdate" = $true
             "dontUpdateRubygems" = $true
             #"rubygemsUpdate" = $true
         }
         @{
             "version" = "Ruby 2.0.0-p648"
             "install_path" = "C:\Ruby200"
-            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.0.0-p648-i386-mingw32.7z"
-            "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe"
-            "devkit_paths" = @("C:/Ruby200")
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby200.zip"
+            "devkit_paths" = @()
             "install_psych" = "true"
+            "dontUpdate" = $true
             "rubygemsUpdate" = $true
         }
         @{
             "version" = "Ruby 2.0.0-p648 (x64)"
             "install_path" = "C:\Ruby200-x64"
-            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.0.0-p648-x64-mingw32.7z"
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby200-x64.zip"
             "install_psych" = "true"
+            "dontUpdate" = $true
             "rubygemsUpdate" = $true
         }
         @{
             "version" = "Ruby 2.2.6"
             "install_path" = "C:\Ruby22"
-            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.2.6-i386-mingw32.7z"
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby22.zip"
+            "dontUpdate" = $true
             "rubygemsUpdate" = $true
         }
         @{
             "version" = "Ruby 2.2.6 (x64)"
             "install_path" = "C:\Ruby22-x64"
-            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.2.6-x64-mingw32.7z"
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby22-x64.zip"
+            "dontUpdate" = $true
             "rubygemsUpdate" = $true
         }
         @{
             "version" = "Ruby 2.1.9"
             "install_path" = "C:\Ruby21"
-            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.1.9-i386-mingw32.7z"
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby21.zip"
+            "dontUpdate" = $true
             "rubygemsUpdate" = $true
         }
         @{
             "version" = "Ruby 2.1.9 (x64)"
             "install_path" = "C:\Ruby21-x64"
-            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.1.9-x64-mingw32.7z"
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby21-x64.zip"
+            "dontUpdate" = $true
             "rubygemsUpdate" = $true
         }
         @{
             "version" = "Ruby 2.3.3"
             "install_path" = "C:\Ruby23"
-            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.3.3-i386-mingw32.7z"
-            "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe"
-            "devkit_paths" = @("C:/Ruby200", "C:/Ruby21", "C:/Ruby22", "C:/Ruby23")
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby23.zip"
+            "devkit_paths" = @()
+            "dontUpdate" = $true
             "bundlerV2" = $true
         }
         @{
             "version" = "Ruby 2.3.3 (x64)"
             "install_path" = "C:\Ruby23-x64"
-            "download_url" = "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.3.3-x64-mingw32.7z"
-            "devkit_url" = "http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-64-4.7.2-20130224-1432-sfx.exe"
-            "devkit_paths" = @("C:/Ruby200-x64", "C:/Ruby21-x64", "C:/Ruby22-x64", "C:/Ruby23-x64")
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby23-x64.zip"
+            "devkit_paths" = @()
+            "dontUpdate" = $true
             "bundlerV2" = $true
         }
         @{
@@ -124,17 +129,17 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "bundlerV2" = $true
         }
         @{
-            "version" = "Ruby 2.7.2-1"
+            "version" = "Ruby 2.7.3-1"
             "install_path" = "C:\Ruby27"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.2-1/rubyinstaller-2.7.2-1-x86.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.3-1/rubyinstaller-2.7.3-1-x86.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
         }    
         @{
-            "version" = "Ruby 2.7.2-1 (x64)"
+            "version" = "Ruby 2.7.3-1 (x64)"
             "install_path" = "C:\Ruby27-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.2-1/rubyinstaller-2.7.2-1-x64.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.3-1/rubyinstaller-2.7.3-1-x64.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
@@ -146,17 +151,17 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
 $rubies = $rubies + @(
     @{
-        "version" = "Ruby 3.0.0-1"
+        "version" = "Ruby 3.0.1-1"
         "install_path" = "C:\Ruby30"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.0-1/rubyinstaller-3.0.0-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.1-1/rubyinstaller-3.0.1-1-x86.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
     }    
     @{
-        "version" = "Ruby 3.0.0-1 (x64)"
+        "version" = "Ruby 3.0.1-1 (x64)"
         "install_path" = "C:\Ruby30-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.0-1/rubyinstaller-3.0.0-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.1-1/rubyinstaller-3.0.1-1-x64.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
@@ -253,7 +258,6 @@ function Install-Ruby($ruby) {
         New-Item $tempPath -ItemType Directory | Out-Null
 
         $distFileName = Get-FileNameFromUrl $ruby.download_url
-        $distName = [IO.Path]::GetFileNameWithoutExtension($distFileName)
         $distLocalFileName = (Join-Path $tempPath $distFileName)
 
         # download archive to a temp
@@ -262,10 +266,7 @@ function Install-Ruby($ruby) {
 
         # extract archive to C:\
         Write-Host "  Extracting Ruby files..." -ForegroundColor Gray
-        cmd /c 7z x $distLocalFileName -o"C:\" | Out-Null
-
-        # rename
-        Rename-Item "C:\$distName" $ruby.install_path
+        cmd /c 7z x $distLocalFileName -o"$($ruby.install_path)" | Out-Null
 
         # setup Ruby
         UpdateRubyPath "$($ruby.install_path)\bin"
@@ -278,34 +279,6 @@ function Install-Ruby($ruby) {
         # list installed gems
         Write-Host "gem list --local" -ForegroundColor Gray
         cmd /c gem list --local
-
-        # download DevKit
-        if($ruby.devkit_url) {
-            Write-Host "  Downloading DevKit from $($ruby.devkit_url)" -ForegroundColor Gray
-            $devKitFileName = Get-FileNameFromUrl $ruby.devkit_url
-            $devKitLocalFileName = (Join-Path $tempPath $devKitFileName)
-            (New-Object Net.WebClient).DownloadFile($ruby.devkit_url, $devKitLocalFileName)
-
-            # extract DevKit
-            $devKitPath = (Join-Path $ruby.install_path 'DevKit')
-            Write-Host "  Extracting DevKit to $devKitPath..." -ForegroundColor Gray
-            cmd /c 7z x $devKitLocalFileName -o"$devKitPath" | Out-Null
-
-            # create config.yml
-            $configYamlPath = (Join-Path $devKitPath 'config.yml')
-            New-Item $configYamlPath -ItemType File | Out-Null
-            Add-Content $configYamlPath "---`n"
-            for($i = 0; $i -lt $ruby.devkit_paths.Count; $i++) {
-                Add-Content $configYamlPath "- $($ruby.devkit_paths[$i])`n"
-            }
-
-            # install DevKit
-            Write-Host "  Installing DevKit..." -ForegroundColor Gray
-            $origPath = (pwd).Path
-            cd $devKitPath
-            cmd /c ruby dk.rb install
-            cd $origPath
-        }
     }
 
     # delete temp path
@@ -318,6 +291,11 @@ function Install-Ruby($ruby) {
 }
 
 function Update-Ruby($ruby) {
+
+    if ($ruby.dontUpdate) {
+        return
+    }
+
     Write-Host "Updating $($ruby.version)" -ForegroundColor Cyan
 
     UpdateRubyPath "$($ruby.install_path)\bin"
@@ -398,7 +376,7 @@ for($i = 0; $i -lt $rubies.Count; $i++) {
 if (-not $env:INSTALL_LATEST_ONLY) {
     Add-Path 'C:\Ruby193\bin'
 } else {
-    Add-Path 'C:\Ruby27\bin'
+    Add-Path 'C:\Ruby30\bin'
 }
 
 ((Get-Date) - $started)
