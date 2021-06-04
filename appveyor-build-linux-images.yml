@@ -16,20 +16,10 @@ environment:
     APPVEYOR_BAKE_IMAGE: ubuntu1604-master-gce-us-central1
     BUILD_AGENT_MODE: GCE
 
-  # - job_name: Ubuntu 20.04 on Azure West US
-  #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-2004-azure-westus
-  #   APPVEYOR_BAKE_IMAGE: ubuntu2004-master-azure-westus
-  #   BUILD_AGENT_MODE: Azure    
-
   - job_name: Ubuntu 18.04 on Azure West US
     APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1804-azure-westus
     APPVEYOR_BAKE_IMAGE: ubuntu1804-master-azure-westus
     BUILD_AGENT_MODE: Azure
-
-  # - job_name: Ubuntu 16.04 on Azure West US
-  #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1604-azure-westus
-  #   APPVEYOR_BAKE_IMAGE: ubuntu1604-master-azure-westus
-  #   BUILD_AGENT_MODE: Azure
 
   - job_name: Ubuntu 20.04 on Hyper-V
     APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-2004-hyperv
