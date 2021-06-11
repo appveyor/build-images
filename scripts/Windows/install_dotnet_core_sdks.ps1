@@ -32,10 +32,10 @@ Install-SDK "2.2.402"
 if (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019") {
     Install-SDK "3.0.103"
     Install-SDK "3.1.202"
-    Install-SDK "3.1.409"
+    Install-SDK "3.1.410"
 }
 
 # VS 2019 Preview
 if ($env:install_vs2019_preview) {
-	Install-SDK "6.0.100-preview.3.21202.5"
+	Install-SDK "6.0.100-preview.4.21255.9"
 }
