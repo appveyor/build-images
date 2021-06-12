@@ -97,33 +97,33 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "bundlerV2" = $true
         }
         @{
-            "version" = "Ruby 2.5.8-1"
+            "version" = "Ruby 2.5.9-1"
             "install_path" = "C:\Ruby25"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.8-1/rubyinstaller-2.5.8-1-x86.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.9-1/rubyinstaller-2.5.9-1-x86.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
         }
         @{
-            "version" = "Ruby 2.5.8-1 (x64)"
+            "version" = "Ruby 2.5.9-1 (x64)"
             "install_path" = "C:\Ruby25-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.8-1/rubyinstaller-2.5.8-1-x64.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.9-1/rubyinstaller-2.5.9-1-x64.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
         }
         @{
-            "version" = "Ruby 2.6.6-1"
+            "version" = "Ruby 2.6.7-1"
             "install_path" = "C:\Ruby26"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.6-1/rubyinstaller-2.6.6-1-x86.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.7-1/rubyinstaller-2.6.7-1-x86.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
         }    
         @{
-            "version" = "Ruby 2.6.6-1 (x64)"
+            "version" = "Ruby 2.6.7-1 (x64)"
             "install_path" = "C:\Ruby26-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.6-1/rubyinstaller-2.6.6-1-x64.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.7-1/rubyinstaller-2.6.7-1-x64.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
