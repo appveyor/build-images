@@ -23,6 +23,6 @@ if (-not (Get-LocalUser -Name $env:appveyor_user -ErrorAction Ignore)) {throw "u
 cmd /c net localgroup Administrators $env:appveyor_user /add
 cmd /c 'winrm set winrm/config/service/auth @{Basic="true"}'
 
-Set-LocalUser -Name $env:appveyor_user -PasswordNeverExpires:$true
+Set-LocalUser -Name $env:appveyor_user -PasswordNeverExpires:$false
 
 Write-Host "User created"
