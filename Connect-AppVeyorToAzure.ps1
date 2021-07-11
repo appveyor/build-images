@@ -589,7 +589,7 @@ Function Connect-AppVeyorToAzure {
                 -var "image_description=$ImageName" `
                 -var "datemark=$date_mark" `
                 -var "packer_manifest=$packerManifest" `
-                -var "OPT_FEATURES=$ImageFeatures" `
+                -var "opt_features=$ImageFeatures" `
                 $ImageTemplate
             }
 

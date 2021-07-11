@@ -406,7 +406,7 @@ d-i passwd/user-default-groups appveyor sudo
                 "-var `"output_directory=$output_directory`"",
                 "-var `"datemark=$date_mark`"",
                 "-var `"packer_manifest=$packerManifest`"",
-                "-var `"OPT_FEATURES=$ImageFeatures`"",
+                "-var `"opt_features=$ImageFeatures`"",
                 "-var `"host_ip_addr=$MasterIPAddress`"",
                 "-var `"host_ip_mask=$SubnetMask`"",
                 "-var `"host_ip_gw=$DefaultGateway`"",

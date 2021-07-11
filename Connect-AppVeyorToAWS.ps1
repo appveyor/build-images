@@ -534,7 +534,7 @@ S3 bucket $($aws_s3_bucket_artifacts) id in '$($bucketregion)' region, while bui
             -var "image_description=$ImageName" `
             -var "datemark=$date_mark" `
             -var "packer_manifest=$packerManifest" `
-            -var "OPT_FEATURES=$ImageFeatures" `
+            -var "opt_features=$ImageFeatures" `
             $ImageTemplate
 
 
