@@ -13,6 +13,8 @@ Start-Process $buildToolsPath `
 -ArgumentList `
 '--add', 'Microsoft.VisualStudio.Workload.MSBuildTools', `
 '--add', 'Microsoft.VisualStudio.Workload.NetCoreBuildTools', `
+'--add', 'Microsoft.VisualStudio.Workload.WebBuildTools', `
+'--add', 'Microsoft.VisualStudio.Wcf.BuildTools.ComponentGroup', `
 '--add', 'Microsoft.Component.ClickOnce.MSBuild', `
 '--quiet', '--norestart', '--nocache' `
 -NoNewWindow -Wait; `
