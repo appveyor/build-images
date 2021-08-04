@@ -11,16 +11,16 @@ environment:
 # Azure
 # =======
 
-  # - job_name: VS 2019 on Azure West US
-  #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-azure-westus
-  #   APPVEYOR_BAKE_IMAGE: vs2019-master-azure-westus
+  - job_name: VS 2019 on Azure West US
+    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-azure-westus
+    APPVEYOR_BAKE_IMAGE: vs2019-master-azure-westus
 
 # GCE
 # =======
 
-  # - job_name: VS 2019 on GCE us-central1
-  #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
-  #   APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
+  - job_name: VS 2019 on GCE us-central1
+    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
+    APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
 
 # Azure - Preview
 # ===============
@@ -33,10 +33,10 @@ environment:
 # Hyper-V - Preview
 # ===============
 
-  - job_name: VS 2019 Preview on Hyper-V
-    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-preview-master
-    APPVEYOR_BAKE_IMAGE: vs2019-preview-master
-    install_vs2019_preview: true
+  # - job_name: VS 2019 Preview on Hyper-V
+  #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-preview-master
+  #   APPVEYOR_BAKE_IMAGE: vs2019-preview-master
+  #   install_vs2019_preview: true
 
 init:
   - appveyor version
@@ -58,15 +58,15 @@ test: off
 
 build_script:
 
-# - ps: .\install_qt_ifw.ps1
+- ps: .\install_selenium_drivers.ps1
 # - dir C:\Qt
 # - dir C:\Qt\Tools
 # - dir C:\Qt\Tools\QtInstallerFramework
-- ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
+# - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
 
 # Restart VM
-- ps: Start-Sleep -s 5; Restart-Computer -Force
-- ps: Start-Sleep -s 5
+# - ps: Start-Sleep -s 5; Restart-Computer -Force
+# - ps: Start-Sleep -s 5
 
 - appveyor version
 - ps: .\cleanup_windows.ps1
