@@ -587,7 +587,7 @@ function install_xcode() {
 
     # big sur
     if [ "$OSX_MAJOR_VER" -eq 11 ]; then
-        XCODE_VERSIONS=( "12.5" )
+        XCODE_VERSIONS=( "12.5.1" )
     fi
 
     #check fastlane
@@ -597,7 +597,7 @@ function install_xcode() {
         export XCODE_INSTALL_USER=$APPLEID_USER
         export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
         export FASTLANE_DONT_STORE_PASSWORD=1
-        #export SPACESHIP_SKIP_2FA_UPGRADE=1
+        export SPACESHIP_SKIP_2FA_UPGRADE=1
 
         for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
             xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
