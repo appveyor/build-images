@@ -587,7 +587,7 @@ function install_xcode() {
 
     # big sur
     if [ "$OSX_MAJOR_VER" -eq 11 ]; then
-        XCODE_VERSIONS=( "12.5.1" )
+        XCODE_VERSIONS=( "12.5" )
     fi
 
     #check fastlane
