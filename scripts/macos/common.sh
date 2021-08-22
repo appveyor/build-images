@@ -5,7 +5,8 @@ if [[ -z "${USER_NAME-}" || "${#USER_NAME}" = "0" ]]; then USER_NAME=appveyor; f
 if [[ -z "${USER_HOME-}" || "${#USER_HOME}" = "0" ]]; then USER_HOME=/Users/appveyor; fi
 if [[ -z "${VERSIONS_FILE-}" || "${#VERSIONS_FILE}" = "0" ]]; then VERSIONS_FILE=$HOME/versions.log; fi
 HOST_NAME=appveyor-vm
-OSX_VERS=$(sw_vers -productVersion | awk -F "." '{print $2}')
+OSX_MAJOR_VER=$(sw_vers -productVersion | awk -F "." '{print $1}')
+OSX_MINOR_VER=$(sw_vers -productVersion | awk -F "." '{print $2}')
 PlistBuddy="/usr/libexec/PlistBuddy"
 BREW_CMD=$(command -v brew)
 
@@ -340,7 +341,7 @@ function install_virtualenv() {
 }
 
 function fix_python_six() {
-    if [ "$OSX_VERS" -le 14 ]; then
+    if [ "$OSX_MAJOR_VER" -eq 10 ] && [ "$OSX_MINOR_VER" -le 14 ]; then
         # output current version
         pip list 2>/dev/null | grep six || true
         pip install --ignore-installed six ||
@@ -576,10 +577,17 @@ function install_xcode() {
     echo "[INFO] Running install_xcode..."
     XCODE_VERSION="11.3.1"
 
+    # all versions
     declare XCODE_VERSIONS=( "9.4.1" "10.3" "11.3.1" )
 
-    if [ "$OSX_VERS" -gt 14 ]; then
+    # catalina
+    if [ "$OSX_MAJOR_VER" -eq 10 ] && [ "$OSX_MINOR_VER" -gt 14 ]; then
         XCODE_VERSIONS+=( "11.7" "12.3" )
+    fi
+
+    # big sur
+    if [ "$OSX_MAJOR_VER" -eq 11 ]; then
+        XCODE_VERSIONS=( "12.5.1" )
     fi
 
     #check fastlane
@@ -615,8 +623,8 @@ function install_vcpkg() {
 
     echo "Home: $HOME"
 
-    echo "macOS version: $OSX_VERS"
-    if [ "$OSX_VERS" -le 14 ]; then
+    echo "macOS version: $OSX_MINOR_VER"
+    if [ "$OSX_MAJOR_VER" -eq 10 ] && [ "$OSX_MINOR_VER" -le 14 ]; then
         echo "Installing GCC"
         brew install gcc
     fi
