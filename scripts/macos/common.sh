@@ -682,17 +682,30 @@ function install_openjdk() {
     [ -x "${BREW_CMD-}" ] ||
         { echo "[ERROR] Cannot find brew. Install Homebrew first!" 1>&2; return 1; }
     if check_user; then
+
+        # all versions
+        declare JDK_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" )
+
+        # big sur
+        if [ "$OSX_MAJOR_VER" -eq 11 ]; then
+            JDK_VERSIONS=( "13" "14" "15" )
+        fi
+
         su -l ${USER_NAME} -c "
             $BREW_CMD tap AdoptOpenJDK/openjdk
-            $BREW_CMD install --cask adoptopenjdk8 adoptopenjdk9 adoptopenjdk10 adoptopenjdk11 adoptopenjdk12 adoptopenjdk13 adoptopenjdk14 adoptopenjdk15
-        " ||
-            { echo "[ERROR] Cannot install adoptopenjdk with Homebrew." 1>&2; return 20; }
+        " || { echo "[ERROR] Cannot add AdoptOpenJDK/openjdk tap." 1>&2; return 20; }        
 
-        JDK_PATH=$(/usr/libexec/java_home -v $i)
-        write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64='${JDK_PATH}
-        for i in 9 10 11 12 13 14 15; do
-            JDK_PATH=$(/usr/libexec/java_home -v $i)
-            write_line "${HOME}/.profile" "export JAVA_HOME_${i}_X64=${JDK_PATH}"
+        # install JDKs
+        for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
+            su -l ${USER_NAME} -c "
+                $BREW_CMD install --cask adoptopenjdk${JDK_VERSION}
+            " || { echo "[ERROR] Cannot install adoptopenjdk ${JDK_VERSION} with Homebrew." 1>&2; return 20; }
+        done
+
+        # add JDK paths to the profile
+        for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
+            JDK_PATH=$(/usr/libexec/java_home -v $JDK_VERSION)
+            write_line "${HOME}/.profile" "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}"
         done
     else
         echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
