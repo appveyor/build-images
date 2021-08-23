@@ -596,8 +596,8 @@ function install_xcode() {
         gem install xcode-install
         export XCODE_INSTALL_USER=$APPLEID_USER
         export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
+        export FASTLANE_SESSION="$APPLEID_SESSION"
         export FASTLANE_DONT_STORE_PASSWORD=1
-        export SPACESHIP_SKIP_2FA_UPGRADE=1
 
         for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
             xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
