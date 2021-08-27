@@ -469,7 +469,7 @@ function install_dotnets() {
 function install_gvm_and_golangs() {
     echo "[INFO] Running install_gvm_and_golangs..."
     # install go in system first
-    brew_install go
+    brew install go
     install_gvm
 
     source "${HOME}/.gvm/scripts/gvm"
