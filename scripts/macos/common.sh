@@ -511,9 +511,9 @@ function install_golangs() {
     for v in "${GO_VERSIONS[@]}"; do
         # big sur
         if [ "$OSX_MAJOR_VER" -eq 10 ]; then
-            # Catalina - install from binaries
+            # Catalina/Mojave - install from binaries
             gvm install "${v}" -B ||
-                { echo "[WARNING] Cannot install ${v}." 1>&2; }
+                { echo "[WARNING] Cannot install ${v} from binary." 1>&2; }
         else
             # BigSur - install from source
             gvm install "${v}" ||

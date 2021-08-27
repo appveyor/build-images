@@ -60,7 +60,9 @@ su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
         $(declare -f log_version)
+        $(declare -f check_user)
         $(declare -f brew_install)
+        $(declare -f run_brew)
         $(declare -f write_line)
         $(declare -f add_line)
         $(declare -f replace_line)        
