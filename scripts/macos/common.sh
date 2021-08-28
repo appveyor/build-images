@@ -711,11 +711,18 @@ function install_openjdk() {
             " || { echo "[ERROR] Cannot install adoptopenjdk ${JDK_VERSION} with Homebrew." 1>&2; return 20; }
         done
 
-        # add JDK paths to the profile
-        for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
-            JDK_PATH=$(/usr/libexec/java_home -v $JDK_VERSION)
-            write_line "${HOME}/.profile" "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}"
+        JDK_PATH=$(/usr/libexec/java_home -v $i)
+        write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64='${JDK_PATH}
+        for i in 9 10 11 12 13 14 15; do
+            JDK_PATH=$(/usr/libexec/java_home -v $i)
+            write_line "${HOME}/.profile" "export JAVA_HOME_${i}_X64=${JDK_PATH}"
         done
+
+        # # add JDK paths to the profile
+        # for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
+        #     JDK_PATH=$(/usr/libexec/java_home -v $JDK_VERSION)
+        #     write_line "${HOME}/.profile" "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}"
+        # done
     else
         echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
     fi
