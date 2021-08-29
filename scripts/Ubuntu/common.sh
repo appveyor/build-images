@@ -1313,8 +1313,8 @@ function install_postgresql() {
 
 function install_mongodb() {
     echo "[INFO] Running install_mongodb..."
-    curl -fsSL https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add - &&
-    add-apt-repository "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/4.2 multiverse" ||
+    curl -fsSL https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add - &&
+    add-apt-repository "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/5.0 multiverse" ||
         { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install mongodb-org ||
