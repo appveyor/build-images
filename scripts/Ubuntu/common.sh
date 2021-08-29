@@ -1139,7 +1139,7 @@ function install_golangs() {
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
-    declare DOCKER_IMAGES=( "microsoft/dotnet" "microsoft/aspnetcore" "debian" "ubuntu" "centos" "alpine" "busybox" )
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:5.0" "mcr.microsoft.com/dotnet/aspnet:5.0" "mcr.microsoft.com/mssql/server:2019-latest" "debian" "ubuntu" "centos" "alpine" "busybox" )
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
         docker pull "$IMAGE" ||
             { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
@@ -1180,6 +1180,11 @@ function install_docker() {
     systemctl disable docker
 
     log_version dpkg -l docker-ce
+
+    # install docker-compose
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    log_version docker-compose --version
 }
 
 function install_MSSQLServer() {
