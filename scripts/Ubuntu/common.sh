@@ -552,7 +552,7 @@ function update_git() {
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        GIT_VERSION=2.29.2
+        GIT_VERSION=2.33.0
     else
         GIT_VERSION=$1
     fi
