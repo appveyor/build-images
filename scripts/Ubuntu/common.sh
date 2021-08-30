@@ -1471,11 +1471,11 @@ function install_awscli() {
 
 function install_localstack() {
     echo "[INFO] Running install_localstack..."
-    pip install localstack --ignore-installed PyYAML ||
+    pip install localstack==0.12.12 --ignore-installed PyYAML ||
         { echo "[ERROR] Cannot install localstack." 1>&2; return 10; }
     # since version 0.8.8 localstack requires but do not have in dependencies amazon_kclpy
-    pip install amazon_kclpy ||
-        { echo "[ERROR] Cannot install amazon_kclpy which is required by localstack." 1>&2; return 20; }
+    pip install amazon-kclpy==2.0.2 ||
+        { echo "[ERROR] Cannot install amazon-kclpy which is required by localstack." 1>&2; return 20; }
     log_version localstack --version
 }
 
