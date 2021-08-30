@@ -1605,21 +1605,21 @@ function install_gcc() {
     echo "[INFO] Running install_gcc..."
     # add existing gcc's to alternatives
     if [[ -f /usr/bin/gcc-5 ]] && [[ -f /usr/bin/g++-5 ]]; then
-        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5 ||
+        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 ||
             { echo "[ERROR] Cannot install gcc-8." 1>&2; return 10; }
     fi
     add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
     apt-get -y -qq update ||
         { echo "[ERROR] Cannot add gcc repository to APT sources." 1>&2; return 20; }
     apt-get -y -q install gcc-7 g++-7 && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7 ||
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 50 --slave /usr/bin/g++ g++ /usr/bin/g++-7 ||
         { echo "[ERROR] Cannot install gcc-7." 1>&2; return 30; }
     apt-get -y -q install gcc-8 g++-8 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-8 ||
         { echo "[ERROR] Cannot install gcc-8." 1>&2; return 40; }
     apt-get -y -q install gcc-9 g++-9 && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9 ||
-        { echo "[ERROR] Cannot install gcc-8." 1>&2; return 40; }
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 70 --slave /usr/bin/g++ g++ /usr/bin/g++-9 ||
+        { echo "[ERROR] Cannot install gcc-9." 1>&2; return 50; }
 }
 
 function install_curl() {
