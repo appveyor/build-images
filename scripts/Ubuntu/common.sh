@@ -1323,10 +1323,16 @@ function install_postgresql() {
     replace_line '/etc/postgresql/11/main/pg_hba.conf' 'local   all             postgres                                trust' 'local\s+all\s+postgres\s+peer'
 }
 
+function configure_mongodb_repo() {
+    echo "[INFO] Running configure_mongodb_repo..."
+    curl -fsSL https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add - &&
+    add-apt-repository "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/5.0 multiverse" ||
+        { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
+}
+
 function install_mongodb() {
     echo "[INFO] Running install_mongodb..."
-    curl -fsSL https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add - &&
-    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
+    configure_mongodb_repo
     apt-get -y update &&
     apt-get -y -q install mongodb-org ||
         { echo "[ERROR] Cannot install mongodb." 1>&2; return 20; }
