@@ -1487,7 +1487,7 @@ function install_awscli() {
 function install_localstack() {
     echo "[INFO] Running install_localstack..."
     source ~/venv3.9/bin/activate
-    pip install localstack --ignore-installed PyYAML ||
+    pip install localstack ||
         { echo "[ERROR] Cannot install localstack." 1>&2; return 10; }
     # since version 0.8.8 localstack requires but do not have in dependencies amazon_kclpy
     pip install amazon-kclpy ||
