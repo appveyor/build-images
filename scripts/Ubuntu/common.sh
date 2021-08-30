@@ -247,6 +247,16 @@ function configure_uefi() {
     fi
 }
 
+function fix_apt_sources() {
+    echo "[INFO] Running fix_apt_sources..."
+    apt-get install -y python3-apt
+    wget https://github.com/davidfoerster/aptsources-cleanup/releases/download/v0.1.7.5.2/aptsources-cleanup.pyz
+    chmod a+x aptsources-cleanup.pyz
+    ./aptsources-cleanup.pyz --yes
+    apt-get update
+    rm aptsources-cleanup.pyz
+}
+
 function configure_locale() {
     echo "[INFO] Running configure_locale..."
     echo LANG=C.UTF-8 >/etc/default/locale

@@ -370,6 +370,8 @@ configure_motd ||
     _abort $?
 configure_uefi ||
     _abort $?
+fix_apt_sources ||
+    _abort $?
 if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
     fix_grub_timeout ||
         _abort $?
