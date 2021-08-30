@@ -33,14 +33,6 @@ function configure_firefox_repository() {
     apt-get -y update
 }
 
-function install_mongodb() {
-    echo "[INFO] Running install_mongodb..."
-    apt install -yqq mongodb ||
-        { echo "[ERROR] Cannot install mongodb." 1>&2; return 10; }
-
-    log_version dpkg -l mongodb
-}
-
 function install_jdks_from_repository() {
     echo "[INFO] Running install_jdks_from_repository..."
     add-apt-repository -y ppa:openjdk-r/ppa

@@ -1316,9 +1316,8 @@ function install_postgresql() {
 function install_mongodb() {
     echo "[INFO] Running install_mongodb..."
     curl -fsSL https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add - &&
-    add-apt-repository "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/5.0 multiverse" ||
-        { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
-    apt-get -y -qq update &&
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
+    apt-get -y update &&
     apt-get -y -q install mongodb-org ||
         { echo "[ERROR] Cannot install mongodb." 1>&2; return 20; }
     echo "[Unit]
@@ -1471,10 +1470,11 @@ function install_awscli() {
 
 function install_localstack() {
     echo "[INFO] Running install_localstack..."
-    pip install localstack==0.12.12 --ignore-installed PyYAML ||
+    source ~/venv3.9/bin/activate
+    pip install localstack --ignore-installed PyYAML ||
         { echo "[ERROR] Cannot install localstack." 1>&2; return 10; }
     # since version 0.8.8 localstack requires but do not have in dependencies amazon_kclpy
-    pip install amazon-kclpy==2.0.2 ||
+    pip install amazon-kclpy ||
         { echo "[ERROR] Cannot install amazon-kclpy which is required by localstack." 1>&2; return 20; }
     log_version localstack --version
 }
