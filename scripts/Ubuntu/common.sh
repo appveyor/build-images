@@ -1534,7 +1534,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.21.0
+        VERSION=3.21.2
     else
         VERSION=$1
     fi
@@ -1542,7 +1542,7 @@ function install_cmake() {
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
-    curl -fsSL -O "https://cmake.org/files/v${VERSION%.*}/${TAR_FILE}" &&
+    curl -fsSL -O "https://github.com/Kitware/CMake/releases/download/v${VERSION}/${TAR_FILE}" &&
     tar -zxf "${TAR_FILE}" ||
         { echo "[ERROR] Cannot download and untar cmake." 1>&2; popd; return 10; }
     DIR_NAME=$(tar -ztf ${TAR_FILE} |cut -d'/' -f1|sort|uniq|head -n1)
