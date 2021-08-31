@@ -247,6 +247,16 @@ function configure_uefi() {
     fi
 }
 
+function fix_apt_sources() {
+    echo "[INFO] Running fix_apt_sources..."
+    apt-get install -y python3-apt
+    wget https://github.com/davidfoerster/aptsources-cleanup/releases/download/v0.1.7.5.2/aptsources-cleanup.pyz
+    chmod a+x aptsources-cleanup.pyz
+    ./aptsources-cleanup.pyz --yes
+    apt-get update
+    rm aptsources-cleanup.pyz
+}
+
 function configure_locale() {
     echo "[INFO] Running configure_locale..."
     echo LANG=C.UTF-8 >/etc/default/locale
@@ -552,7 +562,7 @@ function update_git() {
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        GIT_VERSION=2.29.2
+        GIT_VERSION=2.33.0
     else
         GIT_VERSION=$1
     fi
@@ -707,7 +717,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.13" "3.7.10" "3.8.10" "3.9.5" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.14" "3.7.11" "3.8.11" "3.9.6" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -1019,12 +1029,9 @@ function install_rvm() {
         return 1
     fi
 
-    # Docker fix from here: https://github.com/inversepath/usbarmory-debian-base_image/issues/9#issuecomment-451635505
-    mkdir -p ${HOME}/.gnupg
-    echo "disable-ipv6" >> ${HOME}/.gnupg/dirmngr.conf
-
     # Install mpapis public key (might need `gpg2` and or `sudo`)
-    gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+    curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+    curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
 
     # Download the installer
     curl -fsSL -O https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer &&
@@ -1124,7 +1131,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.12" "go1.16.4" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.7" "go1.17" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1139,7 +1146,7 @@ function install_golangs() {
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
-    declare DOCKER_IMAGES=( "microsoft/dotnet" "microsoft/aspnetcore" "debian" "ubuntu" "centos" "alpine" "busybox" )
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:5.0" "mcr.microsoft.com/dotnet/aspnet:5.0" "mcr.microsoft.com/mssql/server:2019-latest" "debian" "ubuntu" "centos" "alpine" "busybox" )
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
         docker pull "$IMAGE" ||
             { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
@@ -1180,6 +1187,11 @@ function install_docker() {
     systemctl disable docker
 
     log_version dpkg -l docker-ce
+
+    # install docker-compose
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    log_version docker-compose --version
 }
 
 function install_MSSQLServer() {
@@ -1311,12 +1323,17 @@ function install_postgresql() {
     replace_line '/etc/postgresql/11/main/pg_hba.conf' 'local   all             postgres                                trust' 'local\s+all\s+postgres\s+peer'
 }
 
+function configure_mongodb_repo() {
+    echo "[INFO] Running configure_mongodb_repo..."
+    curl -fsSL https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add - &&
+    add-apt-repository "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/5.0 multiverse" ||
+        { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
+}
+
 function install_mongodb() {
     echo "[INFO] Running install_mongodb..."
-    curl -fsSL https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add - &&
-    add-apt-repository "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/4.2 multiverse" ||
-        { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
-    apt-get -y -qq update &&
+    configure_mongodb_repo
+    apt-get -y update &&
     apt-get -y -q install mongodb-org ||
         { echo "[ERROR] Cannot install mongodb." 1>&2; return 20; }
     echo "[Unit]
@@ -1469,11 +1486,12 @@ function install_awscli() {
 
 function install_localstack() {
     echo "[INFO] Running install_localstack..."
-    pip install localstack --ignore-installed PyYAML ||
+    source ~/venv3.9/bin/activate
+    pip install localstack ||
         { echo "[ERROR] Cannot install localstack." 1>&2; return 10; }
     # since version 0.8.8 localstack requires but do not have in dependencies amazon_kclpy
-    pip install amazon_kclpy ||
-        { echo "[ERROR] Cannot install amazon_kclpy which is required by localstack." 1>&2; return 20; }
+    pip install amazon-kclpy ||
+        { echo "[ERROR] Cannot install amazon-kclpy which is required by localstack." 1>&2; return 20; }
     log_version localstack --version
 }
 
@@ -1587,21 +1605,21 @@ function install_gcc() {
     echo "[INFO] Running install_gcc..."
     # add existing gcc's to alternatives
     if [[ -f /usr/bin/gcc-5 ]] && [[ -f /usr/bin/g++-5 ]]; then
-        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5 ||
+        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 ||
             { echo "[ERROR] Cannot install gcc-8." 1>&2; return 10; }
     fi
     add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
     apt-get -y -qq update ||
         { echo "[ERROR] Cannot add gcc repository to APT sources." 1>&2; return 20; }
     apt-get -y -q install gcc-7 g++-7 && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7 ||
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 50 --slave /usr/bin/g++ g++ /usr/bin/g++-7 ||
         { echo "[ERROR] Cannot install gcc-7." 1>&2; return 30; }
     apt-get -y -q install gcc-8 g++-8 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-8 ||
         { echo "[ERROR] Cannot install gcc-8." 1>&2; return 40; }
     apt-get -y -q install gcc-9 g++-9 && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9 ||
-        { echo "[ERROR] Cannot install gcc-8." 1>&2; return 40; }
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 70 --slave /usr/bin/g++ g++ /usr/bin/g++-9 ||
+        { echo "[ERROR] Cannot install gcc-9." 1>&2; return 50; }
 }
 
 function install_curl() {

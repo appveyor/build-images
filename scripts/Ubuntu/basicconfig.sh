@@ -336,7 +336,6 @@ install_doxygen ||
     _abort $?
 install_awscli ||
     _abort $?
-install_localstack || _continue
 install_azurecli ||
     _abort $?
 install_gcloud ||
@@ -369,6 +368,8 @@ configure_firewall ||
 configure_motd ||
     _abort $?
 configure_uefi ||
+    _abort $?
+fix_apt_sources ||
     _abort $?
 if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
     fix_grub_timeout ||
