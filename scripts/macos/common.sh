@@ -618,9 +618,6 @@ function install_xcode() {
         # Cleanup
         export XCODE_INSTALL_USER=
         export XCODE_INSTALL_PASSWORD=
-
-        # set correct dev tools
-        sudo xcode-select --switch /Library/Developer/CommandLineTools
     else
         echo "[ERROR] Variables APPLEID_USER and/or APPLEID_PWD not set."
         return 10
