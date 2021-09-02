@@ -11,7 +11,7 @@ Write-Host "Installing Service Fabric 7.0" -ForegroundColor Cyan
 # install runtime
 Write-Host "Downloading Service Fabric Runtime..."
 $exePath = "$env:TEMP\MicrosoftServiceFabricRuntime.exe"
-(New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/0/0/f/00fbca28-0a64-4c9a-a3a3-b11763ee17e5/MicrosoftServiceFabric.7.0.470.9590.exe', $exePath)
+(New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/misc/MicrosoftServiceFabric.7.0.470.9590.exe', $exePath)
 
 Write-Host "Installing Service Fabric Runtime..."
 cmd /c start /wait $exePath /AcceptEULA
@@ -21,7 +21,7 @@ Write-Host "Installing Service Fabric SDK..."
 
 Write-Host "Downloading..."
 $msiPath = "$env:TEMP\MicrosoftServiceFabricSDK.msi"
-(New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/0/0/f/00fbca28-0a64-4c9a-a3a3-b11763ee17e5/MicrosoftServiceFabricSDK.4.0.470.msi', $msiPath)
+(New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/misc/MicrosoftServiceFabricSDK.4.0.470.msi', $msiPath)
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i "$msiPath" /quiet
