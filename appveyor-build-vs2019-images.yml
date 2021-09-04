@@ -232,6 +232,7 @@ for:
     - ps: .\install_postgres10.ps1
     - ps: .\install_postgres11.ps1
     - ps: .\install_postgres12.ps1
+    - ps: .\install_postgres13.ps1
     - ps: .\install_mysql.ps1    
     - ps: .\install_mongo.ps1
 
@@ -280,8 +281,8 @@ for:
     - ps: .\install_cygwin.ps1
     - ps: .\install_mingw.ps1
     - ps: .\install_mingw-w64.ps1
-    - ps: .\install_boost_1.71.0_vs2019.ps1
     - ps: .\install_boost_1.73.0_vs2019.ps1
+    - ps: .\install_boost_1.77.0_vs2019.ps1
 
     - ps: .\install_android_sdk.ps1
     - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip

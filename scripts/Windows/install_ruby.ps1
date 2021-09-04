@@ -113,33 +113,33 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "bundlerV2" = $true
         }
         @{
-            "version" = "Ruby 2.6.7-1"
+            "version" = "Ruby 2.6.8-1"
             "install_path" = "C:\Ruby26"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.7-1/rubyinstaller-2.6.7-1-x86.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.8-1/rubyinstaller-2.6.8-1-x86.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
         }    
         @{
-            "version" = "Ruby 2.6.7-1 (x64)"
+            "version" = "Ruby 2.6.8-1 (x64)"
             "install_path" = "C:\Ruby26-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.7-1/rubyinstaller-2.6.7-1-x64.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.8-1/rubyinstaller-2.6.8-1-x64.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
         }
         @{
-            "version" = "Ruby 2.7.3-1"
+            "version" = "Ruby 2.7.4-1"
             "install_path" = "C:\Ruby27"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.3-1/rubyinstaller-2.7.3-1-x86.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.4-1/rubyinstaller-2.7.4-1-x86.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
         }    
         @{
-            "version" = "Ruby 2.7.3-1 (x64)"
+            "version" = "Ruby 2.7.4-1 (x64)"
             "install_path" = "C:\Ruby27-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.3-1/rubyinstaller-2.7.3-1-x64.exe"
+            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.4-1/rubyinstaller-2.7.4-1-x64.exe"
             "devkit_url" = ""
             "devkit_paths" = @()
             "bundlerV2" = $true
@@ -151,17 +151,17 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
 $rubies = $rubies + @(
     @{
-        "version" = "Ruby 3.0.1-1"
+        "version" = "Ruby 3.0.2-1"
         "install_path" = "C:\Ruby30"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.1-1/rubyinstaller-3.0.1-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.2-1/rubyinstaller-3.0.2-1-x86.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
     }    
     @{
-        "version" = "Ruby 3.0.1-1 (x64)"
+        "version" = "Ruby 3.0.2-1 (x64)"
         "install_path" = "C:\Ruby30-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.1-1/rubyinstaller-3.0.1-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.2-1/rubyinstaller-3.0.2-1-x64.exe"
         "devkit_url" = ""
         "devkit_paths" = @()
         "bundlerV2" = $true
