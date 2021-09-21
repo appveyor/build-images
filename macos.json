@@ -2,6 +2,8 @@
   "variables": {
     "macos_version": "catalina",
     "pvm_path": "iso/template1.pvm",
+    "vmx_path": "~/Virtual Machines.localized/template1.vmware/template1.vmx",
+    "output_directory": "",
     "datemark": "{{timestamp}}",
     "install_user": "appveyor",
     "install_password": "appveyor",
@@ -95,6 +97,19 @@
       "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "skip_compaction": "false"
+    },
+    {
+      "type": "vmware-vmx",
+      "source_path": "{{ user `vmx_path` }}",
+      "ssh_username": "{{ user `template_user` }}",
+      "ssh_password": "{{ user `template_password` }}",
+      "ssh_timeout": "120s",
+      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
+      "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
+      "headless": "true",
+      "output_directory": "{{user `output_directory`}}",
+      "snapshot_name": "master",
+      "skip_compaction": "true"
     },
     {
       "type": "parallels-iso",
