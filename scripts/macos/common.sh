@@ -600,8 +600,11 @@ function install_xcode() {
     fi
 
     #check fastlane
-    if [ -n "${APPLEID_SESSION-}" ] && [ "${#APPLEID_SESSION}" -gt "0" ]; then
+    if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
+        [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
         gem install xcode-install
+        export XCODE_INSTALL_USER=$APPLEID_USER
+        export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
         export FASTLANE_SESSION="$APPLEID_SESSION"
         export FASTLANE_DONT_STORE_PASSWORD=1
 
@@ -614,8 +617,10 @@ function install_xcode() {
         xcversion simulators --install='watchOS 5.3'
         # Cleanup
         export FASTLANE_SESSION=
+        export XCODE_INSTALL_USER=
+        export XCODE_INSTALL_PASSWORD=
     else
-        echo "[ERROR] Variables APPLEID_SESSION is not set."
+        echo "[ERROR] Variables APPLEID_USER and/or APPLEID_PWD not set."
         return 10
     fi
 }
