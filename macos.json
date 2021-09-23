@@ -63,8 +63,6 @@
     {
       "type": "shell",
       "environment_vars": [
-        "APPLEID_USER={{user `appleIdUser`}}",
-        "APPLEID_PWD={{user `appleIdPasswd`}}",
         "APPLEID_SESSION={{user `fastlaneSession`}}",
         "INSTALL_PASSWORD={{user `install_password`}}"
       ],
