@@ -600,7 +600,7 @@ function install_xcode() {
     fi
 
     #check fastlane
-    if [ -n "${FASTLANE_SESSION-}" ] && [ "${#FASTLANE_SESSION}" -gt "0" ]; then
+    if [ -n "${APPLEID_SESSION-}" ] && [ "${#APPLEID_SESSION}" -gt "0" ]; then
         gem install xcode-install
         export FASTLANE_SESSION="$APPLEID_SESSION"
         export FASTLANE_DONT_STORE_PASSWORD=1
@@ -615,7 +615,7 @@ function install_xcode() {
         # Cleanup
         export FASTLANE_SESSION=
     else
-        echo "[ERROR] Variables FASTLANE_SESSION is not set."
+        echo "[ERROR] Variables APPLEID_SESSION is not set."
         return 10
     fi
 }
