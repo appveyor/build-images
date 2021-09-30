@@ -6,7 +6,7 @@ $installDir = "C:\Qt"
 
 $component_groups = @(
     @{
-        version = "6.1.3"
+        version = "6.2.0"
         components = @(
             "win64_msvc2019_64",
             "win64_mingw81",
@@ -71,6 +71,68 @@ $component_groups = @(
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     $component_groups += @(
+        @{
+            version = "6.1.3"
+            components = @(
+                "win64_msvc2019_64",
+                "win64_mingw81",
+                "debug_info",
+                "debug_info.win64_mingw81",
+                "debug_info.win64_msvc2019_64",
+    
+                "addons.qt3d",
+                "addons.qt3d.win64_mingw81",
+                "addons.qt3d.win64_msvc2019_64",
+    
+                "addons.qtactiveqt",
+                "addons.qtactiveqt.win64_mingw81",
+                "addons.qtactiveqt.win64_msvc2019_64",
+    
+                "addons.qtcharts",
+                "addons.qtcharts.win64_mingw81",
+                "addons.qtcharts.win64_msvc2019_64",
+    
+                "addons.qtdatavis3d",
+                "addons.qtdatavis3d.win64_mingw81",
+                "addons.qtdatavis3d.win64_msvc2019_64",
+                
+                "addons.qtimageformats",
+                "addons.qtimageformats.win64_mingw81",
+                "addons.qtimageformats.win64_msvc2019_64",
+    
+                "addons.qtlottie",
+                "addons.qtlottie.win64_mingw81",
+                "addons.qtlottie.win64_msvc2019_64",
+    
+                "addons.qtnetworkauth",
+                "addons.qtnetworkauth.win64_mingw81",
+                "addons.qtnetworkauth.win64_msvc2019_64",
+                
+                "addons.qtscxml",
+                "addons.qtscxml.win64_mingw81",
+                "addons.qtscxml.win64_msvc2019_64",
+    
+                "addons.qtvirtualkeyboard",
+                "addons.qtvirtualkeyboard.win64_mingw81",
+                "addons.qtvirtualkeyboard.win64_msvc2019_64",            
+    
+                "qt5compat",
+                "qt5compat.win64_mingw81",
+                "qt5compat.win64_msvc2019_64",
+    
+                "qtshadertools",
+                "qtshadertools.win64_mingw81",
+                "qtshadertools.win64_msvc2019_64",            
+            
+                "qtquick3d",
+                "qtquick3d.win64_mingw81",
+                "qtquick3d.win64_msvc2019_64",
+            
+                "qtquicktimeline",
+                "qtquicktimeline.win64_mingw81",
+                "qtquicktimeline.win64_msvc2019_64"
+            )
+        }        
         @{
             version = "6.0.4"
             components = @(
@@ -232,61 +294,6 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "qtquicktimeline.win64_mingw73",
                 "qtquicktimeline.win64_msvc2017_64"
             )
-        }        
-        @{
-            version = "5.13.2"
-            components = @(
-                "win32_msvc2017",
-                "win64_msvc2017_64",
-                "win32_mingw73",
-                "win64_mingw73",
-                "debug_info",
-                "debug_info.win32_msvc2017",
-                "debug_info.win64_msvc2017_64",
-                "qtcharts",
-                "qtcharts.win32_mingw73",
-                "qtcharts.win32_msvc2017",
-                "qtcharts.win64_mingw73",
-                "qtcharts.win64_msvc2017_64",
-                "qtdatavis3d",
-                "qtdatavis3d.win32_mingw73",
-                "qtdatavis3d.win32_msvc2017",
-                "qtdatavis3d.win64_mingw73",
-                "qtdatavis3d.win64_msvc2017_64",
-                "qtlottie",
-                "qtlottie.win32_mingw73",
-                "qtlottie.win32_msvc2017",
-                "qtlottie.win64_mingw73",
-                "qtlottie.win64_msvc2017_64",
-                "qtnetworkauth",
-                "qtnetworkauth.win32_mingw73",
-                "qtnetworkauth.win32_msvc2017",
-                "qtnetworkauth.win64_mingw73",
-                "qtnetworkauth.win64_msvc2017_64",
-                "qtpurchasing",
-                "qtpurchasing.win32_mingw73",
-                "qtpurchasing.win32_msvc2017",
-                "qtpurchasing.win64_mingw73",
-                "qtpurchasing.win64_msvc2017_64",
-                "qtscript",
-                "qtscript.win32_mingw73",
-                "qtscript.win32_msvc2017",
-                "qtscript.win64_mingw73",
-                "qtscript.win64_msvc2017_64",
-                "qtvirtualkeyboard",
-                "qtvirtualkeyboard.win32_mingw73",
-                "qtvirtualkeyboard.win32_msvc2017",
-                "qtvirtualkeyboard.win64_mingw73",
-                "qtvirtualkeyboard.win64_msvc2017_64",
-                "qtwebengine",
-                "qtwebengine.win32_msvc2017",
-                "qtwebengine.win64_msvc2017_64",
-                "qtwebglplugin",
-                "qtwebglplugin.win32_mingw73",
-                "qtwebglplugin.win32_msvc2017",
-                "qtwebglplugin.win64_mingw73",
-                "qtwebglplugin.win64_msvc2017_64"
-            )
         }
         @{
             version = "5.9.9"
@@ -369,11 +376,11 @@ Write-Host "OK" -ForegroundColor Green
 
 # set aliases
 cmd /c mklink /J C:\Qt\latest C:\Qt\5.15.2
+cmd /c mklink /J C:\Qt\6.2 C:\Qt\6.2.0
 cmd /c mklink /J C:\Qt\6.1 C:\Qt\6.1.3
 cmd /c mklink /J C:\Qt\6.0 C:\Qt\6.0.4
 cmd /c mklink /J C:\Qt\5.15 C:\Qt\5.15.2
 cmd /c mklink /J C:\Qt\5.14 C:\Qt\5.14.2
-cmd /c mklink /J C:\Qt\5.13 C:\Qt\5.13.2
 cmd /c mklink /J C:\Qt\5.9 C:\Qt\5.9.9
 
 Write-Host "Qt 5.x installed" -ForegroundColor Green

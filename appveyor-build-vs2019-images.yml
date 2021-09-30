@@ -180,7 +180,7 @@ for:
     - ps: .\install_nunit3.ps1
     - ps: .\install_vstest_console_logger.ps1
     
-    - ps: .\install_qt_fast.ps1
+    - ps: .\install_qt_fast_windows.ps1
     - ps: .\install_ruby.ps1
 
   -
