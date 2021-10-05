@@ -5,7 +5,7 @@ if(Test-Path $gvPath) {
 }
 
 $tempPath = "$env:TEMP\GitVersion"
-nuget install gitversion.commandline -Version 5.1.3 -ExcludeVersion -OutputDirectory $tempPath
+nuget install gitversion.commandline -Version 5.7.0 -ExcludeVersion -OutputDirectory $tempPath
 
 [IO.Directory]::Move("$tempPath\gitversion.commandline\tools", $gvPath)
 Remove-Item $tempPath -Recurse -Force

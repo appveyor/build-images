@@ -6,7 +6,7 @@ $installDir = "$env:HOME/Qt"
 
 $component_groups = @(
     @{
-        version = "6.1.2"
+        version = "6.2.0"
         components = @(
             "gcc_64",
             "debug_info",
@@ -43,6 +43,40 @@ $component_groups = @(
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     $component_groups += @(
+        @{
+            version = "6.1.3"
+            components = @(
+                "gcc_64",
+                "debug_info",
+                "debug_info.gcc_64",
+                "addons.qt3d",
+                "addons.qt3d.gcc_64",
+                "addons.qtcharts",
+                "addons.qtcharts.gcc_64",
+                "addons.qtdatavis3d",
+                "addons.qtdatavis3d.gcc_64",
+                "addons.qtimageformats",
+                "addons.qtimageformats.gcc_64",
+                "addons.qtlottie",
+                "addons.qtlottie.gcc_64",
+                "addons.qtnetworkauth",
+                "addons.qtnetworkauth.gcc_64",
+                "addons.qtscxml",
+                "addons.qtscxml.gcc_64",
+                "addons.qtvirtualkeyboard",
+                "addons.qtvirtualkeyboard.gcc_64",
+                "qt5compat",
+                "qt5compat.gcc_64",        
+                "qtquick3d",
+                "qtquick3d.gcc_64",
+                "qtquicktimeline",
+                "qtquicktimeline.gcc_64",                     
+                "qtshadertools",
+                "qtshadertools.gcc_64",
+                "qtwaylandcompositor",
+                "qtwaylandcompositor.gcc_64"            
+            )
+        }        
         @{
             version = "6.0.4"
             components = @(
@@ -153,7 +187,8 @@ foreach($componentGroup in $component_groups) {
 
 # set aliases
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/latest"
-ln -s "$HOME/Qt/6.1.2" "$HOME/Qt/6.1"
+ln -s "$HOME/Qt/6.2.0" "$HOME/Qt/6.2"
+ln -s "$HOME/Qt/6.1.3" "$HOME/Qt/6.1"
 ln -s "$HOME/Qt/6.0.4" "$HOME/Qt/6.0"
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/5.15"
 ln -s "$HOME/Qt/5.14.2" "$HOME/Qt/5.14"
