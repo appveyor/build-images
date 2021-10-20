@@ -7,7 +7,7 @@ function build_vm() {
     BUILD_AGENT_MODE="Parallels"
     PACKER_CONFIG="$HOME/packer-config.json"
     PACKER_LOGS="$HOME/packer-logs"
-    IMAGES_DIR="$HOME/appveyor-images"
+    IMAGES_DIR="$HOME/Parallels"
 
     if [[ -z "${DATEMARK-}" || "${#DATEMARK}" = "0" ]]; then DATEMARK=$(date +%Y-%m-%d-%H%M%S); fi
 
@@ -16,6 +16,7 @@ function build_vm() {
     fi
 
     if [[ "${PACKER_BUILDER}" = "vmware-vmx" ]]; then
+        IMAGES_DIR="$HOME/appveyor-images"
         OUT_DIR="${IMAGES_DIR}/macos-${MACOS_VER}-${DATEMARK}"
         BUILD_AGENT_MODE="VMware"
     fi
