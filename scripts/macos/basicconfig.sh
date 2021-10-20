@@ -121,5 +121,12 @@ su -l "${USER_NAME}" -c "
     _abort $?
 install_cocoapods
 install_mono
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f add_ssh_known_hosts)
+        add_ssh_known_hosts" ||
+    _abort $?
 configure_term
 cleanup
