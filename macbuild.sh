@@ -12,7 +12,7 @@ function build_vm() {
     if [[ -z "${DATEMARK-}" || "${#DATEMARK}" = "0" ]]; then DATEMARK=$(date +%Y-%m-%d-%H%M%S); fi
 
     if [[ "${PACKER_BUILDER}" = "" ]]; then
-        PACKER_BUILDER="vmware-vmx"
+        PACKER_BUILDER="parallels-pvm"
     fi
 
     if [[ "${PACKER_BUILDER}" = "vmware-vmx" ]]; then
