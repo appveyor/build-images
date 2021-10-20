@@ -251,7 +251,7 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-head" )
+    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -596,7 +596,7 @@ function install_xcode() {
 
     # big sur
     if [ "$OSX_MAJOR_VER" -eq 11 ]; then
-        XCODE_VERSIONS=( "12.5.1" )
+        XCODE_VERSIONS=( "12.5.1" "13" )
     fi
 
     #check fastlane
@@ -616,6 +616,7 @@ function install_xcode() {
         xcversion simulators --install='tvOS 12.4'
         xcversion simulators --install='watchOS 5.3'
         # Cleanup
+        export FASTLANE_SESSION=
         export XCODE_INSTALL_USER=
         export XCODE_INSTALL_PASSWORD=
     else

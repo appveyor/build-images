@@ -2,18 +2,21 @@
   "variables": {
     "macos_version": "catalina",
     "pvm_path": "iso/template1.pvm",
+    "images_directory": "appveyor-images",
+    "output_directory": "",
+    "build_agent_mode": "Parallels",
     "datemark": "{{timestamp}}",
     "install_user": "appveyor",
     "install_password": "appveyor",
     "appVeyorUrl": "https://ci.appveyor.com"
   },
-  "sensitive-variables": ["install_password", "template_password", "appleIdUser", "appleIdPasswd"],
+  "sensitive-variables": ["install_password", "appleIdUser", "appleIdPasswd", "fastlaneSession"],
   "provisioners": [
     {
       "type": "shell",
       "inline": [
-        "/usr/bin/dscl -u \"{{user `template_user`}}\" -P \"{{user `template_password`}}\" . -passwd \"/Users/{{user `template_user`}}\" \"{{user `install_password`}}\"",
-        "security set-keychain-password -o \"{{user `template_password`}}\" -p \"{{user `install_password`}}\" \"/Users/{{user `template_user`}}/Library/Keychains/login.keychain\""
+        "/usr/bin/dscl -u \"{{user `install_user`}}\" -P \"{{user `install_password`}}\" . -passwd \"/Users/{{user `install_user`}}\" \"{{user `install_password`}}\"",
+        "security set-keychain-password -o \"{{user `install_password`}}\" -p \"{{user `install_password`}}\" \"/Users/{{user `install_user`}}/Library/Keychains/login.keychain\""
       ]
     },
     {
@@ -29,7 +32,7 @@
     {
       "type": "shell",
       "environment_vars": [
-        "HOMEBREW_BUILD_AGENT_MODE=Parallels"
+        "HOMEBREW_BUILD_AGENT_MODE={{ user `build_agent_mode` }}"
       ],
       "inline": [
         "brew install appveyor/brew/appveyor-build-agent",
@@ -89,12 +92,25 @@
       "type": "parallels-pvm",
       "parallels_tools_flavor": "mac",
       "source_path": "{{ user `pvm_path` }}",
-      "ssh_username": "{{ user `template_user` }}",
-      "ssh_password": "{{ user `template_password` }}",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout": "120s",
       "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "skip_compaction": "false"
+    },
+    {
+      "type": "vmware-vmx",
+      "source_path": "{{ user `images_directory` }}/macos-{{ user `macos_version` }}-base/macos-{{ user `macos_version` }}-base.vmx",
+      "ssh_username": "{{ user `install_user` }}",
+      "ssh_password": "{{ user `install_password` }}",
+      "ssh_timeout": "120s",
+      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
+      "vm_name": "macos-{{user `macos_version`}}-{{user `datemark`}}",
+      "headless": "true",
+      "output_directory": "{{user `output_directory`}}",
+      "snapshot_name": "master",
+      "skip_compaction": "true"
     },
     {
       "type": "parallels-iso",
