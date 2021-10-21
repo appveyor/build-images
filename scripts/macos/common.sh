@@ -169,6 +169,7 @@ function install_curl() {
     brew_install curl
     if check_user; then
         # shellcheck disable=SC2016
+        export PATH="/usr/local/opt/curl/bin:$PATH"
         write_line "${HOME}/.profile" 'export PATH="/usr/local/opt/curl/bin:$PATH"'
     fi
 }
@@ -237,6 +238,8 @@ function install_fastlane() {
 
 function install_rvm() {
     echo "[INFO] Running install_rvm..."
+    which curl
+    curl --version
     echo "gem: --no-document" >> $HOME/.gemrc
     command -v gpg ||
         { echo "Cannot find gpg. Install GPG first!" 1>&2; return 10; }
