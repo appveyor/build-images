@@ -39,6 +39,7 @@ configure_path
 configure_updates
 configure_sshd
 configure_autologin
+install_curl
 install_virtualenv
 install_gcc
 install_gpg

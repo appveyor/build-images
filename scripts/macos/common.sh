@@ -163,6 +163,16 @@ function run_brew() {
     fi
 }
 
+function install_curl() {
+    echo "[INFO] Running install_curl..."
+
+    brew_install curl
+    if check_user; then
+        # shellcheck disable=SC2016
+        write_line "${HOME}/.profile" 'export PATH="/usr/local/opt/curl/bin:$PATH"'
+    fi
+}
+
 function install_cvs() {
     echo "[INFO] Running install_cvs..."
 
