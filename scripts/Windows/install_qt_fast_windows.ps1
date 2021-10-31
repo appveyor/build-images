@@ -6,7 +6,7 @@ $installDir = "C:\Qt"
 
 $component_groups = @(
     @{
-        version = "6.2.0"
+        version = "6.2.1"
         components = @(
             "win64_msvc2019_64",
             "win64_mingw81",
@@ -376,7 +376,7 @@ Write-Host "OK" -ForegroundColor Green
 
 # set aliases
 cmd /c mklink /J C:\Qt\latest C:\Qt\5.15.2
-cmd /c mklink /J C:\Qt\6.2 C:\Qt\6.2.0
+cmd /c mklink /J C:\Qt\6.2 C:\Qt\6.2.1
 cmd /c mklink /J C:\Qt\6.1 C:\Qt\6.1.3
 cmd /c mklink /J C:\Qt\6.0 C:\Qt\6.0.4
 cmd /c mklink /J C:\Qt\5.15 C:\Qt\5.15.2
