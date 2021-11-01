@@ -2,7 +2,7 @@ Write-Host "Installing Windows 11 SDK (10.0.22000.1)..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
 $isoPath = "$env:TEMP\sdksetup.iso"
-(New-Object Net.WebClient).DownloadFile('https://go.microsoft.com/fwlink/?linkid=2166460', $isoPath)
+(New-Object Net.WebClient).DownloadFile('https://go.microsoft.com/fwlink/?linkid=2173746', $isoPath)
 
 $extractPath = "$env:TEMP\sdksetup22000"
 Write-Host "Extracting..."
