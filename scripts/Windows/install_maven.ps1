@@ -1,4 +1,4 @@
-﻿Write-Host "Installing Apache Maven 3.8.1 ..." -ForegroundColor Cyan
+﻿Write-Host "Installing Apache Maven 3.8.3 ..." -ForegroundColor Cyan
 
 $apachePath = "${env:ProgramFiles(x86)}\Apache"
 $mavenPath = "$apachePath\Maven"
@@ -12,12 +12,12 @@ if(-not (Test-Path $apachePath)) {
 }
 
 Write-Host "Downloading..."
-$zipPath = "$env:TEMP\apache-maven-3.8.1-bin.zip"
-(New-Object Net.WebClient).DownloadFile('https://httpd-mirror.sergal.org/apache/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.zip', $zipPath)
+$zipPath = "$env:TEMP\apache-maven-3.8.3-bin.zip"
+(New-Object Net.WebClient).DownloadFile('https://dlcdn.apache.org/maven/maven-3/3.8.3/binaries/apache-maven-3.8.3-bin.zip', $zipPath)
 
 Write-Host "Unpacking..."
 7z x $zipPath -oC:\apache-maven | Out-Null
-[IO.Directory]::Move('C:\apache-maven\apache-maven-3.8.1', $mavenPath)
+[IO.Directory]::Move('C:\apache-maven\apache-maven-3.8.3', $mavenPath)
 Remove-Item 'C:\apache-maven' -Recurse -Force
 del $zipPath
 
