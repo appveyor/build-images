@@ -11,15 +11,28 @@ New-Item 'C:\Libraries' -ItemType Directory -Force
 Measure-Command {
     Write-Host "Installing boost 1.77.0..." -ForegroundColor Cyan
 
-    Write-Host "Downloading..."
-    $zipPath = "$env:TEMP\boost_1_77_0.7z"
-    (New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/boost_1_77_0.7z", $zipPath)
+    Write-Host "Downloading x86..."
+    $exePath = "$env:TEMP\boost_1_77_0-msvc-14.2-32.exe"
+    (New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/misc/boost_1_77_0-msvc-14.2-32.exe', $exePath)
+
+    Write-Host "Installing x86..."
+    cmd /c start /wait "$exePath" /verysilent
+    del $exePath
     
-    Write-Host "Unpacking..."
-    7z x $zipPath -o"C:\Libraries" | Out-Null
-    Remove-Item $zipPath
+    Write-Host "Downloading x64..."
+    $exePath = "$env:TEMP\boost_1_77_0-msvc-14.2-64.exe"
+    (New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/misc/boost_1_77_0-msvc-14.2-64.exe', $exePath)
+
+    Write-Host "Installing x64..."
+    cmd /c start /wait "$exePath" /verysilent
+    del $exePath
+
+    [IO.Directory]::Move('C:\local\boost_1_77_0', 'C:\Libraries\boost_1_77_0')
+
+    Remove-Item 'C:\local' -Force -Recurse
 
     Write-Host "Compressing..."
+
     Start-ProcessWithOutput "compact /c /i /q /s:C:\Libraries\boost_1_77_0" -IgnoreStdOut
 }
 
