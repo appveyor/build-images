@@ -10,12 +10,12 @@ if(Test-Path $jdkPath) {
 
 Write-Host "Downloading..."
 $zipPath = "$env:TEMP\openjdk-16_windows-x64_bin.zip"
-(New-Object Net.WebClient).DownloadFile('https://download.java.net/java/GA/jdk16/7863447f0ab643c585b9bdebf67c69db/36/GPL/openjdk-16_windows-x64_bin.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://download.java.net/java/GA/jdk16.0.1/7147401fd7354114ac51ef3e1328291f/9/GPL/openjdk-16.0.1_windows-x64_bin.zip', $zipPath)
 
 Write-Host "Unpacking..."
 $tempPath = "$env:TEMP\jdk16_temp"
 7z x $zipPath -o"$tempPath" | Out-Null
-[IO.Directory]::Move("$tempPath\jdk-16", $jdkPath)
+[IO.Directory]::Move("$tempPath\jdk-16.0.1", $jdkPath)
 Remove-Item $tempPath -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item $zipPath -ErrorAction SilentlyContinue
 
