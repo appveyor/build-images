@@ -373,10 +373,6 @@ for($i = 0; $i -lt $rubies.Count; $i++) {
     Write-Host "  bundler --version: $(cmd /c bundler --version)"
 }
 
-if (-not $env:INSTALL_LATEST_ONLY) {
-    Add-Path 'C:\Ruby193\bin'
-} else {
-    Add-Path 'C:\Ruby30\bin'
-}
+Add-Path 'C:\Ruby30\bin'
 
 ((Get-Date) - $started)
