@@ -309,7 +309,7 @@ if (get-Service IpOverUsbSvc -ErrorAction Ignore) {
 Write-Host "Adding Visual Studio 2022 current MSBuild to PATH..." -ForegroundColor Cyan
 
 Add-Path "$vsPath\MSBuild\Current\Bin"
-Add-Path "$vsPath\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150"
+Add-Path "$vsPath\Common7\IDE\Extensions\Microsoft\SQLDB\DAC"
 
 Write-Host "Warm up default .NET Core SDK"
 

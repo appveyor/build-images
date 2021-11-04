@@ -18,7 +18,7 @@ if (Test-Path $msbuild_vs2022_path) {
     Write-Host "Adding Visual Studio 2022 current MSBuild to PATH..." -ForegroundColor Cyan
     Add-Path $msbuild_vs2022_path
 
-    $dac_150_path = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150";
+    $dac_150_path = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\SQLDB\DAC";
     if (Test-Path $dac_150_path) {
         Add-Path $dac_150_path
     } else {
