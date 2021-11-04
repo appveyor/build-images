@@ -58,6 +58,7 @@ Function InstallVS
 
 $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Component.Android.SDK25.Private ' + `
+	'--add Component.Android.SDK.MAUI ' + `
 	'--add Component.Android.SDK28 ' + `
 	'--add Component.Linux.CMake ' + `
 	'--add Component.MDD.Android ' + `
@@ -142,40 +143,38 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.VisualStudio.Component.SQL.SSDT ' + `
 	'--add Microsoft.VisualStudio.Component.TeamOffice ' + `
 	'--add Microsoft.VisualStudio.Component.TextTemplating ' + `
-	'--add Microsoft.VisualStudio.Component.TypeScript.3.6 ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.20.ATL ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.20.ATL.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.20.CLI.Support ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.20.MFC ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.20.MFC.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.20.x86.x64 ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.20.x86.x64.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.ARM ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.ARM.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.ARM64 ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.ARM64.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.ATL ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.ATL.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.CLI.Support ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.MFC ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.MFC.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.x86.x64 ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.21.x86.x64.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.ATL ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.ATL.ARM ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.ATL.ARM.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.ATL.ARM64 ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.ATL.ARM64.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.ATL.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.CLI.Support ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.MFC ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.MFC.ARM ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.MFC.ARM.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.MFC.ARM64 ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.MFC.ARM64.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.MFC.Spectre ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.x86.x64 ' + `
-	'--add Microsoft.VisualStudio.Component.VC.14.22.x86.x64.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.TypeScript.SDK.4.4 ' + `
+	'--add Microsoft.VisualStudio.Component.TypeScript.TSServer ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.ARM ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.ARM.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.ARM64 ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.ARM64.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.ATL ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.ATL.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.CLI.Support ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.MFC ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.MFC.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.x86.x64 ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.29.16.11.x86.x64.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.ARM ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.ARM.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.ARM64 ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.ARM64.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.ATL ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.ATL.ARM ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.ATL.ARM.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.ATL.ARM64 ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.ATL.ARM64.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.ATL.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.CLI.Support ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.MFC ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.MFC.ARM ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.MFC.ARM.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.MFC.ARM64 ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.MFC.ARM64.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.MFC.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.x86.x64 ' + `
+	'--add Microsoft.VisualStudio.Component.VC.14.30.17.0.x86.x64.Spectre ' + `
 	'--add Microsoft.VisualStudio.Component.VC.140 ' + `
 	'--add Microsoft.VisualStudio.Component.VC.ASAN ' + `
 	'--add Microsoft.VisualStudio.Component.VC.ATL ' + `
@@ -225,7 +224,8 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.VisualStudio.Component.Windows10SDK.17134 ' + `
 	'--add Microsoft.VisualStudio.Component.Windows10SDK.17763 ' + `
 	'--add Microsoft.VisualStudio.Component.Windows10SDK.18362 ' + `
-	'--add Microsoft.VisualStudio.Component.Windows10SDK.19041 ' + `
+	'--add Microsoft.VisualStudio.Component.Windows10SDK.20348 ' + `
+	'--add Microsoft.VisualStudio.Component.Windows11SDK.22000 ' + `
 	'--add Microsoft.VisualStudio.Component.WinXP ' + `
 	'--add Microsoft.VisualStudio.Component.Workflow ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.Azure.CloudServices ' + `
@@ -269,8 +269,8 @@ if ($env:install_vs2022_preview) {
 	Write-Host "Installing from 'Release' channel"
 	$VSBootstrapperURL = 'https://aka.ms/vs/17/release/vs_community.exe'
 
-	# This is how to know channelUri for previous versions of VS 2019
-	# - Download previous bootstrapper for Professional edition: https://docs.microsoft.com/en-us/visualstudio/releases/2019/history#release-dates-and-build-numbers
+	# This is how to know channelUri for previous versions of VS 2022
+	# - Download previous bootstrapper for Professional edition: https://docs.microsoft.com/en-us/visualstudio/releases/2022/history#release-dates-and-build-numbers
 	# - Run `.\vs_Professional.exe --layout .\VSLayout
 	# - In the output log look for the first line with `/channel`, for example:
 	#
@@ -288,9 +288,9 @@ $ErrorActionPreference = 'Stop'
 # Install VS
 $exitCode = InstallVS -WorkLoads $WorkLoads -Sku $Sku -VSBootstrapperURL $VSBootstrapperURL -ChannelUri $ChannelUri
 
-$vsPath = "${env:ProgramFiles}\Microsoft Visual Studio\2019\Community"
+$vsPath = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community"
 if (-not (Test-Path $vsPath)) {
-    $vsPath = "${env:ProgramFiles}\Microsoft Visual Studio\2019\Preview"
+    $vsPath = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Preview"
 }
 
 Write-Host "Initializing Visual Studio Experimental Instance"
