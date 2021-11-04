@@ -10,8 +10,16 @@ if (-not (Test-Path $vs2019RootPath)) {
     $vs2019RootPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview"
 }
 
+$vs2022RootPath = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community"
+if (-not (Test-Path $vs2022RootPath)) {
+    $vs2022RootPath = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Preview"
+}
+
 $vs2019TestWindowPath1 = "$vs2019RootPath\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
 $vs2019TestWindowPath2 = "$vs2019RootPath\Common7\IDE\Extensions\TestPlatform"
+
+$vs2022TestWindowPath1 = "$vs2022RootPath\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
+$vs2022TestWindowPath2 = "$vs2022RootPath\Common7\IDE\Extensions\TestPlatform"
 
 $vs2013Path = "$vs2013TestWindowPath\Extensions"
 $vs2015Path = "$vs2015TestWindowPath\Extensions"
@@ -19,6 +27,8 @@ $vs2017Path1 = "$vs2017TestWindowPath1\Extensions"
 $vs2017Path2 = "$vs2017TestWindowPath2\Extensions"
 $vs2019Path1 = "$vs2019TestWindowPath1\Extensions"
 $vs2019Path2 = "$vs2019TestWindowPath2\Extensions"
+$vs2022Path1 = "$vs2022TestWindowPath1\Extensions"
+$vs2022Path2 = "$vs2022TestWindowPath2\Extensions"
 
 Remove-Path $vs2013TestWindowPath
 Remove-Path $vs2015TestWindowPath
@@ -26,6 +36,8 @@ Remove-Path $vs2017TestWindowPath1
 Remove-Path $vs2017TestWindowPath2
 Remove-Path $vs2019TestWindowPath1
 Remove-Path $vs2019TestWindowPath2
+Remove-Path $vs2022TestWindowPath1
+Remove-Path $vs2022TestWindowPath2
 
 $zipPath = "$env:TEMP\Appveyor.MSTestLogger.zip"
 (New-Object Net.WebClient).DownloadFile('http://www.appveyor.com/downloads/Appveyor.MSTestLogger.zip', $zipPath)
@@ -69,11 +81,25 @@ if(Test-Path $vs2019Path2) {
     7z x $zipPath2 -y -o"$vs2019Path2" | Out-Null
 }
 
+if(Test-Path $vs2022Path1) {
+    # VS 2019
+    Remove-Item "$vs2022Path1\appveyor.*" -Force
+    7z x $zipPath2 -y -o"$vs2022Path1" | Out-Null
+}
+
+if(Test-Path $vs2022Path2) {
+    # VS 2019
+    Remove-Item "$vs2022Path2\appveyor.*" -Force
+    7z x $zipPath2 -y -o"$vs2022Path2" | Out-Null
+}
+
 del $zipPath
 del $zipPath2
 
 # modify PATH
-if(Test-Path $vs2019Path2) {
+if (Test-Path $vs2022Path2) {
+    Add-Path $vs2022TestWindowPath2
+} elseif(Test-Path $vs2019Path2) {
     Add-Path $vs2019TestWindowPath2
 } elseif(Test-Path $vs2017Path2) {
     Add-Path $vs2017TestWindowPath2
