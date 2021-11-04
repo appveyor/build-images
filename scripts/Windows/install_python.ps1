@@ -363,13 +363,8 @@ if($python310) {
 UpdatePip "$env:SystemDrive\Python310"
 UpdatePip "$env:SystemDrive\Python310-x64"
 
-if (-not $env:INSTALL_LATEST_ONLY) {
-    Add-Path C:\Python27
-    Add-Path C:\Python27\Scripts
-} else {
-    Add-Path C:\Python39
-    Add-Path C:\Python39\Scripts
-}
+Add-Path C:\Python310
+Add-Path C:\Python310\Scripts
 
 # restore .py file mapping
 # https://github.com/appveyor/ci/issues/575
