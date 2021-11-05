@@ -56,7 +56,7 @@ Function InstallVS
   }
 }
 
-$WorkLoads = '--add Component.Android.NDK.R16B ' + `
+$WorkLoads = '--add Component.Android.NDK.R21E ' + `
 	'--add Component.Android.SDK25.Private ' + `
 	'--add Component.Android.SDK.MAUI ' + `
 	'--add Component.Android.SDK28 ' + `
