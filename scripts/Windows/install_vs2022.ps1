@@ -293,9 +293,6 @@ if (-not (Test-Path $vsPath)) {
     $vsPath = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Preview"
 }
 
-Write-Host "Initializing Visual Studio Experimental Instance"
-& "$vsPath\Common7\IDE\devenv.exe" /RootSuffix Exp /ResetSettings General.vssettings /Command File.Exit
-
 Write-Host "Disabling VS-related services"
 if (get-Service SQLWriterw -ErrorAction Ignore) {
   Stop-Service SQLWriter
@@ -310,12 +307,3 @@ Write-Host "Adding Visual Studio 2022 current MSBuild to PATH..." -ForegroundCol
 
 Add-Path "$vsPath\MSBuild\Current\Bin"
 Add-Path "$vsPath\Common7\IDE\Extensions\Microsoft\SQLDB\DAC"
-
-Write-Host "Warm up default .NET Core SDK"
-
-$projectPath = "$env:temp\TestCoreApp"
-New-Item -Path $projectPath -Force -ItemType Directory | Out-Null
-Push-Location -Path $projectPath
-& $env:ProgramFiles\dotnet\dotnet.exe new console
-Pop-Location
-Remove-Item $projectPath -Force -Recurse
