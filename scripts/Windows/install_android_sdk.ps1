@@ -120,6 +120,8 @@ if ($env:INSTALL_LATEST_ONLY) {
             "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 }
 
+Start-Sleep -s 1000
+
 7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
 
 Pop-Location
