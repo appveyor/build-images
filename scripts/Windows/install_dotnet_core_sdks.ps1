@@ -24,7 +24,7 @@ function Install-SDK($sdkVersion) {
 if (-not $env:INSTALL_LATEST_ONLY) {
     #Install-SDK "1.1.14"
     #Install-SDK "2.1.202"
-    Install-SDK "2.1.806"
+    #Install-SDK "2.1.806"
 }
 Install-SDK "2.2.402"
 
