@@ -213,6 +213,11 @@ for:
 
     build_script:
 
+    - ps: .\install_java_7_8.ps1
+    - ps: .\install_jdk15.ps1
+    - ps: .\install_jdk16.ps1
+    - ps: .\install_jdk17.ps1
+    
     - ps: .\install_android_sdk.ps1
     - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 
@@ -232,10 +237,6 @@ for:
     - ps: .\install_yarn.ps1
     - ps: .\install_go.ps1
     #- ps: .\install_rust.ps1
-    - ps: .\install_java_7_8.ps1
-    - ps: .\install_jdk15.ps1
-    - ps: .\install_jdk16.ps1
-    - ps: .\install_jdk17.ps1
     - ps: .\install_erlang.ps1
 
     - ps: .\install_postgres96.ps1
