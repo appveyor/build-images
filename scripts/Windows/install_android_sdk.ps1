@@ -4,6 +4,9 @@ $ErrorActionPreference = 'SilentlyContinue'
 
 $sdk_root = Join-Path ${env:ProgramFiles(x86)} "Android\android-sdk"
 $ndk_root = Join-Path  $env:SystemDrive "Microsoft\AndroidNDK64\"
+if (-not (Test-Path $ndk_root)) {
+    $ndk_root = Join-Path  $env:SystemDrive "Microsoft\AndroidNDK\"
+}
 $zipPath = "$env:temp\android-sdk-tools.zip"
 $sdkPath = "$env:temp\android-sdk"
 $licenseZipPath = "$env:temp\android-sdk-licenses.zip"
