@@ -1534,7 +1534,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.21.2
+        VERSION=3.21.4
     else
         VERSION=$1
     fi
