@@ -28,7 +28,7 @@ function install_outdated_dotnets() {
 
 function prepare_dotnet_packages() {
 
-    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" )
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
