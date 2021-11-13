@@ -1705,7 +1705,7 @@ function install_virtualbox_core() {
 function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
 
-    local VERSION=6.1.16
+    local VERSION=6.1.28
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
     install_virtualbox_core || return $?
