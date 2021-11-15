@@ -401,8 +401,18 @@ function copy_appveyoragent() {
 
     echo "[INFO] Installing AppVeyor Build Agent v${APPVEYOR_BUILD_AGENT_VERSION}"
 
+    arch=$(uname -m)
+    if [[ $arch == x86_64 ]] || [[ $arch == amd64 ]]; then
+        arch="x64"
+    elif [[ $arch == arm64 ]] || [[ $arch == aarch64 ]]; then
+        arch="arm64"
+    else
+        echo "Error: Unsupported architecture $arch." 1>&2
+        exit 1
+    fi
+
     local AGENT_FILE
-    AGENT_FILE=appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-x64.tar.gz
+    AGENT_FILE="appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-${arch}.tar.gz"
 
     if [[ -z "${AGENT_DIR-}" ]]; then
         echo "[WARNING] AGENT_DIR variable is not set. Setting it to AGENT_DIR=/opt/appveyor/build-agent" 1>&2;
