@@ -13,7 +13,7 @@ Measure-Command {
 
     Write-Host "Downloading x86..."
     $exePath = "$env:TEMP\boost_1_73_0-msvc-14.2-32.exe"
-    (New-Object Net.WebClient).DownloadFile('https://netactuate.dl.sourceforge.net/project/boost/boost-binaries/1.73.0/boost_1_73_0-msvc-14.2-32.exe', $exePath)
+    (New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/misc/boost_1_73_0-msvc-14.2-32.exe', $exePath)
 
     Write-Host "Installing x86..."
     cmd /c start /wait "$exePath" /verysilent
@@ -21,7 +21,7 @@ Measure-Command {
     
     Write-Host "Downloading x64..."
     $exePath = "$env:TEMP\boost_1_73_0-msvc-14.2-64.exe"
-    (New-Object Net.WebClient).DownloadFile('https://managedway.dl.sourceforge.net/project/boost/boost-binaries/1.73.0/boost_1_73_0-msvc-14.2-64.exe', $exePath)
+    (New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/misc/boost_1_73_0-msvc-14.2-64.exe', $exePath)
 
     Write-Host "Installing x64..."
     cmd /c start /wait "$exePath" /verysilent

@@ -342,6 +342,27 @@ if($python39) {
 UpdatePip "$env:SystemDrive\Python39"
 UpdatePip "$env:SystemDrive\Python39-x64"
 
+# Python 3.10.0 x64
+$python310_x64 = (GetUninstallString 'Python 3.10.0 (64-bit)')
+if($python310_x64) {
+    Write-Host 'Python 3.10.0 x64 already installed'
+} else {
+
+    InstallPythonEXE "3.10.0" "x64" "$env:SystemDrive\Python310-x64"
+}
+
+# Python 3.10.0
+$python310 = (GetUninstallString 'Python 3.10.0 (32-bit)')
+if($python310) {
+    Write-Host 'Python 3.10.0 already installed'
+} else {
+
+    InstallPythonEXE "3.10.0" "x86" "$env:SystemDrive\Python310"
+}
+
+UpdatePip "$env:SystemDrive\Python310"
+UpdatePip "$env:SystemDrive\Python310-x64"
+
 if (-not $env:INSTALL_LATEST_ONLY) {
     Add-Path C:\Python27
     Add-Path C:\Python27\Scripts
@@ -400,6 +421,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     CheckPython 'C:\Python37-x64'
     CheckPython 'C:\Python38'
     CheckPython 'C:\Python38-x64'
+    CheckPython 'C:\Python39'
+    CheckPython 'C:\Python39-x64'    
 }
-CheckPython 'C:\Python39'
-CheckPython 'C:\Python39-x64'
+CheckPython 'C:\Python310'
+CheckPython 'C:\Python310-x64'
