@@ -309,7 +309,13 @@ Function Connect-AppVeyorToHyperV {
             "$ParentFolder/hyper-v/Windows/scripts/shutdown_vm.bat",
             "$ParentFolder/hyper-v/Windows/scripts/win-updates.ps1"
         )
-        New-IsoFile -Path $FileName -Source $Files -Force -Media "CDR"
+        $StagingFolder="$ParentFolder/iso-source"
+        mkdir -f "$StagingFolder"
+        foreach ($f in $Files)
+        {
+            Copy-Item -Force "$f" "$StagingFolder"
+        }
+        New-IsoFile -destinationIso "$FileName" -source "$StagingFolder" -Force -Media "CDR"
     }
     elseif ($imageOs -eq "Linux")
     {
