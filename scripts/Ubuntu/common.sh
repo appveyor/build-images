@@ -401,8 +401,18 @@ function copy_appveyoragent() {
 
     echo "[INFO] Installing AppVeyor Build Agent v${APPVEYOR_BUILD_AGENT_VERSION}"
 
+    arch=$(uname -m)
+    if [[ $arch == x86_64 ]] || [[ $arch == amd64 ]]; then
+        arch="x64"
+    elif [[ $arch == arm64 ]] || [[ $arch == aarch64 ]]; then
+        arch="arm64"
+    else
+        echo "Error: Unsupported architecture $arch." 1>&2
+        exit 1
+    fi
+
     local AGENT_FILE
-    AGENT_FILE=appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-x64.tar.gz
+    AGENT_FILE="appveyor-build-agent-${APPVEYOR_BUILD_AGENT_VERSION}-linux-${arch}.tar.gz"
 
     if [[ -z "${AGENT_DIR-}" ]]; then
         echo "[WARNING] AGENT_DIR variable is not set. Setting it to AGENT_DIR=/opt/appveyor/build-agent" 1>&2;
@@ -537,7 +547,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -717,7 +727,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.14" "3.7.11" "3.8.11" "3.9.6" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.12" "3.8.12" "3.9.8" "3.10.0" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -815,7 +825,7 @@ function preheat_dotnet_sdks() {
 
 function prepare_dotnet_packages() {
 
-    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" )
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
@@ -1061,7 +1071,7 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-head" )
+    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1131,7 +1141,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.7" "go1.17" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.10" "go1.17.3" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1534,7 +1544,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.21.2
+        VERSION=3.21.4
     else
         VERSION=$1
     fi
@@ -1705,7 +1715,7 @@ function install_virtualbox_core() {
 function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
 
-    local VERSION=6.1.16
+    local VERSION=6.1.28
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
     install_virtualbox_core || return $?
