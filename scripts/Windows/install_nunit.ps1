@@ -1,18 +1,16 @@
-﻿Write-Host "Installing NUnit 2.6.4..." -ForegroundColor Cyan
+﻿Write-Host "Installing NUnit 2.7.1..." -ForegroundColor Cyan
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$toolsPath = "$env:SYSTEMDRIVE\Tools"
 $nunitPath = "$env:SYSTEMDRIVE\Tools\NUnit"
 
 Remove-Item $nunitPath -Recurse -Force -ErrorAction SilentlyContinue
 
 # nunit
-$zipPath = "$env:TEMP\NUnit-2.6.4.zip"
-(New-Object Net.WebClient).DownloadFile('http://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip', $zipPath)
-7z x $zipPath -y -o"$toolsPath" | Out-Null
+$zipPath = "$env:TEMP\NUnit-2.7.1.zip"
+(New-Object Net.WebClient).DownloadFile('https://github.com/nunit-legacy/nunitv2/releases/download/2.7.1/NUnit-2.7.1.zip', $zipPath)
+7z x $zipPath -y -o"$nunitPath" | Out-Null
 Remove-Item $zipPath
-[IO.Directory]::Move("$toolsPath\NUnit-2.6.4", $nunitPath)
 
 # logger
 $zipPath = "$env:TEMP\Appveyor.NUnitLogger.zip"
