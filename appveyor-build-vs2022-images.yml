@@ -273,8 +273,8 @@ for:
     - ps: .\install_vdproj_vs2022.ps1
     - ps: .\install_service_fabric.ps1
 #    - ps: .\install_ssis_vs2019.ps1
-#    - ps: .\install_wix311.ps1
-#    - ps: .\install_wix_toolset_vs2019.ps1
+    - ps: .\install_wix311.ps1
+    - ps: .\install_wix_toolset_vs2022.ps1
     - ps: .\install_openssl.ps1
     - ps: .\install_doxygen.ps1
     - ps: .\install_graphviz.ps1
