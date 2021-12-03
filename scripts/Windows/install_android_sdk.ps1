@@ -42,8 +42,10 @@ Push-Location -Path $sdkPath
 if ($env:INSTALL_LATEST_ONLY) {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
             "platform-tools" `
+            "platforms;android-30" `
             "platforms;android-29" `
             "platforms;android-28" `
+            "build-tools;30.0.2" `
             "build-tools;29.0.2" `
             "build-tools;29.0.0" `
             "build-tools;28.0.3" `
