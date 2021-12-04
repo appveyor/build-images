@@ -311,8 +311,7 @@ Function Connect-AppVeyorToHyperV {
         )
         $StagingFolder="$ParentFolder/iso-source"
         mkdir -f "$StagingFolder"
-        foreach ($f in $Files)
-        {
+        foreach ($f in $Files) {
             Copy-Item -Force "$f" "$StagingFolder"
         }
         New-IsoFile -destinationIso "$FileName" -source "$StagingFolder" -Force -Media "CDR"
