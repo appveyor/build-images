@@ -310,7 +310,7 @@ Function Connect-AppVeyorToHyperV {
             "$ParentFolder/hyper-v/Windows/scripts/win-updates.ps1"
         )
         $StagingFolder="$ParentFolder/iso-source"
-        mkdir -f "$StagingFolder"
+        mkdir "$StagingFolder"
         foreach ($f in $Files) {
             Copy-Item -Force "$f" "$StagingFolder"
         }
