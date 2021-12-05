@@ -26,6 +26,10 @@ $component_groups = @(
             "addons.qtcharts.win64_mingw",
             "addons.qtcharts.win64_msvc2019_64",
 
+            "addons.qtconnectivity",
+            "addons.qtconnectivity.win64_mingw",
+            "addons.qtconnectivity.win64_msvc2019_64",
+
             "addons.qtdatavis3d",
             "addons.qtdatavis3d.win64_mingw",
             "addons.qtdatavis3d.win64_msvc2019_64",
@@ -38,9 +42,21 @@ $component_groups = @(
             "addons.qtlottie.win64_mingw",
             "addons.qtlottie.win64_msvc2019_64",
 
+            "addons.qtmultimedia",
+            "addons.qtmultimedia.win64_mingw",
+            "addons.qtmultimedia.win64_msvc2019_64",   
+
             "addons.qtnetworkauth",
             "addons.qtnetworkauth.win64_mingw",
             "addons.qtnetworkauth.win64_msvc2019_64",
+
+            "addons.qtpositioning",
+            "addons.qtpositioning.win64_mingw",
+            "addons.qtpositioning.win64_msvc2019_64",
+
+            "addons.qtremoteobjects",
+            "addons.qtremoteobjects.win64_mingw",
+            "addons.qtremoteobjects.win64_msvc2019_64",             
             
             "addons.qtscxml",
             "addons.qtscxml.win64_mingw",
@@ -48,7 +64,22 @@ $component_groups = @(
 
             "addons.qtvirtualkeyboard",
             "addons.qtvirtualkeyboard.win64_mingw",
-            "addons.qtvirtualkeyboard.win64_msvc2019_64",            
+            "addons.qtvirtualkeyboard.win64_msvc2019_64",
+
+            "addons.qtwebchannel",
+            "addons.qtwebchannel.win64_mingw",
+            "addons.qtwebchannel.win64_msvc2019_64",
+
+            "addons.qtwebengine",
+            "addons.qtwebengine.win64_msvc2019_64",
+            
+            "addons.qtwebsockets",
+            "addons.qtwebsockets.win64_mingw",
+            "addons.qtwebsockets.win64_msvc2019_64",
+
+            "addons.qtwebview",
+            "addons.qtwebview.win64_mingw",
+            "addons.qtwebview.win64_msvc2019_64",
 
             "qt5compat",
             "qt5compat.win64_mingw",
