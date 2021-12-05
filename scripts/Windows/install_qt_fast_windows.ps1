@@ -356,11 +356,6 @@ $component_groups += @(
     }
 )
 
-# cleanup
-if (Test-Path $installDir) {
-    Remove-Item $installDir -Force -Recurse
-}
-
 # install components
 foreach($componentGroup in $component_groups) {
     if ($componentGroup.version) {
@@ -381,12 +376,19 @@ compact /c /i /s:C:\Qt | Out-Null
 Write-Host "OK" -ForegroundColor Green
 
 # set aliases
-cmd /c mklink /J C:\Qt\latest C:\Qt\5.15.2
-cmd /c mklink /J C:\Qt\6.2 C:\Qt\6.2.2
-cmd /c mklink /J C:\Qt\6.1 C:\Qt\6.1.3
-cmd /c mklink /J C:\Qt\6.0 C:\Qt\6.0.4
-cmd /c mklink /J C:\Qt\5.15 C:\Qt\5.15.2
-cmd /c mklink /J C:\Qt\5.14 C:\Qt\5.14.2
-cmd /c mklink /J C:\Qt\5.9 C:\Qt\5.9.9
+$sym_links = @{
+    "latest" = "5.15.2"
+    "6.2" = "6.2.2"
+    "6.1" = "6.1.3"
+    "6.0" = "6.0.4"
+    "5.15" = "5.15.2"
+    "5.14" = "5.14.2"
+    "5.9" = "5.9.9"
+}
+
+foreach($link in $sym_links.Keys) {
+    $target = $sym_links[$link]
+    New-Item -ItemType SymbolicLink -Path "$installDir\$link" -Target "$installDir\$target" -Force | Out-Null
+}
 
 Write-Host "Qt 5.x installed" -ForegroundColor Green
