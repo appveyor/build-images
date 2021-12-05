@@ -9,61 +9,61 @@ $component_groups = @(
         version = "6.2.2"
         components = @(
             "win64_msvc2019_64",
-            "win64_mingw81",
+            "win64_mingw",
             "debug_info",
-            "debug_info.win64_mingw81",
+            "debug_info.win64_mingw",
             "debug_info.win64_msvc2019_64",
 
             "addons.qt3d",
-            "addons.qt3d.win64_mingw81",
+            "addons.qt3d.win64_mingw",
             "addons.qt3d.win64_msvc2019_64",
 
             "addons.qtactiveqt",
-            "addons.qtactiveqt.win64_mingw81",
+            "addons.qtactiveqt.win64_mingw",
             "addons.qtactiveqt.win64_msvc2019_64",
 
             "addons.qtcharts",
-            "addons.qtcharts.win64_mingw81",
+            "addons.qtcharts.win64_mingw",
             "addons.qtcharts.win64_msvc2019_64",
 
             "addons.qtdatavis3d",
-            "addons.qtdatavis3d.win64_mingw81",
+            "addons.qtdatavis3d.win64_mingw",
             "addons.qtdatavis3d.win64_msvc2019_64",
             
             "addons.qtimageformats",
-            "addons.qtimageformats.win64_mingw81",
+            "addons.qtimageformats.win64_mingw",
             "addons.qtimageformats.win64_msvc2019_64",
 
             "addons.qtlottie",
-            "addons.qtlottie.win64_mingw81",
+            "addons.qtlottie.win64_mingw",
             "addons.qtlottie.win64_msvc2019_64",
 
             "addons.qtnetworkauth",
-            "addons.qtnetworkauth.win64_mingw81",
+            "addons.qtnetworkauth.win64_mingw",
             "addons.qtnetworkauth.win64_msvc2019_64",
             
             "addons.qtscxml",
-            "addons.qtscxml.win64_mingw81",
+            "addons.qtscxml.win64_mingw",
             "addons.qtscxml.win64_msvc2019_64",
 
             "addons.qtvirtualkeyboard",
-            "addons.qtvirtualkeyboard.win64_mingw81",
+            "addons.qtvirtualkeyboard.win64_mingw",
             "addons.qtvirtualkeyboard.win64_msvc2019_64",            
 
             "qt5compat",
-            "qt5compat.win64_mingw81",
+            "qt5compat.win64_mingw",
             "qt5compat.win64_msvc2019_64",
 
             "qtshadertools",
-            "qtshadertools.win64_mingw81",
+            "qtshadertools.win64_mingw",
             "qtshadertools.win64_msvc2019_64",            
         
             "qtquick3d",
-            "qtquick3d.win64_mingw81",
+            "qtquick3d.win64_mingw",
             "qtquick3d.win64_msvc2019_64",
         
             "qtquicktimeline",
-            "qtquicktimeline.win64_mingw81",
+            "qtquicktimeline.win64_mingw",
             "qtquicktimeline.win64_msvc2019_64"
         )
     }
@@ -348,7 +348,8 @@ $component_groups += @(
             "qt.tools.win32_mingw730",
             "qt.tools.win64_mingw730",
             "qt.tools.win32_mingw810",
-            "qt.tools.win64_mingw810",            
+            "qt.tools.win64_mingw810",
+            "qt.tools.win64_mingw900",
             "qt.tools.ifw.42",
             "qt.license.thirdparty"
         )
