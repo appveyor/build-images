@@ -356,6 +356,11 @@ $component_groups += @(
     }
 )
 
+# cleanup
+if (Test-Path $installDir) {
+    Remove-Item $installDir -Force -Recurse
+}
+
 # install components
 foreach($componentGroup in $component_groups) {
     if ($componentGroup.version) {
