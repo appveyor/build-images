@@ -317,26 +317,26 @@ if($python38) {
 UpdatePip "$env:SystemDrive\Python38"
 UpdatePip "$env:SystemDrive\Python38-x64"
 
-# Python 3.9.7 x64
-$python39_x64 = (GetUninstallString 'Python 3.9.7 (64-bit)')
+# Python 3.9.9 x64
+$python39_x64 = (GetUninstallString 'Python 3.9.9 (64-bit)')
 if($python39_x64) {
-    Write-Host 'Python 3.9.7 x64 already installed'
+    Write-Host 'Python 3.9.9 x64 already installed'
 } else {
 
     #UninstallPython "Python 3.8.5 (64-bit)"
 
-    InstallPythonEXE "3.9.7" "x64" "$env:SystemDrive\Python39-x64"
+    InstallPythonEXE "3.9.9" "x64" "$env:SystemDrive\Python39-x64"
 }
 
-# Python 3.9.7
-$python39 = (GetUninstallString 'Python 3.9.7 (32-bit)')
+# Python 3.9.9
+$python39 = (GetUninstallString 'Python 3.9.9 (32-bit)')
 if($python39) {
-    Write-Host 'Python 3.9.7 already installed'
+    Write-Host 'Python 3.9.9 already installed'
 } else {
 
     #UninstallPython "Python 3.8.5 (32-bit)"
 
-    InstallPythonEXE "3.9.7" "x86" "$env:SystemDrive\Python39"
+    InstallPythonEXE "3.9.9" "x86" "$env:SystemDrive\Python39"
 }
 
 UpdatePip "$env:SystemDrive\Python39"
@@ -363,13 +363,8 @@ if($python310) {
 UpdatePip "$env:SystemDrive\Python310"
 UpdatePip "$env:SystemDrive\Python310-x64"
 
-if (-not $env:INSTALL_LATEST_ONLY) {
-    Add-Path C:\Python27
-    Add-Path C:\Python27\Scripts
-} else {
-    Add-Path C:\Python39
-    Add-Path C:\Python39\Scripts
-}
+Add-Path C:\Python310
+Add-Path C:\Python310\Scripts
 
 # restore .py file mapping
 # https://github.com/appveyor/ci/issues/575
