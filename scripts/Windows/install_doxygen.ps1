@@ -4,12 +4,14 @@ Write-Host "Installing Doxygen..." -ForegroundColor Cyan
 
 $destPath = 'C:\Tools\Doxygen'
 
-if(-not (Test-Path $destPath)) {
-    New-Item $destPath -ItemType directory -Force | Out-Null
+if(Test-Path $destPath) {
+    Remove-Item $destPath -Recurse -Force
 }
 
+New-Item $destPath -ItemType directory -Force | Out-Null
+
 $zipPath = "$env:TEMP\doxygen.zip"
-(New-Object Net.WebClient).DownloadFile('https://doxygen.nl/files/doxygen-1.9.1.windows.bin.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://www.doxygen.nl/files/doxygen-1.9.3-setup.exe', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 Remove-Item $zipPath
 
