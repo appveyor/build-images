@@ -1,6 +1,5 @@
 ﻿$110Letter = "L"
-$111Letter = "L"
-$300Letter = ""
+$111Letter = "m"
 $102Letter = "u"
 
 function GetUninstallString($productName) {
@@ -87,8 +86,8 @@ UninstallOpenSSL "OpenSSL 1.1.1$111Letter (64-bit)"
 
 Write-Host "Installing OpenSSL 3.0.0$111Letter 32-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$exePath = "$env:temp\Win32OpenSSL-3_0_0$300Letter.exe"
-(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-3_0_0$300Letter.exe", $exePath)
+$exePath = "$env:temp\Win32OpenSSL-3_0_1.exe"
+(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-3_0_1.exe", $exePath)
 if (-not (Test-Path $exePath)) {throw "Unable to find $exePath"}
 Write-Host "Installing..."
 cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v30-Win32-temp
@@ -96,10 +95,10 @@ Remove-Item $exePath
 Write-Host "Installed" -ForegroundColor Green
 Copy-Item C:\OpenSSL-v30-Win32-temp -Destination C:\OpenSSL-v30-Win32 -Recurse
 
-Write-Host "Installing OpenSSL 3.0.0$300Letter 64-bit ..." -ForegroundColor Cyan
+Write-Host "Installing OpenSSL 3.0.1 64-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$exePath = "$env:temp\Win64OpenSSL-3_0_0$300Letter.exe"
-(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win64OpenSSL-3_0_0$300Letter.exe", $exePath)
+$exePath = "$env:temp\Win64OpenSSL-3_0_1.exe"
+(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win64OpenSSL-3_0_1.exe", $exePath)
 if (-not (Test-Path $exePath)) {throw "Unable to find $exePath"}
 Write-Host "Installing..."
 cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v30-Win64-temp
@@ -107,8 +106,8 @@ Remove-Item $exePath
 Write-Host "Installed" -ForegroundColor Green
 Copy-Item C:\OpenSSL-v30-Win64-temp -Destination C:\OpenSSL-v30-Win64 -Recurse
 
-UninstallOpenSSL "OpenSSL 3.0.0$300Letter (32-bit)"
-UninstallOpenSSL "OpenSSL 3.0.0$300Letter (64-bit)"
+UninstallOpenSSL "OpenSSL 3.0.1 (32-bit)"
+UninstallOpenSSL "OpenSSL 3.0.1 (64-bit)"
 
 # -----------------------------------------------------------------------------------------------------------------
 
