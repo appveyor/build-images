@@ -317,47 +317,47 @@ if($python38) {
 UpdatePip "$env:SystemDrive\Python38"
 UpdatePip "$env:SystemDrive\Python38-x64"
 
-# Python 3.9.9 x64
-$python39_x64 = (GetUninstallString 'Python 3.9.9 (64-bit)')
+# Python 3.9.10 x64
+$python39_x64 = (GetUninstallString 'Python 3.9.10 (64-bit)')
 if($python39_x64) {
-    Write-Host 'Python 3.9.9 x64 already installed'
+    Write-Host 'Python 3.9.10 x64 already installed'
 } else {
 
     #UninstallPython "Python 3.8.5 (64-bit)"
 
-    InstallPythonEXE "3.9.9" "x64" "$env:SystemDrive\Python39-x64"
+    InstallPythonEXE "3.9.10" "x64" "$env:SystemDrive\Python39-x64"
 }
 
-# Python 3.9.9
-$python39 = (GetUninstallString 'Python 3.9.9 (32-bit)')
+# Python 3.9.10
+$python39 = (GetUninstallString 'Python 3.9.10 (32-bit)')
 if($python39) {
-    Write-Host 'Python 3.9.9 already installed'
+    Write-Host 'Python 3.9.10 already installed'
 } else {
 
     #UninstallPython "Python 3.8.5 (32-bit)"
 
-    InstallPythonEXE "3.9.9" "x86" "$env:SystemDrive\Python39"
+    InstallPythonEXE "3.9.10" "x86" "$env:SystemDrive\Python39"
 }
 
 UpdatePip "$env:SystemDrive\Python39"
 UpdatePip "$env:SystemDrive\Python39-x64"
 
-# Python 3.10.1 x64
-$python310_x64 = (GetUninstallString 'Python 3.10.1 (64-bit)')
+# Python 3.10.2 x64
+$python310_x64 = (GetUninstallString 'Python 3.10.2 (64-bit)')
 if($python310_x64) {
-    Write-Host 'Python 3.10.1 x64 already installed'
+    Write-Host 'Python 3.10.2 x64 already installed'
 } else {
 
-    InstallPythonEXE "3.10.1" "x64" "$env:SystemDrive\Python310-x64"
+    InstallPythonEXE "3.10.2" "x64" "$env:SystemDrive\Python310-x64"
 }
 
-# Python 3.10.1
-$python310 = (GetUninstallString 'Python 3.10.1 (32-bit)')
+# Python 3.10.2
+$python310 = (GetUninstallString 'Python 3.10.2 (32-bit)')
 if($python310) {
-    Write-Host 'Python 3.10.1 already installed'
+    Write-Host 'Python 3.10.2 already installed'
 } else {
 
-    InstallPythonEXE "3.10.1" "x86" "$env:SystemDrive\Python310"
+    InstallPythonEXE "3.10.2" "x86" "$env:SystemDrive\Python310"
 }
 
 UpdatePip "$env:SystemDrive\Python310"
