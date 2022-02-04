@@ -118,7 +118,7 @@ wsl lsb_release -a
 wslconfig /setdefault ubuntu-18.04
 wsl lsb_release -a
 
-wslconfig /setdefault ubuntu-20.04
+wslconfig /setdefault ubuntu
 wsl lsb_release -a
 
 # Rename C:\Windows\System32\bash.exe to avoid conflicts with default Git's bash
