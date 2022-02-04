@@ -72,11 +72,11 @@ $ubuntuExe = "C:\WSL\Ubuntu1804\ubuntu1804.exe"
 
 Write-warning "Installing Ubuntu 20.04 for WSL"
 
-(New-Object Net.WebClient).DownloadFile('https://aka.ms/wslubuntu2004', "$env:TEMP\wsl-ubuntu-2004.zip")
+(New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/misc/Ubuntu_2004.2021.825.0_x64.zip', "$env:TEMP\wsl-ubuntu-2004.zip")
 Expand-Archive -Path "$env:TEMP\wsl-ubuntu-2004.zip" -DestinationPath "C:\WSL\Ubuntu2004" -Force
 Remove-Item "$env:TEMP\wsl-ubuntu-2004.zip"
 
-$ubuntuExe = "C:\WSL\Ubuntu2004\ubuntu2004.exe"
+$ubuntuExe = "C:\WSL\Ubuntu2004\ubuntu.exe"
 . $ubuntuExe install --root
 . $ubuntuExe run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
 . $ubuntuExe run "echo 'appveyor:Password12!' | sudo chpasswd"
