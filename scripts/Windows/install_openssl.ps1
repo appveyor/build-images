@@ -84,7 +84,7 @@ UninstallOpenSSL "OpenSSL 1.1.1$111Letter (64-bit)"
 
 # -----------------------------------------------------------------------------------------------------------------
 
-Write-Host "Installing OpenSSL 3.0.0$111Letter 32-bit ..." -ForegroundColor Cyan
+Write-Host "Installing OpenSSL 3.0.1 32-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:temp\Win32OpenSSL-3_0_1.exe"
 (New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-3_0_1.exe", $exePath)
