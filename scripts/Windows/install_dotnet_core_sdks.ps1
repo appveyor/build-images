@@ -40,7 +40,7 @@ if ($vs2019 -or $vs2022) {
 
 # VS 2022 images only
 if ($vs2022) {
-    Install-SDK "5.0.404"
+    Install-SDK "5.0.405"
 }
 
 # VS 2019 Preview
