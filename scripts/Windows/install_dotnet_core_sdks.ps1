@@ -1,3 +1,5 @@
+. "$PSScriptRoot\common.ps1"
+
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 function Install-SDK($sdkVersion) {
