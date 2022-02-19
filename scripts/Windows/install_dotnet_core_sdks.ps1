@@ -17,7 +17,7 @@ function Install-SDK($sdkVersion) {
     New-Item -Path $projectPath -Force -ItemType Directory | Out-Null
     Set-Content -Path "$projectPath\global.json" -Value "{`"sdk`": {`"version`": `"$sdkVersion`"}}"
     Push-Location -Path $projectPath
-    Start-ProcessWithOutput "$env:ProgramFiles\dotnet\dotnet.exe new console"
+    Start-ProcessWithOutput "dotnet new console"
     Pop-Location
     Remove-Item $projectPath -Force -Recurse
     Write-Host "Installed .NET Core SDK $sdkVersion" -ForegroundColor Green
