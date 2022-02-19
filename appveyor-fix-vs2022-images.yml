@@ -11,9 +11,9 @@ environment:
 # Azure
 # =======
 
-  - job_name: VS 2022 on Azure West US
-    APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-azure-westus
-    APPVEYOR_BAKE_IMAGE: vs2022-master-azure-westus
+  # - job_name: VS 2022 on Azure West US
+  #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-azure-westus
+  #   APPVEYOR_BAKE_IMAGE: vs2022-master-azure-westus
 
 # GCE
 # =======
@@ -43,7 +43,7 @@ test: off
 build_script:
 
 #- ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
-- ps: .\install_doxygen.ps1
+- ps: .\install_dotnet_core_sdks.ps1
 # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
 
 # Restart VM
