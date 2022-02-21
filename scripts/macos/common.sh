@@ -520,7 +520,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.7" "go1.17" )
+    declare GO_VERSIONS=( "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.14" "go1.17.7" )
     for v in "${GO_VERSIONS[@]}"; do
         # big sur
         if [ "$OSX_MAJOR_VER" -eq 10 ]; then
