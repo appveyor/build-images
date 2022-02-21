@@ -583,7 +583,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
