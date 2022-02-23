@@ -774,6 +774,7 @@ function enable_vnc() {
 
 function configure_updates() {
     echo "[INFO] Running configure_updates..."
+    softwareupdate --all --install --force
     softwareupdate --schedule off
     defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -boolean FALSE
     defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -boolean FALSE
