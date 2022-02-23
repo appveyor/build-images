@@ -40,12 +40,13 @@ configure_updates
 configure_sshd
 configure_autologin
 install_curl
+install_vcs
 install_virtualenv
 install_gcc
 install_gpg
 install_rvm_and_rubies
 install_fastlane
-install_xcode  
+install_xcode
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -101,7 +102,6 @@ su -l "${USER_NAME}" -c "
         $(declare -f install_qt)
         install_qt" ||
     _abort $?
-install_cvs
 install_cmake
 install_openjdk
 su -l "${USER_NAME}" -c "

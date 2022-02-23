@@ -174,8 +174,8 @@ function install_curl() {
     fi
 }
 
-function install_cvs() {
-    echo "[INFO] Running install_cvs..."
+function install_vcs() {
+    echo "[INFO] Running install_vcs..."
 
     brew_install mercurial subversion git git-lfs
     if check_user; then
