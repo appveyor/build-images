@@ -475,7 +475,7 @@ function install_dotnets() {
     popd
 
     #shellcheck disable=SC2016
-    write_line "${HOME}/.profile" "add2path_suffix $INSTALL_DIR"
+    write_line "${HOME}/.profile" 'export PATH=$PATH:/usr/local/share/dotnet'
     export PATH="$PATH:$INSTALL_DIR"
 }
 
@@ -663,7 +663,7 @@ function install_vcpkg() {
     ./bootstrap-vcpkg.sh ||
         { echo "[ERROR] Cannot bootstrap vcpkg." 1>&2; popd; return 10; }
 
-    write_line "${HOME}/.profile" 'add2path_suffix ${HOME}/vcpkg'
+    write_line "${HOME}/.profile" 'export PATH=$PATH:$HOME/vcpkg'
     export PATH="$PATH:${HOME}/vcpkg"
     vcpkg integrate install ||
         { echo "[WARNING] 'vcpkg integrate install' Failed." 1>&2; }
