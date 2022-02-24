@@ -383,6 +383,8 @@ function install_pythons(){
     find /Library/Developer/CommandLineTools/Packages/ -name 'macOS_SDK_headers_*.pkg' |
         xargs -I {} sudo installer -pkg {} -target /
 
+    ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/Current/Headers/X11 /usr/local/include/X11
+
     brew install openssl xz gdbm
 
     SSL_PATH=$(brew --prefix openssl)
@@ -611,9 +613,6 @@ function install_xcode() {
     if [ "$OSX_MAJOR_VER" -eq 11 ]; then
         XCODE_VERSIONS=( "12.5.1" "13.2.1" )
     fi
-
-    # update dev tools
-    sudo xcode-select --install
 
     #check fastlane
     if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
