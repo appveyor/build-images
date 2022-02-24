@@ -813,11 +813,16 @@ function check_folders() {
     fi
 }
 
+function fix_home_permissions() {
+    echo "[INFO] Running fix_home_permissions..."
+    sudo chown -R ${USER_NAME} $HOME
+}
+
 function cleanup() {
     echo "[INFO] Running cleanup..."
 
     # fix $HOME permissions
-    sudo chown -R ${USER_NAME} $HOME
+    fix_home_permissions
 
     # clean bash_history
     [ -f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history

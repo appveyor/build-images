@@ -47,6 +47,7 @@ install_gpg
 install_rvm_and_rubies
 install_fastlane
 install_xcode
+fix_home_permissions
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
