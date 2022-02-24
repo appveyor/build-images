@@ -612,6 +612,9 @@ function install_xcode() {
         XCODE_VERSIONS=( "12.5.1" "13.2.1" )
     fi
 
+    # update dev tools
+    sudo xcode-select --install
+
     #check fastlane
     if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
         [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
