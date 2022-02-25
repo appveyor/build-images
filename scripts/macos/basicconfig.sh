@@ -44,6 +44,7 @@ install_vcs
 install_virtualenv
 install_gcc
 install_gpg
+install_openjdk
 install_rvm_and_rubies
 install_fastlane
 install_xcode
@@ -104,7 +105,6 @@ su -l "${USER_NAME}" -c "
         install_qt" ||
     _abort $?
 install_cmake
-install_openjdk
 su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
