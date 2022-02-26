@@ -610,7 +610,7 @@ function install_xcode() {
     fi
 
     # big sur
-    if [ "$OSX_MAJOR_VER" -eq 11 ]; then
+    if [ "$OSX_MAJOR_VER" -ge 11 ]; then
         XCODE_VERSIONS=( "12.5.1" "13.2.1" )
     fi
 
@@ -709,7 +709,7 @@ function install_openjdk() {
         declare JDK_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" )
 
         # big sur
-        if [ "$OSX_MAJOR_VER" -eq 11 ]; then
+        if [ "$OSX_MAJOR_VER" -ge 11 ]; then
             JDK_VERSIONS=( "13" "14" "15" )
         fi
 
