@@ -174,8 +174,8 @@ function install_curl() {
     fi
 }
 
-function install_cvs() {
-    echo "[INFO] Running install_cvs..."
+function install_vcs() {
+    echo "[INFO] Running install_vcs..."
 
     brew_install mercurial subversion git git-lfs
     if check_user; then
@@ -311,7 +311,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.21.2
+        VERSION=3.22.2
     else
         VERSION=$1
     fi
@@ -383,6 +383,8 @@ function install_pythons(){
     find /Library/Developer/CommandLineTools/Packages/ -name 'macOS_SDK_headers_*.pkg' |
         xargs -I {} sudo installer -pkg {} -target /
 
+    ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/Current/Headers/X11 /usr/local/include/X11
+
     brew install openssl xz gdbm
 
     SSL_PATH=$(brew --prefix openssl)
@@ -392,7 +394,7 @@ function install_pythons(){
     LDFLAGS="-L${SSL_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.14" "3.7.11" "3.8.11" "3.9.6" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.12" "3.8.12" "3.9.10" "3.10.2" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -466,7 +468,7 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" "5.0"  )
+    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" "5.0" "6.0"  )
     for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
         sudo ./dotnet-install.sh -channel "$v" --install-dir "$INSTALL_DIR"
@@ -520,7 +522,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.7" "go1.17" )
+    declare GO_VERSIONS=( "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.14" "go1.17.7" )
     for v in "${GO_VERSIONS[@]}"; do
         # big sur
         if [ "$OSX_MAJOR_VER" -eq 10 ]; then
@@ -583,7 +585,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -608,8 +610,8 @@ function install_xcode() {
     fi
 
     # big sur
-    if [ "$OSX_MAJOR_VER" -eq 11 ]; then
-        XCODE_VERSIONS=( "12.5.1" "13" )
+    if [ "$OSX_MAJOR_VER" -ge 11 ]; then
+        XCODE_VERSIONS=( "12.5.1" "13.2.1" )
     fi
 
     #check fastlane
@@ -707,7 +709,7 @@ function install_openjdk() {
         declare JDK_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" )
 
         # big sur
-        if [ "$OSX_MAJOR_VER" -eq 11 ]; then
+        if [ "$OSX_MAJOR_VER" -ge 11 ]; then
             JDK_VERSIONS=( "13" "14" "15" )
         fi
 
@@ -813,11 +815,16 @@ function check_folders() {
     fi
 }
 
+function fix_home_permissions() {
+    echo "[INFO] Running fix_home_permissions..."
+    sudo chown -R ${USER_NAME} $HOME
+}
+
 function cleanup() {
     echo "[INFO] Running cleanup..."
 
     # fix $HOME permissions
-    sudo chown -R ${USER_NAME} $HOME
+    fix_home_permissions
 
     # clean bash_history
     [ -f ${HOME}/.bash_history ] && cat /dev/null > ${HOME}/.bash_history
