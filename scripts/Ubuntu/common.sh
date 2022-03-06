@@ -727,7 +727,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.12" "3.8.12" "3.9.8" "3.10.0" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.12" "3.8.12" "3.9.10" "3.10.2" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
