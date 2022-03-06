@@ -18,9 +18,9 @@ environment:
 # GCE
 # =======
 
-  - job_name: VS 2019 on GCE us-central1
-    APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
-    APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
+  # - job_name: VS 2019 on GCE us-central1
+  #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
+  #   APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
 
 init:
   - appveyor version
