@@ -425,6 +425,7 @@ function install_pythons(){
     done
     find "$HOME" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
     rm ${HOME}/Python-*.tgz
+    rm /usr/local/include/X11
 }
 
 function global_json() {
