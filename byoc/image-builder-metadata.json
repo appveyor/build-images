@@ -66,7 +66,7 @@
             },
             {
                "id":"dotnet_core_sdks",
-               "title":"NET Core SDKs (2.x - 3.x)"
+               "title":"NET Core SDKs (2.x - 5.x)"
             },
             {
                "id":"sql_server_2017",
@@ -89,6 +89,10 @@
                "title":"Visual Studio Community 2019"
             },
             {
+               "id":"vs2022",
+               "title":"Visual Studio Community 2022"
+            },            
+            {
                "id":"xunit_20",
                "title":"xUnit 2.0.0 RTM"
             },
@@ -106,7 +110,7 @@
             },
             {
                "id":"ruby",
-               "title":"Ruby with DevKit (1.9.3 -  2.6.3)"
+               "title":"Ruby with DevKit (1.9.3 - 3.0.0)"
             },
             {
                "id":"miniconda",
@@ -114,15 +118,15 @@
             },
             {
                "id":"python",
-               "title":"Python (2.6.6 - 3.7.4)"
+               "title":"Python (2.6 - 3.10)"
             },
             {
                "id":"openssl",
-               "title":"OpenSSL (1.0.2 - 1.1.1)"
+               "title":"OpenSSL (1.0.2 - 3.0)"
             },
             {
                "id":"cmake",
-               "title":"CMake 3.15.1"
+               "title":"CMake"
             },
             {
                "id":"postgres96",
