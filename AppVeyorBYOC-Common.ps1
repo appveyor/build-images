@@ -449,9 +449,9 @@ function GetOrCreateServicePrincipal ($service_principal_name, $build_cloud_name
     }
     if (-not $sp) {
         $sp = New-AzADServicePrincipal -DisplayName $service_principal_name -Role Contributor
-        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($sp.Secret)
-        $azure_client_secret = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-        $azure_client_id = $sp.ApplicationId
+        $sp_cred = $sp | New-AzADSpCredential -StartDate (Get-Date) -EndDate (Get-Date).AddYears(10)
+        $azure_client_secret = $sp_cred.SecretText
+        $azure_client_id = $sp.AppId
     }
     else {
         $clouds = Invoke-RestMethod -Uri "$($AppVeyorUrl)/api/build-clouds" -Headers $headers -Method Get
