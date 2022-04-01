@@ -14,22 +14,24 @@ function GetUninstallString($productName) {
     $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
     $x64userItems = @(Get-ChildItem "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
     ($x64items + $x64userItems + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
-        | ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
-        | Where-Object { $_.DisplayName -and $_.DisplayName -eq $productName } `
-        | Select UninstallString).UninstallString
+    | ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
+    | Where-Object { $_.DisplayName -and $_.DisplayName -eq $productName } `
+    | Select UninstallString).UninstallString
 }
 
 function UninstallPython($pythonName) {
     $uninstallCommand = (GetUninstallString $pythonName)
-    if($uninstallCommand) {
+    if ($uninstallCommand) {
         Write-Host "Uninstalling $pythonName..." -NoNewline
-        if($uninstallCommand.contains('/modify')) {
+        if ($uninstallCommand.contains('/modify')) {
             $uninstallCommand = $uninstallCommand.replace('/modify', '')
             cmd /c start /wait "`"$uninstallCommand`"" /quiet /uninstall
-        } elseif ($uninstallCommand.contains('/uninstall')) {
+        }
+        elseif ($uninstallCommand.contains('/uninstall')) {
             $uninstallCommand = $uninstallCommand.replace('/uninstall', '')
             cmd /c start /wait "`"$uninstallCommand`"" /uninstall
-        } else {
+        }
+        else {
             $uninstallCommand = $uninstallCommand.replace('MsiExec.exe /I{', '/x{').replace('MsiExec.exe /X{', '/x{')
             cmd /c start /wait msiexec.exe $uninstallCommand /quiet
         }
@@ -110,9 +112,10 @@ function InstallPythonEXE($version, $platform, $targetPath) {
 if (-not $env:INSTALL_LATEST_ONLY) {
     # Python 2.6.6
     $python26 = (GetUninstallString 'Python 2.6.6')
-    if($python26) {
+    if ($python26) {
         Write-Host 'Python 2.6.6 already installed'
-    } else {
+    }
+    else {
 
         InstallPythonMSI "2.6.6" "x64" "$env:SystemDrive\Python26-x64"
         InstallPythonMSI "2.6.6" "x86" "$env:SystemDrive\Python26"
@@ -132,9 +135,10 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
 # Python 2.7.18
 $python27 = (GetUninstallString 'Python 2.7.18')
-if($python27) {
+if ($python27) {
     Write-Host 'Python 2.7.18 already installed'
-} else {
+}
+else {
     UninstallPython "Python 2.7.14"
     UninstallPython "Python 2.7.14 (64-bit)"
     UninstallPython "Python 2.7.15"
@@ -154,9 +158,10 @@ UpdatePip "$env:SystemDrive\Python27-x64"
 if (-not $env:INSTALL_LATEST_ONLY) {
     # Python 3.3.5
     $python33 = (GetUninstallString 'Python 3.3.5')
-    if($python33) {
+    if ($python33) {
         Write-Host 'Python 3.3.5 already installed'
-    } else {
+    }
+    else {
 
         InstallPythonMSI "3.3.5" "x64" "$env:SystemDrive\Python33-x64"
         InstallPythonMSI "3.3.5" "x86" "$env:SystemDrive\Python33"
@@ -180,9 +185,10 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 if (-not $env:INSTALL_LATEST_ONLY) {
     # Python 3.4.4
     $python34 = (GetUninstallString 'Python 3.4.4')
-    if($python34) {
+    if ($python34) {
         Write-Host 'Python 3.4.4 already installed'
-    } else {
+    }
+    else {
 
         UninstallPython "Python 3.4.3"
         UninstallPython "Python 3.4.3 (64-bit)"
@@ -209,9 +215,10 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 if (-not $env:INSTALL_LATEST_ONLY) {
     # Python 3.5.4
     $python35 = (GetUninstallString 'Python 3.5.4 (32-bit)')
-    if($python35) {
+    if ($python35) {
         Write-Host 'Python 3.5.4 already installed'
-    } else {
+    }
+    else {
 
         UninstallPython "Python 3.5.3 (32-bit)"
         UninstallPython "Python 3.5.3 (64-bit)"
@@ -228,9 +235,10 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
     # Python 3.6.8 x64
     $python36_x64 = (GetUninstallString 'Python 3.6.8 (64-bit)')
-    if($python36_x64) {
+    if ($python36_x64) {
         Write-Host 'Python 3.6.8 x64 already installed'
-    } else {
+    }
+    else {
 
         UninstallPython "Python 3.6.6 (64-bit)"
         UninstallPython "Python 3.6.7 (64-bit)"
@@ -240,9 +248,10 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
     # Python 3.6.8
     $python36 = (GetUninstallString 'Python 3.6.8 (32-bit)')
-    if($python36) {
+    if ($python36) {
         Write-Host 'Python 3.6.8 already installed'
-    } else {
+    }
+    else {
 
         UninstallPython "Python 3.6.6 (32-bit)"
         UninstallPython "Python 3.6.7 (32-bit)"
@@ -258,9 +267,10 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
     # Python 3.7.9 x64
     $python37_x64 = (GetUninstallString 'Python 3.7.9 (64-bit)')
-    if($python37_x64) {
+    if ($python37_x64) {
         Write-Host 'Python 3.7.9 x64 already installed'
-    } else {
+    }
+    else {
 
         UninstallPython "Python 3.7.0 (64-bit)"
         UninstallPython "Python 3.7.5 (64-bit)"
@@ -273,9 +283,10 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
     # Python 3.7.9
     $python37 = (GetUninstallString 'Python 3.7.9 (32-bit)')
-    if($python37) {
+    if ($python37) {
         Write-Host 'Python 3.7.9 already installed'
-    } else {
+    }
+    else {
         UninstallPython "Python 3.7.0 (32-bit)"
         UninstallPython "Python 3.7.5 (32-bit)"
         UninstallPython "Python 3.7.7 (32-bit)"
@@ -290,9 +301,10 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
 # Python 3.8.10 x64
 $python38_x64 = (GetUninstallString 'Python 3.8.10 (64-bit)')
-if($python38_x64) {
+if ($python38_x64) {
     Write-Host 'Python 3.8.10 x64 already installed'
-} else {
+}
+else {
 
     UninstallPython "Python 3.8.0 (64-bit)"
     UninstallPython "Python 3.8.2 (64-bit)"
@@ -303,9 +315,10 @@ if($python38_x64) {
 
 # Python 3.8.10
 $python38 = (GetUninstallString 'Python 3.8.10 (32-bit)')
-if($python38) {
+if ($python38) {
     Write-Host 'Python 3.8.10 already installed'
-} else {
+}
+else {
 
     UninstallPython "Python 3.8.0 (32-bit)"
     UninstallPython "Python 3.8.2 (32-bit)"
@@ -317,47 +330,51 @@ if($python38) {
 UpdatePip "$env:SystemDrive\Python38"
 UpdatePip "$env:SystemDrive\Python38-x64"
 
-# Python 3.9.10 x64
-$python39_x64 = (GetUninstallString 'Python 3.9.10 (64-bit)')
-if($python39_x64) {
-    Write-Host 'Python 3.9.10 x64 already installed'
-} else {
+# Python 3.9.12 x64
+$python39_x64 = (GetUninstallString 'Python 3.9.12 (64-bit)')
+if ($python39_x64) {
+    Write-Host 'Python 3.9.12 x64 already installed'
+}
+else {
 
     #UninstallPython "Python 3.8.5 (64-bit)"
 
-    InstallPythonEXE "3.9.10" "x64" "$env:SystemDrive\Python39-x64"
+    InstallPythonEXE "3.9.12" "x64" "$env:SystemDrive\Python39-x64"
 }
 
-# Python 3.9.10
-$python39 = (GetUninstallString 'Python 3.9.10 (32-bit)')
-if($python39) {
-    Write-Host 'Python 3.9.10 already installed'
-} else {
+# Python 3.9.12
+$python39 = (GetUninstallString 'Python 3.9.12 (32-bit)')
+if ($python39) {
+    Write-Host 'Python 3.9.12 already installed'
+}
+else {
 
     #UninstallPython "Python 3.8.5 (32-bit)"
 
-    InstallPythonEXE "3.9.10" "x86" "$env:SystemDrive\Python39"
+    InstallPythonEXE "3.9.12" "x86" "$env:SystemDrive\Python39"
 }
 
 UpdatePip "$env:SystemDrive\Python39"
 UpdatePip "$env:SystemDrive\Python39-x64"
 
-# Python 3.10.2 x64
-$python310_x64 = (GetUninstallString 'Python 3.10.2 (64-bit)')
-if($python310_x64) {
-    Write-Host 'Python 3.10.2 x64 already installed'
-} else {
+# Python 3.10.4 x64
+$python310_x64 = (GetUninstallString 'Python 3.10.4 (64-bit)')
+if ($python310_x64) {
+    Write-Host 'Python 3.10.4 x64 already installed'
+}
+else {
 
-    InstallPythonEXE "3.10.2" "x64" "$env:SystemDrive\Python310-x64"
+    InstallPythonEXE "3.10.4" "x64" "$env:SystemDrive\Python310-x64"
 }
 
-# Python 3.10.2
-$python310 = (GetUninstallString 'Python 3.10.2 (32-bit)')
-if($python310) {
-    Write-Host 'Python 3.10.2 already installed'
-} else {
+# Python 3.10.4
+$python310 = (GetUninstallString 'Python 3.10.4 (32-bit)')
+if ($python310) {
+    Write-Host 'Python 3.10.4 already installed'
+}
+else {
 
-    InstallPythonEXE "3.10.2" "x86" "$env:SystemDrive\Python310"
+    InstallPythonEXE "3.10.4" "x86" "$env:SystemDrive\Python310"
 }
 
 UpdatePip "$env:SystemDrive\Python310"
@@ -383,14 +400,16 @@ $r
 function CheckPython($path) {
     if (Test-Path "$path\python.exe") {
         Start-ProcessWithOutput "$path\python.exe --version"
-    } else {
+    }
+    else {
         throw "python.exe is missing in $path"
     }
 
     if (Test-Path "$path\Scripts\pip.exe") {
         Start-ProcessWithOutput "$path\Scripts\pip.exe --version"
         Start-ProcessWithOutput "$path\Scripts\virtualenv.exe --version"
-    } else {
+    }
+    else {
         Write-Host "pip.exe is missing in $path" -ForegroundColor Red
     }
 }
