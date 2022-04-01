@@ -1,7 +1,7 @@
-﻿$cmakeVersion = "3.22.2"
+﻿$cmakeVersion = "3.23.0"
 
 $cmakeUninstallPath = "${env:ProgramFiles}\CMake\Uninstall.exe"
-if([IO.File]::Exists($cmakeUninstallPath)) {
+if ([IO.File]::Exists($cmakeUninstallPath)) {
     Write-Host "Uninstalling previous CMake ..." -ForegroundColor Cyan
     # uninstall existent
     "`"$cmakeUninstallPath`" /S" | out-file ".\uninstall-cmake.cmd" -Encoding ASCII
