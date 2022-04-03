@@ -2,64 +2,68 @@
 
 $go_versions = @(
     @{
-        "version" = "1.17.7"
-        "folder" = "go117"
+        "version" = "1.18"
+        "folder"  = "go118"
     }
 )
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     $go_versions = $go_versions + @(
         @{
-            "version" = "1.16.14"
-            "folder" = "go116"
+            "version" = "1.17.8"
+            "folder"  = "go117"
+        }
+        @{
+            "version" = "1.16.15"
+            "folder"  = "go116"
         }        
         @{
             "version" = "1.15.15"
-            "folder" = "go115"
+            "folder"  = "go115"
         }        
         @{
             "version" = "1.14.15"
-            "folder" = "go114"
+            "folder"  = "go114"
         }
         @{
             "version" = "1.13.15"
-            "folder" = "go113"
+            "folder"  = "go113"
         }
         @{
             "version" = "1.12.17"
-            "folder" = "go112"
+            "folder"  = "go112"
         }
         @{
             "version" = "1.11.13"
-            "folder" = "go111"
+            "folder"  = "go111"
         }
         @{
             "version" = "1.10.8"
-            "folder" = "go110"
+            "folder"  = "go110"
         }
         @{
             "version" = "1.9.7"
-            "folder" = "go19"
+            "folder"  = "go19"
         }
         @{
             "version" = "1.8.7"
-            "folder" = "go18"
+            "folder"  = "go18"
         }
         @{
             "version" = "1.7.6"
-            "folder" = "go17"
+            "folder"  = "go17"
         }
         @{
             "version" = "1.6.4"
-            "folder" = "go16"
+            "folder"  = "go16"
         }
         @{
             "version" = "1.5.4"
-            "folder" = "go15"
+            "folder"  = "go15"
         }
         @{
             "version" = "1.4.3"
-            "folder" = "go14"
+            "folder"  = "go14"
         }
     )    
 }
@@ -71,10 +75,10 @@ function InstallGo ($go_version, $folder_name) {
     $destDir = "C:\$folder_name"
 
     Write-Host "Removing Go in $destDir..."
-    if(Test-Path $destDir) {
+    if (Test-Path $destDir) {
         Remove-Item $destDir -Recurse -Force
     }
-    if(Test-Path "$destDir-x86") {
+    if (Test-Path "$destDir-x86") {
         Remove-Item "$destDir-x86" -Recurse -Force
     }
     
@@ -101,15 +105,15 @@ function InstallGo ($go_version, $folder_name) {
     del $goDistPath
 }
 
-if(Test-Path 'C:\go') {
+if (Test-Path 'C:\go') {
     Remove-Item 'C:\go' -Recurse -Force
 }
-if(Test-Path 'C:\go-x86') {
+if (Test-Path 'C:\go-x86') {
     Remove-Item 'C:\go-x86' -Recurse -Force
 }
 
 # install go
-for($i = 0; $i -lt $go_versions.Count; $i++) {
+for ($i = 0; $i -lt $go_versions.Count; $i++) {
     InstallGo $go_versions[$i].version $go_versions[$i].folder
 }
 
@@ -127,7 +131,7 @@ Start-ProcessWithOutput "go version"
 
 # test go installations
 
-for($i = 0; $i -lt $go_versions.Count; $i++) {
+for ($i = 0; $i -lt $go_versions.Count; $i++) {
     Write-Host "$($go_versions[$i].version)" -ForegroundColor Cyan
     Start-ProcessWithOutput "C:\$($go_versions[$i].folder)\bin\go.exe version" -IgnoreExitCode
     Start-ProcessWithOutput "C:\$($go_versions[$i].folder)-x86\bin\go.exe version" -IgnoreExitCode

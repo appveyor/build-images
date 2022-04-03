@@ -4,7 +4,7 @@ Write-Host "Installing Microsoft Edge..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
 $msiPath = "$env:TEMP\MicrosoftEdgeEnterpriseX64.msi"
-(New-Object Net.WebClient).DownloadFile('https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/7f1e99eb-894f-46e9-82d9-8fa888df0a57/MicrosoftEdgeEnterpriseX64.msi', $msiPath)
+(New-Object Net.WebClient).DownloadFile('https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/18e7a93d-4393-4d72-9611-ec93904acc83/MicrosoftEdgeEnterpriseX64.msi', $msiPath)
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i "$msiPath" /qn /norestart
