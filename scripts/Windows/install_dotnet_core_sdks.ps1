@@ -6,7 +6,8 @@ function Install-SDK($sdkVersion) {
     
     if (Test-Path "$env:ProgramFiles\dotnet\sdk\$sdkVersion") {
         Write-Host ".NET Core SDK $sdkVersion is already installed" -ForegroundColor Yellow
-    } else {
+    }
+    else {
         Write-Host "Installing .NET Core SDK $sdkVersion"
         Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
         & $env:temp\dotnet-install.ps1 -Architecture x64 -Version $sdkVersion -InstallDir "$env:ProgramFiles\dotnet"
@@ -37,15 +38,15 @@ $vs2022 = (Test-Path "${env:ProgramFiles}\Microsoft Visual Studio\2022")
 if ($vs2019 -or $vs2022) {
     Install-SDK "3.0.103"
     Install-SDK "3.1.202"
-    Install-SDK "3.1.416"
+    Install-SDK "3.1.417"
 }
 
 # VS 2022 images only
 if ($vs2022) {
-    Install-SDK "5.0.405"
+    Install-SDK "5.0.406"
 }
 
 # VS 2019 Preview
 if ($env:install_vs2019_preview) {
-	Install-SDK "6.0.100-preview.5.21302.13"
+    Install-SDK "6.0.100-preview.5.21302.13"
 }

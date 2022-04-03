@@ -1,4 +1,4 @@
-﻿$version = '7.2.1'
+﻿$version = '7.2.2'
 
 Write-Host "Installing PowerShell Core $version"
 Write-Host "=========================="
@@ -27,7 +27,8 @@ if (Test-Path $appveyorPath) {
     if (-not (Test-Path $pwshProfileFilename) -or (Get-Content $pwshProfileFilename | Where-Object { $_.Contains("AppVeyor.BuildAgent.PowerShell.dll") }).Count -eq 0) {
         Write-Host "Updating $pwshProfileFilename with AppVeyor PS Modules"
         Add-Content $pwshProfileFilename "`nImport-Module '$appveyorPath\dotnetcore\AppVeyor.BuildAgent.PowerShell.dll'"
-    } else {
+    }
+    else {
         Write-Host "Import of AppVeyor Modules already exists in $pwshProfileFilename"
     }
 }
