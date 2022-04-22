@@ -321,6 +321,7 @@
         "12.22.1",
         "12.22.6",
         "12.22.7",
+        "12.22.12",
         "13.0.0",
         "13.0.1",
         "13.1.0",
@@ -354,6 +355,7 @@
         "14.17.0",
         "14.17.6",
         "14.18.1",
+        "14.19.1",
         "15.0.0",
         "15.2.0",
         "15.4.0",
@@ -363,7 +365,10 @@
         "16.3.0",
         "16.8.0",
         "16.13.0",
+        "16.14.2",
         "17.1.0",
+        "17.9.0",
+        "18.0.0",
         "8.11.1",
         "8.11.2",
         "8.11.3",
@@ -574,6 +579,11 @@
             $lastOne = ($i -eq ($nodeVersions.Length - 1) -and $j -eq ($nodePlatforms.Length - 1))
 
             Write-Host "Installing $nodeName $nodeVersion $nodePlatform..." -ForegroundColor Cyan
+
+            if ($nodeVersion.startswith('18.') -and $nodePlatform -eq 'x86') {
+                Write-Host "Skipped as there is no x86 version of $nodeName $nodeVersion" -ForegroundColor Yellow
+                continue
+            }
 
             $avvmDir = "$avvmRoot\$nodeVersion\$nodePlatform"
             $installDir = ProductInstallDirectory $nodeVersion $nodePlatform
