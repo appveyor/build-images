@@ -1,6 +1,8 @@
 ﻿Write-Host "Installing 7-Zip"
 Write-Host "================"
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 $exePath = "$env:TEMP\7z2107-x64.exe"
 Invoke-WebRequest https://www.7-zip.org/a/7z2107-x64.exe -OutFile $exePath
 cmd /c start /wait $exePath /S
