@@ -26,7 +26,7 @@ Write-Host "Installed Chrome Selenium driver" -ForegroundColor Green
 Write-Host "Installing Edge Selenium driver..." -ForegroundColor Cyan
 
 $zipPath = "$env:TEMP\edgedriver_win32.zip"
-(New-Object Net.WebClient).DownloadFile('https://msedgedriver.azureedge.net/99.0.1150.55/edgedriver_win32.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://msedgedriver.azureedge.net/100.0.1185.50/edgedriver_win32.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 Remove-Item $zipPath
 
