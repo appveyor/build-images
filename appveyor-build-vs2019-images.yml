@@ -224,7 +224,7 @@ for:
       - ps: .\install_cmake.ps1
       - ps: .\install_perl.ps1
       - ps: .\install_llvm.ps1
-      - ps: .\install_llvm_extension_vs2019.ps1
+      #- ps: .\install_llvm_extension_vs2019.ps1
       - ps: .\install_vcpkg.ps1
       - ps: .\install_innosetup.ps1
       - ps: .\install_coverity.ps1
