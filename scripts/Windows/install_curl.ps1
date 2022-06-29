@@ -4,15 +4,15 @@ Write-Host "Installing curl..." -ForegroundColor Cyan
 
 $destPath = 'C:\Tools\curl'
 
-if(Test-Path $destPath) {
+if (Test-Path $destPath) {
     Remove-Item $destPath -Recurse -Force
 }
 
-$zipPath = "$env:TEMP\curl-7.79.1-win64-mingw.zip"
+$zipPath = "$env:TEMP\curl-7.84.0_2-win64-mingw.zip"
 $tempPath = "$env:TEMP\curl"
-(New-Object Net.WebClient).DownloadFile('https://curl.se/windows/dl-7.79.1/curl-7.79.1-win64-mingw.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://curl.se/windows/dl-7.84.0_2/curl-7.84.0_2-win64-mingw.zip', $zipPath)
 7z x $zipPath -aoa -o"$tempPath"
-[IO.Directory]::Move("$tempPath\curl-7.79.1-win64-mingw", $destPath)
+[IO.Directory]::Move("$tempPath\curl-7.84.0_2-win64-mingw", $destPath)
 
 del $zipPath
 Remove-Item $tempPath -Recurse -Force
