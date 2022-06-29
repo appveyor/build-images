@@ -1,4 +1,4 @@
-﻿$nugetVersion = '5.11.0'
+﻿$nugetVersion = '6.2.1'
 $nugetUrl = "https://dist.nuget.org/win-x86-commandline/v$nugetVersion/nuget.exe"
 
 $nugetDir = "$env:SystemDrive\Tools\NuGet3"
@@ -10,10 +10,12 @@ if (-not (Test-Path $nugetDir)) {
         New-Item $nugetDir -ItemType Directory -Force | Out-Null
         Add-Path $nugetDir
         Add-SessionPath $nugetDir
-    } else {
+    }
+    else {
         Write-Host "Updating NuGet in $nugetDir"
     }
-} else {
+}
+else {
     Write-Host "Updating NuGet in $nugetDir"
 }
 
