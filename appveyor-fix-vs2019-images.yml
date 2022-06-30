@@ -7,19 +7,19 @@ environment:
       APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master
       APPVEYOR_BAKE_IMAGE: vs2019-master
 
-    # Azure
-    # =======
-
-    - job_name: VS 2019 on Azure West US
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-azure-westus
-      APPVEYOR_BAKE_IMAGE: vs2019-master-azure-westus
-
     # GCE
     # =======
 
     - job_name: VS 2019 on GCE us-central1
       APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
       APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
+
+    # # Azure
+    # # =======
+
+    # - job_name: VS 2019 on Azure West US
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-azure-westus
+    #   APPVEYOR_BAKE_IMAGE: vs2019-master-azure-westus
 
 init:
   - appveyor version
