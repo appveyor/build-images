@@ -6,7 +6,7 @@ $installDir = "C:\Qt"
 
 $component_groups = @(
     @{
-        version    = "6.3.0"
+        version    = "6.4.0"
         components = @(
             "win64_msvc2019_64",
             "win64_mingw",
@@ -39,11 +39,21 @@ $component_groups = @(
             "addons.qtdatavis3d.win64_mingw",
             "addons.qtdatavis3d.win64_msvc2019_64",
             "addons.qtdatavis3d.win64_msvc2019_arm64",
-            
+
+            "addons.qthttpserver",
+            "addons.qthttpserver.win64_mingw",
+            "addons.qthttpserver.win64_msvc2019_64",
+            "addons.qthttpserver.win64_msvc2019_arm64",            
+
             "addons.qtimageformats",
             "addons.qtimageformats.win64_mingw",
             "addons.qtimageformats.win64_msvc2019_64",
             "addons.qtimageformats.win64_msvc2019_arm64",
+
+            "addons.qtlanguageserver",
+            "addons.qtlanguageserver.win64_mingw",
+            "addons.qtlanguageserver.win64_msvc2019_64",
+            "addons.qtlanguageserver.win64_msvc2019_arm64",               
 
             "addons.qtlottie",
             "addons.qtlottie.win64_mingw",
@@ -60,10 +70,18 @@ $component_groups = @(
             "addons.qtnetworkauth.win64_msvc2019_64",
             "addons.qtnetworkauth.win64_msvc2019_arm64",
 
+            "addons.qtpdf",
+            "addons.qtpdf.win64_msvc2019_64",
+
             "addons.qtpositioning",
             "addons.qtpositioning.win64_mingw",
             "addons.qtpositioning.win64_msvc2019_64",
             "addons.qtpositioning.win64_msvc2019_arm64",
+
+            "addons.qtquick3dphysics",
+            "addons.qtquick3dphysics.win64_mingw",
+            "addons.qtquick3dphysics.win64_msvc2019_64",
+            "addons.qtquick3dphysics.win64_msvc2019_arm64",            
 
             "addons.qtremoteobjects",
             "addons.qtremoteobjects.win64_mingw",
@@ -88,7 +106,12 @@ $component_groups = @(
             "addons.qtserialport",
             "addons.qtserialport.win64_mingw",
             "addons.qtserialport.win64_msvc2019_64",
-            "addons.qtserialport.win64_msvc2019_arm64",            
+            "addons.qtserialport.win64_msvc2019_arm64",
+
+            "addons.qtspeech",
+            "addons.qtspeech.win64_mingw",
+            "addons.qtspeech.win64_msvc2019_64",
+            "addons.qtspeech.win64_msvc2019_arm64",                 
 
             "addons.qtvirtualkeyboard",
             "addons.qtvirtualkeyboard.win64_mingw",
@@ -137,6 +160,134 @@ $component_groups = @(
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     $component_groups += @(
+        @{
+            version    = "6.3.1"
+            components = @(
+                "win64_msvc2019_64",
+                "win64_mingw",
+                "debug_info",
+                "debug_info.win64_mingw",
+                "debug_info.win64_msvc2019_64",
+                "debug_info.win64_msvc2019_arm64",
+    
+                "addons.qt3d",
+                "addons.qt3d.win64_mingw",
+                "addons.qt3d.win64_msvc2019_64",
+                "addons.qt3d.win64_msvc2019_arm64",
+    
+                "addons.qtactiveqt",
+                "addons.qtactiveqt.win64_mingw",
+                "addons.qtactiveqt.win64_msvc2019_64",
+                "addons.qtactiveqt.win64_msvc2019_arm64",
+    
+                "addons.qtcharts",
+                "addons.qtcharts.win64_mingw",
+                "addons.qtcharts.win64_msvc2019_64",
+                "addons.qtcharts.win64_msvc2019_arm64",
+    
+                "addons.qtconnectivity",
+                "addons.qtconnectivity.win64_mingw",
+                "addons.qtconnectivity.win64_msvc2019_64",
+                "addons.qtconnectivity.win64_msvc2019_arm64",
+    
+                "addons.qtdatavis3d",
+                "addons.qtdatavis3d.win64_mingw",
+                "addons.qtdatavis3d.win64_msvc2019_64",
+                "addons.qtdatavis3d.win64_msvc2019_arm64",      
+    
+                "addons.qtimageformats",
+                "addons.qtimageformats.win64_mingw",
+                "addons.qtimageformats.win64_msvc2019_64",
+                "addons.qtimageformats.win64_msvc2019_arm64",
+    
+                "addons.qtlottie",
+                "addons.qtlottie.win64_mingw",
+                "addons.qtlottie.win64_msvc2019_64",
+                "addons.qtlottie.win64_msvc2019_arm64",
+    
+                "addons.qtmultimedia",
+                "addons.qtmultimedia.win64_mingw",
+                "addons.qtmultimedia.win64_msvc2019_64",
+                "addons.qtmultimedia.win64_msvc2019_arm64",
+    
+                "addons.qtnetworkauth",
+                "addons.qtnetworkauth.win64_mingw",
+                "addons.qtnetworkauth.win64_msvc2019_64",
+                "addons.qtnetworkauth.win64_msvc2019_arm64",
+    
+                "addons.qtpositioning",
+                "addons.qtpositioning.win64_mingw",
+                "addons.qtpositioning.win64_msvc2019_64",
+                "addons.qtpositioning.win64_msvc2019_arm64",
+    
+                "addons.qtremoteobjects",
+                "addons.qtremoteobjects.win64_mingw",
+                "addons.qtremoteobjects.win64_msvc2019_64",
+                "addons.qtremoteobjects.win64_msvc2019_arm64",
+                
+                "addons.qtscxml",
+                "addons.qtscxml.win64_mingw",
+                "addons.qtscxml.win64_msvc2019_64",
+                "addons.qtscxml.win64_msvc2019_arm64",
+    
+                "addons.qtsensors",
+                "addons.qtsensors.win64_mingw",
+                "addons.qtsensors.win64_msvc2019_64",
+                "addons.qtsensors.win64_msvc2019_arm64",
+    
+                "addons.qtserialbus",
+                "addons.qtserialbus.win64_mingw",
+                "addons.qtserialbus.win64_msvc2019_64",
+                "addons.qtserialbus.win64_msvc2019_arm64",
+                
+                "addons.qtserialport",
+                "addons.qtserialport.win64_mingw",
+                "addons.qtserialport.win64_msvc2019_64",
+                "addons.qtserialport.win64_msvc2019_arm64",            
+    
+                "addons.qtvirtualkeyboard",
+                "addons.qtvirtualkeyboard.win64_mingw",
+                "addons.qtvirtualkeyboard.win64_msvc2019_64",
+                "addons.qtvirtualkeyboard.win64_msvc2019_arm64",
+    
+                "addons.qtwebchannel",
+                "addons.qtwebchannel.win64_mingw",
+                "addons.qtwebchannel.win64_msvc2019_64",
+                "addons.qtwebchannel.win64_msvc2019_arm64",
+    
+                "addons.qtwebengine",
+                "addons.qtwebengine.win64_msvc2019_64",
+                
+                "addons.qtwebsockets",
+                "addons.qtwebsockets.win64_mingw",
+                "addons.qtwebsockets.win64_msvc2019_64",
+                "addons.qtwebsockets.win64_msvc2019_arm64",
+    
+                "addons.qtwebview",
+                "addons.qtwebview.win64_mingw",
+                "addons.qtwebview.win64_msvc2019_64",
+    
+                "qt5compat",
+                "qt5compat.win64_mingw",
+                "qt5compat.win64_msvc2019_64",
+                "qt5compat.win64_msvc2019_arm64",
+    
+                "qtquick3d",
+                "qtquick3d.win64_mingw",
+                "qtquick3d.win64_msvc2019_64",
+                "qtquick3d.win64_msvc2019_arm64",
+            
+                "qtquicktimeline",
+                "qtquicktimeline.win64_mingw",
+                "qtquicktimeline.win64_msvc2019_64",
+                "qtquicktimeline.win64_msvc2019_arm64",
+    
+                "qtshadertools",
+                "qtshadertools.win64_mingw",
+                "qtshadertools.win64_msvc2019_64",
+                "qtshadertools.win64_msvc2019_arm64"
+            )
+        }        
         @{
             version    = "6.2.4"
             components = @(
@@ -266,68 +417,6 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             )
         }        
         @{
-            version    = "6.1.3"
-            components = @(
-                "win64_msvc2019_64",
-                "win64_mingw81",
-                "debug_info",
-                "debug_info.win64_mingw81",
-                "debug_info.win64_msvc2019_64",
-    
-                "addons.qt3d",
-                "addons.qt3d.win64_mingw81",
-                "addons.qt3d.win64_msvc2019_64",
-    
-                "addons.qtactiveqt",
-                "addons.qtactiveqt.win64_mingw81",
-                "addons.qtactiveqt.win64_msvc2019_64",
-    
-                "addons.qtcharts",
-                "addons.qtcharts.win64_mingw81",
-                "addons.qtcharts.win64_msvc2019_64",
-    
-                "addons.qtdatavis3d",
-                "addons.qtdatavis3d.win64_mingw81",
-                "addons.qtdatavis3d.win64_msvc2019_64",
-                
-                "addons.qtimageformats",
-                "addons.qtimageformats.win64_mingw81",
-                "addons.qtimageformats.win64_msvc2019_64",
-    
-                "addons.qtlottie",
-                "addons.qtlottie.win64_mingw81",
-                "addons.qtlottie.win64_msvc2019_64",
-    
-                "addons.qtnetworkauth",
-                "addons.qtnetworkauth.win64_mingw81",
-                "addons.qtnetworkauth.win64_msvc2019_64",
-                
-                "addons.qtscxml",
-                "addons.qtscxml.win64_mingw81",
-                "addons.qtscxml.win64_msvc2019_64",
-    
-                "addons.qtvirtualkeyboard",
-                "addons.qtvirtualkeyboard.win64_mingw81",
-                "addons.qtvirtualkeyboard.win64_msvc2019_64",            
-    
-                "qt5compat",
-                "qt5compat.win64_mingw81",
-                "qt5compat.win64_msvc2019_64",
-    
-                "qtshadertools",
-                "qtshadertools.win64_mingw81",
-                "qtshadertools.win64_msvc2019_64",            
-            
-                "qtquick3d",
-                "qtquick3d.win64_mingw81",
-                "qtquick3d.win64_msvc2019_64",
-            
-                "qtquicktimeline",
-                "qtquicktimeline.win64_mingw81",
-                "qtquicktimeline.win64_msvc2019_64"
-            )
-        }               
-        @{
             version    = "5.15.2"
             components = @(
                 "win32_msvc2019",
@@ -448,7 +537,7 @@ $component_groups += @(
             "qt.tools.win32_mingw810",
             "qt.tools.win64_mingw810",
             "qt.tools.win64_mingw900",
-            "qt.tools.ifw.43",
+            "qt.tools.ifw.44",
             "qt.license.thirdparty"
         )
     }
@@ -477,9 +566,9 @@ Write-Host "OK" -ForegroundColor Green
 # set aliases
 $sym_links = @{
     "latest" = "5.15.2"
-    "6.3"    = "6.3.0"
+    "6.4"    = "6.4.0"    
+    "6.3"    = "6.3.1"
     "6.2"    = "6.2.4"
-    "6.1"    = "6.1.3"
     "5.15"   = "5.15.2"
     "5.9"    = "5.9.9"
 }

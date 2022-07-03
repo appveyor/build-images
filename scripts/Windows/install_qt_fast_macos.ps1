@@ -6,7 +6,7 @@ $installDir = "$env:HOME/Qt"
 
 $component_groups = @(
     @{
-        version    = "6.3.0"
+        version    = "6.4.0"
         components = @(
             "clang_64",
             "debug_info",
@@ -15,18 +15,50 @@ $component_groups = @(
             "addons.qt3d.clang_64",
             "addons.qtcharts",
             "addons.qtcharts.clang_64",
+            "addons.qtconnectivity",
+            "addons.qtconnectivity.clang_64",            
             "addons.qtdatavis3d",
             "addons.qtdatavis3d.clang_64",
+            "addons.qthttpserver",
+            "addons.qthttpserver.clang_64",            
             "addons.qtimageformats",
             "addons.qtimageformats.clang_64",
+            "addons.qtlanguageserver",
+            "addons.qtlanguageserver.clang_64",                 
             "addons.qtlottie",
             "addons.qtlottie.clang_64",
+            "addons.qtmultimedia",
+            "addons.qtmultimedia.clang_64",            
             "addons.qtnetworkauth",
             "addons.qtnetworkauth.clang_64",
+            "addons.qtpdf",
+            "addons.qtpdf.clang_64",            
+            "addons.qtpositioning",
+            "addons.qtpositioning.clang_64",            
+            "addons.qtquick3dphysics",
+            "addons.qtquick3dphysics.clang_64",
+            "addons.qtremoteobjects",
+            "addons.qtremoteobjects.clang_64",                             
             "addons.qtscxml",
             "addons.qtscxml.clang_64",
+            "addons.qtsensors",
+            "addons.qtsensors.clang_64",            
+            "addons.qtserialbus",
+            "addons.qtserialbus.clang_64",
+            "addons.qtserialport",
+            "addons.qtserialport.clang_64",            
+            "addons.qtspeech",
+            "addons.qtspeech.clang_64",              
             "addons.qtvirtualkeyboard",
             "addons.qtvirtualkeyboard.clang_64",            
+            "addons.qtwebchannel",
+            "addons.qtwebchannel.clang_64",            
+            "addons.qtwebengine",
+            "addons.qtwebengine.clang_64", 
+            "addons.qtwebsockets",
+            "addons.qtwebsockets.clang_64",       
+            "addons.qtwebview",
+            "addons.qtwebview.clang_64",                                
             "qt5compat",
             "qt5compat.clang_64",        
             "qtquick3d",
@@ -42,7 +74,7 @@ $component_groups = @(
 if (-not $env:INSTALL_LATEST_ONLY) {
     $component_groups += @(
         @{
-            version    = "6.2.4"
+            version    = "6.3.1"
             components = @(
                 "clang_64",
                 "debug_info",
@@ -74,7 +106,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             )
         }        
         @{
-            version    = "6.1.3"
+            version    = "6.2.4"
             components = @(
                 "clang_64",
                 "debug_info",
@@ -104,7 +136,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "qtshadertools",
                 "qtshadertools.clang_64"
             )
-        }              
+        }                     
         @{
             version    = "5.15.2"
             components = @(
@@ -141,7 +173,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 $component_groups += @(
     @{
         components = @(
-            "qt.tools.ifw.43",
+            "qt.tools.ifw.44",
             "qt.license.thirdparty"
         )
     }
@@ -164,9 +196,9 @@ foreach ($componentGroup in $component_groups) {
 
 # set aliases
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/latest"
-ln -s "$HOME/Qt/6.3.0" "$HOME/Qt/6.3"
+ln -s "$HOME/Qt/6.4.0" "$HOME/Qt/6.4"
+ln -s "$HOME/Qt/6.3.1" "$HOME/Qt/6.3"
 ln -s "$HOME/Qt/6.2.4" "$HOME/Qt/6.2"
-ln -s "$HOME/Qt/6.1.3" "$HOME/Qt/6.1"
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/5.15"
 
 Write-Host "Qt 5.x installed" -ForegroundColor Green

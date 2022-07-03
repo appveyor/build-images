@@ -7,21 +7,22 @@ $installDir = "C:\Qt"
 $component_groups = @(
     @{
         components = @(
-            "qt.tools.ifw.43",
+            "qt.tools.ifw.44",
             "qt.license.thirdparty"
         )
     }
 )
 
 # install components
-foreach($componentGroup in $component_groups) {
+foreach ($componentGroup in $component_groups) {
     if ($componentGroup.version) {
-        foreach($component in $componentGroup.components) {
+        foreach ($component in $componentGroup.components) {
             Install-QtComponent -Version $componentGroup.version -Name $component -Path $installDir
         }
         ConfigureQtVersion $installDir $componentGroup.version
-    } else {
-        foreach($component in $componentGroup.components) {
+    }
+    else {
+        foreach ($component in $componentGroup.components) {
             Install-QtComponent -Id $component -Path $installDir
         }
     }
