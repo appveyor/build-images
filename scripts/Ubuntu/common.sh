@@ -641,8 +641,8 @@ function install_gitversion() {
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
 
-    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-${VERSION}.tar.gz &&
-    tar -zxf gitversion-linux-${VERSION}.tar.gz -C /usr/local/bin &&
+    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-x64-${VERSION}.tar.gz &&
+    tar -zxf gitversion-linux-x64-${VERSION}.tar.gz -C /usr/local/bin &&
     chmod a+rx /usr/local/bin/GitVersion* ||
         { echo "[ERROR] Cannot install GitVersion ${VERSION}." 1>&2; popd; return 10; }
 
