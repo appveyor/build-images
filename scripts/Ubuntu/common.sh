@@ -643,11 +643,11 @@ function install_gitversion() {
 
     curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-x64-${VERSION}.tar.gz &&
     tar -zxf gitversion-linux-x64-${VERSION}.tar.gz -C /usr/local/bin &&
-    chmod a+rx /usr/local/bin/GitVersion* ||
+    chmod a+rx /usr/local/bin/gitversion* ||
         { echo "[ERROR] Cannot install GitVersion ${VERSION}." 1>&2; popd; return 10; }
 
     popd
-    log_version GitVersion /version
+    log_version gitversion /version
     [ -d /var/tmp/.net/ ] && rm -rf /var/tmp/.net/
 }
 
