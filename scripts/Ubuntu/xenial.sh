@@ -19,3 +19,21 @@ function install_doxygen() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
     install_doxygen_version '1.8.17'
 }
+
+function install_clang() {
+    echo "[INFO] Running install_clang for Xenial..."
+    curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+
+    install_clang_version 9
+    install_clang_version 10
+    install_clang_version 11
+    install_clang_version 12
+
+    # make clang 10 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-10 1000
+    update-alternatives --config clang
+    update-alternatives --config clang++
+
+    log_version clang --version
+}
