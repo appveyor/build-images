@@ -982,7 +982,7 @@ function install_jdk() {
         { echo "[ERROR] Cannot download and unpack JDK ${JDK_VERSION}." 1>&2; popd; return 10; }
     DIR_NAME=$(tar tf "${JDK_ARCHIVE}" |cut -d'/' -f1|sort|uniq|head -n1)
     mkdir -p ${JDK_PATH} &&
-    cp -R "${DIR_NAME}"/* "${JDK_PATH}" ||
+    cp --remove-destination -R "${DIR_NAME}"/* "${JDK_PATH}" ||
         { echo "[ERROR] Cannot copy JDK ${JDK_VERSION} to ${JDK_PATH}." 1>&2; popd; return 20; }
     ln -s -f "${JDK_PATH}" "${JDK_LINK}" ||
         { echo "[ERROR] Cannot symlink JDK ${JDK_VERSION} to ${JDK_LINK}." 1>&2; popd; return 20; }
