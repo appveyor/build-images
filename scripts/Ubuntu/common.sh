@@ -647,7 +647,7 @@ function install_gitversion() {
         { echo "[ERROR] Cannot install GitVersion ${VERSION}." 1>&2; popd; return 10; }
 
     popd
-    log_version gitversion /version
+    #log_version gitversion /version
     [ -d /var/tmp/.net/ ] && rm -rf /var/tmp/.net/
 }
 
