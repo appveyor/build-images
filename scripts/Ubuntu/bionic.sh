@@ -80,5 +80,5 @@ function fix_sqlserver() {
 
 function install_doxygen() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
-    install_doxygen_version '1.8.18'
+    install_doxygen_version '1.8.20' 'https://appveyordownloads.blob.core.windows.net/misc'
 }

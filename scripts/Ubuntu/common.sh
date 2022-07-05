@@ -1858,19 +1858,14 @@ function install_qt() {
 
 function install_doxygen() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
-    install_doxygen_version '1.8.20'
+    install_doxygen_version '1.9.4' 'https://www.doxygen.nl/files'
 }
 
 function install_doxygen_version() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
-    local DOXYGEN_VERSION
-    local DOXYGEN_URL
-    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOXYGEN_VERSION=1.9.4
-    else
-        DOXYGEN_VERSION=$1
-    fi
-    DOXYGEN_URL=https://www.doxygen.nl/files/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+    DOXYGEN_VERSION=$1
+    DOXYGEN_URL_PREFIX=$2
+    DOXYGEN_URL=${DOXYGEN_URL_PREFIX}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
