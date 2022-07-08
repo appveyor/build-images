@@ -396,7 +396,7 @@ function install_azure_linux_agent(){
 
 function copy_appveyoragent() {
     if [[ -z "${APPVEYOR_BUILD_AGENT_VERSION-}" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
-        APPVEYOR_BUILD_AGENT_VERSION=7.0.2572;
+        APPVEYOR_BUILD_AGENT_VERSION=7.0.3240;
     fi
 
     echo "[INFO] Installing AppVeyor Build Agent v${APPVEYOR_BUILD_AGENT_VERSION}"
@@ -547,7 +547,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -572,7 +572,7 @@ function update_git() {
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        GIT_VERSION=2.33.0
+        GIT_VERSION=2.37.0
     else
         GIT_VERSION=$1
     fi
@@ -632,7 +632,7 @@ function install_gitversion() {
     echo "[INFO] Running install_gitversion..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=5.1.2
+        VERSION=5.10.3
     else
         VERSION=$1
     fi
@@ -641,14 +641,14 @@ function install_gitversion() {
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
 
-    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-${VERSION}.tar.gz &&
-    tar -zxf gitversion-linux-${VERSION}.tar.gz -C /usr/local/bin &&
-    chmod a+rx /usr/local/bin/GitVersion* ||
+    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-x64-${VERSION}.tar.gz &&
+    tar -zxf gitversion-linux-x64-${VERSION}.tar.gz -C /usr/local/bin &&
+    chmod a+rx /usr/local/bin/gitversion* ||
         { echo "[ERROR] Cannot install GitVersion ${VERSION}." 1>&2; popd; return 10; }
 
     popd
-    log_version GitVersion /version
-    [ -d /var/tmp/.net/ ] && rm -rf /var/tmp/.net/
+    log_version gitversion /version
+    #[ -d /var/tmp/.net/ ] && rm -rf /var/tmp/.net/
 }
 
 function configure_mercurial_repository() {
@@ -727,7 +727,7 @@ function install_pip() {
 
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.12" "3.8.12" "3.9.10" "3.10.2" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.13" "3.8.13" "3.9.13" "3.10.5" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -943,6 +943,8 @@ function install_jdks() {
         return $?
     install_jdk 15 https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz ||
         return $?
+    install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-x64_bin.tar.gz ||
+        return $?        
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
         IFS=$'\n'
@@ -980,9 +982,10 @@ function install_jdk() {
         { echo "[ERROR] Cannot download and unpack JDK ${JDK_VERSION}." 1>&2; popd; return 10; }
     DIR_NAME=$(tar tf "${JDK_ARCHIVE}" |cut -d'/' -f1|sort|uniq|head -n1)
     mkdir -p ${JDK_PATH} &&
-    cp -R "${DIR_NAME}"/* "${JDK_PATH}" &&
+    cp --remove-destination -R "${DIR_NAME}"/* "${JDK_PATH}" ||
+        { echo "[ERROR] Cannot copy JDK ${JDK_VERSION} to ${JDK_PATH}." 1>&2; popd; return 20; }
     ln -s -f "${JDK_PATH}" "${JDK_LINK}" ||
-        { echo "[ERROR] Cannot copy JDK ${JDK_VERSION} to /usr/lib/jvm." 1>&2; popd; return 20; }
+        { echo "[ERROR] Cannot symlink JDK ${JDK_VERSION} to ${JDK_LINK}." 1>&2; popd; return 20; }
 
     PROFILE_LINES+=( "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}" )
 
@@ -1071,7 +1074,7 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-head" )
+    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1141,7 +1144,7 @@ function install_golangs() {
     gvm install go1.4 -B &&
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.14" "go1.17.7" )
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.11" "go1.18.3" )
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1199,7 +1202,7 @@ function install_docker() {
     log_version dpkg -l docker-ce
 
     # install docker-compose
-    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo curl -L "https://github.com/docker/compose/releases/download/2.6.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     log_version docker-compose --version
 }
@@ -1463,7 +1466,7 @@ function install_packer() {
     echo "[INFO] Running install_packer..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=1.6.5
+        VERSION=1.8.2
     else
         VERSION=$1
     fi
@@ -1544,7 +1547,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.22.2
+        VERSION=3.23.2
     else
         VERSION=$1
     fi
@@ -1636,7 +1639,7 @@ function install_curl() {
     echo "[INFO] Running install_curl..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=7.73.0
+        VERSION=7.84.0
     else
         VERSION=$1
     fi
@@ -1758,6 +1761,9 @@ function install_clang() {
     install_clang_version 9
     install_clang_version 10
     install_clang_version 11
+    install_clang_version 12
+    install_clang_version 13
+    install_clang_version 14
 
     # make clang 10 default
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
@@ -1783,11 +1789,11 @@ function install_octo() {
     echo "[INFO] Running install_octo..."
     local OCTO_VERSION OCTO_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        OCTO_VERSION=6.17.0
+        OCTO_VERSION=9.0.0
     else
         OCTO_VERSION=$1
     fi
-    OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.ubuntu.16.04-x64.tar.gz"
+    OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.linux-x64.tar.gz"
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
@@ -1801,7 +1807,7 @@ function install_octo() {
     else
         echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
     fi
-    log_version /opt/octopus/Octo version
+    log_version /opt/octopus/octo version
     # cleanup
     rm OctopusTools.tar.gz
     popd &&
@@ -1852,19 +1858,14 @@ function install_qt() {
 
 function install_doxygen() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
-    install_doxygen_version '1.8.20'
+    install_doxygen_version '1.9.4' 'https://www.doxygen.nl/files'
 }
 
 function install_doxygen_version() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
-    local DOXYGEN_VERSION
-    local DOXYGEN_URL
-    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        DOXYGEN_VERSION=1.8.20
-    else
-        DOXYGEN_VERSION=$1
-    fi
-    DOXYGEN_URL=https://phoenixnap.dl.sourceforge.net/project/doxygen/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+    DOXYGEN_VERSION=$1
+    DOXYGEN_URL_PREFIX=$2
+    DOXYGEN_URL=${DOXYGEN_URL_PREFIX}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
