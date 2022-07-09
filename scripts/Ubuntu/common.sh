@@ -1202,9 +1202,14 @@ function install_docker() {
     log_version dpkg -l docker-ce
 
     # install docker-compose
-    sudo curl -L "https://github.com/docker/compose/releases/download/2.6.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    install_docker_compose
+}
+
+function install_docker_compose() {
+    echo "[INFO] Running install_docker_compose..."
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
-    log_version docker-compose --version
+    log_version docker-compose --version    
 }
 
 function install_MSSQLServer() {
