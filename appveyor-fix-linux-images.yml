@@ -2,7 +2,7 @@ environment:
   matrix:
     - job_name: Ubuntu 20.04 on Hyper-V
       APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-2004-hyperv
-      #APPVEYOR_BAKE_IMAGE: ubuntu2004-master
+      APPVEYOR_BAKE_IMAGE: ubuntu2004-master
 
     # - job_name: Ubuntu 18.04 on Hyper-V
     #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1804-hyperv
