@@ -1,32 +1,28 @@
 environment:
   matrix:
     - job_name: Ubuntu 20.04 on Hyper-V
-      APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-2004-hyperv
+      APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2004-master
       APPVEYOR_BAKE_IMAGE: ubuntu2004-master
 
     # - job_name: Ubuntu 18.04 on Hyper-V
-    #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1804-hyperv
+    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1804-master
     #   APPVEYOR_BAKE_IMAGE: ubuntu1804-master
 
     # - job_name: Ubuntu 16.04 on Hyper-V
-    #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1604-hyperv
+    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1604-master
     #   APPVEYOR_BAKE_IMAGE: ubuntu1604-master
 
     # - job_name: Ubuntu 20.04 on GCE us-central1
-    #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-2004-gce-us-central1
+    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2004-master-gce-us-central1
     #   APPVEYOR_BAKE_IMAGE: ubuntu2004-master-gce-us-central1
 
     # - job_name: Ubuntu 18.04 on GCE us-central1
-    #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1804-gce-us-central1
+    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1804-master-gce-us-central1
     #   APPVEYOR_BAKE_IMAGE: ubuntu1804-master-gce-us-central1
 
     # - job_name: Ubuntu 16.04 on GCE us-central1
-    #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1604-gce-us-central1
+    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1604-master-gce-us-central1
     #   APPVEYOR_BAKE_IMAGE: ubuntu1604-master-gce-us-central1
-
-    # - job_name: Ubuntu 18.04 on Azure West US
-    #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-1804-azure-westus
-    #   APPVEYOR_BAKE_IMAGE: ubuntu1804-master-azure-westus
 
   BASE_DIR: src/build-images-${APPVEYOR_REPO_COMMIT}/scripts/Ubuntu
   BOOTSTRAP: true
