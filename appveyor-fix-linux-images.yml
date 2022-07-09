@@ -41,6 +41,7 @@ clone_script:
 build_script:
   - cd $BASE_DIR && pwd
   - sudo -E ./fixconfig.sh
+  - sudo cp /opt/octopus/octo /usr/bin
   - appveyor PushArtifact versions.log
 
 test: off

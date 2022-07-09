@@ -1799,24 +1799,14 @@ function install_octo() {
         OCTO_VERSION=$1
     fi
     OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.linux-x64.tar.gz"
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
+
     curl -fsSL "${OCTO_URL}" -o OctopusTools.tar.gz ||
-        { echo "[ERROR] Cannot download OctopusTools." 1>&2; popd; return 10; }
-    mkdir -p /opt/octopus &&
-    tar zxf OctopusTools.tar.gz -C /opt/octopus ||
-        { echo "[ERROR] Cannot unpack and copy OctopusTools." 1>&2; popd; return 20; }
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        write_line "${HOME}/.profile" 'add2path /opt/octopus'
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
-    fi
-    log_version /opt/octopus/octo version
+        { echo "[ERROR] Cannot download OctopusTools." 1>&2; return 10; }
+    sudo tar zxf OctopusTools.tar.gz -C /usr/bin ||
+        { echo "[ERROR] Cannot unpack and copy OctopusTools." 1>&2; return 20; }
+    log_version octo version
     # cleanup
     rm OctopusTools.tar.gz
-    popd &&
-    rm -rf "${TMP_DIR}"
 }
 
 function install_vcpkg() {
