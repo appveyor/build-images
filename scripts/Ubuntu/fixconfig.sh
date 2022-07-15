@@ -76,8 +76,13 @@ init_logging
 
 configure_path
 
-
-install_docker_compose ||
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_pythons)
+        install_pythons" ||
     _abort $?
+
+# install_docker_compose ||
+#     _abort $?
 
 cleanup

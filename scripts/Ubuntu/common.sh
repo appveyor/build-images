@@ -731,6 +731,10 @@ function install_pythons(){
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
+        if [ -d ${VENV_MINOR_PATH} ]; then
+            echo "Python is already installed at ${VENV_MINOR_PATH}." 
+            continue
+        fi
         if [ ! -d ${VENV_PATH} ]; then
         curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
             { echo "[WARNING] Cannot download Python ${i}."; continue; }
