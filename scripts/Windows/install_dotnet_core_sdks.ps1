@@ -38,7 +38,7 @@ $vs2022 = (Test-Path "${env:ProgramFiles}\Microsoft Visual Studio\2022")
 if ($vs2019 -or $vs2022) {
     Install-SDK "3.0.103"
     Install-SDK "3.1.202"
-    Install-SDK "3.1.420"
+    Install-SDK "3.1.422"
     Install-SDK "5.0.408"
 }
 
