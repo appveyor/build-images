@@ -739,8 +739,8 @@ password-stores =" > .subversion/config ||
 
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
-    command -v pip || install_pip
-    pip install virtualenv ||
+    command -v pip3 || install_pip3
+    pip3 install virtualenv ||
         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
 
     log_version virtualenv --version
@@ -760,6 +760,13 @@ function install_pip() {
 
     #cleanup
     #rm get-pip.py
+}
+
+function install_pip3() {
+    echo "[INFO] Running install_pip3..."
+
+    apt-get -y -q install pip3
+    log_version pip3 --version
 }
 
 function install_pythons(){
@@ -1864,7 +1871,11 @@ function install_octo() {
     else
         OCTO_VERSION=$1
     fi
-    OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.linux-x64.tar.gz"
+    RELEASE_ARCH="x64"
+    if [[ "${OS_ARCH}" == "arm64" ]]; then
+        RELEASE_ARCH="arm64"
+    fi    
+    OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.linux-${RELEASE_ARCH}.tar.gz"
 
     curl -fsSL "${OCTO_URL}" -o OctopusTools.tar.gz ||
         { echo "[ERROR] Cannot download OctopusTools." 1>&2; return 10; }

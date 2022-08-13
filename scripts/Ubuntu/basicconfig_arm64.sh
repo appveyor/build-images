@@ -200,10 +200,10 @@ if ! ${DEBUG}; then                          ### Disabled for faster debugging
 # install_gitlfs ||
 #     _abort $?
 
-install_gitversion ||
-    _abort $?
+# install_gitversion ||
+#     _abort $?
 
-install_pip ||
+install_pip3 ||
     _abort $?
 
 install_virtualenv ||
@@ -212,11 +212,13 @@ install_virtualenv ||
 install_octo ||
     _abort $?
 
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_pythons)
-        install_pythons" ||
-    _abort $?
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         $(declare -f install_pythons)
+#         install_pythons" ||
+#     _abort $?
+
+return
 
 # .NET stuff
 install_dotnets ||
