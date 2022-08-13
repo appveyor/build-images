@@ -148,10 +148,11 @@ chown_logfile || _continue
 disable_automatic_apt_updates ||
     _abort $?
 
+# EXCLUDE!
 # configure_apt ||
 #     _abort $?
 
-configure_locale
+#configure_locale
 
 install_tools ||
     _abort $?

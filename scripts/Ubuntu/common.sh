@@ -357,12 +357,7 @@ function install_tools() {
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
 
     # python packages
-
-    if [[ $OS_ARCH == "amd64" ]]; then
-        tools_array+=( "python" "python-dev" )
-    else
-        tools_array+=( "python2" "python2-dev" )
-    fi
+    tools_array+=( "python" "python-dev" )
     tools_array+=( "python-setuptools" )
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
