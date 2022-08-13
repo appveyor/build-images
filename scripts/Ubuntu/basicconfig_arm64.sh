@@ -163,44 +163,39 @@ configure_path
 #         _abort $?
 # fi
 
-if ! ${DEBUG}; then                          ### Disabled for faster debugging
+# if ! ${DEBUG}; then                          ### Disabled for faster debugging
 
-install_powershell_arm64 ||
-    _abort $?
+# install_powershell_arm64 ||
+#     _abort $?
 
-install_cvs ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_svn)
-        configure_svn" ||
-    _abort $?
+# install_cvs ||
+#     _abort $?
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         $(declare -f configure_svn)
+#         configure_svn" ||
+#     _abort $?
 
-update_git ||
-    _abort $?
+# update_git ||
+#     _abort $?
 
-install_gitlfs ||
-    _abort $?
+# install_gitlfs ||
+#     _abort $?
 
-install_gitversion ||
-    _abort $?
+# install_gitversion ||
+#     _abort $?
 
-install_pip3 ||
-    _abort $?
+# install_pip3 ||
+#     _abort $?
 
-install_virtualenv ||
-    _abort $?
-
-install_octo ||
-    _abort $?
+# install_virtualenv ||
+#     _abort $?
 
 # su -l ${USER_NAME} -c "
 #         USER_NAME=${USER_NAME}
 #         $(declare -f install_pythons)
 #         install_pythons" ||
 #     _abort $?
-
-return
 
 # .NET stuff
 install_dotnets ||
@@ -215,9 +210,7 @@ su -l ${USER_NAME} -c "
         configure_nuget" ||
     _abort $?
 
-su -l ${USER_NAME} -c "
-        curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
-    _abort $?
+return
 
 install_docker ||
     _abort $?

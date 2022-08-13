@@ -1871,11 +1871,7 @@ function install_octo() {
     else
         OCTO_VERSION=$1
     fi
-    RELEASE_ARCH="x64"
-    if [[ "${OS_ARCH}" == "arm64" ]]; then
-        RELEASE_ARCH="arm64"
-    fi    
-    OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.linux-${RELEASE_ARCH}.tar.gz"
+    OCTO_URL="https://download.octopusdeploy.com/octopus-tools/${OCTO_VERSION}/OctopusTools.${OCTO_VERSION}.linux-x64.tar.gz"
 
     curl -fsSL "${OCTO_URL}" -o OctopusTools.tar.gz ||
         { echo "[ERROR] Cannot download OctopusTools." 1>&2; return 10; }
