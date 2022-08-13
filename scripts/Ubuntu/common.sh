@@ -13,6 +13,17 @@ else
     echo "[WARNING] /etc/os-release not found - cant find VERSION_CODENAME and VERSION_ID."
 fi
 if [[ -z "${LOGGING-}" ]]; then LOGGING=true; fi
+OS_ARCH=$(uname -m)
+if [[ $OS_ARCH == x86_64 ]] || [[ $OS_ARCH == amd64 ]]; then
+    OS_ARCH="amd64"
+elif [[ $OS_ARCH == arm64 ]] || [[ $OS_ARCH == aarch64 ]]; then
+    OS_ARCH="arm64"
+elif [[ $arch == arm* ]]; then
+    OS_ARCH="arm"
+else
+    echo "Error: Unsupported architecture $OS_ARCH." 1>&2
+    exit 1
+fi
 
 function save_bash_attributes() {
     BASH_ATTRIBUTES=$(set -o)
@@ -346,14 +357,21 @@ function install_tools() {
     tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
 
     # python packages
-    tools_array+=( "python" "python-dev" )
+
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "python" "python-dev" )
+    else
+        tools_array+=( "python2" "python2-dev" )
+    fi
     tools_array+=( "python-setuptools" )
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
     tools_array+=( "libbz2-dev" "liblzma-dev" "python3-tk" "tk-dev" "libsqlite3-dev" )
 
     # 32bit support
-    tools_array+=( "libc6:i386" "libncurses5:i386" "libstdc++6:i386" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "libc6:i386" "libncurses5:i386" "libstdc++6:i386" )
+    fi
 
     # Add release specific tools into tools_array
     if command -v add_releasespecific_tools; then
