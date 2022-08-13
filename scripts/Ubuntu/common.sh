@@ -624,11 +624,22 @@ function make_git() {
 
 function install_gitlfs() {
     echo "[INFO] Running install_gitlfs..."
-    command -v git || apt-get -y -q install git
-    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash &&
-    apt-get -y -q install git-lfs ||
-        { echo "Failed to install git lfs." 1>&2; return 10; }
-    log_version dpkg -l git-lfs
+
+    GITLFS_VERSION="3.2.0"
+    FILENAME="git-lfs-linux-${OS_ARCH}-v${GITLFS_VERSION}.tar.gz"
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    curl -L -o ${FILENAME} https://github.com/git-lfs/git-lfs/releases/download/v${GITLFS_VERSION}/${FILENAME} ||
+        { echo "[ERROR] Cannot download GitLFS ${GITLFS_VERSION}." 1>&2; popd; return 10; }
+    
+    tar zxf ${FILENAME}
+    ./git-lfs-${GITLFS_VERSION}/install.sh
+
+    # cleanup
+    popd &&
+    rm -rf "${TMP_DIR}"
+
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         su -l "${USER_NAME}" -c "
             USER_NAME=${USER_NAME}

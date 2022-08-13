@@ -183,19 +183,19 @@ if ! ${DEBUG}; then                          ### Disabled for faster debugging
 # EXCLUDE!
 #install_p7zip
 
-install_powershell_arm64 ||
-    _abort $?
+# install_powershell_arm64 ||
+#     _abort $?
 
-install_cvs ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_svn)
-        configure_svn" ||
-    _abort $?
+# install_cvs ||
+#     _abort $?
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         $(declare -f configure_svn)
+#         configure_svn" ||
+#     _abort $?
 
-update_git ||
-    _abort $?
+# update_git ||
+#     _abort $?
 
 install_gitlfs ||
     _abort $?
