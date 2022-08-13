@@ -197,8 +197,8 @@ if ! ${DEBUG}; then                          ### Disabled for faster debugging
 # update_git ||
 #     _abort $?
 
-install_gitlfs ||
-    _abort $?
+# install_gitlfs ||
+#     _abort $?
 
 install_gitversion ||
     _abort $?
