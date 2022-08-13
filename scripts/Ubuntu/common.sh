@@ -366,9 +366,9 @@ function install_tools() {
     fi
     tools_array+=( "python3" "python3-setuptools" )
     tools_array+=( "apt-transport-https" )
-    tools_array+=( "gfortran" "libbz2-dev" "liblzma-dev" "python3-tk" "libsqlite3-dev" )
     if [[ $OS_ARCH == "amd64" ]]; then
         tools_array+=( "build-essential" "libexpat1-dev" "libffi-dev" "gettext" )
+        tools_array+=( "gfortran" "libbz2-dev" "liblzma-dev" "python3-tk" "libsqlite3-dev" )
         tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" "libssl-dev" )
     fi
 
