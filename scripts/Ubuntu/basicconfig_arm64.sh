@@ -147,7 +147,7 @@ chown_logfile || _continue
 # configure_apt ||
 #     _abort $?
 
-configure_locale
+# configure_locale
 
 install_tools ||
     _abort $?
