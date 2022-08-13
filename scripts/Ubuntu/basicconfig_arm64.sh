@@ -210,11 +210,6 @@ configure_path
 #         configure_nuget" ||
 #     _abort $?
 
-install_docker ||
-    _abort $?
-
-return
-
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f install_nvm)
@@ -223,13 +218,15 @@ su -l ${USER_NAME} -c "
         $(declare -f replace_line)
         install_nvm" ||
     _abort $?
-su -l ${USER_NAME} -c "
-        [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_nvm_nodejs)
-        install_nvm_nodejs ${CURRENT_NODEJS}" ||
-    _abort $?
+# su -l ${USER_NAME} -c "
+#         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+#         USER_NAME=${USER_NAME}
+#         $(declare -f log_version)
+#         $(declare -f install_nvm_nodejs)
+#         install_nvm_nodejs ${CURRENT_NODEJS}" ||
+#     _abort $?
+
+return
 
 install_virtualbox ||
     _abort $?
