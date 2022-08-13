@@ -765,7 +765,7 @@ function install_pip() {
 function install_pip3() {
     echo "[INFO] Running install_pip3..."
 
-    apt-get -y -q install pip3
+    apt-get -y -q install python3-pip
     log_version pip3 --version
 }
 
