@@ -367,9 +367,9 @@ function install_tools() {
     tools_array+=( "python3" "python3-setuptools" )
     tools_array+=( "build-essential" "libssl-dev"  "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "apt-transport-https" )
-    tools_array+=( "gfortran" "python3-tk" "libsqlite3-dev" )
+    tools_array+=( "gfortran" "libbz2-dev" "liblzma-dev" "python3-tk" )
     if [[ $OS_ARCH == "amd64" ]]; then
-        tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" "libbz2-dev" "liblzma-dev" )
+        tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" "libsqlite3-dev" )
     fi
 
     # 32bit support
