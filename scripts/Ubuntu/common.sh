@@ -350,15 +350,21 @@ function install_tools() {
     declare tools_array
     # utilities
     tools_array=( "zip" "unzip" "wget" "curl" "time" "tree" "telnet" "dnsutils" "net-tools" "file" "ftp" "lftp" )
-    tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
+    fi
 
     # build tools
-    tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" "ninja-build" )
-    tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
+    tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" "ninja-build" )
+    fi
 
     # python packages
     tools_array+=( "python" "python-dev" )
-    tools_array+=( "python-setuptools" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "python-setuptools" )
+    fi
     tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
     tools_array+=( "libbz2-dev" "liblzma-dev" "python3-tk" "tk-dev" "libsqlite3-dev" )
