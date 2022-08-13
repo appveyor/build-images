@@ -40,7 +40,7 @@ if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
     esac
 fi
 
-if [[ -z "${BUILD_AGENT_MODE-}" ]] && [[ $OS_ARCH == "arm64" ]]; then
+if [[ -z "${BUILD_AGENT_MODE-}" ]] && [[ ${OS_ARCH-} == "arm64" ]]; then
     BUILD_AGENT_MODE=AmazonEC2
 fi
 
