@@ -471,9 +471,9 @@ function install_appveyoragent() {
     pushd -- "${AGENT_DIR}" ||
         { echo "[ERROR] Cannot cd to ${AGENT_DIR} folder." 1>&2; return 10; }
     if [ "${#AGENT_MODE}" -gt 0 ]; then
-        if command -v python3; then
+        if command -v python; then
             [ -f ${CONFIG_FILE} ] &&
-            python3 -c "import json; import io;
+            python -c "import json; import io;
 a=json.load(io.open('${CONFIG_FILE}', encoding='utf-8-sig'));
 a[u'AppVeyor'][u'Mode']='${AGENT_MODE}';
 a[u'AppVeyor'][u'ProjectBuildsDirectory']='${PROJECT_BUILDS_DIRECTORY}';
