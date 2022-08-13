@@ -198,7 +198,7 @@ configure_path
 #     _abort $?
 
 # .NET stuff
-install_dotnets ||
+install_dotnet_arm64 ||
     _abort $?
 preheat_dotnet_sdks &&
 log_version dotnet --list-sdks &&

@@ -964,6 +964,24 @@ function install_dotnets() {
     install_outdated_dotnets
 }
 
+function install_dotnet_arm64() {
+    echo "[INFO] Running install_dotnet_arm64..."
+
+    curl -SL -o dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/901f7928-5479-4d32-a9e5-ba66162ca0e4/d00b935ec4dc79a27f5bde00712ed3d7/dotnet-sdk-6.0.400-linux-arm64.tar.gz
+    mkdir -p /usr/share/dotnet
+    tar -zxf dotnet.tar.gz -C /usr/share/dotnet
+    ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+    rm dotnet.tar.gz
+
+    #set env
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
+        write_line "$USER_HOME/.profile" "export DOTNET_PRINT_TELEMETRY_MESSAGE=false" 'DOTNET_PRINT_TELEMETRY_MESSAGE='
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
+    fi
+}
+
 function configure_mono_repository () {
     echo "[INFO] Running install_mono..."
     add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||

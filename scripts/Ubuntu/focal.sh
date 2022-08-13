@@ -17,16 +17,11 @@ function configure_mercurial_repository() {
 }
 
 function prepare_dotnet_packages() {
-    if [[ $OS_ARCH == "amd64" ]]; then
-        SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" )
-
-        declare RUNTIME_VERSIONS=( "2.1" "2.2" )
-        dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
-    else
-        SDK_VERSIONS=( "6.0" )
-    fi
-    
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
+    
+    declare RUNTIME_VERSIONS=( "2.1" "2.2" )
+    dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
 }
 
 function install_outdated_dotnets() {
