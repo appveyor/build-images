@@ -362,9 +362,9 @@ function install_tools() {
 
     # python packages
     if [[ $OS_ARCH == "amd64" ]]; then
-        tools_array+=( "python" "python-dev" "python-setuptools" )
+        tools_array+=( "python" "python-dev" "python3-dev" "python-setuptools" )
     fi
-    tools_array+=( "python3" "python3-dev" "python3-setuptools" )
+    tools_array+=( "python3" "python3-setuptools" )
     tools_array+=( "build-essential" "libssl-dev"  "libexpat1-dev" "libffi-dev" "gettext" )
     tools_array+=( "apt-transport-https" )
     tools_array+=( "gfortran" "libbz2-dev" "liblzma-dev" "python3-tk"  "libsqlite3-dev" )
