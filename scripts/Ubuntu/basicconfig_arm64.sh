@@ -176,12 +176,14 @@ if ! ${DEBUG}; then                          ### Disabled for faster debugging
 # install_curl ||
 #     _abort $?
 
-install_clang ||
-    _abort $?
+# EXCLUDE!
+# install_clang ||
+#     _abort $?
 
-install_p7zip
+# EXCLUDE!
+#install_p7zip
 
-install_powershell ||
+install_powershell_arm64 ||
     _abort $?
 
 install_cvs ||

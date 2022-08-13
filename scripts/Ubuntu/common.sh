@@ -806,6 +806,31 @@ function install_powershell() {
     log_version pwsh --version
 }
 
+function install_powershell_arm64() {
+    echo "[INFO] Running install_powershell_arm64..."
+
+    POWERSHELL_VERSION="7.2.5"
+    FILENAME="powershell-${POWERSHELL_VERSION}-linux-arm64.tar.gz"
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    curl -L -o ${FILENAME} https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/${FILENAME} ||
+        { echo "[ERROR] Cannot download PowerShell ${POWERSHELL_VERSION}." 1>&2; popd; return 10; }
+    mkdir -p /opt/microsoft/powershell/7
+    tar zxf ${FILENAME} -C /opt/microsoft/powershell/7
+    chmod +x /opt/microsoft/powershell/7/pwsh
+    ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
+
+    # cleanup
+    popd &&
+    rm -rf "${TMP_DIR}"
+
+    configure_powershell
+
+    # Start PowerShell
+    log_version pwsh --version
+}
+
 function configure_powershell() {
     if [[ -z "${AGENT_DIR-}" ]]; then { echo "[ERROR] AGENT_DIR variable is not set." 1>&2; return 10; } fi
     if [[ -z "${USER_HOME-}" ]]; then { echo "[ERROR] USER_HOME variable is not set." 1>&2; return 20; } fi
