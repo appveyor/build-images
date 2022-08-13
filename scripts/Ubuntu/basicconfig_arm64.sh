@@ -148,60 +148,45 @@ chown_logfile || _continue
 disable_automatic_apt_updates ||
     _abort $?
 
-# EXCLUDE!
-# configure_apt ||
-#     _abort $?
+configure_locale
 
-#configure_locale
-
-# install_tools ||
-#     _abort $?
+install_tools ||
+    _abort $?
 
 if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
     install_KVP_packages ||
         _abort $?
 fi
 
-# if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
-#     install_appveyoragent "${BUILD_AGENT_MODE}" ||
-#         _abort $?
-# fi
+if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
+    install_appveyoragent "${BUILD_AGENT_MODE}" ||
+        _abort $?
+fi
 
 if ! ${DEBUG}; then                          ### Disabled for faster debugging
 
-# EXCLUDE!
-# install_gcc ||
-#     _abort $?
+install_curl ||
+    _abort $?
 
-# install_curl ||
-#     _abort $?
+install_powershell_arm64 ||
+    _abort $?
 
-# EXCLUDE!
-# install_clang ||
-#     _abort $?
+install_cvs ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_svn)
+        configure_svn" ||
+    _abort $?
 
-# EXCLUDE!
-#install_p7zip
+update_git ||
+    _abort $?
 
-# install_powershell_arm64 ||
-#     _abort $?
+install_gitlfs ||
+    _abort $?
 
-# install_cvs ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f configure_svn)
-#         configure_svn" ||
-#     _abort $?
-
-# update_git ||
-#     _abort $?
-
-# install_gitlfs ||
-#     _abort $?
-
-# install_gitversion ||
-#     _abort $?
+install_gitversion ||
+    _abort $?
 
 install_pip3 ||
     _abort $?
