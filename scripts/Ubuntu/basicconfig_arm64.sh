@@ -153,23 +153,24 @@ chown_logfile || _continue
 
 # configure_locale
 
-install_tools ||
-    _abort $?
+# install_tools ||
+#     _abort $?
 
 if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
     install_KVP_packages ||
         _abort $?
 fi
 
-if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
-    install_appveyoragent "${BUILD_AGENT_MODE}" ||
-        _abort $?
-fi
+# if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
+#     install_appveyoragent "${BUILD_AGENT_MODE}" ||
+#         _abort $?
+# fi
 
 if ! ${DEBUG}; then                          ### Disabled for faster debugging
 
-install_gcc ||
-    _abort $?
+# SKIP
+# install_gcc ||
+#     _abort $?
 
 # install_curl ||
 #     _abort $?
