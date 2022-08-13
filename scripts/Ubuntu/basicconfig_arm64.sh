@@ -197,23 +197,23 @@ configure_path
 #         install_pythons" ||
 #     _abort $?
 
-# .NET stuff
-install_dotnet_arm64 ||
-    _abort $?
-preheat_dotnet_sdks &&
-log_version dotnet --list-sdks &&
-log_version dotnet --list-runtimes ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_nuget)
-        configure_nuget" ||
-    _abort $?
-
-return
+# # .NET stuff
+# install_dotnet_arm64 ||
+#     _abort $?
+# preheat_dotnet_sdks &&
+# log_version dotnet --list-sdks &&
+# log_version dotnet --list-runtimes ||
+#     _abort $?
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         $(declare -f configure_nuget)
+#         configure_nuget" ||
+#     _abort $?
 
 install_docker ||
     _abort $?
+
+return
 
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
