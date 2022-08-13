@@ -349,9 +349,9 @@ function install_tools() {
     echo "[INFO] Running install_tools..."
     declare tools_array
     # utilities
-    tools_array=( "zip" "unzip" "wget" "curl" "time" "telnet" "dnsutils" "net-tools" "file" "ftp" "lftp" )
+    tools_array=( "zip" "unzip" "wget" "curl" "time" "telnet" "net-tools" "file" "ftp" "lftp" )
     if [[ $OS_ARCH == "amd64" ]]; then
-        tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" "tree" )
+        tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" "tree" "dnsutils" )
     fi
 
     # build tools
@@ -366,8 +366,8 @@ function install_tools() {
     fi
     tools_array+=( "python3" "python3-dev" "python3-setuptools" )
     tools_array+=( "build-essential" "libssl-dev"  "libexpat1-dev" "libffi-dev" "gettext" )
-    tools_array+=( "gfortran" "apt-transport-https" )
-    tools_array+=( "libbz2-dev" "liblzma-dev" "python3-tk"  "libsqlite3-dev" )
+    tools_array+=( "apt-transport-https" )
+    tools_array+=( "gfortran" "libbz2-dev" "liblzma-dev" "python3-tk"  "libsqlite3-dev" )
     if [[ $OS_ARCH == "amd64" ]]; then
         tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" )
     fi
