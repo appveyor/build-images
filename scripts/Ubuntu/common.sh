@@ -349,25 +349,28 @@ function install_tools() {
     echo "[INFO] Running install_tools..."
     declare tools_array
     # utilities
-    tools_array=( "zip" "unzip" "wget" "curl" "time" "tree" "telnet" "dnsutils" "net-tools" "file" "ftp" "lftp" )
+    tools_array=( "zip" "unzip" "wget" "curl" "time" "telnet" "dnsutils" "net-tools" "file" "ftp" "lftp" )
     if [[ $OS_ARCH == "amd64" ]]; then
-        tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
+        tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" "tree" )
     fi
 
     # build tools
-    tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" )
+    tools_array+=( "make" "binutils" "bison" "gcc" "pkg-config" )
     if [[ $OS_ARCH == "amd64" ]]; then
-        tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" "ninja-build" )
+        tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" "ninja-build" "tcl" )
     fi
 
     # python packages
-    tools_array+=( "python" "python-dev" )
     if [[ $OS_ARCH == "amd64" ]]; then
-        tools_array+=( "python-setuptools" )
+        tools_array+=( "python" "python-dev" "python-setuptools" )
     fi
-    tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
-    tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
-    tools_array+=( "libbz2-dev" "liblzma-dev" "python3-tk" "tk-dev" "libsqlite3-dev" )
+    tools_array+=( "python3" "python3-dev" "python3-setuptools" )
+    tools_array+=( "build-essential" "libssl-dev"  "libexpat1-dev" "libffi-dev" "gettext" )
+    tools_array+=( "gfortran" "apt-transport-https" )
+    tools_array+=( "libbz2-dev" "liblzma-dev" "python3-tk"  "libsqlite3-dev" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" )
+    fi
 
     # 32bit support
     if [[ $OS_ARCH == "amd64" ]]; then
@@ -472,9 +475,9 @@ function install_appveyoragent() {
     pushd -- "${AGENT_DIR}" ||
         { echo "[ERROR] Cannot cd to ${AGENT_DIR} folder." 1>&2; return 10; }
     if [ "${#AGENT_MODE}" -gt 0 ]; then
-        if command -v python; then
+        if command -v python3; then
             [ -f ${CONFIG_FILE} ] &&
-            python -c "import json; import io;
+            python3 -c "import json; import io;
 a=json.load(io.open('${CONFIG_FILE}', encoding='utf-8-sig'));
 a[u'AppVeyor'][u'Mode']='${AGENT_MODE}';
 a[u'AppVeyor'][u'ProjectBuildsDirectory']='${PROJECT_BUILDS_DIRECTORY}';
