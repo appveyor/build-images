@@ -1791,7 +1791,7 @@ function update_nuget() {
 function install_kubectl() {
     echo "[INFO] Running install_kubectl..."
     KUBE_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-    curl -LO "https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl" &&
+    curl -LO "https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/${OS_ARCH}/kubectl" &&
     chmod +x ./kubectl &&
     mv -f ./kubectl /usr/local/bin/kubectl ||
         { echo "[ERROR] Cannot download and install kubectl."; return 10; }

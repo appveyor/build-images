@@ -40,6 +40,10 @@ if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
     esac
 fi
 
+if [[ -z "${BUILD_AGENT_MODE-}" ]] && [[ ${OS_ARCH-} == "arm64" ]]; then
+    BUILD_AGENT_MODE=AmazonEC2
+fi
+
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )
 echo "[DEBUG] Searching installation scripts in ${LIB_FOLDERS[*]}"
@@ -144,8 +148,10 @@ chown_logfile || _continue
 disable_automatic_apt_updates ||
     _abort $?
 
-configure_apt ||
-    _abort $?
+if [[ $OS_ARCH == "amd64" ]]; then
+    configure_apt ||
+        _abort $?
+fi
 
 configure_locale
 
@@ -162,26 +168,27 @@ if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
         _abort $?
 fi
 
-if ! ${DEBUG}; then                          ### Disabled for faster debugging
+if [[ $OS_ARCH == "amd64" ]]; then
+    install_gcc ||
+        _abort $?
 
-install_gcc ||
-    _abort $?
+    install_clang ||
+        _abort $?
 
-# install_curl ||
-#     _abort $?
+    install_p7zip
 
-install_clang ||
-    _abort $?
-
-install_p7zip
-
-install_powershell ||
-    _abort $?
+    install_powershell ||
+        _abort $?
+else
+    install_powershell_arm64 ||
+        _abort $?
+fi
 
 install_cvs ||
     _abort $?
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
         $(declare -f configure_svn)
         configure_svn" ||
     _abort $?
@@ -195,43 +202,63 @@ install_gitlfs ||
 install_gitversion ||
     _abort $?
 
-install_pip ||
-    _abort $?
+if [[ $OS_ARCH == "amd64" ]]; then
+    install_pip ||
+        _abort $?
+else
+    install_pip3 ||
+        _abort $?
+fi
 
 install_virtualenv ||
     _abort $?
 
-install_octo ||
-    _abort $?
+if [[ $OS_ARCH == "amd64" ]]; then
+    install_octo ||
+        _abort $?
+fi
 
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
         $(declare -f install_pythons)
         install_pythons" ||
     _abort $?
 
 # .NET stuff
-install_dotnets ||
-    _abort $?
+if [[ $OS_ARCH == "amd64" ]]; then
+    install_dotnets ||
+        _abort $?
+else
+    install_dotnet_arm64 ||
+        _abort $?
+fi
 preheat_dotnet_sdks &&
 log_version dotnet --list-sdks &&
 log_version dotnet --list-runtimes ||
     _abort $?
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
         $(declare -f configure_nuget)
         configure_nuget" ||
     _abort $?
 
-su -l ${USER_NAME} -c "
-        curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
-    _abort $?
+if [[ $OS_ARCH == "amd64" ]]; then
+    su -l ${USER_NAME} -c "
+            curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
+        _abort $?
 
-install_docker ||
-    _abort $?
+    install_docker ||
+        _abort $?
+else
+    install_docker_arm64 ||
+        _abort $?
+fi
 
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
         $(declare -f install_nvm)
         $(declare -f write_line)
         $(declare -f add_line)
@@ -241,102 +268,121 @@ su -l ${USER_NAME} -c "
 su -l ${USER_NAME} -c "
         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
         USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
         $(declare -f log_version)
         $(declare -f install_nvm_nodejs)
         install_nvm_nodejs ${CURRENT_NODEJS}" ||
     _abort $?
 
-install_virtualbox ||
-    _abort $?
 install_mysql ||
     _abort $?
 install_postgresql ||
     _abort $?
+
 install_redis ||
     _abort $?
-install_mongodb ||
-    _abort $?
-install_rabbitmq ||
-    _abort $?
 
-install_qt ||
-    _abort $? 
+if [[ $OS_ARCH == "amd64" ]]; then
+    install_virtualbox ||
+        _abort $?
+    install_mongodb ||
+        _abort $?
+    install_rabbitmq ||
+        _abort $?
+    install_qt ||
+        _abort $?
 
-# Go lang
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_gvm)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        install_gvm" ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        source \"${HOME}/.gvm/scripts/gvm\"
-        $(declare -f log_version)
-        $(declare -f install_golangs)
-        install_golangs" ||
-    _abort $?
+    # Go lang
+    su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_gvm)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            install_gvm" ||
+        _abort $?
+    su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            source \"${HOME}/.gvm/scripts/gvm\"
+            $(declare -f log_version)
+            $(declare -f install_golangs)
+            install_golangs" ||
+        _abort $?
 
-install_jdks ||
-    _abort $?
+    install_jdks ||
+        _abort $?
 
-OFS=$IFS
-IFS=$'\n'
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_jdk)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
-    _abort $?
-IFS=$OFS
+    OFS=$IFS
+    IFS=$'\n'
+    su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_jdk)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            configure_jdk" <<< "${PROFILE_LINES[*]}" ||
+        _abort $?
+    IFS=$OFS
+else
+    # arm64
+    install_golang_arm64 ||
+        _abort $?
+    install_jdks_arm64 ||
+        _abort $?        
+fi
 
 # Ruby
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
         $(declare -f install_rvm)
         install_rvm" ||
     _abort $?
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
         [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
         $(declare -f log_version)
         $(declare -f install_rubies)
         install_rubies" ||
     _abort $?
 
-install_mono ||
-    _abort $?
+if [[ $OS_ARCH == "amd64" ]]; then
+    install_mono ||
+        _abort $?
 
-install_sqlserver ||
-    _abort $?
+    install_sqlserver ||
+        _abort $?
 
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
-        $(declare -f configure_sqlserver)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_sqlserver" ||
-    _abort $?
+    su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+            $(declare -f configure_sqlserver)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            configure_sqlserver" ||
+        _abort $?
 
-disable_sqlserver ||
-    _abort $?
+    disable_sqlserver ||
+        _abort $?
+
+    install_doxygen ||
+        _abort $?
+
+    install_azurecli ||
+        _abort $?        
+else
+    # arm64
+    install_azurecli_arm64 ||
+        _abort $?    
+fi
 
 install_yarn ||
     _abort $?
-
 install_packer ||
     _abort $?
-install_doxygen ||
-    _abort $?
 install_awscli ||
-    _abort $?
-install_azurecli ||
     _abort $?
 install_gcloud ||
     _abort $?
@@ -346,7 +392,7 @@ install_cmake ||
     _abort $?
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
-        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+        OS_ARCH=${OS_ARCH}
         $(declare -f install_vcpkg)
         $(declare -f write_line)
         $(declare -f add_line)
@@ -354,13 +400,17 @@ su -l ${USER_NAME} -c "
         $(declare -f log_version)
         install_vcpkg" ||
     _abort $?
-install_browsers ||
-    _abort $?
-update_nuget ||
-    _abort $?
+if [[ $OS_ARCH == "amd64" ]]; then
+    install_browsers ||
+        _abort $?
+    update_nuget ||
+        _abort $?
+else
+    install_browsers_arm64 ||
+        _abort $?
+fi
 add_ssh_known_hosts ||
     _continue $?
-fi
 configure_sshd ||
     _abort $?
 configure_firewall ||
