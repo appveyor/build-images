@@ -138,159 +138,156 @@ fi
 
 configure_path
 
-# if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
-#     add_user ||
-#         _abort $?
-# fi
+if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
+    add_user ||
+        _abort $?
+fi
 
-# chown_logfile || _continue
+chown_logfile || _continue
 
-# disable_automatic_apt_updates ||
-#     _abort $?
+disable_automatic_apt_updates ||
+    _abort $?
 
-# configure_locale
+configure_locale
 
-# install_tools ||
-#     _abort $?
+install_tools ||
+    _abort $?
 
-# if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
-#     install_KVP_packages ||
-#         _abort $?
-# fi
+if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
+    install_KVP_packages ||
+        _abort $?
+fi
 
-# if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
-#     install_appveyoragent "${BUILD_AGENT_MODE}" ||
-#         _abort $?
-# fi
+if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
+    install_appveyoragent "${BUILD_AGENT_MODE}" ||
+        _abort $?
+fi
 
-# if ! ${DEBUG}; then                          ### Disabled for faster debugging
+install_powershell_arm64 ||
+    _abort $?
 
-# install_powershell_arm64 ||
-#     _abort $?
+install_cvs ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        $(declare -f configure_svn)
+        configure_svn" ||
+    _abort $?
 
-# install_cvs ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         OS_ARCH=${OS_ARCH}
-#         $(declare -f configure_svn)
-#         configure_svn" ||
-#     _abort $?
+update_git ||
+    _abort $?
 
-# update_git ||
-#     _abort $?
+install_gitlfs ||
+    _abort $?
 
-# install_gitlfs ||
-#     _abort $?
+install_gitversion ||
+    _abort $?
 
-# install_gitversion ||
-#     _abort $?
+install_pip3 ||
+    _abort $?
 
-# install_pip3 ||
-#     _abort $?
+install_virtualenv ||
+    _abort $?
 
-# install_virtualenv ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        $(declare -f install_pythons)
+        install_pythons" ||
+    _abort $?
 
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         OS_ARCH=${OS_ARCH}
-#         $(declare -f install_pythons)
-#         install_pythons" ||
-#     _abort $?
+# .NET stuff
+install_dotnet_arm64 ||
+    _abort $?
+preheat_dotnet_sdks &&
+log_version dotnet --list-sdks &&
+log_version dotnet --list-runtimes ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        $(declare -f configure_nuget)
+        configure_nuget" ||
+    _abort $?
 
-# # .NET stuff
-# install_dotnet_arm64 ||
-#     _abort $?
-# preheat_dotnet_sdks &&
-# log_version dotnet --list-sdks &&
-# log_version dotnet --list-runtimes ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         OS_ARCH=${OS_ARCH}
-#         $(declare -f configure_nuget)
-#         configure_nuget" ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        $(declare -f install_nvm)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        install_nvm" ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        $(declare -f log_version)
+        $(declare -f install_nvm_nodejs)
+        install_nvm_nodejs ${CURRENT_NODEJS}" ||
+    _abort $?
 
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         OS_ARCH=${OS_ARCH}
-#         $(declare -f install_nvm)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         install_nvm" ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
-#         USER_NAME=${USER_NAME}
-#         OS_ARCH=${OS_ARCH}
-#         $(declare -f log_version)
-#         $(declare -f install_nvm_nodejs)
-#         install_nvm_nodejs ${CURRENT_NODEJS}" ||
-#     _abort $?
+install_mysql ||
+    _abort $?
 
-# install_mysql ||
-#     _abort $?
+install_postgresql ||
+    _abort $?
 
-# install_postgresql ||
-#     _abort $?
+install_redis ||
+    _abort $?
 
-# install_redis ||
-#     _abort $?
+install_golang_arm64 ||
+    _abort $?
 
-# install_golang_arm64 ||
-#     _abort $?
+install_jdks_arm64 ||
+    _abort $?
 
-# install_jdks_arm64 ||
-#     _abort $?
+# Ruby
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        $(declare -f install_rvm)
+        install_rvm" ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
+        $(declare -f log_version)
+        $(declare -f install_rubies)
+        install_rubies" ||
+    _abort $?
 
-# # Ruby
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         OS_ARCH=${OS_ARCH}
-#         $(declare -f install_rvm)
-#         install_rvm" ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         OS_ARCH=${OS_ARCH}
-#         [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
-#         $(declare -f log_version)
-#         $(declare -f install_rubies)
-#         install_rubies" ||
-#     _abort $?
+install_yarn ||
+    _abort $?
+install_packer ||
+    _abort $?
+install_awscli ||
+    _abort $?
+install_azurecli_arm64 ||
+    _abort $?
+install_gcloud ||
+    _abort $?
+install_cmake ||
+    _abort $?
 
-# install_yarn ||
-#     _abort $?
-# install_packer ||
-#     _abort $?
-# install_awscli ||
-#     _abort $?
-# install_azurecli_arm64 ||
-#     _abort $?
-# install_gcloud ||
-#     _abort $?
-# install_cmake ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        $(declare -f install_vcpkg)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f log_version)
+        install_vcpkg" ||
+    _abort $?
 
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         OS_ARCH=${OS_ARCH}
-#         $(declare -f install_vcpkg)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         $(declare -f log_version)
-#         install_vcpkg" ||
-#     _abort $?
-
-# install_browsers ||
-#     _abort $?
-# add_ssh_known_hosts ||
-#     _continue $?
-# fi
+install_browsers ||
+    _abort $?
+add_ssh_known_hosts ||
+    _continue $?
 configure_sshd ||
     _abort $?
 configure_firewall ||
