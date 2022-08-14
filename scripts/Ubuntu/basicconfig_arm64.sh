@@ -235,17 +235,6 @@ configure_path
 # install_redis ||
 #     _abort $?
 
-install_mongodb ||
-    _abort $?
-
-exit 0
-
-install_rabbitmq ||
-    _abort $?
-
-install_qt ||
-    _abort $? 
-
 # Go lang
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
@@ -262,6 +251,8 @@ su -l ${USER_NAME} -c "
         $(declare -f install_golangs)
         install_golangs" ||
     _abort $?
+
+exit 0
 
 install_jdks ||
     _abort $?
