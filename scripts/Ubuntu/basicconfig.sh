@@ -148,10 +148,8 @@ chown_logfile || _continue
 disable_automatic_apt_updates ||
     _abort $?
 
-if [[ $OS_ARCH == "amd64" ]]; then
-    configure_apt ||
-        _abort $?
-fi
+configure_apt ||
+    _abort $?
 
 configure_locale
 
