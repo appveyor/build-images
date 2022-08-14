@@ -1170,7 +1170,12 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1" "ruby-head" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.2" "ruby-head" )
+    else
+        declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.2" "ruby-head" )
+    fi
+    
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1592,7 +1597,7 @@ function install_packer() {
     else
         VERSION=$1
     fi
-    local ZIPNAME=packer_${VERSION}_linux_amd64.zip
+    local ZIPNAME=packer_${VERSION}_linux_${OS_ARCH}.zip
     curl -fsSL -O https://releases.hashicorp.com/packer/${VERSION}/${ZIPNAME} &&
     unzip -q -o ${ZIPNAME} -d /usr/local/bin ||
         { echo "[ERROR] Cannot download and unzip packer." 1>&2; return 10; }
@@ -1673,7 +1678,12 @@ function install_cmake() {
     else
         VERSION=$1
     fi
-    local TAR_FILE=cmake-${VERSION}-linux-x86_64.tar.gz
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare TAR_ARCH="x86_64"
+    else
+        declare TAR_ARCH="aarch64"
+    fi
+    local TAR_FILE=cmake-${VERSION}-linux-${TAR_ARCH}.tar.gz
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"

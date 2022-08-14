@@ -238,20 +238,8 @@ configure_path
 # install_golang_arm64 ||
 #     _abort $?
 
-install_jdks_arm64 ||
-    _abort $?
-
-OFS=$IFS
-IFS=$'\n'
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_jdk)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
-    _abort $?
-IFS=$OFS
+# install_jdks_arm64 ||
+#     _abort $?
 
 # Ruby
 su -l ${USER_NAME} -c "
@@ -267,39 +255,18 @@ su -l ${USER_NAME} -c "
         install_rubies" ||
     _abort $?
 
-install_mono ||
-    _abort $?
-
-install_sqlserver ||
-    _abort $?
-
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
-        $(declare -f configure_sqlserver)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_sqlserver" ||
-    _abort $?
-
-disable_sqlserver ||
-    _abort $?
-
 install_yarn ||
     _abort $?
-
 install_packer ||
-    _abort $?
-install_doxygen ||
     _abort $?
 install_awscli ||
     _abort $?
+
+exit 0
+
 install_azurecli ||
     _abort $?
 install_gcloud ||
-    _abort $?
-install_kubectl ||
     _abort $?
 install_cmake ||
     _abort $?
@@ -314,8 +281,6 @@ su -l ${USER_NAME} -c "
         install_vcpkg" ||
     _abort $?
 install_browsers ||
-    _abort $?
-update_nuget ||
     _abort $?
 add_ssh_known_hosts ||
     _continue $?
