@@ -163,7 +163,7 @@ configure_path
 #         _abort $?
 # fi
 
-# if ! ${DEBUG}; then                          ### Disabled for faster debugging
+if ! ${DEBUG}; then                          ### Disabled for faster debugging
 
 # install_powershell_arm64 ||
 #     _abort $?
@@ -286,11 +286,11 @@ configure_path
 #         install_vcpkg" ||
 #     _abort $?
 
-install_browsers ||
-    _abort $?
-add_ssh_known_hosts ||
-    _continue $?
-fi
+# install_browsers ||
+#     _abort $?
+# add_ssh_known_hosts ||
+#     _continue $?
+# fi
 configure_sshd ||
     _abort $?
 configure_firewall ||
