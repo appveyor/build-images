@@ -235,13 +235,10 @@ configure_path
 # install_redis ||
 #     _abort $?
 
-# Go lang
-install_golang_arm64 ||
-    _abort $?
+# install_golang_arm64 ||
+#     _abort $?
 
-exit 0
-
-install_jdks ||
+install_jdks_arm64 ||
     _abort $?
 
 OFS=$IFS

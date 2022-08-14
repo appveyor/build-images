@@ -1106,6 +1106,11 @@ function configure_jdk() {
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
 }
 
+function install_jdks_arm64() {
+    echo "[INFO] Running install_jdks_arm64..."
+    apt -y install openjdk-17-jdk
+}
+
 function install_rvm_and_rubies() {
     echo "[INFO] Running install_rvm_and_rubies..."
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
