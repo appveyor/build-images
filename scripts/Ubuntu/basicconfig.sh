@@ -410,18 +410,24 @@ else
     install_browsers_arm64 ||
         _abort $?
 fi
+
 add_ssh_known_hosts ||
     _continue $?
-configure_sshd ||
-    _abort $?
-configure_firewall ||
-    _abort $?
-configure_motd ||
-    _abort $?
-configure_uefi ||
-    _abort $?
+
+if [[ $OS_ARCH == "amd64" ]]; then
+    configure_sshd ||
+        _abort $?
+    configure_firewall ||
+        _abort $?
+    configure_motd ||
+        _abort $?
+    configure_uefi ||
+        _abort $?
+fi
+
 fix_apt_sources ||
     _abort $?
+
 if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
     fix_grub_timeout ||
         _abort $?
