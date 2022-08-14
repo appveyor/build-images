@@ -218,20 +218,19 @@ configure_path
 #         $(declare -f replace_line)
 #         install_nvm" ||
 #     _abort $?
-su -l ${USER_NAME} -c "
-        [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
-        $(declare -f install_nvm_nodejs)
-        install_nvm_nodejs ${CURRENT_NODEJS}" ||
-    _abort $?
+# su -l ${USER_NAME} -c "
+#         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+#         USER_NAME=${USER_NAME}
+#         $(declare -f log_version)
+#         $(declare -f install_nvm_nodejs)
+#         install_nvm_nodejs ${CURRENT_NODEJS}" ||
+#     _abort $?
 
-return
-
-install_virtualbox ||
-    _abort $?
 install_mysql ||
     _abort $?
+
+exit 0
+
 install_postgresql ||
     _abort $?
 install_redis ||
