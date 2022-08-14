@@ -241,28 +241,26 @@ configure_path
 # install_jdks_arm64 ||
 #     _abort $?
 
-# Ruby
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_rvm)
-        install_rvm" ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
-        $(declare -f log_version)
-        $(declare -f install_rubies)
-        install_rubies" ||
-    _abort $?
+# # Ruby
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         $(declare -f install_rvm)
+#         install_rvm" ||
+#     _abort $?
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
+#         $(declare -f log_version)
+#         $(declare -f install_rubies)
+#         install_rubies" ||
+#     _abort $?
 
-install_yarn ||
-    _abort $?
-install_packer ||
-    _abort $?
-install_awscli ||
-    _abort $?
-
-exit 0
+# install_yarn ||
+#     _abort $?
+# install_packer ||
+#     _abort $?
+# install_awscli ||
+#     _abort $?
 
 install_azurecli ||
     _abort $?
@@ -280,6 +278,9 @@ su -l ${USER_NAME} -c "
         $(declare -f log_version)
         install_vcpkg" ||
     _abort $?
+
+exit 0
+
 install_browsers ||
     _abort $?
 add_ssh_known_hosts ||
