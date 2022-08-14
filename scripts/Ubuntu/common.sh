@@ -1259,6 +1259,8 @@ function install_golang_arm64() {
     rm -rf /usr/local/go && tar -C /usr/local -xzf ${GO_FILENAME}
     rm ${GO_FILENAME}
 
+    /usr/local/go/bin/go version
+
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         write_line "$USER_HOME/.profile" 'export PATH=$PATH:/usr/local/go/bin'
     else
