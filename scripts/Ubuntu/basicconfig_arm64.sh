@@ -197,6 +197,9 @@ su -l ${USER_NAME} -c "
         install_pythons" ||
     _abort $?
 
+install_docker_arm64 ||
+    _abort $?
+
 # .NET stuff
 install_dotnet_arm64 ||
     _abort $?

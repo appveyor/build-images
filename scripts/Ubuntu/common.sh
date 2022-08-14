@@ -1333,9 +1333,40 @@ function install_docker() {
     install_docker_compose
 }
 
+function install_docker_arm64() {
+    echo "[INFO] Running install_docker_arm64..."
+
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sudo sh get-docker.sh
+    rm get-docker.sh
+
+    # Native Overlay Diff: true
+    modprobe -r overlay && modprobe overlay redirect_dir=off
+    echo 'options overlay redirect_dir=off' > /etc/modprobe.d/disable_overlay_redirect_dir.conf
+
+    systemctl restart docker &&
+    systemctl is-active docker ||
+        { echo "[ERROR] Docker service failed to start." 1>&2; return 30; }
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        usermod -aG docker ${USER_NAME}
+    fi
+    docker info
+    #pull_dockerimages
+    #systemctl disable docker
+
+    install_docker_compose
+}
+
 function install_docker_compose() {
     echo "[INFO] Running install_docker_compose..."
-    sudo curl -L "https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare TAR_ARCH="x86_64"
+    else
+        declare TAR_ARCH="aarch64"
+    fi
+
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-linux-${TAR_ARCH}" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     log_version docker-compose --version    
 }
@@ -1643,7 +1674,7 @@ function install_localstack() {
 
 function install_gcloud() {
     echo "[INFO] Running install_gcloud..."
-    apt-get install apt-transport-https ca-certificates &&
+    apt-get -y install apt-transport-https ca-certificates &&
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/sources.list.d/google-cloud-sdk.list &&
     curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - ||
         { echo "[ERROR] Cannot add google-cloud-sdk repository to APT sources." 1>&2; return 10; }
