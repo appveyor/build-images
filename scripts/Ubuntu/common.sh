@@ -1633,6 +1633,33 @@ function install_p7zip() {
     rm -rf "${TMP_DIR}"
 }
 
+function install_7zip() {
+    echo "[INFO] Running install_7zip..."
+
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare TAR_ARCH="x64"
+    else
+        declare TAR_ARCH="arm64"
+    fi
+
+    FILENAME="7z2201-linux-${TAR_ARCH}.tar.xz"
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    curl -LO https://www.7-zip.org/a/${FILENAME} ||
+        { echo "[ERROR] Cannot download 7Zip." 1>&2; popd; return 10; }
+    tar -xf ${FILENAME}
+    cp 7zz /usr/bin
+    ln -s /usr/bin/7zz /usr/bin/7za
+
+    # cleanup
+    popd &&
+    rm -rf "${TMP_DIR}"
+
+    7zz --version
+    7za --version
+}
+
 function install_packer() {
     echo "[INFO] Running install_packer..."
     local VERSION

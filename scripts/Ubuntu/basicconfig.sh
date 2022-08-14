@@ -168,14 +168,15 @@ if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
         _abort $?
 fi
 
+install_7zip ||
+    _abort $?
+
 if [[ $OS_ARCH == "amd64" ]]; then
     install_gcc ||
         _abort $?
 
     install_clang ||
         _abort $?
-
-    install_p7zip
 
     install_powershell ||
         _abort $?
