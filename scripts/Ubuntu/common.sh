@@ -1670,6 +1670,13 @@ function install_azurecli() {
     log_version az --version
 }
 
+function install_azurecli_arm64() {
+    echo "[INFO] Running install_azurecli_arm64..."
+    pip install azure-cli ||
+        { echo "[ERROR] Cannot install azure-cli." 1>&2; return 10; }
+    log_version az --version
+}
+
 function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION

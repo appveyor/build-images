@@ -262,12 +262,15 @@ configure_path
 # install_awscli ||
 #     _abort $?
 
-install_azurecli ||
+install_azurecli_arm64 ||
     _abort $?
-install_gcloud ||
-    _abort $?
-install_cmake ||
-    _abort $?
+
+exit 0
+
+# install_gcloud ||
+#     _abort $?
+# install_cmake ||
+#     _abort $?
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
