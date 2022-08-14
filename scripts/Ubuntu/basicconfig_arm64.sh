@@ -163,7 +163,7 @@ configure_path
 #         _abort $?
 # fi
 
-if ! ${DEBUG}; then                          ### Disabled for faster debugging
+# if ! ${DEBUG}; then                          ### Disabled for faster debugging
 
 # install_powershell_arm64 ||
 #     _abort $?
