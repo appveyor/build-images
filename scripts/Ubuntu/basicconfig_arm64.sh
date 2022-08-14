@@ -232,13 +232,14 @@ configure_path
 # install_postgresql ||
 #     _abort $?
 
-install_redis ||
+# install_redis ||
+#     _abort $?
+
+install_mongodb ||
     _abort $?
 
 exit 0
 
-install_mongodb ||
-    _abort $?
 install_rabbitmq ||
     _abort $?
 
