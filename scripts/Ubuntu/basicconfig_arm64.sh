@@ -210,21 +210,21 @@ configure_path
 #         configure_nuget" ||
 #     _abort $?
 
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_nvm)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        install_nvm" ||
-    _abort $?
 # su -l ${USER_NAME} -c "
-#         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
 #         USER_NAME=${USER_NAME}
-#         $(declare -f log_version)
-#         $(declare -f install_nvm_nodejs)
-#         install_nvm_nodejs ${CURRENT_NODEJS}" ||
+#         $(declare -f install_nvm)
+#         $(declare -f write_line)
+#         $(declare -f add_line)
+#         $(declare -f replace_line)
+#         install_nvm" ||
 #     _abort $?
+su -l ${USER_NAME} -c "
+        [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_nvm_nodejs)
+        install_nvm_nodejs ${CURRENT_NODEJS}" ||
+    _abort $?
 
 return
 
