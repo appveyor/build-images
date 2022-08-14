@@ -269,7 +269,7 @@ configure_path
 #     _abort $?
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
-        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+        OS_ARCH=${OS_ARCH}
         $(declare -f install_vcpkg)
         $(declare -f write_line)
         $(declare -f add_line)
