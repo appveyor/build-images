@@ -172,6 +172,7 @@ configure_path
 #     _abort $?
 # su -l ${USER_NAME} -c "
 #         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
 #         $(declare -f configure_svn)
 #         configure_svn" ||
 #     _abort $?
@@ -193,6 +194,7 @@ configure_path
 
 # su -l ${USER_NAME} -c "
 #         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
 #         $(declare -f install_pythons)
 #         install_pythons" ||
 #     _abort $?
@@ -206,12 +208,14 @@ configure_path
 #     _abort $?
 # su -l ${USER_NAME} -c "
 #         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
 #         $(declare -f configure_nuget)
 #         configure_nuget" ||
 #     _abort $?
 
 # su -l ${USER_NAME} -c "
 #         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
 #         $(declare -f install_nvm)
 #         $(declare -f write_line)
 #         $(declare -f add_line)
@@ -221,6 +225,7 @@ configure_path
 # su -l ${USER_NAME} -c "
 #         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
 #         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
 #         $(declare -f log_version)
 #         $(declare -f install_nvm_nodejs)
 #         install_nvm_nodejs ${CURRENT_NODEJS}" ||
@@ -244,11 +249,13 @@ configure_path
 # # Ruby
 # su -l ${USER_NAME} -c "
 #         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
 #         $(declare -f install_rvm)
 #         install_rvm" ||
 #     _abort $?
 # su -l ${USER_NAME} -c "
 #         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
 #         [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
 #         $(declare -f log_version)
 #         $(declare -f install_rubies)
@@ -267,18 +274,17 @@ configure_path
 #     _abort $?
 # install_cmake ||
 #     _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        OS_ARCH=${OS_ARCH}
-        $(declare -f install_vcpkg)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        $(declare -f log_version)
-        install_vcpkg" ||
-    _abort $?
 
-exit 0
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
+#         $(declare -f install_vcpkg)
+#         $(declare -f write_line)
+#         $(declare -f add_line)
+#         $(declare -f replace_line)
+#         $(declare -f log_version)
+#         install_vcpkg" ||
+#     _abort $?
 
 install_browsers ||
     _abort $?

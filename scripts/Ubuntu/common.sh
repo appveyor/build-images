@@ -1963,10 +1963,8 @@ function install_vcpkg() {
     git clone --depth 1 https://github.com/Microsoft/vcpkg.git &&
     pushd vcpkg
 
-    #./bootstrap-vcpkg.sh ||
-    #    { echo "[ERROR] Cannot bootstrap vcpkg." 1>&2; popd; return 10; }
-
-    echo "AAAAAAAAAAAAAAAAA: $OS_ARCH"
+    ./bootstrap-vcpkg.sh ||
+       { echo "[ERROR] Cannot bootstrap vcpkg." 1>&2; popd; return 10; }
 
     if [[ $OS_ARCH == "arm64" ]]; then
         export VCPKG_FORCE_SYSTEM_BINARIES=1
