@@ -355,9 +355,9 @@ function install_tools() {
     fi
 
     # build tools
-    tools_array+=( "make" "binutils" "bison" "gcc" "pkg-config" )
+    tools_array+=( "make" "binutils" "bison" "gcc" "pkg-config" "ninja-build" )
     if [[ $OS_ARCH == "amd64" ]]; then
-        tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" "ninja-build" "tcl" )
+        tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" "tcl" )
     fi
 
     # python packages
@@ -1962,8 +1962,14 @@ function install_vcpkg() {
 
     git clone --depth 1 https://github.com/Microsoft/vcpkg.git &&
     pushd vcpkg
+
     ./bootstrap-vcpkg.sh ||
         { echo "[ERROR] Cannot bootstrap vcpkg." 1>&2; popd; return 10; }
+
+    if [[ $OS_ARCH == "arm64" ]]; then
+        export VCPKG_FORCE_SYSTEM_BINARIES=1
+        write_line "${HOME}/.profile" 'export VCPKG_FORCE_SYSTEM_BINARIES=1'
+    fi
 
     write_line "${HOME}/.profile" 'add2path_suffix ${HOME}/vcpkg'
     export PATH="$PATH:${HOME}/vcpkg"
