@@ -389,6 +389,7 @@ function install_tools() {
     fi
 
     #APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
+    apt-get update
     apt-get -y ${APT_GET_OPTIONS-} install "${tools_array[@]}" --no-install-recommends ||
         {
             echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2;
