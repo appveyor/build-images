@@ -287,7 +287,7 @@ su -l ${USER_NAME} -c "
         install_vcpkg" ||
     _abort $?
 
-install_browsers ||
+install_browsers_arm64 ||
     _abort $?
 add_ssh_known_hosts ||
     _continue $?

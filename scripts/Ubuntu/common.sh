@@ -366,10 +366,10 @@ function install_tools() {
     fi
     tools_array+=( "python3" "python3-setuptools" )
     tools_array+=( "apt-transport-https" )
+    tools_array+=( "libffi-dev" "libssl-dev" "libsqlite3-dev" "liblzma-dev" "libbz2-dev" "libgdbm-dev" "libyaml-dev" "libgmp-dev" "libreadline-dev" "libncurses5-dev" )
     if [[ $OS_ARCH == "amd64" ]]; then
-        tools_array+=( "build-essential" "libexpat1-dev" "libffi-dev" "gettext" )
-        tools_array+=( "gfortran" "libbz2-dev" "liblzma-dev" "python3-tk" "libsqlite3-dev" )
-        tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" "libssl-dev" )
+        tools_array+=( "build-essential" "libexpat1-dev" "gettext" "gfortran" "python3-tk" )
+        tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" )
     fi
 
     # 32bit support
@@ -1875,6 +1875,25 @@ function install_browsers() {
     #cleanup
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }
+
+function install_browsers_arm64() {
+    echo "[INFO] Running install_browsers_arm64..."
+
+    configure_firefox_repository
+
+    apt-get -y -q install libappindicator1 fonts-liberation xvfb ||
+        { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 10; }
+
+    apt-get -y --fix-broken install
+    apt-get -y -q install firefox chromium-browser
+    log_version dpkg -l firefox chromium-browser
+}
+
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare TAR_ARCH="x86_64"
+    else
+        declare TAR_ARCH="aarch64"
+    fi
 
 function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
