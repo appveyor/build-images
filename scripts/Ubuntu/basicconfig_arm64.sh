@@ -236,20 +236,7 @@ configure_path
 #     _abort $?
 
 # Go lang
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_gvm)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        install_gvm" ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        source \"${HOME}/.gvm/scripts/gvm\"
-        $(declare -f log_version)
-        $(declare -f install_golangs)
-        install_golangs" ||
+install_golang_arm64 ||
     _abort $?
 
 exit 0

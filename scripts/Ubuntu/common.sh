@@ -1233,15 +1233,11 @@ function install_golangs() {
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
     
-    if [[ $OS_ARCH == "amd64" ]]; then
-        gvm install go1.4 -B &&
-        gvm use go1.4 ||
-            { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
+    gvm install go1.4 -B &&
+    gvm use go1.4 ||
+        { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-        declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.11" "go1.18.3" )
-    else
-        declare GO_VERSIONS=( "go1.15.15" "go1.16.15" "go1.17.11" "go1.18.3" )
-    fi
+    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.11" "go1.18.3" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
@@ -1252,6 +1248,22 @@ function install_golangs() {
     gvm use "${GO_VERSIONS[$index]}" --default
     log_version gvm version
     log_version go version
+}
+
+function install_golang_arm64() {
+    echo "[INFO] Running install_golang_arm64..."
+
+    GO_VERSION="1.19"
+    GO_FILENAME="go${GO_VERSION}.linux-amd64.tar.gz"
+    curl -fsSLO https://go.dev/dl/${GO_FILENAME}
+    rm -rf /usr/local/go && tar -C /usr/local -xzf ${GO_FILENAME}
+    rm ${GO_FILENAME}
+
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "$USER_HOME/.profile" 'export PATH=$PATH:/usr/local/go/bin'
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
+    fi    
 }
 
 function pull_dockerimages() {
