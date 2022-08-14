@@ -226,13 +226,14 @@ configure_path
 #         install_nvm_nodejs ${CURRENT_NODEJS}" ||
 #     _abort $?
 
-install_mysql ||
+# install_mysql ||
+#     _abort $?
+
+install_postgresql ||
     _abort $?
 
 exit 0
 
-install_postgresql ||
-    _abort $?
 install_redis ||
     _abort $?
 install_mongodb ||
