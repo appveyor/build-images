@@ -1254,7 +1254,7 @@ function install_golang_arm64() {
     echo "[INFO] Running install_golang_arm64..."
 
     GO_VERSION="1.19"
-    GO_FILENAME="go${GO_VERSION}.linux-amd64.tar.gz"
+    GO_FILENAME="go${GO_VERSION}.linux-arm64.tar.gz"
     curl -fsSLO https://go.dev/dl/${GO_FILENAME}
     rm -rf /usr/local/go && tar -C /usr/local -xzf ${GO_FILENAME}
     rm ${GO_FILENAME}
