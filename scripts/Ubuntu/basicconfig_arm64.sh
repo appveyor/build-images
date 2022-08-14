@@ -261,12 +261,8 @@ configure_path
 #     _abort $?
 # install_awscli ||
 #     _abort $?
-
-install_azurecli_arm64 ||
-    _abort $?
-
-exit 0
-
+# install_azurecli_arm64 ||
+#     _abort $?
 # install_gcloud ||
 #     _abort $?
 # install_cmake ||
