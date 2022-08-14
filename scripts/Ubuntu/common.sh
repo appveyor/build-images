@@ -1656,8 +1656,7 @@ function install_7zip() {
     popd &&
     rm -rf "${TMP_DIR}"
 
-    7zz --version
-    7za --version
+    7za
 }
 
 function install_packer() {
