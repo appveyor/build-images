@@ -263,7 +263,7 @@ function fix_apt_sources() {
     apt-get install -y python3-apt
     wget https://github.com/davidfoerster/aptsources-cleanup/releases/download/v0.1.7.5.2/aptsources-cleanup.pyz
     chmod a+x aptsources-cleanup.pyz
-    ./aptsources-cleanup.pyz --yes
+    echo a | ./aptsources-cleanup.pyz --yes
     apt-get update
     rm aptsources-cleanup.pyz
 }
