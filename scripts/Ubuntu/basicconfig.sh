@@ -428,18 +428,14 @@ fi
 
 add_ssh_known_hosts ||
     _continue $?
-
-if [[ $OS_ARCH == "amd64" ]]; then
-    configure_sshd ||
-        _abort $?
-    configure_firewall ||
-        _abort $?
-    configure_motd ||
-        _abort $?
-    configure_uefi ||
-        _abort $?
-fi
-
+configure_sshd ||
+    _abort $?
+configure_firewall ||
+    _abort $?
+configure_motd ||
+    _abort $?
+configure_uefi ||
+    _abort $?
 fix_apt_sources ||
     _abort $?
 
