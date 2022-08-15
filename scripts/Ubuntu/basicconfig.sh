@@ -25,6 +25,18 @@ else
     echo "Running script as $(whoami)"
 fi
 
+OS_ARCH=$(uname -m)
+if [[ $OS_ARCH == x86_64 ]] || [[ $OS_ARCH == amd64 ]]; then
+    OS_ARCH="amd64"
+elif [[ $OS_ARCH == arm64 ]] || [[ $OS_ARCH == aarch64 ]]; then
+    OS_ARCH="arm64"
+elif [[ $arch == arm* ]]; then
+    OS_ARCH="arm"
+else
+    echo "Error: Unsupported architecture $OS_ARCH." 1>&2
+    exit 1
+fi
+
 if [[ -z "${BOOTSTRAP-}" || "${#BOOTSTRAP}" = "0" ]]; then
     case  ${PACKER_BUILDER_TYPE-} in
         googlecompute )
@@ -43,6 +55,9 @@ fi
 if [[ -z "${BUILD_AGENT_MODE-}" ]] && [[ ${OS_ARCH-} == "arm64" ]]; then
     BUILD_AGENT_MODE=AmazonEC2
 fi
+
+echo "OS_ARCH: ${OS_ARCH}"
+echo "BUILD_AGENT_MODE: ${BUILD_AGENT_MODE}"
 
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )

@@ -13,17 +13,6 @@ else
     echo "[WARNING] /etc/os-release not found - cant find VERSION_CODENAME and VERSION_ID."
 fi
 if [[ -z "${LOGGING-}" ]]; then LOGGING=true; fi
-OS_ARCH=$(uname -m)
-if [[ $OS_ARCH == x86_64 ]] || [[ $OS_ARCH == amd64 ]]; then
-    OS_ARCH="amd64"
-elif [[ $OS_ARCH == arm64 ]] || [[ $OS_ARCH == aarch64 ]]; then
-    OS_ARCH="arm64"
-elif [[ $arch == arm* ]]; then
-    OS_ARCH="arm"
-else
-    echo "Error: Unsupported architecture $OS_ARCH." 1>&2
-    exit 1
-fi
 
 function save_bash_attributes() {
     BASH_ATTRIBUTES=$(set -o)
