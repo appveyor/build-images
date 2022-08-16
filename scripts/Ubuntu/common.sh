@@ -1011,33 +1011,41 @@ function install_jdks_from_repository() {
     echo "[INFO] Running install_jdks_from_repository..."
     add-apt-repository -y ppa:openjdk-r/ppa
     apt-get -y -qq update && {
-        apt-get -y -q install --no-install-recommends openjdk-7-jdk
         apt-get -y -q install --no-install-recommends openjdk-8-jdk
-#        apt-get -y -q install --no-install-recommends openjdk-9-jdk -o Dpkg::Options::="--force-overwrite"
     } ||
         { echo "[ERROR] Cannot install JDKs." 1>&2; return 10; }
     update-java-alternatives --set java-1.8.0-openjdk-amd64
 }
 
+# https://jdk.java.net/archive/
 function install_jdks() {
     echo "[INFO] Running install_jdks..."
     install_jdks_from_repository || return $?
 
-    install_jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz ||
+    if [[ $OS_ARCH == "amd64" ]]; then
+        TAR_ARCH="x64"
+        install_jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 10 https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 11 https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 12 https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 13 https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 14 https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_linux-x64_bin.tar.gz ||
+            return $?
+    else
+        TAR_ARCH="aarch64"
+    fi
+    install_jdk 15 https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?
-    install_jdk 10 https://download.java.net/openjdk/jdk10/ri/openjdk-10+44_linux-x64_bin_ri.tar.gz ||
-        return $?
-    install_jdk 11 https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_linux-x64_bin.tar.gz ||
-        return $?
-    install_jdk 12 https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz ||
-        return $?
-    install_jdk 13 https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz ||
-        return $?
-    install_jdk 14 https://download.java.net/java/GA/jdk14.0.1/664493ef4a6946b186ff29eb326336a2/7/GPL/openjdk-14.0.1_linux-x64_bin.tar.gz ||
-        return $?
-    install_jdk 15 https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz ||
-        return $?
-    install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-x64_bin.tar.gz ||
+    install_jdk 16 https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-16.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?  
+    install_jdk 17 https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?                     
+    install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?        
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
@@ -1098,7 +1106,6 @@ function configure_jdk() {
     fi
     local file
 
-    write_line "${HOME}/.profile" 'export JAVA_HOME_7_X64=/usr/lib/jvm/java-7-openjdk-amd64'
     write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64=/usr/lib/jvm/java-8-openjdk-amd64'
     while read -r line; do
         write_line "${HOME}/.profile" "${line}"
@@ -1246,11 +1253,11 @@ function install_golangs() {
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
     
-    gvm install go1.4 -B &&
-    gvm use go1.4 ||
+    gvm install go1.14.15 -B &&
+    gvm use go1.14.15 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.11" "go1.18.3" )
+    declare GO_VERSIONS=( "go1.15.15" "go1.16.15" "go1.17.11" "go1.18.3" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
