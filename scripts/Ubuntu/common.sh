@@ -575,7 +575,8 @@ function install_nvm_nodejs() {
 
     log_version nvm --version
     log_version nvm list
-
+    log_version node --version
+    log_version npm --version
 }
 
 function update_git() {
