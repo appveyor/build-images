@@ -552,7 +552,7 @@ function install_nvm_nodejs() {
     fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        CURRENT_NODEJS=8
+        CURRENT_NODEJS=16
     else
         CURRENT_NODEJS=$1
     fi
@@ -2095,8 +2095,8 @@ function install_doxygen_version() {
 
 function add_ssh_known_hosts() {
     echo "[INFO] Configuring ~/.ssh/known_hosts..."
-    if [ -f "../Windows/add_ssh_known_hosts.ps1" ] && command -v pwsh; then
-        pwsh -nol -noni ../Windows/add_ssh_known_hosts.ps1
+    if [ -f "${LIB_FOLDER}/../Windows/add_ssh_known_hosts.ps1" ] && command -v pwsh; then
+        pwsh -nol -noni "${LIB_FOLDER}/../Windows/add_ssh_known_hosts.ps1"
         echo $HOME
         chmod 700 $HOME/.ssh
     else
