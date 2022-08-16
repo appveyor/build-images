@@ -10,7 +10,7 @@ HOST_NAME=appveyor-vm
 MSSQL_SA_PASSWORD=Password12!
 MYSQL_ROOT_PASSWORD=Password12!
 POSTGRES_ROOT_PASSWORD=Password12!
-CURRENT_NODEJS=8
+CURRENT_NODEJS=16
 AGENT_DIR=/opt/appveyor/build-agent
 WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 VERSIONS_FILE=$WORK_DIR/versions.log
@@ -421,8 +421,13 @@ else
         _abort $?
 fi
 
-add_ssh_known_hosts ||
-    _continue $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        $(declare -f add_ssh_known_hosts)
+        add_ssh_known_hosts" ||
+    _abort $?
+
 configure_sshd ||
     _abort $?
 configure_firewall ||
