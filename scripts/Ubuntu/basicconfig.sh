@@ -200,6 +200,14 @@ else
         _abort $?
 fi
 
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        LIB_FOLDER=${LIB_FOLDER}
+        $(declare -f add_ssh_known_hosts)
+        add_ssh_known_hosts" ||
+    _abort $?
+
 install_cvs ||
     _abort $?
 su -l ${USER_NAME} -c "
@@ -420,13 +428,6 @@ else
     install_browsers_arm64 ||
         _abort $?
 fi
-
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        OS_ARCH=${OS_ARCH}
-        $(declare -f add_ssh_known_hosts)
-        add_ssh_known_hosts" ||
-    _abort $?
 
 configure_sshd ||
     _abort $?
