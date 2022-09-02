@@ -2,12 +2,14 @@
 #shellcheck disable=SC2086,SC2015,SC2164
 
 function add_releasespecific_tools() {
-    # doxygen support
-    tools_array+=( "libclang1-9" )
-    # 32bit support
-    tools_array+=( "libcurl4:i386" "libcurl4-gnutls-dev" )
-    # HWE kernel
-    tools_array+=( "linux-generic-hwe-18.04" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        # doxygen support
+        tools_array+=( "libclang1-9" )
+        # 32bit support
+        tools_array+=( "libcurl4:i386" "libcurl4-gnutls-dev" )
+        # HWE kernel
+        tools_array+=( "linux-generic-hwe-18.04" )
+    fi    
 }
 
 function configure_mercurial_repository() {
@@ -17,7 +19,7 @@ function configure_mercurial_repository() {
 function prepare_dotnet_packages() {
     SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
-
+    
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
     dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
 }

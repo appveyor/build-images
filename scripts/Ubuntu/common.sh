@@ -252,7 +252,7 @@ function fix_apt_sources() {
     apt-get install -y python3-apt
     wget https://github.com/davidfoerster/aptsources-cleanup/releases/download/v0.1.7.5.2/aptsources-cleanup.pyz
     chmod a+x aptsources-cleanup.pyz
-    ./aptsources-cleanup.pyz --yes
+    echo a | ./aptsources-cleanup.pyz --yes
     apt-get update
     rm aptsources-cleanup.pyz
 }
@@ -338,22 +338,33 @@ function install_tools() {
     echo "[INFO] Running install_tools..."
     declare tools_array
     # utilities
-    tools_array=( "zip" "unzip" "wget" "curl" "time" "tree" "telnet" "dnsutils" "net-tools" "file" "ftp" "lftp" )
-    tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" )
+    tools_array=( "zip" "unzip" "wget" "curl" "time" "telnet" "net-tools" "file" "ftp" "lftp" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools"  "dkms" "dos2unix" "tree" "dnsutils" )
+    fi
 
     # build tools
-    tools_array+=( "make" "binutils" "bison" "gcc" "tcl" "pkg-config" "ninja-build" )
-    tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" )
+    tools_array+=( "make" "binutils" "bison" "gcc" "pkg-config" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "ant" "ant-optional" "maven" "gradle" "nuget" "graphviz" "tcl" "ninja-build" )
+    fi
 
     # python packages
-    tools_array+=( "python" "python-dev" )
-    tools_array+=( "python-setuptools" )
-    tools_array+=( "build-essential" "libssl-dev" "libcurl4-gnutls-dev" "libexpat1-dev" "libffi-dev" "gettext" )
-    tools_array+=( "inotify-tools" "gfortran" "apt-transport-https" )
-    tools_array+=( "libbz2-dev" "liblzma-dev" "python3-tk" "tk-dev" "libsqlite3-dev" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "python" "python-dev" "python3-dev" "python-setuptools" )
+    fi
+    tools_array+=( "python3" "python3-setuptools" )
+    tools_array+=( "apt-transport-https" )
+    tools_array+=( "libffi-dev" "libssl-dev" "libsqlite3-dev" "liblzma-dev" "libbz2-dev" "libgdbm-dev" "libyaml-dev" "libgmp-dev" "libreadline-dev" "libncurses5-dev" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "build-essential" "libexpat1-dev" "gettext" "gfortran" "python3-tk" )
+        tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" )
+    fi
 
     # 32bit support
-    tools_array+=( "libc6:i386" "libncurses5:i386" "libstdc++6:i386" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "libc6:i386" "libncurses5:i386" "libstdc++6:i386" )
+    fi
 
     # Add release specific tools into tools_array
     if command -v add_releasespecific_tools; then
@@ -367,6 +378,7 @@ function install_tools() {
     fi
 
     #APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
+    apt-get update
     apt-get -y ${APT_GET_OPTIONS-} install "${tools_array[@]}" --no-install-recommends ||
         {
             echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2;
@@ -396,7 +408,7 @@ function install_azure_linux_agent(){
 
 function copy_appveyoragent() {
     if [[ -z "${APPVEYOR_BUILD_AGENT_VERSION-}" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
-        APPVEYOR_BUILD_AGENT_VERSION=7.0.3240;
+        APPVEYOR_BUILD_AGENT_VERSION=7.0.3254;
     fi
 
     echo "[INFO] Installing AppVeyor Build Agent v${APPVEYOR_BUILD_AGENT_VERSION}"
@@ -540,14 +552,20 @@ function install_nvm_nodejs() {
     fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        CURRENT_NODEJS=8
+        CURRENT_NODEJS=16
     else
         CURRENT_NODEJS=$1
     fi
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" )
+
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" )
+    else
+        declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" )
+    fi
+    
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -557,7 +575,8 @@ function install_nvm_nodejs() {
 
     log_version nvm --version
     log_version nvm list
-
+    log_version node --version
+    log_version npm --version
 }
 
 function update_git() {
@@ -602,11 +621,22 @@ function make_git() {
 
 function install_gitlfs() {
     echo "[INFO] Running install_gitlfs..."
-    command -v git || apt-get -y -q install git
-    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash &&
-    apt-get -y -q install git-lfs ||
-        { echo "Failed to install git lfs." 1>&2; return 10; }
-    log_version dpkg -l git-lfs
+
+    GITLFS_VERSION="3.2.0"
+    FILENAME="git-lfs-linux-${OS_ARCH}-v${GITLFS_VERSION}.tar.gz"
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    curl -L -o ${FILENAME} https://github.com/git-lfs/git-lfs/releases/download/v${GITLFS_VERSION}/${FILENAME} ||
+        { echo "[ERROR] Cannot download GitLFS ${GITLFS_VERSION}." 1>&2; popd; return 10; }
+    
+    tar zxf ${FILENAME}
+    ./git-lfs-${GITLFS_VERSION}/install.sh
+
+    # cleanup
+    popd &&
+    rm -rf "${TMP_DIR}"
+
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         su -l "${USER_NAME}" -c "
             USER_NAME=${USER_NAME}
@@ -641,8 +671,12 @@ function install_gitversion() {
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
 
-    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-x64-${VERSION}.tar.gz &&
-    tar -zxf gitversion-linux-x64-${VERSION}.tar.gz -C /usr/local/bin &&
+    RELEASE_ARCH="x64"
+    if [[ "${OS_ARCH}" == "arm64" ]]; then
+        RELEASE_ARCH="arm64"
+    fi
+    curl -fsSL -O https://github.com/GitTools/GitVersion/releases/download/${VERSION}/gitversion-linux-${RELEASE_ARCH}-${VERSION}.tar.gz &&
+    tar -zxf gitversion-linux-${RELEASE_ARCH}-${VERSION}.tar.gz -C /usr/local/bin &&
     chmod a+rx /usr/local/bin/gitversion* ||
         { echo "[ERROR] Cannot install GitVersion ${VERSION}." 1>&2; popd; return 10; }
 
@@ -702,8 +736,8 @@ password-stores =" > .subversion/config ||
 
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
-    command -v pip || install_pip
-    pip install virtualenv ||
+    command -v pip3 || install_pip3
+    pip3 install virtualenv ||
         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
 
     log_version virtualenv --version
@@ -725,9 +759,22 @@ function install_pip() {
     #rm get-pip.py
 }
 
+function install_pip3() {
+    echo "[INFO] Running install_pip3..."
+
+    apt-get -y -q install python3-pip
+    log_version pip3 --version
+}
+
 function install_pythons(){
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.13" "3.8.13" "3.9.13" "3.10.5" )
+
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.13" "3.8.13" "3.9.13" "3.10.6" )
+    else
+        declare PY_VERSIONS=( "2.7.18" "3.7.13" "3.8.13" "3.9.13" "3.10.6" )
+    fi
+
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -777,6 +824,31 @@ function install_powershell() {
     apt-get -y -qq update &&
     apt-get -y -q --allow-downgrades install powershell ||
         { echo "[ERROR] PowerShell install failed." 1>&2; return 10; }
+
+    configure_powershell
+
+    # Start PowerShell
+    log_version pwsh --version
+}
+
+function install_powershell_arm64() {
+    echo "[INFO] Running install_powershell_arm64..."
+
+    POWERSHELL_VERSION="7.2.5"
+    FILENAME="powershell-${POWERSHELL_VERSION}-linux-arm64.tar.gz"
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    curl -L -o ${FILENAME} https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/${FILENAME} ||
+        { echo "[ERROR] Cannot download PowerShell ${POWERSHELL_VERSION}." 1>&2; popd; return 10; }
+    mkdir -p /opt/microsoft/powershell/7
+    tar zxf ${FILENAME} -C /opt/microsoft/powershell/7
+    chmod +x /opt/microsoft/powershell/7/pwsh
+    ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
+
+    # cleanup
+    popd &&
+    rm -rf "${TMP_DIR}"
 
     configure_powershell
 
@@ -895,6 +967,24 @@ function install_dotnets() {
     install_outdated_dotnets
 }
 
+function install_dotnet_arm64() {
+    echo "[INFO] Running install_dotnet_arm64..."
+
+    curl -SL -o dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/901f7928-5479-4d32-a9e5-ba66162ca0e4/d00b935ec4dc79a27f5bde00712ed3d7/dotnet-sdk-6.0.400-linux-arm64.tar.gz
+    mkdir -p /usr/share/dotnet
+    tar -zxf dotnet.tar.gz -C /usr/share/dotnet
+    ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+    rm dotnet.tar.gz
+
+    #set env
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
+        write_line "$USER_HOME/.profile" "export DOTNET_PRINT_TELEMETRY_MESSAGE=false" 'DOTNET_PRINT_TELEMETRY_MESSAGE='
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
+    fi
+}
+
 function configure_mono_repository () {
     echo "[INFO] Running install_mono..."
     add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||
@@ -921,33 +1011,41 @@ function install_jdks_from_repository() {
     echo "[INFO] Running install_jdks_from_repository..."
     add-apt-repository -y ppa:openjdk-r/ppa
     apt-get -y -qq update && {
-        apt-get -y -q install --no-install-recommends openjdk-7-jdk
         apt-get -y -q install --no-install-recommends openjdk-8-jdk
-#        apt-get -y -q install --no-install-recommends openjdk-9-jdk -o Dpkg::Options::="--force-overwrite"
     } ||
         { echo "[ERROR] Cannot install JDKs." 1>&2; return 10; }
     update-java-alternatives --set java-1.8.0-openjdk-amd64
 }
 
+# https://jdk.java.net/archive/
 function install_jdks() {
     echo "[INFO] Running install_jdks..."
     install_jdks_from_repository || return $?
 
-    install_jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz ||
+    if [[ $OS_ARCH == "amd64" ]]; then
+        TAR_ARCH="x64"
+        install_jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 10 https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 11 https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 12 https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 13 https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 14 https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_linux-x64_bin.tar.gz ||
+            return $?
+    else
+        TAR_ARCH="aarch64"
+    fi
+    install_jdk 15 https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?
-    install_jdk 10 https://download.java.net/openjdk/jdk10/ri/openjdk-10+44_linux-x64_bin_ri.tar.gz ||
-        return $?
-    install_jdk 11 https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_linux-x64_bin.tar.gz ||
-        return $?
-    install_jdk 12 https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz ||
-        return $?
-    install_jdk 13 https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz ||
-        return $?
-    install_jdk 14 https://download.java.net/java/GA/jdk14.0.1/664493ef4a6946b186ff29eb326336a2/7/GPL/openjdk-14.0.1_linux-x64_bin.tar.gz ||
-        return $?
-    install_jdk 15 https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz ||
-        return $?
-    install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-x64_bin.tar.gz ||
+    install_jdk 16 https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-16.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?  
+    install_jdk 17 https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?                     
+    install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?        
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
@@ -1008,7 +1106,6 @@ function configure_jdk() {
     fi
     local file
 
-    write_line "${HOME}/.profile" 'export JAVA_HOME_7_X64=/usr/lib/jvm/java-7-openjdk-amd64'
     write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64=/usr/lib/jvm/java-8-openjdk-amd64'
     while read -r line; do
         write_line "${HOME}/.profile" "${line}"
@@ -1017,6 +1114,11 @@ function configure_jdk() {
     write_line "${HOME}/.profile" 'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8'
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
+}
+
+function install_jdks_arm64() {
+    echo "[INFO] Running install_jdks_arm64..."
+    apt -y install openjdk-17-jdk
 }
 
 function install_rvm_and_rubies() {
@@ -1078,7 +1180,12 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1" "ruby-head" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.2" "ruby-head" )
+    else
+        declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.2" "ruby-head" )
+    fi
+    
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1145,10 +1252,13 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    gvm install go1.4 -B &&
-    gvm use go1.4 ||
+    
+    gvm install go1.14.15 -B &&
+    gvm use go1.14.15 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.7.6" "go1.8.7" "go1.9.7" "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.11" "go1.18.3" )
+
+    declare GO_VERSIONS=( "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.5" "go1.19" )
+    
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1158,6 +1268,24 @@ function install_golangs() {
     gvm use "${GO_VERSIONS[$index]}" --default
     log_version gvm version
     log_version go version
+}
+
+function install_golang_arm64() {
+    echo "[INFO] Running install_golang_arm64..."
+
+    GO_VERSION="1.19"
+    GO_FILENAME="go${GO_VERSION}.linux-arm64.tar.gz"
+    curl -fsSLO https://go.dev/dl/${GO_FILENAME}
+    rm -rf /usr/local/go && tar -C /usr/local -xzf ${GO_FILENAME}
+    rm ${GO_FILENAME}
+
+    /usr/local/go/bin/go version
+
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "$USER_HOME/.profile" 'export PATH=$PATH:/usr/local/go/bin'
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
+    fi    
 }
 
 function pull_dockerimages() {
@@ -1209,9 +1337,40 @@ function install_docker() {
     install_docker_compose
 }
 
+function install_docker_arm64() {
+    echo "[INFO] Running install_docker_arm64..."
+
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sudo sh get-docker.sh
+    rm get-docker.sh
+
+    # Native Overlay Diff: true
+    modprobe -r overlay && modprobe overlay redirect_dir=off
+    echo 'options overlay redirect_dir=off' > /etc/modprobe.d/disable_overlay_redirect_dir.conf
+
+    systemctl restart docker &&
+    systemctl is-active docker ||
+        { echo "[ERROR] Docker service failed to start." 1>&2; return 30; }
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        usermod -aG docker ${USER_NAME}
+    fi
+    docker info
+    #pull_dockerimages
+    #systemctl disable docker
+
+    install_docker_compose
+}
+
 function install_docker_compose() {
     echo "[INFO] Running install_docker_compose..."
-    sudo curl -L "https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare TAR_ARCH="x86_64"
+    else
+        declare TAR_ARCH="aarch64"
+    fi
+
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-linux-${TAR_ARCH}" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     log_version docker-compose --version    
 }
@@ -1471,6 +1630,32 @@ function install_p7zip() {
     rm -rf "${TMP_DIR}"
 }
 
+function install_7zip() {
+    echo "[INFO] Running install_7zip..."
+
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare TAR_ARCH="x64"
+    else
+        declare TAR_ARCH="arm64"
+    fi
+
+    FILENAME="7z2201-linux-${TAR_ARCH}.tar.xz"
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    curl -LO https://www.7-zip.org/a/${FILENAME} ||
+        { echo "[ERROR] Cannot download 7Zip." 1>&2; popd; return 10; }
+    tar -xf ${FILENAME}
+    cp 7zz /usr/bin
+    ln -s /usr/bin/7zz /usr/bin/7za
+
+    # cleanup
+    popd &&
+    rm -rf "${TMP_DIR}"
+
+    7za
+}
+
 function install_packer() {
     echo "[INFO] Running install_packer..."
     local VERSION
@@ -1479,7 +1664,7 @@ function install_packer() {
     else
         VERSION=$1
     fi
-    local ZIPNAME=packer_${VERSION}_linux_amd64.zip
+    local ZIPNAME=packer_${VERSION}_linux_${OS_ARCH}.zip
     curl -fsSL -O https://releases.hashicorp.com/packer/${VERSION}/${ZIPNAME} &&
     unzip -q -o ${ZIPNAME} -d /usr/local/bin ||
         { echo "[ERROR] Cannot download and unzip packer." 1>&2; return 10; }
@@ -1519,7 +1704,7 @@ function install_localstack() {
 
 function install_gcloud() {
     echo "[INFO] Running install_gcloud..."
-    apt-get install apt-transport-https ca-certificates &&
+    apt-get -y install apt-transport-https ca-certificates &&
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/sources.list.d/google-cloud-sdk.list &&
     curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - ||
         { echo "[ERROR] Cannot add google-cloud-sdk repository to APT sources." 1>&2; return 10; }
@@ -1552,6 +1737,13 @@ function install_azurecli() {
     log_version az --version
 }
 
+function install_azurecli_arm64() {
+    echo "[INFO] Running install_azurecli_arm64..."
+    pip install azure-cli ||
+        { echo "[ERROR] Cannot install azure-cli." 1>&2; return 10; }
+    log_version az --version
+}
+
 function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
@@ -1560,7 +1752,12 @@ function install_cmake() {
     else
         VERSION=$1
     fi
-    local TAR_FILE=cmake-${VERSION}-linux-x86_64.tar.gz
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare TAR_ARCH="x86_64"
+    else
+        declare TAR_ARCH="aarch64"
+    fi
+    local TAR_FILE=cmake-${VERSION}-linux-${TAR_ARCH}.tar.gz
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
@@ -1617,7 +1814,7 @@ function update_nuget() {
 function install_kubectl() {
     echo "[INFO] Running install_kubectl..."
     KUBE_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-    curl -LO "https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl" &&
+    curl -LO "https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/${OS_ARCH}/kubectl" &&
     chmod +x ./kubectl &&
     mv -f ./kubectl /usr/local/bin/kubectl ||
         { echo "[ERROR] Cannot download and install kubectl."; return 10; }
@@ -1702,6 +1899,25 @@ function install_browsers() {
     #cleanup
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }
+
+function install_browsers_arm64() {
+    echo "[INFO] Running install_browsers_arm64..."
+
+    configure_firefox_repository
+
+    apt-get -y -q install libappindicator1 fonts-liberation xvfb ||
+        { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 10; }
+
+    apt-get -y --fix-broken install
+    apt-get -y -q install firefox chromium-browser
+    log_version dpkg -l firefox chromium-browser
+}
+
+    if [[ $OS_ARCH == "amd64" ]]; then
+        declare TAR_ARCH="x86_64"
+    else
+        declare TAR_ARCH="aarch64"
+    fi
 
 function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
@@ -1821,6 +2037,9 @@ function install_vcpkg() {
         echo "This script must be run as '${USER_NAME}' user. Current user is '$(whoami)'" 1>&2
         return 1
     fi
+
+    sudo apt -y install ninja-build
+
     pushd "${HOME}"
     command -v git ||
         { echo "[ERROR] Cannot find git. Please install git first." 1>&2; return 10; }
@@ -1832,8 +2051,14 @@ function install_vcpkg() {
 
     git clone --depth 1 https://github.com/Microsoft/vcpkg.git &&
     pushd vcpkg
+
     ./bootstrap-vcpkg.sh ||
-        { echo "[ERROR] Cannot bootstrap vcpkg." 1>&2; popd; return 10; }
+       { echo "[ERROR] Cannot bootstrap vcpkg." 1>&2; popd; return 10; }
+
+    if [[ $OS_ARCH == "arm64" ]]; then
+        export VCPKG_FORCE_SYSTEM_BINARIES=1
+        write_line "${HOME}/.profile" 'export VCPKG_FORCE_SYSTEM_BINARIES=1'
+    fi
 
     write_line "${HOME}/.profile" 'add2path_suffix ${HOME}/vcpkg'
     export PATH="$PATH:${HOME}/vcpkg"
@@ -1878,8 +2103,8 @@ function install_doxygen_version() {
 
 function add_ssh_known_hosts() {
     echo "[INFO] Configuring ~/.ssh/known_hosts..."
-    if [ -f "../Windows/add_ssh_known_hosts.ps1" ] && command -v pwsh; then
-        pwsh -nol -noni ../Windows/add_ssh_known_hosts.ps1
+    if [ -f "${LIB_FOLDER}/../Windows/add_ssh_known_hosts.ps1" ] && command -v pwsh; then
+        pwsh -nol -noni "${LIB_FOLDER}/../Windows/add_ssh_known_hosts.ps1"
         echo $HOME
         chmod 700 $HOME/.ssh
     else
