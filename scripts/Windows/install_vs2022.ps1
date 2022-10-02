@@ -216,6 +216,7 @@ $WorkLoads = '--add Component.Android.NDK.R21E ' + `
 	'--add Microsoft.VisualStudio.Component.VC.v141.MFC.Spectre ' + `
 	'--add Microsoft.VisualStudio.Component.VC.v141.x86.x64 ' + `
 	'--add Microsoft.VisualStudio.Component.VC.v141.x86.x64.Spectre ' + `
+	'--add Microsoft.VisualStudio.Component.VC.Modules.x86.x64 ' + `
 	'--add Microsoft.VisualStudio.Component.VSSDK ' + `
 	'--add Microsoft.VisualStudio.Component.Wcf.Tooling ' + `
 	'--add Microsoft.VisualStudio.Component.Web ' + `
@@ -245,6 +246,8 @@ $WorkLoads = '--add Component.Android.NDK.R21E ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.WebToolsExtensions ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.WebToolsExtensions.CMake ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.WebToolsExtensions.TemplateEngine ' + `
+	'--add Microsoft.VisualStudio.ComponentGroup.WindowsAppSDK.Cpp ' + `
+	'--add Microsoft.VisualStudio.ComponentGroup.WindowsAppSDK.Cs ' + `
 	'--add Microsoft.VisualStudio.Workload.Azure ' + `
 	'--add Microsoft.VisualStudio.Workload.CoreEditor ' + `
 	'--add Microsoft.VisualStudio.Workload.Data ' + `
