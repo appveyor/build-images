@@ -8,6 +8,10 @@ function add_releasespecific_tools() {
     tools_array+=( "linux-generic-hwe-16.04" )
 }
 
+function install_postgresql() {
+    echo "[INFO] Skip install_postgresql on Xenial..."
+}
+
 function configure_mongodb_repo() {
     echo "[INFO] Running configure_mongodb_repo for Xenial..."
     curl -fsSL https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add - &&
