@@ -799,7 +799,7 @@ function install_pythons(){
         else
             PY_BIN=python
         fi
-        python3 -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
+        python -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
         popd
         echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
