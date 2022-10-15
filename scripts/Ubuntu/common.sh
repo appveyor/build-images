@@ -751,7 +751,7 @@ function install_pip() {
     python get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
-    python -m pip install --upgrade pip setuptools wheel
+    python -m pip install --upgrade pip setuptools wheel virtualenv
 
     log_version pip --version
 
@@ -767,7 +767,10 @@ function install_pip3() {
 }
 
 function install_pythons(){
-    command -v virtualenv || install_virtualenv
+    install_pip3
+    install_pip
+    #command -v virtualenv || install_virtualenv
+    python -m virtualenv --version
 
     if [[ $OS_ARCH == "amd64" ]]; then
         declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.13" "3.8.13" "3.9.13" "3.10.6" )
