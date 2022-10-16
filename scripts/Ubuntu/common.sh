@@ -736,11 +736,13 @@ password-stores =" > .subversion/config ||
 
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
-    command -v pip3 || install_pip3
+    install_pip3
     pip3 install virtualenv ||
         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
+    log_version python3 -m virtualenv --version
 
-    log_version virtualenv --version
+    install_pip
+    log_version python -m virtualenv --version
 }
 
 function install_pip() {
@@ -755,8 +757,8 @@ function install_pip() {
 
     log_version pip --version
 
-    #cleanup
-    #rm get-pip.py
+    # cleanup
+    rm get-pip.py
 }
 
 function install_pip3() {
@@ -767,10 +769,7 @@ function install_pip3() {
 }
 
 function install_pythons(){
-    install_pip3
-    install_pip
-    #command -v virtualenv || install_virtualenv
-    python -m virtualenv --version
+    install_virtualenv
 
     if [[ $OS_ARCH == "amd64" ]]; then
         declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.13" "3.8.13" "3.9.13" "3.10.6" )
