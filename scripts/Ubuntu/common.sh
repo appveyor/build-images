@@ -737,12 +737,12 @@ password-stores =" > .subversion/config ||
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
     install_pip3
-    pip3 install virtualenv ||
-        { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
-    log_version python3 -m virtualenv --version
-
+    # pip3 install virtualenv ||
+    #     { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
+    # log_version python3 -m virtualenv --version
     install_pip
     log_version python -m virtualenv --version
+    log_version virtualenv --version
 }
 
 function install_pip() {
