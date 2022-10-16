@@ -769,7 +769,7 @@ function install_pip3() {
 }
 
 function install_pythons(){
-    install_virtualenv
+    echo "[INFO] Running install_pythons..."
 
     if [[ $OS_ARCH == "amd64" ]]; then
         declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.13" "3.8.13" "3.9.13" "3.10.6" )
