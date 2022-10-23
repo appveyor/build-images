@@ -41,3 +41,7 @@ function install_clang() {
 
     log_version clang --version
 }
+
+function install_rabbitmq() {
+    echo "[INFO] Skip running install_rabbitmq on Xenial..."
+}
