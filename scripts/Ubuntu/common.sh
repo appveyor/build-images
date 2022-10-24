@@ -998,6 +998,9 @@ function install_flutter() {
         return 1
     fi
 
+    # fix home folder permissions
+    sudo chown "$(id -u "${USER_NAME}"):$(id -g "${USER_NAME}")" -R "${USER_HOME}"
+
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
