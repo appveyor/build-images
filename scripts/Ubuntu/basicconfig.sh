@@ -264,7 +264,7 @@ if [[ $OS_ARCH == "amd64" ]]; then
             install_android_sdk" ||
         _abort $?
 else
-    # TODO
+    echo "TODO: install_android_sdk for ARM"
 fi
 
 if [[ $OS_ARCH == "amd64" ]]; then
@@ -278,7 +278,7 @@ if [[ $OS_ARCH == "amd64" ]]; then
             install_flutter" ||
         _abort $?
 else
-    # TODO
+    echo "TODO: install_flutter for ARM"
 fi
 
 # .NET stuff
