@@ -270,6 +270,19 @@ su -l ${USER_NAME} -c "
 
 if [[ $OS_ARCH == "amd64" ]]; then
     su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_flutter)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            install_flutter" ||
+        _abort $?
+else
+    # TODO
+fi
+
+if [[ $OS_ARCH == "amd64" ]]; then
+    su -l ${USER_NAME} -c "
             curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -" ||
         _abort $?
 

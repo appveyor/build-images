@@ -987,6 +987,42 @@ function install_dotnet_arm64() {
     fi
 }
 
+function install_flutter() {
+    echo "[INFO] Running install_flutter..."
+
+    local BIN_DIR="${HOME}/flutter/bin"
+
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    local RELEASE_URL
+    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.3.3-stable.tar.xz"
+    curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
+        { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
+    
+    tar -xf "flutter_linux_stable.tar.xz" -C $HOME
+
+    #shellcheck disable=SC2016
+    write_line "${HOME}/.profile" "add2path_suffix $BIN_DIR"
+    export PATH="$PATH:$BIN_DIR"
+
+    flutter channel stable
+    flutter upgrade
+    flutter doctor
+
+    popd &&
+    rm -rf "${TMP_DIR}"
+
+    log_version flutter --version
+}
+
 function configure_mono_repository () {
     echo "[INFO] Running install_mono..."
     add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||
@@ -1275,7 +1311,7 @@ function install_golangs() {
 function install_golang_arm64() {
     echo "[INFO] Running install_golang_arm64..."
 
-    GO_VERSION="1.19"
+    GO_VERSION="1.19.2"
     GO_FILENAME="go${GO_VERSION}.linux-arm64.tar.gz"
     curl -fsSLO https://go.dev/dl/${GO_FILENAME}
     rm -rf /usr/local/go && tar -C /usr/local -xzf ${GO_FILENAME}
