@@ -253,19 +253,6 @@ su -l ${USER_NAME} -c "
 install_jdks ||
     _abort $?
 
-OFS=$IFS
-IFS=$'\n'
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_jdk)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        $(declare -f log_version)
-        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
-    _abort $?
-IFS=$OFS
-
 if [[ $OS_ARCH == "amd64" ]]; then
     su -l ${USER_NAME} -c "
             USER_NAME=${USER_NAME}

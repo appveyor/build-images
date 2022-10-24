@@ -1095,6 +1095,7 @@ function install_jdks() {
             $(declare -f write_line)
             $(declare -f add_line)
             $(declare -f replace_line)
+            $(declare -f log_version)
             configure_jdk" <<< "${PROFILE_LINES[*]}" ||
                 return $?
         IFS=$OFS
