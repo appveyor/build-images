@@ -1255,11 +1255,11 @@ function install_golangs() {
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
     
-    gvm install go1.14.15 -B &&
-    gvm use go1.14.15 ||
+    gvm install go1.4 -B &&
+    gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.5" "go1.19" )
+    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.7" "go1.19.2" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
