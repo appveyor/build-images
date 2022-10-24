@@ -261,6 +261,7 @@ su -l ${USER_NAME} -c "
         $(declare -f write_line)
         $(declare -f add_line)
         $(declare -f replace_line)
+        $(declare -f log_version)
         configure_jdk" <<< "${PROFILE_LINES[*]}" ||
     _abort $?
 IFS=$OFS
@@ -272,6 +273,7 @@ if [[ $OS_ARCH == "amd64" ]]; then
             $(declare -f write_line)
             $(declare -f add_line)
             $(declare -f replace_line)
+            $(declare -f log_version)
             install_android_sdk" ||
         _abort $?
 else
@@ -285,6 +287,7 @@ if [[ $OS_ARCH == "amd64" ]]; then
             $(declare -f write_line)
             $(declare -f add_line)
             $(declare -f replace_line)
+            $(declare -f log_version)
             install_flutter" ||
         _abort $?
 else
