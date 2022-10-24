@@ -249,6 +249,48 @@ su -l ${USER_NAME} -c "
         install_pythons" ||
     _abort $?
 
+# JDK
+install_jdks ||
+    _abort $?
+
+OFS=$IFS
+IFS=$'\n'
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f configure_jdk)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
+    _abort $?
+IFS=$OFS
+
+if [[ $OS_ARCH == "amd64" ]]; then
+    su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_android_sdk)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            install_android_sdk" ||
+        _abort $?
+else
+    # TODO
+fi
+
+if [[ $OS_ARCH == "amd64" ]]; then
+    su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_flutter)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            install_flutter" ||
+        _abort $?
+else
+    # TODO
+fi
+
 # .NET stuff
 if [[ $OS_ARCH == "amd64" ]]; then
     install_dotnets ||
@@ -267,19 +309,6 @@ su -l ${USER_NAME} -c "
         $(declare -f configure_nuget)
         configure_nuget" ||
     _abort $?
-
-if [[ $OS_ARCH == "amd64" ]]; then
-    su -l ${USER_NAME} -c "
-            USER_NAME=${USER_NAME}
-            $(declare -f install_flutter)
-            $(declare -f write_line)
-            $(declare -f add_line)
-            $(declare -f replace_line)
-            install_flutter" ||
-        _abort $?
-else
-    # TODO
-fi
 
 if [[ $OS_ARCH == "amd64" ]]; then
     su -l ${USER_NAME} -c "
@@ -329,22 +358,6 @@ if [[ $OS_ARCH == "amd64" ]]; then
     install_qt ||
         _abort $?     
 fi
-
-# JDK
-install_jdks ||
-    _abort $?
-
-OFS=$IFS
-IFS=$'\n'
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_jdk)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
-    _abort $?
-IFS=$OFS
 
 # Go lang
 su -l ${USER_NAME} -c "

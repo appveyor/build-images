@@ -1148,15 +1148,50 @@ function configure_jdk() {
     while read -r line; do
         write_line "${HOME}/.profile" "${line}"
     done
-    write_line "${HOME}/.profile" 'export JAVA_HOME=/usr/lib/jvm/java-9-openjdk-amd64'
+    write_line "${HOME}/.profile" 'export JAVA_HOME=$JAVA_HOME_18_X64'
     write_line "${HOME}/.profile" 'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8'
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
+
+    log_version java --version
 }
 
 function install_jdks_arm64() {
     echo "[INFO] Running install_jdks_arm64..."
     apt -y install openjdk-17-jdk
+}
+
+function install_android_sdk() {
+    echo "[INFO] Running install_android_sdk..."
+
+    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip"
+
+    write_line "${HOME}/.profile" 'export ANDROID_SDK_ROOT="/usr/lib/android-sdk"'
+    export ANDROID_SDK_ROOT="/usr/lib/android-sdk"
+
+    sudo mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
+    sudo chown -R $(id -u):$(id -g) "${ANDROID_SDK_ROOT}"
+    ANDROID_SDK_ARCHIVE="${ANDROID_SDK_ROOT}/archive"
+    wget --progress=dot:giga "${ANDROID_SDK_URL}" -O "${ANDROID_SDK_ARCHIVE}"
+    unzip -q -d "${ANDROID_SDK_ROOT}/cmdline-tools" "${ANDROID_SDK_ARCHIVE}"
+    mv "${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools" "${ANDROID_SDK_ROOT}/cmdline-tools/tools"
+    export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
+    write_line "${HOME}/.profile" 'add2path $ANDROID_SDK_ROOT/cmdline-tools/latest/bin'
+    write_line "${HOME}/.profile" 'add2path $ANDROID_SDK_ROOT/cmdline-tools/tools/bin'
+    sdkmanager --version
+    echo "y" | sdkmanager "tools" > /dev/null
+    echo "y" | sdkmanager "build-tools;28.0.3" > /dev/null
+    echo "y" | sdkmanager "build-tools;30.0.3" > /dev/null
+    echo "y" | sdkmanager "platforms;android-30" > /dev/null
+    echo "y" | sdkmanager "platforms;android-31" > /dev/null
+    echo "y" | sdkmanager "platform-tools" > /dev/null
+    echo "y" | sdkmanager "cmdline-tools;latest" > /dev/null
+    echo "y" | sdkmanager "extras;android;m2repository" > /dev/null
+    echo "y" | sdkmanager "extras;google;m2repository" > /dev/null
+    echo "y" | sdkmanager "patcher;v4" > /dev/null
+    rm "${ANDROID_SDK_ARCHIVE}"
+
+    log_version sdkmanager --version
 }
 
 function install_rvm_and_rubies() {
