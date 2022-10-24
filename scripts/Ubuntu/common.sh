@@ -1015,6 +1015,7 @@ function install_flutter() {
 
     flutter channel stable
     flutter upgrade
+    yes "y" | flutter doctor --android-licenses > /dev/null
     flutter doctor
 
     popd &&
