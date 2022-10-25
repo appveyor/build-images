@@ -249,6 +249,9 @@ su -l ${USER_NAME} -c "
         install_pythons" ||
     _abort $?
 
+install_cmake ||
+    _abort $?
+
 # JDK
 install_jdks ||
     _abort $?
@@ -422,8 +425,6 @@ install_awscli ||
 install_gcloud ||
     _abort $?
 install_kubectl ||
-    _abort $?
-install_cmake ||
     _abort $?
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}

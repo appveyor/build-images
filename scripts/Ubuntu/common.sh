@@ -361,6 +361,11 @@ function install_tools() {
         tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" )
     fi
 
+    # dev tools
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "libgtk-3-dev" )
+    fi    
+
     # 32bit support
     if [[ $OS_ARCH == "amd64" ]]; then
         tools_array+=( "libc6:i386" "libncurses5:i386" "libstdc++6:i386" )
@@ -1019,7 +1024,7 @@ function install_flutter() {
     flutter channel stable
     flutter upgrade
     yes "y" | flutter doctor --android-licenses > /dev/null
-    flutter doctor
+    flutter doctor -v
 
     popd &&
     rm -rf "${TMP_DIR}"
