@@ -2169,7 +2169,7 @@ function install_qt() {
 
 function install_doxygen() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
-    install_doxygen_version '1.9.4' 'https://www.doxygen.nl/files'
+    install_doxygen_version '1.9.5' 'https://www.doxygen.nl/files'
 }
 
 function install_doxygen_version() {
