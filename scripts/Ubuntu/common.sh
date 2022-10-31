@@ -361,6 +361,15 @@ function install_tools() {
         tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" )
     fi
 
+    # dev tools
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "libgtk-3-dev" )
+        # tools_array+=( "libgstreamer1.0-dev" "libgstreamer-plugins-base1.0-dev" "libgstreamer-plugins-bad1.0-dev" )
+        # tools_array+=( "gstreamer1.0-plugins-base" "gstreamer1.0-plugins-good" "gstreamer1.0-plugins-bad" "gstreamer1.0-plugins-ugly" )
+        # tools_array+=( "gstreamer1.0-libav" "gstreamer1.0-doc" "gstreamer1.0-tools" "gstreamer1.0-x" "gstreamer1.0-alsa" "gstreamer1.0-gl" )
+        # tools_array+=( "gstreamer1.0-gtk3"" gstreamer1.0-qt5" "gstreamer1.0-pulseaudio" )
+    fi    
+
     # 32bit support
     if [[ $OS_ARCH == "amd64" ]]; then
         tools_array+=( "libc6:i386" "libncurses5:i386" "libstdc++6:i386" )
@@ -561,9 +570,9 @@ function install_nvm_nodejs() {
     local v
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" )
+        declare NVM_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" )
     else
-        declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" )
+        declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" )
     fi
     
     for v in "${NVM_VERSIONS[@]}"; do
@@ -736,10 +745,12 @@ password-stores =" > .subversion/config ||
 
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
-    command -v pip3 || install_pip3
-    pip3 install virtualenv ||
-        { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
-
+    install_pip3
+    # pip3 install virtualenv ||
+    #     { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
+    # log_version python3 -m virtualenv --version
+    install_pip
+    log_version python -m virtualenv --version
     log_version virtualenv --version
 }
 
@@ -751,12 +762,12 @@ function install_pip() {
     python get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
-    python -m pip install --upgrade pip setuptools wheel
+    python -m pip install --upgrade pip setuptools wheel virtualenv
 
     log_version pip --version
 
-    #cleanup
-    #rm get-pip.py
+    # cleanup
+    rm get-pip.py
 }
 
 function install_pip3() {
@@ -767,12 +778,12 @@ function install_pip3() {
 }
 
 function install_pythons(){
-    command -v virtualenv || install_virtualenv
+    echo "[INFO] Running install_pythons..."
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.13" "3.8.13" "3.9.13" "3.10.6" )
+        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.15" "3.8.15" "3.9.15" "3.10.8" "3.11.0" )
     else
-        declare PY_VERSIONS=( "2.7.18" "3.7.13" "3.8.13" "3.9.13" "3.10.6" )
+        declare PY_VERSIONS=( "2.7.18" "3.7.15" "3.8.15" "3.9.15" "3.10.8" "3.11.0" )
     fi
 
     for i in "${PY_VERSIONS[@]}"; do
@@ -799,7 +810,7 @@ function install_pythons(){
         else
             PY_BIN=python
         fi
-        virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
+        python -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
         popd
         echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
@@ -985,6 +996,46 @@ function install_dotnet_arm64() {
     fi
 }
 
+function install_flutter() {
+    echo "[INFO] Running install_flutter..."
+
+    local BIN_DIR="${HOME}/flutter/bin"
+
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+
+    # fix home folder permissions
+    sudo chown "$(id -u "${USER_NAME}"):$(id -g "${USER_NAME}")" -R "${HOME}"
+
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    local RELEASE_URL
+    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.3.3-stable.tar.xz"
+    curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
+        { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
+    
+    tar -xf "flutter_linux_stable.tar.xz" -C $HOME
+
+    #shellcheck disable=SC2016
+    write_line "${HOME}/.profile" "add2path_suffix $BIN_DIR"
+    export PATH="$PATH:$BIN_DIR"
+
+    flutter channel stable
+    flutter upgrade
+    yes "y" | flutter doctor --android-licenses > /dev/null
+    flutter doctor -v
+
+    popd &&
+    rm -rf "${TMP_DIR}"
+
+    log_version flutter --version
+}
+
 function configure_mono_repository () {
     echo "[INFO] Running install_mono..."
     add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||
@@ -1056,6 +1107,7 @@ function install_jdks() {
             $(declare -f write_line)
             $(declare -f add_line)
             $(declare -f replace_line)
+            $(declare -f log_version)
             configure_jdk" <<< "${PROFILE_LINES[*]}" ||
                 return $?
         IFS=$OFS
@@ -1110,15 +1162,50 @@ function configure_jdk() {
     while read -r line; do
         write_line "${HOME}/.profile" "${line}"
     done
-    write_line "${HOME}/.profile" 'export JAVA_HOME=/usr/lib/jvm/java-9-openjdk-amd64'
+    write_line "${HOME}/.profile" 'export JAVA_HOME=$JAVA_HOME_18_X64'
     write_line "${HOME}/.profile" 'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8'
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
+
+    log_version java --version
 }
 
 function install_jdks_arm64() {
     echo "[INFO] Running install_jdks_arm64..."
     apt -y install openjdk-17-jdk
+}
+
+function install_android_sdk() {
+    echo "[INFO] Running install_android_sdk..."
+
+    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip"
+
+    write_line "${HOME}/.profile" 'export ANDROID_SDK_ROOT="/usr/lib/android-sdk"'
+    export ANDROID_SDK_ROOT="/usr/lib/android-sdk"
+
+    sudo mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
+    sudo chown -R $(id -u):$(id -g) "${ANDROID_SDK_ROOT}"
+    ANDROID_SDK_ARCHIVE="${ANDROID_SDK_ROOT}/archive"
+    wget --progress=dot:giga "${ANDROID_SDK_URL}" -O "${ANDROID_SDK_ARCHIVE}"
+    unzip -q -d "${ANDROID_SDK_ROOT}/cmdline-tools" "${ANDROID_SDK_ARCHIVE}"
+    mv "${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools" "${ANDROID_SDK_ROOT}/cmdline-tools/tools"
+    export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
+    write_line "${HOME}/.profile" 'add2path $ANDROID_SDK_ROOT/cmdline-tools/latest/bin'
+    write_line "${HOME}/.profile" 'add2path $ANDROID_SDK_ROOT/cmdline-tools/tools/bin'
+    sdkmanager --version
+    echo "y" | sdkmanager "tools" > /dev/null
+    echo "y" | sdkmanager "build-tools;28.0.3" > /dev/null
+    echo "y" | sdkmanager "build-tools;30.0.3" > /dev/null
+    echo "y" | sdkmanager "platforms;android-30" > /dev/null
+    echo "y" | sdkmanager "platforms;android-31" > /dev/null
+    echo "y" | sdkmanager "platform-tools" > /dev/null
+    echo "y" | sdkmanager "cmdline-tools;latest" > /dev/null
+    echo "y" | sdkmanager "extras;android;m2repository" > /dev/null
+    echo "y" | sdkmanager "extras;google;m2repository" > /dev/null
+    echo "y" | sdkmanager "patcher;v4" > /dev/null
+    rm "${ANDROID_SDK_ARCHIVE}"
+
+    log_version sdkmanager --version
 }
 
 function install_rvm_and_rubies() {
@@ -1253,11 +1340,11 @@ function install_golangs() {
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
     
-    gvm install go1.14.15 -B &&
-    gvm use go1.14.15 ||
+    gvm install go1.4 -B &&
+    gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.5" "go1.19" )
+    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.7" "go1.19.2" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
@@ -1273,7 +1360,7 @@ function install_golangs() {
 function install_golang_arm64() {
     echo "[INFO] Running install_golang_arm64..."
 
-    GO_VERSION="1.19"
+    GO_VERSION="1.19.2"
     GO_FILENAME="go${GO_VERSION}.linux-arm64.tar.gz"
     curl -fsSLO https://go.dev/dl/${GO_FILENAME}
     rm -rf /usr/local/go && tar -C /usr/local -xzf ${GO_FILENAME}
@@ -2082,7 +2169,7 @@ function install_qt() {
 
 function install_doxygen() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
-    install_doxygen_version '1.9.4' 'https://www.doxygen.nl/files'
+    install_doxygen_version '1.9.5' 'https://www.doxygen.nl/files'
 }
 
 function install_doxygen_version() {

@@ -74,7 +74,7 @@ $component_groups = @(
 if (-not $env:INSTALL_LATEST_ONLY) {
     $component_groups += @(
         @{
-            version    = "6.3.1"
+            version    = "6.3.2"
             components = @(
                 "clang_64",
                 "debug_info",
@@ -197,7 +197,7 @@ foreach ($componentGroup in $component_groups) {
 # set aliases
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/latest"
 ln -s "$HOME/Qt/6.4.0" "$HOME/Qt/6.4"
-ln -s "$HOME/Qt/6.3.1" "$HOME/Qt/6.3"
+ln -s "$HOME/Qt/6.3.2" "$HOME/Qt/6.3"
 ln -s "$HOME/Qt/6.2.4" "$HOME/Qt/6.2"
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/5.15"
 

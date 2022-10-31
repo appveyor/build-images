@@ -249,6 +249,41 @@ su -l ${USER_NAME} -c "
         install_pythons" ||
     _abort $?
 
+install_cmake ||
+    _abort $?
+
+# JDK
+install_jdks ||
+    _abort $?
+
+if [[ $OS_ARCH == "amd64" ]]; then
+    su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_android_sdk)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            $(declare -f log_version)
+            install_android_sdk" ||
+        _abort $?
+else
+    echo "TODO: install_android_sdk for ARM"
+fi
+
+if [[ $OS_ARCH == "amd64" ]]; then
+    su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f install_flutter)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            $(declare -f log_version)
+            install_flutter" ||
+        _abort $?
+else
+    echo "TODO: install_flutter for ARM"
+fi
+
 # .NET stuff
 if [[ $OS_ARCH == "amd64" ]]; then
     install_dotnets ||
@@ -316,22 +351,6 @@ if [[ $OS_ARCH == "amd64" ]]; then
     install_qt ||
         _abort $?     
 fi
-
-# JDK
-install_jdks ||
-    _abort $?
-
-OFS=$IFS
-IFS=$'\n'
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f configure_jdk)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        configure_jdk" <<< "${PROFILE_LINES[*]}" ||
-    _abort $?
-IFS=$OFS
 
 # Go lang
 su -l ${USER_NAME} -c "
@@ -406,8 +425,6 @@ install_awscli ||
 install_gcloud ||
     _abort $?
 install_kubectl ||
-    _abort $?
-install_cmake ||
     _abort $?
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
