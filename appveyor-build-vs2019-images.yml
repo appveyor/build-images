@@ -183,6 +183,7 @@ for:
       - ps: .\install_jdk18.ps1
       - ps: .\install_jdk19.ps1
       - ps: .\install_erlang.ps1
+      - ps: .\install_flutter.ps1
 
       - ps: .\install_postgres96.ps1
       - ps: .\install_postgres10.ps1
