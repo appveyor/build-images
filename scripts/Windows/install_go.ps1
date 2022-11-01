@@ -2,7 +2,7 @@
 
 $go_versions = @(
     @{
-        "version" = "1.19"
+        "version" = "1.19.2"
         "folder"  = "go119"
     }
 )
@@ -10,7 +10,7 @@ $go_versions = @(
 if (-not $env:INSTALL_LATEST_ONLY) {
     $go_versions = $go_versions + @(
         @{
-            "version" = "1.18.5"
+            "version" = "1.18.7"
             "folder"  = "go118"
         }
         @{
