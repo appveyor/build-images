@@ -59,28 +59,24 @@ Write-Host "Installed" -ForegroundColor Green
 
 Write-Host "Installing OpenSSL 1.1.1$111Letter 32-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$exePath = "$env:temp\Win32OpenSSL-1_1_1$111Letter.exe"
-(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-1_1_1$111Letter.exe", $exePath)
-if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
+$zipPath = "$env:temp\OpenSSL-v111q-Win32.zip"
+(New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/OpenSSL-v111q-Win32.zip", $zipPath)
+if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
 Write-Host "Installing..."
-cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v111-Win32-temp
-Remove-Item $exePath
+7z x $zipPath -o"$env:SYSTEMDRIVE\" | Out-Null
+Remove-Item $zipPath
 Write-Host "Installed" -ForegroundColor Green
-Copy-Item C:\OpenSSL-v111-Win32-temp -Destination C:\OpenSSL-v111-Win32 -Recurse
+
 
 Write-Host "Installing OpenSSL 1.1.1$111Letter 64-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$exePath = "$env:temp\Win64OpenSSL-1_1_1$111Letter.exe"
-(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win64OpenSSL-1_1_1$111Letter.exe", $exePath)
-if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
+$zipPath = "$env:temp\OpenSSL-v111q-Win64.zip"
+(New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/OpenSSL-v111q-Win64.zip", $zipPath)
+if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
 Write-Host "Installing..."
-cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v111-Win64-temp
-Remove-Item $exePath
+7z x $zipPath -o"$env:SYSTEMDRIVE\" | Out-Null
+Remove-Item $zipPath
 Write-Host "Installed" -ForegroundColor Green
-Copy-Item C:\OpenSSL-v111-Win64-temp -Destination C:\OpenSSL-v111-Win64 -Recurse
-
-UninstallOpenSSL "OpenSSL 1.1.1$111Letter (32-bit)"
-UninstallOpenSSL "OpenSSL 1.1.1$111Letter (64-bit)"
 
 # -----------------------------------------------------------------------------------------------------------------
 
