@@ -4,7 +4,7 @@ New-Item "${env:ProgramFiles}\Java" -ItemType Directory -Force | Out-Null
 
 $jdkPath = "${env:ProgramFiles}\Java\jdk16"
 
-if(Test-Path $jdkPath) {
+if (Test-Path $jdkPath) {
     Remove-Item $jdkPath -Recurse -Force
 }
 
@@ -20,9 +20,5 @@ Remove-Item $tempPath -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item $zipPath -ErrorAction SilentlyContinue
 
 cmd /c "`"$jdkPath\bin\java`" --version"
-
-if ($env:INSTALL_LATEST_ONLY) {
-    Add-Path "$jdkPath\bin"
-}
 
 Write-Host "JDK 16 installed" -ForegroundColor Green
