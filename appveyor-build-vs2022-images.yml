@@ -166,6 +166,7 @@ for:
         - bake_phase: 3
 
     build_script:
+      - ps: .\install_openssl.ps1
       - ps: .\install_msys64.ps1
       - ps: .\install_chrome_browser.ps1
       - ps: .\install_firefox_browser.ps1
@@ -223,7 +224,6 @@ for:
       #    - ps: .\install_ssis_vs2019.ps1
       - ps: .\install_wix311.ps1
       - ps: .\install_wix_toolset_vs2022.ps1
-      - ps: .\install_openssl.ps1
       - ps: .\install_doxygen.ps1
       - ps: .\install_graphviz.ps1
       - ps: .\install_cmake.ps1
