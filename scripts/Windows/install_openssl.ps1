@@ -63,7 +63,7 @@ $zipPath = "$env:temp\OpenSSL-v111q-Win32.zip"
 (New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/OpenSSL-v111q-Win32.zip", $zipPath)
 if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
 Write-Host "Installing..."
-7z x $zipPath -o"$env:SYSTEMDRIVE\" | Out-Null
+7z x $zipPath -o"$env:SYSTEMDRIVE\OpenSSL-v111-Win32" | Out-Null
 Remove-Item $zipPath
 Write-Host "Installed" -ForegroundColor Green
 
@@ -74,7 +74,7 @@ $zipPath = "$env:temp\OpenSSL-v111q-Win64.zip"
 (New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/OpenSSL-v111q-Win64.zip", $zipPath)
 if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
 Write-Host "Installing..."
-7z x $zipPath -o"$env:SYSTEMDRIVE\" | Out-Null
+7z x $zipPath -o"$env:SYSTEMDRIVE\OpenSSL-v111-Win64" | Out-Null
 Remove-Item $zipPath
 Write-Host "Installed" -ForegroundColor Green
 
