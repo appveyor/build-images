@@ -1,3 +1,5 @@
+. "$PSScriptRoot\common.ps1"
+
 $version = '3.3.6'
 
 Write-Host "Installing Flutter SDK $version"
@@ -16,7 +18,7 @@ Write-Host "Unpacking Flutter SDK..."
 Add-SessionPath "$env:SystemDrive\flutter\bin"
 Add-Path "$env:SystemDrive\flutter\bin"
 
-flutter upgrade
-flutter doctor -v
+Start-ProcessWithOutput "flutter upgrade"
+Start-ProcessWithOutput "flutter doctor -v"
 
 Write-Host "Flutter SDK installed"
