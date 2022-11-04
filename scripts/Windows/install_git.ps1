@@ -1,4 +1,6 @@
-Write-Host "Installing Git 2.37.0"
+$version = '2.38.1'
+
+Write-Host "Installing Git $version"
 Write-Host "====================="
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -6,7 +8,7 @@ Write-Host "====================="
 $exePath = "$env:TEMP\Git-install.exe"
 
 Write-Host "Downloading..."
-(New-Object Net.WebClient).DownloadFile('https://github.com/git-for-windows/git/releases/download/v2.37.0.windows.1/Git-2.37.0-64-bit.exe', $exePath)
+(New-Object Net.WebClient).DownloadFile("https://github.com/git-for-windows/git/releases/download/v$version.windows.1/Git-$version-64-bit.exe", $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath /VERYSILENT /NORESTART /NOCANCEL /SP- /NOICONS /COMPONENTS="icons,icons\quicklaunch,ext,ext\reg,ext\reg\shellhere,ext\reg\guihere,assoc,assoc_sh" /LOG

@@ -1,4 +1,4 @@
-Write-Host "Installing Qt 5.x ..." -ForegroundColor Cyan
+Write-Host "Installing Qt 5.x, 6.x ..." -ForegroundColor Cyan
 
 . "$PSScriptRoot\install_qt_module.ps1"
 

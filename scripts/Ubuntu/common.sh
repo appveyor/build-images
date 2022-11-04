@@ -2101,7 +2101,7 @@ function install_octo() {
     echo "[INFO] Running install_octo..."
     local OCTO_VERSION OCTO_URL
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        OCTO_VERSION=9.0.0
+        OCTO_VERSION=9.1.7
     else
         OCTO_VERSION=$1
     fi
