@@ -356,6 +356,8 @@
         "14.17.6",
         "14.18.1",
         "14.19.1",
+        "14.20.1",
+        "14.21.1",
         "15.0.0",
         "15.2.0",
         "15.4.0",
@@ -366,9 +368,15 @@
         "16.8.0",
         "16.13.0",
         "16.14.2",
+        "16.18.0",
+        "16.18.1",
         "17.1.0",
         "17.9.0",
+        "17.9.1",
         "18.0.0",
+        "18.12.0",
+        "19.0.0",
+        "19.0.1",
         "8.11.1",
         "8.11.2",
         "8.11.3",
@@ -382,7 +390,7 @@
         "8.16.0",
         "8.16.2",
         "8.17.0"
-        )
+    )
 
     $nodePlatforms = @(
         "x64",
@@ -391,10 +399,10 @@
 
     $fileTemplates = @{
         "nodejs_x64" = @{
-            "files_ps1" = '$files = @{ "nodejs" = "$env:ProgramFiles\nodejs" }'
-            "install_ps1" = 'reg import "$PSScriptRoot\install.reg" 2> $null'
+            "files_ps1"     = '$files = @{ "nodejs" = "$env:ProgramFiles\nodejs" }'
+            "install_ps1"   = 'reg import "$PSScriptRoot\install.reg" 2> $null'
             "uninstall_ps1" = 'Remove-Item -Path ''HKCU:\Software\Node.js'' -Recurse -Force'
-            "install_reg" = 'Windows Registry Editor Version 5.00
+            "install_reg"   = 'Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\Node.js]
 "InstallPath"="C:\\Program Files\\nodejs\\"
@@ -405,10 +413,10 @@
 "EnvironmentPathNpmModules"=dword:00000001'
         }
         "nodejs_x86" = @{
-            "files_ps1" = '$files = @{ "nodejs" = "${env:ProgramFiles(x86)}\nodejs" }'
-            "install_ps1" = 'reg import "$PSScriptRoot\install.reg" 2> $null'
+            "files_ps1"     = '$files = @{ "nodejs" = "${env:ProgramFiles(x86)}\nodejs" }'
+            "install_ps1"   = 'reg import "$PSScriptRoot\install.reg" 2> $null'
             "uninstall_ps1" = 'Remove-Item -Path ''HKCU:\Software\Node.js'' -Recurse -Force'
-            "install_reg" = 'Windows Registry Editor Version 5.00
+            "install_reg"   = 'Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\Node.js]
 "InstallPath"="C:\\Program Files (x86)\\nodejs\\"
@@ -418,11 +426,11 @@
 "DocumentationShortcuts"=dword:00000001
 "EnvironmentPathNpmModules"=dword:00000001'
         }
-        "iojs_x64" = @{
-            "files_ps1" = '$files = @{ "iojs" = "$env:ProgramFiles\iojs" }'
-            "install_ps1" = 'reg import "$PSScriptRoot\install.reg" 2> $null'
+        "iojs_x64"   = @{
+            "files_ps1"     = '$files = @{ "iojs" = "$env:ProgramFiles\iojs" }'
+            "install_ps1"   = 'reg import "$PSScriptRoot\install.reg" 2> $null'
             "uninstall_ps1" = 'Remove-Item -Path ''HKCU:\Software\io.js'' -Recurse -Force'
-            "install_reg" = 'Windows Registry Editor Version 5.00
+            "install_reg"   = 'Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\io.js]
 "InstallPath"="C:\\Program Files\\iojs\\"
@@ -432,11 +440,11 @@
 "DocumentationShortcuts"=dword:00000001
 "EnvironmentPathNpmModules"=dword:00000001'
         }
-        "iojs_x86" = @{
-            "files_ps1" = '$files = @{ "iojs" = "${env:ProgramFiles(x86)}\iojs" }'
-            "install_ps1" = 'reg import "$PSScriptRoot\install.reg" 2> $null'
+        "iojs_x86"   = @{
+            "files_ps1"     = '$files = @{ "iojs" = "${env:ProgramFiles(x86)}\iojs" }'
+            "install_ps1"   = 'reg import "$PSScriptRoot\install.reg" 2> $null'
             "uninstall_ps1" = 'Remove-Item -Path ''HKCU:\Software\io.js'' -Recurse -Force'
-            "install_reg" = 'Windows Registry Editor Version 5.00
+            "install_reg"   = 'Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\io.js]
 "InstallPath"="C:\\Program Files (x86)\\iojs\\"
@@ -451,27 +459,27 @@
     function Get-Version([string]$str) {
         $versionDigits = $str.Split('.')
         $version = @{
-            major = -1
-            minor = -1
-            build = -1
+            major    = -1
+            minor    = -1
+            build    = -1
             revision = -1
-            number = 0
+            number   = 0
         }
 
-        if($versionDigits.Length -gt 0) {
+        if ($versionDigits.Length -gt 0) {
             $version.major = [int]$versionDigits[0]
         }
-        if($versionDigits.Length -gt 1) {
+        if ($versionDigits.Length -gt 1) {
             $version.minor = [int]$versionDigits[1]
         }
-        if($versionDigits.Length -gt 2) {
+        if ($versionDigits.Length -gt 2) {
             $version.build = [int]$versionDigits[2]
         }
-        if($versionDigits.Length -gt 3) {
+        if ($versionDigits.Length -gt 3) {
             $version.revision = [int]$versionDigits[3]
         }
 
-        for($i = 0; $i -lt $versionDigits.Length; $i++) {
+        for ($i = 0; $i -lt $versionDigits.Length; $i++) {
             $version.number += [long]$versionDigits[$i] -shl 16 * (3 - $i)
         }
 
@@ -482,20 +490,24 @@
         $v = Get-Version $version
         if ($v.Major -eq 0 -or $v.Major -ge 4) {
             return 'Node.js'
-        } else {
+        }
+        else {
             return 'io.js'
         }
     }
 
     function ProductInstallDirectory($version, $platform) {
         $v = Get-Version $version
-        if(($v.Major -eq 0 -or $v.Major -ge 4) -and $platform -eq 'x86') {
+        if (($v.Major -eq 0 -or $v.Major -ge 4) -and $platform -eq 'x86') {
             return "${env:ProgramFiles(x86)}\nodejs"
-        } elseif ($v.Major -ge 1 -and $platform -eq 'x86') {
+        }
+        elseif ($v.Major -ge 1 -and $platform -eq 'x86') {
             return "${env:ProgramFiles(x86)}\iojs"
-        } elseif ($v.Major -eq 0 -or $v.Major -ge 4) {
+        }
+        elseif ($v.Major -eq 0 -or $v.Major -ge 4) {
             return "$env:ProgramFiles\nodejs"
-        } elseif ($v.Major -ge 1) {
+        }
+        elseif ($v.Major -ge 1) {
             return "$env:ProgramFiles\iojs"
         }
     }
@@ -503,10 +515,10 @@
     function Get-NodeJsInstallPackage {
         param
         (
-	        [Parameter(Mandatory=$true)]
+            [Parameter(Mandatory = $true)]
             [string]$version,
 
-            [Parameter(Mandatory=$false)]
+            [Parameter(Mandatory = $false)]
             [string]$bitness = 'x86'
         )
 
@@ -514,19 +526,26 @@
     
         if ($v.Major -ge 4 -and $bitness -eq 'x86') {
             $packageUrl = "http://nodejs.org/dist/v$version/node-v$version-x86.msi"
-        } elseif ($v.Major -ge 4 -and $bitness -eq 'x64') {
+        }
+        elseif ($v.Major -ge 4 -and $bitness -eq 'x64') {
             $packageUrl = "http://nodejs.org/dist/v$version/node-v$version-x64.msi"
-        } elseif ($v.Major -eq 0 -and $v.Minor -gt 6 -and $bitness -eq 'x86') {
+        }
+        elseif ($v.Major -eq 0 -and $v.Minor -gt 6 -and $bitness -eq 'x86') {
             $packageUrl = "http://nodejs.org/dist/v$version/node-v$version-x86.msi"
-        } elseif ($v.Major -eq 0 -and $v.Minor -le 6 -and $bitness -eq 'x86') {
+        }
+        elseif ($v.Major -eq 0 -and $v.Minor -le 6 -and $bitness -eq 'x86') {
             $packageUrl = "http://nodejs.org/dist/v$version/node.msi"
-        } elseif ($v.Major -ge 1 -and $bitness -eq 'x86') {
+        }
+        elseif ($v.Major -ge 1 -and $bitness -eq 'x86') {
             $packageUrl = "https://iojs.org/dist/v$version/iojs-v$version-x86.msi"
-        } elseif ($v.Major -eq 0 -and $v.Minor -gt 6) {
+        }
+        elseif ($v.Major -eq 0 -and $v.Minor -gt 6) {
             $packageUrl = "http://nodejs.org/dist/v$version/x64/node-v$version-x64.msi"
-        } elseif ($v.Major -eq 0 -and $v.Minor -le 6) {
+        }
+        elseif ($v.Major -eq 0 -and $v.Minor -le 6) {
             $packageUrl = "http://nodejs.org/dist/v$version/x64/node.msi"
-        } elseif ($v.Major -ge 1) {
+        }
+        elseif ($v.Major -ge 1) {
             $packageUrl = "https://iojs.org/dist/v$version/iojs-v$version-x64.msi"
         }
 
@@ -540,10 +559,10 @@
     function Start-NodeJsInstallation {
         param
         (
-	        [Parameter(Mandatory=$true)]
+            [Parameter(Mandatory = $true)]
             [string]$version,
 
-            [Parameter(Mandatory=$false)]
+            [Parameter(Mandatory = $false)]
             [string]$bitness = 'x86'
         )
 
@@ -558,19 +577,20 @@
     function GetUninstallString($productName) {
         $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
         $uninstallString = ($x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
-           | ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
-           | Where-Object { $_.DisplayName -and $_.DisplayName -eq $productName } `
-           | Select UninstallString).UninstallString
+            | ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
+            | Where-Object { $_.DisplayName -and $_.DisplayName -eq $productName } `
+            | Select UninstallString).UninstallString
 
-        if($uninstallString) {
+        if ($uninstallString) {
             return $uninstallString.replace('MsiExec.exe /I{', '/x{').replace('MsiExec.exe /X{', '/x{')
-        } else {
+        }
+        else {
             return $uninstallString
         }
     }
 
-    for($i = 0; $i -lt $nodeVersions.Length; $i++) {
-        for($j = 0; $j -lt $nodePlatforms.Length; $j++) {
+    for ($i = 0; $i -lt $nodeVersions.Length; $i++) {
+        for ($j = 0; $j -lt $nodePlatforms.Length; $j++) {
             $nodeVersion = $nodeVersions[$i]
             $nodePlatform = $nodePlatforms[$j]
             $nodeName = ProductName $nodeVersion
@@ -580,7 +600,7 @@
 
             Write-Host "Installing $nodeName $nodeVersion $nodePlatform..." -ForegroundColor Cyan
 
-            if ($nodeVersion.startswith('18.') -and $nodePlatform -eq 'x86') {
+            if ($nodeVersion.startswith('18.0') -and $nodePlatform -eq 'x86') {
                 Write-Host "Skipped as there is no x86 version of $nodeName $nodeVersion" -ForegroundColor Yellow
                 continue
             }
@@ -589,7 +609,7 @@
             $installDir = ProductInstallDirectory $nodeVersion $nodePlatform
             $dirName = [IO.Path]::GetFileName($installDir)
 
-            if(Test-Path "$avvmDir\$dirName") {
+            if (Test-Path "$avvmDir\$dirName") {
                 Write-Host "$nodeName $nodeVersion $nodePlatform already installed" -ForegroundColor Gray
                 continue
             }
@@ -600,7 +620,7 @@
 
             # uninstall current node.js or io.js
             $uninstallCommand = (GetUninstallString $nodeName)
-            if($uninstallCommand) {
+            if ($uninstallCommand) {
                 Write-Host "Uninstalling $nodeName..."
                 cmd /c start /wait msiexec.exe $uninstallCommand /quiet   
             }
@@ -608,11 +628,12 @@
             # download required package
             Start-NodeJsInstallation $nodeVersion $nodePlatform
 
-            if(-not $lastOne) {
+            if (-not $lastOne) {
                 # copy
                 Write-Host "Copying $installDir to $avvmDir\$dirName..."
                 Copy-Item $installDir -Destination "$avvmDir\$dirName" -Recurse
-            } else {
+            }
+            else {
                 # mark last version as active
                 $registryKey = "HKLM:\SOFTWARE\Appveyor\VersionManager\node"
                 New-Item $registryKey -Force | Out-Null
@@ -629,11 +650,11 @@
             # fix node.exe alias for io.js
             $avvmIoJsPath = Join-Path $avvmDir "iojs"
 
-            if(Test-Path $avvmIoJsPath) {
+            if (Test-Path $avvmIoJsPath) {
                     
                 Remove-Item "$avvmIoJsPath\node.exe" -Force
 
-'@IF EXIST "%~dp0\iojs.exe" ( 
+                '@IF EXIST "%~dp0\iojs.exe" ( 
     "%~dp0\iojs.exe" %* 
 ) ELSE ( 
     iojs %* 
