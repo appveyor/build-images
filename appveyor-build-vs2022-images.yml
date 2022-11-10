@@ -69,9 +69,9 @@ clone_script:
 
 test: off
 
-on_failure:
+#on_failure:
 #- ps: Get-EventLog AppVeyor -newest 10 | Format-List
-- ps: Start-sleep -s 3600
+#- ps: Start-sleep -s 3600
 
 for:
   # Part 1
@@ -169,7 +169,7 @@ for:
     build_script:
       - ps: .\install_android_sdk.ps1
       - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
-          
+
       - ps: .\install_python.ps1
       - ps: .\install_openssl.ps1
       - ps: .\install_msys64.ps1
