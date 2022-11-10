@@ -27,15 +27,15 @@ function UninstallPython($pythonName) {
         Write-Host "Uninstalling $pythonName..." -NoNewline
         if ($uninstallCommand.contains('/modify')) {
             $uninstallCommand = $uninstallCommand.replace('/modify', '')
-            cmd /c start /wait "`"$uninstallCommand`"" /quiet /uninstall
+            Start-ProcessWithOutput "$uninstallCommand /quiet /uninstall"
         }
         elseif ($uninstallCommand.contains('/uninstall')) {
             $uninstallCommand = $uninstallCommand.replace('/uninstall', '')
-            cmd /c start /wait "`"$uninstallCommand`"" /uninstall
+            Start-ProcessWithOutput $uninstallCommand
         }
         else {
             $uninstallCommand = $uninstallCommand.replace('MsiExec.exe /I{', '/x{').replace('MsiExec.exe /X{', '/x{')
-            cmd /c start /wait msiexec.exe $uninstallCommand /quiet
+            Start-ProcessWithOutput "msiexec.exe $uninstallCommand /quiet"
         }
         Write-Host "done"
     }
