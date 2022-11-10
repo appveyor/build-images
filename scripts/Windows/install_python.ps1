@@ -10,14 +10,6 @@ function UpdatePythonPath($pythonPath) {
     $env:path = ($env:path -split ';' | Where-Object { -not $_.contains('\Python') }) -join ';'
     $env:path = "$pythonPath;$env:path"
 }
-function GetUninstallString($productName) {
-    $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
-    $x64userItems = @(Get-ChildItem "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
-    ($x64items + $x64userItems + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
-    | ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
-    | Where-Object { $_.DisplayName -and $_.DisplayName -eq $productName } `
-    | Select UninstallString).UninstallString
-}
 
 function UninstallPython($pythonName) {
     $uninstallCommand = (GetUninstallString $pythonName)
@@ -115,6 +107,27 @@ function InstallPythonEXE($version, $platform, $targetPath) {
 
     Write-Host "Installed Python $version" -ForegroundColor Green
 }
+
+# Python 3.9.13 x64
+$python39_x64 = (GetUninstallString 'Python 3.9.13 (64-bit)')
+if ($python39_x64) {
+    Write-Host 'Python 3.9.13 x64 already installed'
+}
+else {
+    InstallPythonEXE "3.9.13" "x64" "$env:SystemDrive\Python39-x64"
+}
+
+# Python 3.9.13
+$python39 = (GetUninstallString 'Python 3.9.13 (32-bit)')
+if ($python39) {
+    Write-Host 'Python 3.9.13 already installed'
+}
+else {
+    InstallPythonEXE "3.9.13" "x86" "$env:SystemDrive\Python39"
+}
+
+UpdatePip "$env:SystemDrive\Python39"
+UpdatePip "$env:SystemDrive\Python39-x64"
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     # Python 2.6.6
@@ -326,27 +339,6 @@ else {
 
 UpdatePip "$env:SystemDrive\Python38"
 UpdatePip "$env:SystemDrive\Python38-x64"
-
-# Python 3.9.13 x64
-$python39_x64 = (GetUninstallString 'Python 3.9.13 (64-bit)')
-if ($python39_x64) {
-    Write-Host 'Python 3.9.13 x64 already installed'
-}
-else {
-    InstallPythonEXE "3.9.13" "x64" "$env:SystemDrive\Python39-x64"
-}
-
-# Python 3.9.13
-$python39 = (GetUninstallString 'Python 3.9.13 (32-bit)')
-if ($python39) {
-    Write-Host 'Python 3.9.13 already installed'
-}
-else {
-    InstallPythonEXE "3.9.13" "x86" "$env:SystemDrive\Python39"
-}
-
-UpdatePip "$env:SystemDrive\Python39"
-UpdatePip "$env:SystemDrive\Python39-x64"
 
 # Python 3.10.8 x64
 $python310_x64 = (GetUninstallString 'Python 3.10.8 (64-bit)')
