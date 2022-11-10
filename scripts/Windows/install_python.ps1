@@ -11,6 +11,15 @@ function UpdatePythonPath($pythonPath) {
     $env:path = "$pythonPath;$env:path"
 }
 
+function GetUninstallString($productName) {
+    $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
+    $x64userItems = @(Get-ChildItem "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
+    ($x64items + $x64userItems + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
+    | ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
+    | Where-Object { $_.DisplayName -and $_.DisplayName -eq $productName } `
+    | Select UninstallString).UninstallString
+}
+
 function UninstallPython($pythonName) {
     $uninstallCommand = (GetUninstallString $pythonName)
     if ($uninstallCommand) {
@@ -44,13 +53,6 @@ function UpdatePip($pythonPath) {
 # Write-Host "Downloading get-pip.py..." -ForegroundColor Cyan
 # $pipPath = "$env:TEMP\get-pip.py"
 # (New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/get-pip.py', $pipPath)
-
-$x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
-$x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
-| ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
-| Where-Object { $_.DisplayName -and $_.DisplayName.contains('Python') } `
-| Sort-Object -Property DisplayName `
-| Select-Object -Property DisplayName, DisplayVersion
 
 Write-Host "Downloading get-pip.py v2.6..." -ForegroundColor Cyan
 $pipPath26 = "$env:TEMP\get-pip-26.py"
