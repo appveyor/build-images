@@ -74,8 +74,6 @@ function Start-ProcessWithOutput {
     $process = New-Object System.Diagnostics.Process
     $process.StartInfo = $psi
 
-    $psi
-
     # Adding event handers for stdout and stderr.
     $outScripBlock = {
         if (![String]::IsNullOrEmpty($EventArgs.Data)) {
