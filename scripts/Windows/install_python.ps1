@@ -53,6 +53,13 @@ function UpdatePip($pythonPath) {
 # $pipPath = "$env:TEMP\get-pip.py"
 # (New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/get-pip.py', $pipPath)
 
+$x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
+$x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
+| ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
+| Where-Object { $_.DisplayName -and $_.DisplayName.contains('Python') } `
+| Sort-Object -Property DisplayName `
+| Select-Object -Property DisplayName, DisplayVersion
+
 Write-Host "Downloading get-pip.py v2.6..." -ForegroundColor Cyan
 $pipPath26 = "$env:TEMP\get-pip-26.py"
 (New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/pip/2.6/get-pip.py', $pipPath26)
