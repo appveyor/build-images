@@ -4,7 +4,7 @@
 # https://stackoverflow.com/questions/30699782/access-is-denied-while-upgrading-pip-exe-on-windows/35580525#35580525
 #
 
-$pipVersion = "21.2.4"
+$pipVersion = "22.3.1"
 
 function UpdatePythonPath($pythonPath) {
     $env:path = ($env:path -split ';' | Where-Object { -not $_.contains('\Python') }) -join ';'
@@ -108,29 +108,6 @@ function InstallPythonEXE($version, $platform, $targetPath) {
 
     Write-Host "Installed Python $version" -ForegroundColor Green
 }
-
-# Python 3.9.13 x64
-$python39_x64 = (GetUninstallString 'Python 3.9.13 (64-bit)')
-if ($python39_x64) {
-    Write-Host 'Python 3.9.13 x64 already installed'
-}
-else {
-    UninstallPython "Python 3.9.7 (64-bit)"
-    InstallPythonEXE "3.9.13" "x64" "$env:SystemDrive\Python39-x64"
-}
-
-# Python 3.9.13
-$python39 = (GetUninstallString 'Python 3.9.13 (32-bit)')
-if ($python39) {
-    Write-Host 'Python 3.9.13 already installed'
-}
-else {
-    UninstallPython "Python 3.9.7 (32-bit)"
-    InstallPythonEXE "3.9.13" "x86" "$env:SystemDrive\Python39"
-}
-
-UpdatePip "$env:SystemDrive\Python39"
-UpdatePip "$env:SystemDrive\Python39-x64"
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     # Python 2.6.6
@@ -351,6 +328,29 @@ if ($python310_x64) {
 else {
     InstallPythonEXE "3.10.8" "x64" "$env:SystemDrive\Python310-x64"
 }
+
+# Python 3.9.13 x64
+$python39_x64 = (GetUninstallString 'Python 3.9.13 (64-bit)')
+if ($python39_x64) {
+    Write-Host 'Python 3.9.13 x64 already installed'
+}
+else {
+    UninstallPython "Python 3.9.7 (64-bit)"
+    InstallPythonEXE "3.9.13" "x64" "$env:SystemDrive\Python39-x64"
+}
+
+# Python 3.9.13
+$python39 = (GetUninstallString 'Python 3.9.13 (32-bit)')
+if ($python39) {
+    Write-Host 'Python 3.9.13 already installed'
+}
+else {
+    UninstallPython "Python 3.9.7 (32-bit)"
+    InstallPythonEXE "3.9.13" "x86" "$env:SystemDrive\Python39"
+}
+
+UpdatePip "$env:SystemDrive\Python39"
+UpdatePip "$env:SystemDrive\Python39-x64"
 
 # Python 3.10.8
 $python310 = (GetUninstallString 'Python 3.10.8 (32-bit)')
