@@ -29,7 +29,7 @@ function UninstallPython($pythonName) {
             Start-ProcessWithOutput "$uninstallCommand /quiet /uninstall"
         }
         elseif ($uninstallCommand.contains('/uninstall')) {
-            Start-ProcessWithOutput $uninstallCommand
+            Start-ProcessWithOutput "$uninstallCommand /quiet"
         }
         else {
             $uninstallCommand = $uninstallCommand.replace('MsiExec.exe /I{', '/x{').replace('MsiExec.exe /X{', '/x{')
