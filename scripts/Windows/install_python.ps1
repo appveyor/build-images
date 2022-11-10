@@ -22,6 +22,7 @@ function GetUninstallString($productName) {
 
 function UninstallPython($pythonName) {
     $uninstallCommand = (GetUninstallString $pythonName)
+    Write-Host "uninstallCommand: $uninstallCommand"
     if ($uninstallCommand) {
         Write-Host "Uninstalling $pythonName..." -NoNewline
         if ($uninstallCommand.contains('/modify')) {
