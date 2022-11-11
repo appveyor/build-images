@@ -4,12 +4,13 @@
 # https://stackoverflow.com/questions/30699782/access-is-denied-while-upgrading-pip-exe-on-windows/35580525#35580525
 #
 
-$pipVersion = "21.2.4"
+$pipVersion = "22.3.1"
 
 function UpdatePythonPath($pythonPath) {
     $env:path = ($env:path -split ';' | Where-Object { -not $_.contains('\Python') }) -join ';'
     $env:path = "$pythonPath;$env:path"
 }
+
 function GetUninstallString($productName) {
     $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
     $x64userItems = @(Get-ChildItem "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
@@ -25,15 +26,14 @@ function UninstallPython($pythonName) {
         Write-Host "Uninstalling $pythonName..." -NoNewline
         if ($uninstallCommand.contains('/modify')) {
             $uninstallCommand = $uninstallCommand.replace('/modify', '')
-            cmd /c start /wait "`"$uninstallCommand`"" /quiet /uninstall
+            Start-ProcessWithOutput "$uninstallCommand /quiet /uninstall"
         }
         elseif ($uninstallCommand.contains('/uninstall')) {
-            $uninstallCommand = $uninstallCommand.replace('/uninstall', '')
-            cmd /c start /wait "`"$uninstallCommand`"" /uninstall
+            Start-ProcessWithOutput "$uninstallCommand /quiet"
         }
         else {
             $uninstallCommand = $uninstallCommand.replace('MsiExec.exe /I{', '/x{').replace('MsiExec.exe /X{', '/x{')
-            cmd /c start /wait msiexec.exe $uninstallCommand /quiet
+            Start-ProcessWithOutput "msiexec.exe $uninstallCommand /quiet"
         }
         Write-Host "done"
     }
@@ -320,12 +320,22 @@ else {
 UpdatePip "$env:SystemDrive\Python38"
 UpdatePip "$env:SystemDrive\Python38-x64"
 
+# Python 3.10.8 x64
+$python310_x64 = (GetUninstallString 'Python 3.10.8 (64-bit)')
+if ($python310_x64) {
+    Write-Host 'Python 3.10.8 x64 already installed'
+}
+else {
+    InstallPythonEXE "3.10.8" "x64" "$env:SystemDrive\Python310-x64"
+}
+
 # Python 3.9.13 x64
 $python39_x64 = (GetUninstallString 'Python 3.9.13 (64-bit)')
 if ($python39_x64) {
     Write-Host 'Python 3.9.13 x64 already installed'
 }
 else {
+    UninstallPython "Python 3.9.7 (64-bit)"
     InstallPythonEXE "3.9.13" "x64" "$env:SystemDrive\Python39-x64"
 }
 
@@ -335,20 +345,12 @@ if ($python39) {
     Write-Host 'Python 3.9.13 already installed'
 }
 else {
+    UninstallPython "Python 3.9.7 (32-bit)"
     InstallPythonEXE "3.9.13" "x86" "$env:SystemDrive\Python39"
 }
 
 UpdatePip "$env:SystemDrive\Python39"
 UpdatePip "$env:SystemDrive\Python39-x64"
-
-# Python 3.10.8 x64
-$python310_x64 = (GetUninstallString 'Python 3.10.8 (64-bit)')
-if ($python310_x64) {
-    Write-Host 'Python 3.10.8 x64 already installed'
-}
-else {
-    InstallPythonEXE "3.10.8" "x64" "$env:SystemDrive\Python310-x64"
-}
 
 # Python 3.10.8
 $python310 = (GetUninstallString 'Python 3.10.8 (32-bit)')

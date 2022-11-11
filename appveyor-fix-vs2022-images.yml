@@ -43,7 +43,12 @@ test: off
 build_script:
 
 #- ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
-- ps: .\install_dotnet_core_sdks.ps1
+#- ps: .\install_dotnet_core_sdks.ps1
+- ps: .\install_qt_ifw_windows.ps1
+- dir C:\Qt\6.2
+- dir C:\Qt\Tools
+- dir C:\Qt\Tools\QtInstallerFramework
+- ps: .\install_nunit3.ps1
 # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
 
 # Restart VM
