@@ -712,12 +712,12 @@ function install_openjdk() {
     if check_user; then
 
         # all versions
-        declare JDK_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" )
+        declare JDK_VERSIONS=( "8" "9" "10" "15" "16" "17" "18" "19")
 
-        # big sur, monterey
-        if [ "$OSX_MAJOR_VER" -ge 11 ]; then
-            JDK_VERSIONS=( "15" "16" "17" "18" "19" )
-        fi
+        # # big sur, monterey
+        # if [ "$OSX_MAJOR_VER" -ge 11 ]; then
+        #     JDK_VERSIONS=( "15" "16" "17" "18" "19" )
+        # fi
 
         su -l ${USER_NAME} -c "
             $BREW_CMD tap AdoptOpenJDK/openjdk
@@ -732,7 +732,7 @@ function install_openjdk() {
 
         JDK_PATH=$(/usr/libexec/java_home -v $i)
         write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64='${JDK_PATH}
-        for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
+        for JDK_VERSION in 9 10 15 16 17 18 19; do
             JDK_PATH=$(/usr/libexec/java_home -v ${JDK_VERSION})
             write_line "${HOME}/.profile" "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}"
         done
