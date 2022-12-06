@@ -716,7 +716,7 @@ function install_openjdk() {
 
         # # big sur, monterey
         if [ "$OSX_MAJOR_VER" -ge 11 ]; then
-            JDK_VERSIONS=( "8" "15" "16" "17" "18" "19" )
+            JDK_VERSIONS=( "15" "16" "17" "18" "19" )
         fi
 
         su -l ${USER_NAME} -c "
@@ -730,9 +730,9 @@ function install_openjdk() {
             " || { echo "[ERROR] Cannot install adoptopenjdk ${JDK_VERSION} with Homebrew." 1>&2; return 20; }
         done
 
-        #JDK_PATH=$(/usr/libexec/java_home -v $i)
-        #write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64='${JDK_PATH}
-        for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
+        JDK_PATH=$(/usr/libexec/java_home -v $i)
+        write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64='${JDK_PATH}
+        for JDK_VERSION in "${JDK_VERSIONS[@]:1}"; do
             JDK_PATH=$(/usr/libexec/java_home -v ${JDK_VERSION})
             write_line "${HOME}/.profile" "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}"
         done
