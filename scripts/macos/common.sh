@@ -579,14 +579,14 @@ function install_nvm_nodejs() {
     fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        CURRENT_NODEJS=12
+        CURRENT_NODEJS=18
     else
         CURRENT_NODEJS=$1
     fi
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
