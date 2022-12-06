@@ -469,7 +469,7 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" "5.0" "6.0"  )
+    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" "7.0"  )
     for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
         sudo ./dotnet-install.sh -channel "$v" --install-dir "$INSTALL_DIR"
