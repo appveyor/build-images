@@ -394,7 +394,7 @@ function install_pythons(){
     LDFLAGS="-L${SSL_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.12" "3.8.12" "3.9.10" "3.10.2" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.15" "3.8.15" "3.9.15" "3.10.8" "3.11.0" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
