@@ -714,9 +714,9 @@ function install_openjdk() {
         # all versions
         declare JDK_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" )
 
-        # big sur
+        # big sur, monterey
         if [ "$OSX_MAJOR_VER" -ge 11 ]; then
-            JDK_VERSIONS=( "13" "14" "15" )
+            JDK_VERSIONS=( "15" "16" "17" "18" "19" )
         fi
 
         su -l ${USER_NAME} -c "
@@ -732,9 +732,9 @@ function install_openjdk() {
 
         JDK_PATH=$(/usr/libexec/java_home -v $i)
         write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64='${JDK_PATH}
-        for i in 9 10 11 12 13 14 15; do
-            JDK_PATH=$(/usr/libexec/java_home -v $i)
-            write_line "${HOME}/.profile" "export JAVA_HOME_${i}_X64=${JDK_PATH}"
+        for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
+            JDK_PATH=$(/usr/libexec/java_home -v ${JDK_VERSION})
+            write_line "${HOME}/.profile" "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}"
         done
 
         # # add JDK paths to the profile
