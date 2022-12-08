@@ -36,14 +36,14 @@ function _continue() {
 
 init_logging
 configure_path
-configure_updates
+#configure_updates
 configure_sshd
 configure_autologin
-install_curl
-install_vcs
-install_virtualenv
-install_gcc
-install_gpg
+# install_curl
+# install_vcs
+# install_virtualenv
+# install_gcc
+# install_gpg
 # install_openjdk
 # install_rvm_and_rubies
 # install_fastlane

@@ -753,9 +753,9 @@ function configure_autologin() {
         echo "[ERROR] Password is not set, cannot configure autologin." 1>&2
         return 10
     fi
-    brew_install xfreebird/utils/kcpassword &&
-    enable_autologin "$USER_NAME" "$INSTALL_PASSWORD" ||
-        { echo "[ERROR] Cannot install kcpassword with Homebrew." 1>&2; return 20; }
+    # brew_install xfreebird/utils/kcpassword &&
+    # enable_autologin "$USER_NAME" "$INSTALL_PASSWORD" ||
+    #     { echo "[ERROR] Cannot install kcpassword with Homebrew." 1>&2; return 20; }
 
     local PFILE=/usr/local/var/appveyor/build-agent/psw
     local PDIR=${PFILE%/*}
@@ -763,7 +763,7 @@ function configure_autologin() {
     mkdir -p "$PDIR" &&
     echo -n "$INSTALL_PASSWORD" >"$PFILE" &&
     chown -R "$(id -u "${USER_NAME}"):$(id -g "${USER_NAME}")" "$PDIR" ||
-        { echo "[ERROR] Cannot safe password in '$PFILE'." 1>&2; return 20; }
+        { echo "[ERROR] Cannot save password in '$PFILE'." 1>&2; return 20; }
 
     log_version ls -la "$PDIR"
 }
