@@ -715,9 +715,9 @@ function install_openjdk() {
         declare JDK_VERSIONS=( "8" "9" "10" "15" "16")
 
         # # big sur, monterey
-        if [ "$OSX_MAJOR_VER" -ge 11 ]; then
-            JDK_VERSIONS=( "15" "16" "17" "18" "19" )
-        fi
+        # if [ "$OSX_MAJOR_VER" -ge 11 ]; then
+        #     JDK_VERSIONS=( "15" "16" "17" "18" "19" )
+        # fi
 
         su -l ${USER_NAME} -c "
             $BREW_CMD tap AdoptOpenJDK/openjdk
