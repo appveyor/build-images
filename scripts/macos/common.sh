@@ -346,8 +346,27 @@ function install_qt() {
 
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
+
+    # monterey and above
+    if [ "$OSX_MAJOR_VER" -ge 12 ]; then
+        install_virtualenv_3()
+    else
+        install_virtualenv_2()
+    fi
+}
+
+function install_virtualenv_2() {
+    echo "[INFO] Running install_virtualenv_2..."
     command -v pip || install_pip
     pip install virtualenv ||
+        { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
+
+    log_version virtualenv --version
+}
+
+function install_virtualenv_3() {
+    echo "[INFO] Running install_virtualenv_3..."
+    pip3 install virtualenv ||
         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
 
     log_version virtualenv --version
