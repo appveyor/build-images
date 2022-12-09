@@ -36,7 +36,7 @@ function _continue() {
 
 init_logging
 configure_path
-configure_updates
+#configure_updates
 configure_sshd
 configure_autologin
 install_curl
