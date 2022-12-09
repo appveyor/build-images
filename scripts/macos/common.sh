@@ -349,9 +349,9 @@ function install_virtualenv() {
 
     # monterey and above
     if [ "$OSX_MAJOR_VER" -ge 12 ]; then
-        install_virtualenv_3()
+        install_virtualenv_3
     else
-        install_virtualenv_2()
+        install_virtualenv_2
     fi
 }
 
