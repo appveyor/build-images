@@ -652,9 +652,12 @@ function install_xcode() {
             xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
         done
 
-        xcversion simulators --install='iOS 12.4'
-        xcversion simulators --install='tvOS 12.4'
-        xcversion simulators --install='watchOS 5.3'
+        if [ "$OSX_MAJOR_VER" -lt 12 ]; then
+            xcversion simulators --install='iOS 12.4'
+            xcversion simulators --install='tvOS 12.4'
+            xcversion simulators --install='watchOS 5.3'
+        fi
+
         # Cleanup
         export FASTLANE_SESSION=
         export XCODE_INSTALL_USER=
