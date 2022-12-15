@@ -80,7 +80,7 @@ for:
 
     build_script:
       - ps: .\init_server.ps1
-      - ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
+      - ps: if ($env:cloud_type -eq 'Azure' or $env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
