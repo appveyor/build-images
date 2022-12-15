@@ -264,7 +264,7 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3" "ruby-head" )
+    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3" "ruby-3.1.3" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -311,7 +311,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.22.2
+        VERSION=3.25.1
     else
         VERSION=$1
     fi
@@ -346,8 +346,27 @@ function install_qt() {
 
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
+
+    # monterey and above
+    if [ "$OSX_MAJOR_VER" -ge 12 ]; then
+        install_virtualenv_3
+    else
+        install_virtualenv_2
+    fi
+}
+
+function install_virtualenv_2() {
+    echo "[INFO] Running install_virtualenv_2..."
     command -v pip || install_pip
     pip install virtualenv ||
+        { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
+
+    log_version virtualenv --version
+}
+
+function install_virtualenv_3() {
+    echo "[INFO] Running install_virtualenv_3..."
+    pip3 install virtualenv ||
         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
 
     log_version virtualenv --version
@@ -394,7 +413,7 @@ function install_pythons(){
     LDFLAGS="-L${SSL_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.12" "3.8.12" "3.9.10" "3.10.2" )
+    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.15" "3.8.15" "3.9.15" "3.10.8" "3.11.0" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -469,7 +488,7 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" "5.0" "6.0"  )
+    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" "7.0"  )
     for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
         sudo ./dotnet-install.sh -channel "$v" --install-dir "$INSTALL_DIR"
@@ -523,7 +542,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.14" "go1.17.7" )
+    declare GO_VERSIONS=( "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.8" "go1.19.3" )
     for v in "${GO_VERSIONS[@]}"; do
         # big sur
         if [ "$OSX_MAJOR_VER" -eq 10 ]; then
@@ -579,14 +598,14 @@ function install_nvm_nodejs() {
     fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        CURRENT_NODEJS=12
+        CURRENT_NODEJS=18
     else
         CURRENT_NODEJS=$1
     fi
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" )
+    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -611,8 +630,13 @@ function install_xcode() {
     fi
 
     # big sur
-    if [ "$OSX_MAJOR_VER" -ge 11 ]; then
+    if [ "$OSX_MAJOR_VER" -eq 11 ]; then
         XCODE_VERSIONS=( "12.5.1" "13.2.1" )
+    fi
+
+    # monterey
+    if [ "$OSX_MAJOR_VER" -eq 12 ]; then
+        XCODE_VERSIONS=( "13.4.1" "14.1" )
     fi
 
     #check fastlane
@@ -628,9 +652,12 @@ function install_xcode() {
             xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
         done
 
-        xcversion simulators --install='iOS 12.4'
-        xcversion simulators --install='tvOS 12.4'
-        xcversion simulators --install='watchOS 5.3'
+        if [ "$OSX_MAJOR_VER" -lt 12 ]; then
+            xcversion simulators --install='iOS 12.4'
+            xcversion simulators --install='tvOS 12.4'
+            xcversion simulators --install='watchOS 5.3'
+        fi
+
         # Cleanup
         export FASTLANE_SESSION=
         export XCODE_INSTALL_USER=
@@ -707,12 +734,12 @@ function install_openjdk() {
     if check_user; then
 
         # all versions
-        declare JDK_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" )
+        declare JDK_VERSIONS=( "8" "9" "10" "15" "16")
 
-        # big sur
-        if [ "$OSX_MAJOR_VER" -ge 11 ]; then
-            JDK_VERSIONS=( "13" "14" "15" )
-        fi
+        # # big sur, monterey
+        # if [ "$OSX_MAJOR_VER" -ge 11 ]; then
+        #     JDK_VERSIONS=( "15" "16" "17" "18" "19" )
+        # fi
 
         su -l ${USER_NAME} -c "
             $BREW_CMD tap AdoptOpenJDK/openjdk
@@ -727,9 +754,9 @@ function install_openjdk() {
 
         JDK_PATH=$(/usr/libexec/java_home -v $i)
         write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64='${JDK_PATH}
-        for i in 9 10 11 12 13 14 15; do
-            JDK_PATH=$(/usr/libexec/java_home -v $i)
-            write_line "${HOME}/.profile" "export JAVA_HOME_${i}_X64=${JDK_PATH}"
+        for JDK_VERSION in "${JDK_VERSIONS[@]:1}"; do
+            JDK_PATH=$(/usr/libexec/java_home -v ${JDK_VERSION})
+            write_line "${HOME}/.profile" "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}"
         done
 
         # # add JDK paths to the profile
@@ -748,9 +775,9 @@ function configure_autologin() {
         echo "[ERROR] Password is not set, cannot configure autologin." 1>&2
         return 10
     fi
-    brew_install xfreebird/utils/kcpassword &&
-    enable_autologin "$USER_NAME" "$INSTALL_PASSWORD" ||
-        { echo "[ERROR] Cannot install kcpassword with Homebrew." 1>&2; return 20; }
+    # brew_install xfreebird/utils/kcpassword &&
+    # enable_autologin "$USER_NAME" "$INSTALL_PASSWORD" ||
+    #     { echo "[ERROR] Cannot install kcpassword with Homebrew." 1>&2; return 20; }
 
     local PFILE=/usr/local/var/appveyor/build-agent/psw
     local PDIR=${PFILE%/*}
@@ -758,7 +785,7 @@ function configure_autologin() {
     mkdir -p "$PDIR" &&
     echo -n "$INSTALL_PASSWORD" >"$PFILE" &&
     chown -R "$(id -u "${USER_NAME}"):$(id -g "${USER_NAME}")" "$PDIR" ||
-        { echo "[ERROR] Cannot safe password in '$PFILE'." 1>&2; return 20; }
+        { echo "[ERROR] Cannot save password in '$PFILE'." 1>&2; return 20; }
 
     log_version ls -la "$PDIR"
 }
