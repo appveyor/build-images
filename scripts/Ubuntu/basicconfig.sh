@@ -213,7 +213,7 @@ if [[ $OS_ARCH == "amd64" ]]; then
 
     install_clang ||
         _abort $?
-else
+fi
 
 install_cvs ||
     _abort $?
