@@ -9,15 +9,13 @@
     "install_password": "appveyor",
     "appVeyorUrl": "https://ci.appveyor.com"
   },
-  "sensitive-variables": ["install_password", "appleIdUser", "appleIdPasswd", "fastlaneSession"],
+  "sensitive-variables": [
+    "install_password",
+    "appleIdUser",
+    "appleIdPasswd",
+    "fastlaneSession"
+  ],
   "provisioners": [
-    {
-      "type": "shell",
-      "inline": [
-        "/usr/bin/dscl -u \"{{user `install_user`}}\" -P \"{{user `install_password`}}\" . -passwd \"/Users/{{user `install_user`}}\" \"{{user `install_password`}}\"",
-        "security set-keychain-password -o \"{{user `install_password`}}\" -p \"{{user `install_password`}}\" \"/Users/{{user `install_user`}}/Library/Keychains/login.keychain\""
-      ]
-    },
     {
       "type": "shell",
       "inline": [
@@ -67,23 +65,23 @@
         "APPLEID_SESSION={{user `fastlaneSession`}}",
         "INSTALL_PASSWORD={{user `install_password`}}"
       ],
-      "execute_command": "echo '{{ user `install_password` }}' | {{.Vars}} sudo -S -E bash -ex '{{.Path}}'",
+      "execute_command": "{{.Vars}} sudo -S -E bash -ex '{{.Path}}'",
       "scripts": [
         "scripts/macos/basicconfig.sh"
       ]
     },
     {
-        "type": "shell",
-        "scripts":[
-            "{{ template_dir }}/scripts/macos/run_custom_scripts.sh"
-        ]
+      "type": "shell",
+      "scripts": [
+        "{{ template_dir }}/scripts/macos/run_custom_scripts.sh"
+      ]
     },
     {
       "type": "shell",
       "inline": [
         "if [ -f .ssh/authorized_keys ]; then rm .ssh/authorized_keys; fi",
         "find . -maxdepth 1 -name 'script_*.sh-*.log' -delete"
-       ]
+      ]
     }
   ],
   "builders": [
@@ -94,7 +92,7 @@
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout": "120s",
-      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
+      "shutdown_command": "sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "skip_compaction": "false"
     },
@@ -104,7 +102,7 @@
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout": "120s",
-      "shutdown_command": "echo '{{ user `install_password` }}' | sudo -S shutdown -h now",
+      "shutdown_command": "sudo -S shutdown -h now",
       "vm_name": "macos-{{user `macos_version`}}-{{user `datemark`}}",
       "headless": "true",
       "output_directory": "{{user `output_directory`}}",
@@ -127,19 +125,69 @@
       "ssh_password": "{{ user `install_password` }}",
       "ssh_port": 22,
       "ssh_wait_timeout": "10000s",
-      "shutdown_command": "echo '{{ user `install_password` }}'|sudo -S shutdown -h now",
+      "shutdown_command": "sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "prlctl": [
-        ["set", "{{.Name}}", "--memsize", "2048"],
-        ["set", "{{.Name}}", "--memquota", "512:2048"],
-        ["set", "{{.Name}}", "--cpus", "2"],
-        ["set", "{{.Name}}", "--distribution", "macosx"],
-        ["set", "{{.Name}}", "--3d-accelerate", "highest"],
-        ["set", "{{.Name}}", "--high-resolution", "off"],
-        ["set", "{{.Name}}", "--auto-share-camera", "off"],
-        ["set", "{{.Name}}", "--auto-share-bluetooth", "off"],
-        ["set", "{{.Name}}", "--on-window-close", "keep-running"],
-        ["set", "{{.Name}}", "--shf-host", "off"]
+        [
+          "set",
+          "{{.Name}}",
+          "--memsize",
+          "2048"
+        ],
+        [
+          "set",
+          "{{.Name}}",
+          "--memquota",
+          "512:2048"
+        ],
+        [
+          "set",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ],
+        [
+          "set",
+          "{{.Name}}",
+          "--distribution",
+          "macosx"
+        ],
+        [
+          "set",
+          "{{.Name}}",
+          "--3d-accelerate",
+          "highest"
+        ],
+        [
+          "set",
+          "{{.Name}}",
+          "--high-resolution",
+          "off"
+        ],
+        [
+          "set",
+          "{{.Name}}",
+          "--auto-share-camera",
+          "off"
+        ],
+        [
+          "set",
+          "{{.Name}}",
+          "--auto-share-bluetooth",
+          "off"
+        ],
+        [
+          "set",
+          "{{.Name}}",
+          "--on-window-close",
+          "keep-running"
+        ],
+        [
+          "set",
+          "{{.Name}}",
+          "--shf-host",
+          "off"
+        ]
       ]
     }
   ],

@@ -42,6 +42,11 @@ if ($vs2019 -or $vs2022) {
     Install-SDK "5.0.408"
 }
 
+# VS 2022 image only
+if ($vs2022) {
+    Install-SDK "6.0.403"
+}
+
 # VS 2019 Preview
 if ($env:install_vs2019_preview) {
     Install-SDK "6.0.100-preview.5.21302.13"

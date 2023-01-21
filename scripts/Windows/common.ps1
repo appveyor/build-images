@@ -32,7 +32,8 @@ function Start-ProcessWithOutput {
         if ($idx -lt ($command.length - 2)) {
             $arguments = $command.substring($idx + 2)
         }
-    } else {
+    }
+    else {
         $idx = $command.indexOf(' ')
         if ($idx -ne -1) {
             $fileName = $command.substring(0, $idx)
@@ -106,7 +107,8 @@ function Start-ProcessWithOutput {
         if ($ignoreExitCode -eq $false -and $process.ExitCode -ne 0) {
             exit $process.ExitCode
         }
-    } catch {
+    }
+    catch {
         Write-Host "Error running '$($psi.FileName) $($psi.Arguments)' command: $($_.Exception.Message)" -ForegroundColor Red
         throw $_
     }

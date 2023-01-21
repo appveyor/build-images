@@ -3,9 +3,9 @@
 $ErrorActionPreference = 'SilentlyContinue'
 
 $sdk_root = Join-Path ${env:ProgramFiles(x86)} "Android\android-sdk"
-$ndk_root = Join-Path  $env:SystemDrive "Microsoft\AndroidNDK64\"
+$ndk_root = Join-Path $env:SystemDrive "Microsoft\AndroidNDK64\"
 if (-not (Test-Path $ndk_root)) {
-    $ndk_root = Join-Path  $env:SystemDrive "Microsoft\AndroidNDK\"
+    $ndk_root = Join-Path $env:SystemDrive "Microsoft\AndroidNDK\"
 }
 $zipPath = "$env:temp\android-sdk-tools.zip"
 $sdkPath = "$env:temp\android-sdk"
@@ -13,7 +13,7 @@ $licenseZipPath = "$env:temp\android-sdk-licenses.zip"
 
 Write-Host "Downloading..."
 (New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/sdk-tools-windows-4333796.zip", $zipPath)
-if (-not (Test-Path $zipPath)) {throw "Unable to find $zipPath"}
+if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
 7z x $zipPath -aoa -o"$sdkPath"
 Remove-Item $zipPath -Force -ErrorAction Ignore
 
@@ -23,105 +23,102 @@ $content = [System.Convert]::FromBase64String($base64Content)
 Set-Content -Path $licenseZipPath -Value $content -Encoding Byte
 7z x $licenseZipPath -aoa -o"$sdk_root"
 
-if(Test-Path $ndk_root){
-
+if (Test-Path $ndk_root) {
     $androidNDKs = Get-ChildItem -Path $ndk_root | Sort-Object -Property Name -Descending | Select-Object -First 1
     $latestAndroidNDK = $androidNDKs.FullName;
 
-    setx ANDROID_HOME $sdk_root /M
     setx ANDROID_NDK_HOME $latestAndroidNDK /M
     setx ANDROID_NDK_PATH $latestAndroidNDK /M
 }
-else {
-    Write-Host "NDK is not installed at path $ndk_root"
-    exit 1
-}
+
+setx ANDROID_HOME $sdk_root /M
 
 Push-Location -Path $sdkPath
 
 if ($env:INSTALL_LATEST_ONLY) {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
-            "platform-tools" `
-            "platforms;android-30" `
-            "platforms;android-29" `
-            "platforms;android-28" `
-            "build-tools;30.0.2" `
-            "build-tools;29.0.2" `
-            "build-tools;29.0.0" `
-            "build-tools;28.0.3" `
-            "build-tools;28.0.2" `
-            "build-tools;28.0.1" `
-            "build-tools;28.0.0" `
-            "extras;android;m2repository" `
-            "extras;google;m2repository" `
-            "extras;google;google_play_services" `
-            "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2" `
-            "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.1" `
-            "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" `
-            "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" `
-            "add-ons;addon-google_apis-google-24" `
-            "add-ons;addon-google_apis-google-23" `
-            "add-ons;addon-google_apis-google-22" `
-            "add-ons;addon-google_apis-google-21" `
-            "cmake;3.6.4111459" `
-            "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
-} else {
+        "platform-tools" `
+        "platforms;android-30" `
+        "platforms;android-29" `
+        "platforms;android-28" `
+        "build-tools;30.0.2" `
+        "build-tools;29.0.2" `
+        "build-tools;29.0.0" `
+        "build-tools;28.0.3" `
+        "build-tools;28.0.2" `
+        "build-tools;28.0.1" `
+        "build-tools;28.0.0" `
+        "extras;android;m2repository" `
+        "extras;google;m2repository" `
+        "extras;google;google_play_services" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.1" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" `
+        "add-ons;addon-google_apis-google-24" `
+        "add-ons;addon-google_apis-google-23" `
+        "add-ons;addon-google_apis-google-22" `
+        "add-ons;addon-google_apis-google-21" `
+        "cmake;3.6.4111459" `
+        "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
+}
+else {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
-            "platform-tools" `
-            "platforms;android-30" `
-            "platforms;android-29" `
-            "platforms;android-28" `
-            "platforms;android-27" `
-            "platforms;android-26" `
-            "platforms;android-25" `
-            "platforms;android-24" `
-            "platforms;android-23" `
-            "platforms;android-22" `
-            "platforms;android-21" `
-            "platforms;android-19" `
-            "build-tools;30.0.2" `
-            "build-tools;29.0.2" `
-            "build-tools;29.0.0" `
-            "build-tools;28.0.3" `
-            "build-tools;28.0.2" `
-            "build-tools;28.0.1" `
-            "build-tools;28.0.0" `
-            "build-tools;27.0.3" `
-            "build-tools;27.0.2" `
-            "build-tools;27.0.1" `
-            "build-tools;27.0.0" `
-            "build-tools;26.0.3" `
-            "build-tools;26.0.2" `
-            "build-tools;26.0.1" `
-            "build-tools;26.0.0" `
-            "build-tools;25.0.3" `
-            "build-tools;25.0.2" `
-            "build-tools;25.0.1" `
-            "build-tools;25.0.0" `
-            "build-tools;24.0.3" `
-            "build-tools;24.0.2" `
-            "build-tools;24.0.1" `
-            "build-tools;24.0.0" `
-            "build-tools;23.0.3" `
-            "build-tools;23.0.2" `
-            "build-tools;23.0.1" `
-            "build-tools;22.0.1" `
-            "build-tools;21.1.2" `
-            "build-tools;20.0.0" `
-            "build-tools;19.1.0" `
-            "extras;android;m2repository" `
-            "extras;google;m2repository" `
-            "extras;google;google_play_services" `
-            "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2" `
-            "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.1" `
-            "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" `
-            "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" `
-            "add-ons;addon-google_apis-google-24" `
-            "add-ons;addon-google_apis-google-23" `
-            "add-ons;addon-google_apis-google-22" `
-            "add-ons;addon-google_apis-google-21" `
-            "cmake;3.6.4111459" `
-            "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
+        "platform-tools" `
+        "platforms;android-30" `
+        "platforms;android-29" `
+        "platforms;android-28" `
+        "platforms;android-27" `
+        "platforms;android-26" `
+        "platforms;android-25" `
+        "platforms;android-24" `
+        "platforms;android-23" `
+        "platforms;android-22" `
+        "platforms;android-21" `
+        "platforms;android-19" `
+        "build-tools;30.0.2" `
+        "build-tools;29.0.2" `
+        "build-tools;29.0.0" `
+        "build-tools;28.0.3" `
+        "build-tools;28.0.2" `
+        "build-tools;28.0.1" `
+        "build-tools;28.0.0" `
+        "build-tools;27.0.3" `
+        "build-tools;27.0.2" `
+        "build-tools;27.0.1" `
+        "build-tools;27.0.0" `
+        "build-tools;26.0.3" `
+        "build-tools;26.0.2" `
+        "build-tools;26.0.1" `
+        "build-tools;26.0.0" `
+        "build-tools;25.0.3" `
+        "build-tools;25.0.2" `
+        "build-tools;25.0.1" `
+        "build-tools;25.0.0" `
+        "build-tools;24.0.3" `
+        "build-tools;24.0.2" `
+        "build-tools;24.0.1" `
+        "build-tools;24.0.0" `
+        "build-tools;23.0.3" `
+        "build-tools;23.0.2" `
+        "build-tools;23.0.1" `
+        "build-tools;22.0.1" `
+        "build-tools;21.1.2" `
+        "build-tools;20.0.0" `
+        "build-tools;19.1.0" `
+        "extras;android;m2repository" `
+        "extras;google;m2repository" `
+        "extras;google;google_play_services" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.1" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" `
+        "add-ons;addon-google_apis-google-24" `
+        "add-ons;addon-google_apis-google-23" `
+        "add-ons;addon-google_apis-google-22" `
+        "add-ons;addon-google_apis-google-21" `
+        "cmake;3.6.4111459" `
+        "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 }
 
 7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"

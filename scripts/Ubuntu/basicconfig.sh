@@ -56,6 +56,11 @@ if [[ -z "${BUILD_AGENT_MODE-}" ]] && [[ ${OS_ARCH-} == "arm64" ]]; then
     BUILD_AGENT_MODE=AmazonEC2
 fi
 
+if [[ -z "${BUILD_AGENT_MODE-}" || "${#BUILD_AGENT_MODE}" = "0" ]]; then
+    echo '$PACKER_BUILDER_TYPE variable is not set. Supported values: googlecompute, hyperv, azure, amazon-ec2.'
+    exit 1
+fi
+
 echo "OS_ARCH: ${OS_ARCH}"
 echo "BUILD_AGENT_MODE: ${BUILD_AGENT_MODE}"
 
@@ -187,12 +192,6 @@ install_7zip ||
     _abort $?
 
 if [[ $OS_ARCH == "amd64" ]]; then
-    install_gcc ||
-        _abort $?
-
-    install_clang ||
-        _abort $?
-
     install_powershell ||
         _abort $?
 else
@@ -207,6 +206,14 @@ su -l ${USER_NAME} -c "
         $(declare -f add_ssh_known_hosts)
         add_ssh_known_hosts" ||
     _abort $?
+
+if [[ $OS_ARCH == "amd64" ]]; then
+    install_gcc ||
+        _abort $?
+
+    install_clang ||
+        _abort $?
+fi
 
 install_cvs ||
     _abort $?
