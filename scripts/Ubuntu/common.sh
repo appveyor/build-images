@@ -781,9 +781,9 @@ function install_pythons(){
     echo "[INFO] Running install_pythons..."
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.15" "3.8.15" "3.9.15" "3.10.8" "3.11.0" )
+        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.16" "3.8.16" "3.9.16" "3.10.9" "3.11.1" )
     else
-        declare PY_VERSIONS=( "2.7.18" "3.7.15" "3.8.15" "3.9.15" "3.10.8" "3.11.0" )
+        declare PY_VERSIONS=( "2.7.18" "3.7.16" "3.8.16" "3.9.16" "3.10.9" "3.11.1" )
     fi
 
     for i in "${PY_VERSIONS[@]}"; do
