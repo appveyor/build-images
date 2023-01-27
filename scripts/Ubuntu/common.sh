@@ -1344,7 +1344,7 @@ function install_golangs() {
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.7" "go1.19.2" )
+    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.5" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
