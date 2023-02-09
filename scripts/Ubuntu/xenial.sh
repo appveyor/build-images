@@ -45,3 +45,12 @@ function install_clang() {
 function install_rabbitmq() {
     echo "[INFO] Skip running install_rabbitmq on Xenial..."
 }
+
+function install_google_chrome() {
+    echo "[INFO] Running install_google_chrome on Xenial..."
+    local CHROME_VERSION=107.0.5304.87-1
+    local DEBNAME=google-chrome-stable_${CHROME_VERSION}_amd64.deb
+    curl -fsSL -O https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/${DEBNAME}
+    dpkg -i ${DEBNAME}
+    [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
+}
