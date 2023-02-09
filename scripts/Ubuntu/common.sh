@@ -1971,19 +1971,24 @@ function configure_firefox_repository() {
 
 function install_browsers() {
     echo "[INFO] Running install_browsers..."
-    local DEBNAME=google-chrome-stable_current_amd64.deb
 
-    echo "[INFO] Running configure_firefox_repository..."
     configure_firefox_repository
 
     apt-get -y -q install libappindicator1 fonts-liberation xvfb ||
         { echo "[ERROR] Cannot install libappindicator1 and fonts-liberation." 1>&2; return 10; }
-    curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
-    dpkg -i ${DEBNAME}
+    
+    install_google_chrome
+
     apt-get -y --fix-broken install
     apt-get -y -q install firefox
     log_version dpkg -l firefox google-chrome-stable
-    #cleanup
+}
+
+function install_google_chrome() {
+    echo "[INFO] Running install_google_chrome..."
+    local DEBNAME=google-chrome-stable_current_amd64.deb
+    curl -fsSL -O https://dl.google.com/linux/direct/${DEBNAME}
+    dpkg -i ${DEBNAME}
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }
 

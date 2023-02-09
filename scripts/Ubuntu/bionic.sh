@@ -82,3 +82,12 @@ function install_doxygen() {
     echo "[INFO] Running ${FUNCNAME[0]}..."
     install_doxygen_version '1.8.20' 'https://appveyordownloads.blob.core.windows.net/misc'
 }
+
+function install_google_chrome() {
+    echo "[INFO] Running install_google_chrome on Bionic..."
+    local CHROME_VERSION=107.0.5304.87-1
+    local DEBNAME=google-chrome-stable_${CHROME_VERSION}_amd64.deb
+    curl -fsSL -O https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/${DEBNAME}
+    dpkg -i ${DEBNAME}
+    [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
+}
