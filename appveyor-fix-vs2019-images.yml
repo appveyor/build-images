@@ -4,8 +4,8 @@ environment:
     # =======
 
     - job_name: VS 2019 on Hyper-V
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1
-      #APPVEYOR_BAKE_IMAGE: vs2019-master
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master
+      APPVEYOR_BAKE_IMAGE: vs2019-master
 
     # GCE
     # =======
