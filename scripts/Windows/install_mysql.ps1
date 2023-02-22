@@ -12,7 +12,7 @@ Write-Host "Installing MySQL Server 5.7" -ForegroundColor Cyan
 
 Write-Host "Downloading MySQL..."
 $zipPath = "$($env:temp)\mysql-5.7.27-winx64.zip"
-(New-Object Net.WebClient).DownloadFile('https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.27-winx64.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://cdn.mysql.com//archives/mysql-5.7/mysql-5.7.27-winx64.zip', $zipPath)
 
 Write-Host "Unpacking..."
 New-Item $mySqlRoot -ItemType Directory -Force | Out-Null
