@@ -14,7 +14,7 @@ $exePath = "C:\cygwin\setup-x86.exe"
 dir C:\cygwin
 
 # install cygwin
-cmd /c start /wait $exePath -qnNdO -R C:/cygwin -s http://cygwin.mirror.constant.com -l C:/cygwin/var/cache/setup -P mingw64-i686-gcc-g++ -P mingw64-x86_64-gcc-g++ -P gcc-g++ -P autoconf -P automake -P bison -P libtool -P make -P python2 -P python -P python38 -P gettext-devel -P intltool -P libiconv -P pkg-config -P wget -P curl
+Start-ProcessWithOutput "$exePath -qnNdO -R C:/cygwin -s http://cygwin.mirror.constant.com -l C:/cygwin/var/cache/setup -P mingw64-i686-gcc-g++ -P mingw64-x86_64-gcc-g++ -P gcc-g++ -P autoconf -P automake -P bison -P libtool -P make -P python2 -P python -P python38 -P gettext-devel -P intltool -P libiconv -P pkg-config -P wget -P curl"
 C:\Cygwin\bin\bash -lc true
 
 cmd /c "C:\cygwin\bin\cygcheck -c | C:\cygwin\bin\grep cygwin"
