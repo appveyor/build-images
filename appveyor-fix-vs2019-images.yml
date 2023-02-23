@@ -5,7 +5,7 @@ environment:
 
     - job_name: VS 2019 on Hyper-V
       APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master
-      APPVEYOR_BAKE_IMAGE: vs2019-master
+      #APPVEYOR_BAKE_IMAGE: vs2019-master
 
     # GCE
     # =======
@@ -41,7 +41,7 @@ test: off
 
 build_script:
   #- ps: if ($env:cloud_type -eq 'Azure' -or $env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
-  - ps: .\install_cygwin.ps1
+  - ps: .\fix_ruby.ps1
   #- ps: .\install_maven.ps1
   #- ps: .\install_dotnet_core_sdks.ps1
   #- dir C:\Qt\6.2.2

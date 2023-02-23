@@ -379,12 +379,15 @@ function Update-Ruby($ruby) {
 }
 
 # save current directory
-for ($i = 0; $i -lt $rubies.Count; $i++) {
-    Install-Ruby $rubies[$i]
-}
+# for ($i = 0; $i -lt $rubies.Count; $i++) {
+#     Install-Ruby $rubies[$i]
+# }
 
 for ($i = 0; $i -lt $rubies.Count; $i++) {
-    Update-Ruby $rubies[$i]
+    $ruby = $rubies[$i]
+    if ($ruby.version.startsWith("Ruby 2.4.") -or $ruby.version.startsWith("Ruby 2.5.")) {
+        Update-Ruby $ruby
+    }
 }
 
 # Fix bundler.bat
