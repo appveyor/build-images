@@ -86,7 +86,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.10-1/rubyinstaller-2.4.10-1-x86.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
-            "dontUpdate"   = $true
+            "dontUpdateRubygems" = $true
             "bundlerV2"    = $true
         }
         @{
@@ -95,7 +95,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.10-1/rubyinstaller-2.4.10-1-x64.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
-            "dontUpdate"   = $true
+            "dontUpdateRubygems" = $true
             "bundlerV2"    = $true
         }
         @{
@@ -104,7 +104,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.9-1/rubyinstaller-2.5.9-1-x86.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
-            "dontUpdate"   = $true
+            "dontUpdateRubygems" = $true
             "bundlerV2"    = $true
         }
         @{
@@ -113,7 +113,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.9-1/rubyinstaller-2.5.9-1-x64.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
-            "dontUpdate"   = $true
+            "dontUpdateRubygems" = $true
             "bundlerV2"    = $true
         }
         @{
