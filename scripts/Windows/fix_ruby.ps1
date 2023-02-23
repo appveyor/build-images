@@ -83,7 +83,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         @{
             "version"      = "Ruby 2.4.10-1"
             "install_path" = "C:\Ruby24"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.10-1/rubyinstaller-2.4.10-1-x86.exe"
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby24.zip"
             "devkit_url"   = ""
             "devkit_paths" = @()
             "dontUpdate"   = $true
@@ -92,7 +92,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         @{
             "version"      = "Ruby 2.4.10-1 (x64)"
             "install_path" = "C:\Ruby24-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.4.10-1/rubyinstaller-2.4.10-1-x64.exe"
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby24-x64.zip"
             "devkit_url"   = ""
             "devkit_paths" = @()
             "dontUpdate"   = $true
@@ -101,7 +101,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         @{
             "version"      = "Ruby 2.5.9-1"
             "install_path" = "C:\Ruby25"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.9-1/rubyinstaller-2.5.9-1-x86.exe"
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby25.zip"
             "devkit_url"   = ""
             "devkit_paths" = @()
             "dontUpdate"   = $true
@@ -110,7 +110,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         @{
             "version"      = "Ruby 2.5.9-1 (x64)"
             "install_path" = "C:\Ruby25-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.9-1/rubyinstaller-2.5.9-1-x64.exe"
+            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby25-x64.zip"
             "devkit_url"   = ""
             "devkit_paths" = @()
             "dontUpdate"   = $true
@@ -379,9 +379,8 @@ function Update-Ruby($ruby) {
 
 for ($i = 0; $i -lt $rubies.Count; $i++) {
     $ruby = $rubies[$i]
-    if ($ruby.version.startsWith("Ruby 2.3.") -or $ruby.version.startsWith("Ruby 2.4.") -or $ruby.version.startsWith("Ruby 2.5.")) {
+    if ($ruby.version.startsWith("Ruby 2.4.") -or $ruby.version.startsWith("Ruby 2.5.")) {
         Install-Ruby $ruby
-        Update-Ruby $ruby
     }
 }
 
