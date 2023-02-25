@@ -326,9 +326,8 @@ if ($python39_x64) {
     Write-Host 'Python 3.9.13 x64 already installed'
     UninstallPython "Python 3.9.13 (64-bit)"
 }
-else {
-    InstallPythonEXE "3.9.13" "x64" "$env:SystemDrive\Python39-x64"
-}
+
+InstallPythonEXE "3.9.13" "x64" "$env:SystemDrive\Python39-x64"
 
 # Python 3.9.13
 $python39 = (GetUninstallString 'Python 3.9.13 (32-bit)')
@@ -336,9 +335,8 @@ if ($python39) {
     Write-Host 'Python 3.9.13 already installed'
     UninstallPython "Python 3.9.13 (32-bit)"
 }
-else {
-    InstallPythonEXE "3.9.13" "x86" "$env:SystemDrive\Python39"
-}
+
+InstallPythonEXE "3.9.13" "x86" "$env:SystemDrive\Python39"
 
 UpdatePip "$env:SystemDrive\Python39"
 UpdatePip "$env:SystemDrive\Python39-x64"
