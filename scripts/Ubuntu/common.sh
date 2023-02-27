@@ -1344,7 +1344,7 @@ function install_golangs() {
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.5" )
+    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.6" "go1.20.1" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
@@ -1360,7 +1360,7 @@ function install_golangs() {
 function install_golang_arm64() {
     echo "[INFO] Running install_golang_arm64..."
 
-    GO_VERSION="1.19.5"
+    GO_VERSION="1.20.1"
     GO_FILENAME="go${GO_VERSION}.linux-arm64.tar.gz"
     curl -fsSLO https://go.dev/dl/${GO_FILENAME}
     rm -rf /usr/local/go && tar -C /usr/local -xzf ${GO_FILENAME}
