@@ -1268,9 +1268,9 @@ function install_rubies() {
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.2" "ruby-3.1.3" "ruby-3.2.0" "ruby-head" )
+        declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.3" "ruby-3.2.1" "ruby-head" )
     else
-        declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.2" "ruby-head" )
+        declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.3" "ruby-3.2.1" "ruby-head" )
     fi
     
     for v in "${RUBY_VERSIONS[@]}"; do
