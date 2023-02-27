@@ -845,7 +845,7 @@ function install_powershell() {
 function install_powershell_arm64() {
     echo "[INFO] Running install_powershell_arm64..."
 
-    POWERSHELL_VERSION="7.2.5"
+    POWERSHELL_VERSION="7.3.3"
     FILENAME="powershell-${POWERSHELL_VERSION}-linux-arm64.tar.gz"
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
