@@ -1378,7 +1378,7 @@ function install_golang_arm64() {
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
-    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:5.0" "mcr.microsoft.com/dotnet/aspnet:5.0" "mcr.microsoft.com/mssql/server:2019-latest" "debian" "ubuntu" "centos" "alpine" "busybox" )
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:6.0" "mcr.microsoft.com/dotnet/aspnet:.0" "mcr.microsoft.com/mssql/server:2019-latest" "debian" "ubuntu" "centos" "alpine" "busybox" )
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
         docker pull "$IMAGE" ||
             { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
@@ -1457,7 +1457,7 @@ function install_docker_compose() {
         declare TAR_ARCH="aarch64"
     fi
 
-    sudo curl -L "https://github.com/docker/compose/releases/download/v2.15.1/docker-compose-linux-${TAR_ARCH}" -o /usr/local/bin/docker-compose
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.16.0/docker-compose-linux-${TAR_ARCH}" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     log_version docker-compose --version    
 }
