@@ -671,7 +671,7 @@ function install_gitversion() {
     echo "[INFO] Running install_gitversion..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=5.10.3
+        VERSION=5.12.0
     else
         VERSION=$1
     fi
