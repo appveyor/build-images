@@ -631,7 +631,7 @@ function make_git() {
 function install_gitlfs() {
     echo "[INFO] Running install_gitlfs..."
 
-    GITLFS_VERSION="3.2.0"
+    GITLFS_VERSION="3.3.0"
     FILENAME="git-lfs-linux-${OS_ARCH}-v${GITLFS_VERSION}.tar.gz"
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
