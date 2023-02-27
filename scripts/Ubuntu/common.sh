@@ -981,7 +981,7 @@ function install_dotnets() {
 function install_dotnet_arm64() {
     echo "[INFO] Running install_dotnet_arm64..."
 
-    curl -SL -o dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/72ec0dc2-f425-48c3-97f1-dc83740ba400/78e8fa01fa9987834fa01c19a23dd2e7/dotnet-sdk-7.0.102-linux-arm64.tar.gz
+    curl -SL -o dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/35901872-1f00-48e4-9f55-e6c79823e7fd/8af43bb5e25d090c0af921974287ac2c/dotnet-sdk-7.0.201-linux-arm64.tar.gz
     mkdir -p /usr/share/dotnet
     tar -zxf dotnet.tar.gz -C /usr/share/dotnet
     ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
