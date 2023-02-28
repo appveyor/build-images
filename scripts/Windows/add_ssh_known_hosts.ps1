@@ -123,4 +123,6 @@ $knownhostfile = Join-Path $sshPath "known_hosts"
 Write-Host "Updating $knownhostfile"
 [IO.File]::WriteAllLines($knownhostfile, $contents)
 
+Get-ChildItem $sshPath
+
 Write-Host "Known hosts configured" -ForegroundColor Green

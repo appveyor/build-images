@@ -1,26 +1,25 @@
-environment:    
+environment:
   matrix:
+    # Hyper-V
+    # =======
 
-# Hyper-V
-# =======
-
-  - job_name: VS 2022 on Hyper-V
-    APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
-    APPVEYOR_BAKE_IMAGE: vs2022-master
+    - job_name: VS 2022 on Hyper-V
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
+      APPVEYOR_BAKE_IMAGE: vs2022-master
 
 # Azure
 # =======
 
-  # - job_name: VS 2022 on Azure West US
-  #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-azure-westus
-  #   APPVEYOR_BAKE_IMAGE: vs2022-master-azure-westus
+# - job_name: VS 2022 on Azure West US
+#   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-azure-westus
+#   APPVEYOR_BAKE_IMAGE: vs2022-master-azure-westus
 
 # GCE
 # =======
 
-  - job_name: VS 2022 on GCE us-central1
-    APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
-    APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
+# - job_name: VS 2022 on GCE us-central1
+#   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
+#   APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
 
 init:
   - appveyor version
@@ -31,9 +30,9 @@ init:
 clone_folder: '%USERPROFILE%\image-bake-scripts'
 
 clone_script:
-- ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_COMMIT).zip" -OutFile "$env:temp\scripts.zip"
-- ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
-- ps: Copy-Item -Path "$env:temp\scripts\build-images-$($env:APPVEYOR_REPO_COMMIT)\scripts\Windows\*" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
+  - ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_COMMIT).zip" -OutFile "$env:temp\scripts.zip"
+  - ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
+  - ps: Copy-Item -Path "$env:temp\scripts\build-images-$($env:APPVEYOR_REPO_COMMIT)\scripts\Windows\*" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
 
 test: off
 
@@ -41,19 +40,18 @@ test: off
 # - ps: Get-EventLog AppVeyor -newest 10 | Format-List
 
 build_script:
+  #- ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
+  #- ps: .\install_dotnet_core_sdks.ps1
+  # - ps: .\install_qt_ifw_windows.ps1
+  # - dir C:\Qt\6.2
+  # - dir C:\Qt\Tools
+  # - dir C:\Qt\Tools\QtInstallerFramework
+  - ps: .\add_ssh_known_hosts.ps1
+  # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
 
-#- ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
-#- ps: .\install_dotnet_core_sdks.ps1
-- ps: .\install_qt_ifw_windows.ps1
-- dir C:\Qt\6.2
-- dir C:\Qt\Tools
-- dir C:\Qt\Tools\QtInstallerFramework
-- ps: .\install_nunit3.ps1
-# - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
+  # Restart VM
+  # - ps: Start-Sleep -s 5; Restart-Computer -Force
+  # - ps: Start-Sleep -s 5
 
-# Restart VM
-# - ps: Start-Sleep -s 5; Restart-Computer -Force
-# - ps: Start-Sleep -s 5
-
-- appveyor version
-- ps: .\cleanup_windows.ps1
+  - appveyor version
+  - ps: .\cleanup_windows.ps1
