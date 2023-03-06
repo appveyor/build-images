@@ -1347,7 +1347,7 @@ function install_golangs() {
     declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.6" "go1.20.1" )
     
     for v in "${GO_VERSIONS[@]}"; do
-        gvm install ${v} ||
+        gvm install ${v} -B ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
     local index
