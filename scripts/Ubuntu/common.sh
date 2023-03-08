@@ -600,7 +600,7 @@ function update_git() {
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        GIT_VERSION=2.37.0
+        GIT_VERSION=2.39.2
     else
         GIT_VERSION=$1
     fi
@@ -631,7 +631,7 @@ function make_git() {
 function install_gitlfs() {
     echo "[INFO] Running install_gitlfs..."
 
-    GITLFS_VERSION="3.2.0"
+    GITLFS_VERSION="3.3.0"
     FILENAME="git-lfs-linux-${OS_ARCH}-v${GITLFS_VERSION}.tar.gz"
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
@@ -671,7 +671,7 @@ function install_gitversion() {
     echo "[INFO] Running install_gitversion..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=5.10.3
+        VERSION=5.12.0
     else
         VERSION=$1
     fi
@@ -781,9 +781,9 @@ function install_pythons(){
     echo "[INFO] Running install_pythons..."
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.16" "3.8.16" "3.9.16" "3.10.9" "3.11.1" )
+        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.16" "3.8.16" "3.9.16" "3.10.10" "3.11.2" )
     else
-        declare PY_VERSIONS=( "2.7.18" "3.7.16" "3.8.16" "3.9.16" "3.10.9" "3.11.1" )
+        declare PY_VERSIONS=( "2.7.18" "3.7.16" "3.8.16" "3.9.16" "3.10.10" "3.11.2" )
     fi
 
     for i in "${PY_VERSIONS[@]}"; do
@@ -845,7 +845,7 @@ function install_powershell() {
 function install_powershell_arm64() {
     echo "[INFO] Running install_powershell_arm64..."
 
-    POWERSHELL_VERSION="7.2.5"
+    POWERSHELL_VERSION="7.3.3"
     FILENAME="powershell-${POWERSHELL_VERSION}-linux-arm64.tar.gz"
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
@@ -981,7 +981,7 @@ function install_dotnets() {
 function install_dotnet_arm64() {
     echo "[INFO] Running install_dotnet_arm64..."
 
-    curl -SL -o dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/72ec0dc2-f425-48c3-97f1-dc83740ba400/78e8fa01fa9987834fa01c19a23dd2e7/dotnet-sdk-7.0.102-linux-arm64.tar.gz
+    curl -SL -o dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/35901872-1f00-48e4-9f55-e6c79823e7fd/8af43bb5e25d090c0af921974287ac2c/dotnet-sdk-7.0.201-linux-arm64.tar.gz
     mkdir -p /usr/share/dotnet
     tar -zxf dotnet.tar.gz -C /usr/share/dotnet
     ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
@@ -1015,7 +1015,7 @@ function install_flutter() {
     pushd -- "${TMP_DIR}"
 
     local RELEASE_URL
-    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.7.0-stable.tar.xz"
+    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.7.5-stable.tar.xz"
     curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
         { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
     
@@ -1268,9 +1268,9 @@ function install_rubies() {
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.2" "ruby-3.1.3" "ruby-3.2.0" "ruby-head" )
+        declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.3" "ruby-3.2.1" "ruby-head" )
     else
-        declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.2" "ruby-head" )
+        declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.3" "ruby-3.2.1" "ruby-head" )
     fi
     
     for v in "${RUBY_VERSIONS[@]}"; do
@@ -1344,10 +1344,10 @@ function install_golangs() {
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.5" )
+    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.6" "go1.20.1" )
     
     for v in "${GO_VERSIONS[@]}"; do
-        gvm install ${v} ||
+        gvm install ${v} -B ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
     local index
@@ -1360,7 +1360,7 @@ function install_golangs() {
 function install_golang_arm64() {
     echo "[INFO] Running install_golang_arm64..."
 
-    GO_VERSION="1.19.5"
+    GO_VERSION="1.20.1"
     GO_FILENAME="go${GO_VERSION}.linux-arm64.tar.gz"
     curl -fsSLO https://go.dev/dl/${GO_FILENAME}
     rm -rf /usr/local/go && tar -C /usr/local -xzf ${GO_FILENAME}
@@ -1378,7 +1378,7 @@ function install_golang_arm64() {
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
-    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:5.0" "mcr.microsoft.com/dotnet/aspnet:5.0" "mcr.microsoft.com/mssql/server:2019-latest" "debian" "ubuntu" "centos" "alpine" "busybox" )
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:6.0" "mcr.microsoft.com/dotnet/aspnet:.0" "mcr.microsoft.com/mssql/server:2019-latest" "debian" "ubuntu" "centos" "alpine" "busybox" )
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
         docker pull "$IMAGE" ||
             { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
@@ -1457,7 +1457,7 @@ function install_docker_compose() {
         declare TAR_ARCH="aarch64"
     fi
 
-    sudo curl -L "https://github.com/docker/compose/releases/download/v2.15.1/docker-compose-linux-${TAR_ARCH}" -o /usr/local/bin/docker-compose
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.16.0/docker-compose-linux-${TAR_ARCH}" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     log_version docker-compose --version    
 }
@@ -1932,7 +1932,7 @@ function install_curl() {
     echo "[INFO] Running install_curl..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=7.84.0
+        VERSION=7.88.1
     else
         VERSION=$1
     fi
