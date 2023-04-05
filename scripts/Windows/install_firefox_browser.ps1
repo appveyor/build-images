@@ -1,6 +1,8 @@
 ﻿. "$PSScriptRoot\common.ps1"
 
-Write-Host "Installing FireFox..." -ForegroundColor Cyan
+$firefoxVersion = "111.0.1"
+
+Write-Host "Installing FireFox $firefoxVersion..." -ForegroundColor Cyan
 
 $arch = 'win64'
 if (test-path "${env:ProgramFiles(x86)}\Mozilla Firefox") {
@@ -11,7 +13,7 @@ if (test-path "${env:ProgramFiles(x86)}\Mozilla Firefox") {
 
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\firefox-installer.exe"
-(New-Object Net.WebClient).DownloadFile("https://download.mozilla.org/?product=firefox-106.0.3-ssl&os=$arch&lang=en-US", $exePath)
+(New-Object Net.WebClient).DownloadFile("https://download.mozilla.org/?product=firefox-$firefoxVersion-ssl&os=$arch&lang=en-US", $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath -ms
@@ -19,4 +21,4 @@ Remove-Item $exePath
 
 GetProductVersion "Firefox"
 
-Write-Host "Installed FireFox" -ForegroundColor Green
+Write-Host "Installed FireFox $firefoxVersion" -ForegroundColor Green
