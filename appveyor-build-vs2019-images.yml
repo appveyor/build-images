@@ -87,7 +87,6 @@ for:
       - ps: Start-Sleep -s 5
 
       - appveyor version
-      - ps: .\install_ruby.ps1
       - ps: .\install_path_utils.ps1
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
@@ -103,6 +102,7 @@ for:
       - ps: .\install_subversion.ps1
       - ps: .\add_ssh_known_hosts.ps1
 
+      - ps: .\install_ruby.ps1
       - ps: .\install_docker_hyperv_wsl_features.ps1
 
       # Restart VM
