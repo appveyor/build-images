@@ -87,6 +87,7 @@ for:
       - ps: Start-Sleep -s 5
 
       - appveyor version
+      - ps: .\install_ruby.ps1
       - ps: .\install_path_utils.ps1
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
