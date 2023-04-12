@@ -13,7 +13,7 @@ if (-not (Test-Path $apachePath)) {
 
 Write-Host "Downloading..."
 $zipPath = "$env:TEMP\apache-maven-3.9.0-bin.zip"
-(New-Object Net.WebClient).DownloadFile('https://dlcdn.apache.org/maven/maven-3/3.9.0/binaries/apache-maven-3.9.0-bin.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://dlcdn.apache.org/maven/maven-3/3.9.1/binaries/apache-maven-3.9.1-bin.zip', $zipPath)
 
 Write-Host "Unpacking..."
 7z x $zipPath -oC:\apache-maven | Out-Null
