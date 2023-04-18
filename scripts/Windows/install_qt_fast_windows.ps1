@@ -6,14 +6,15 @@ $installDir = "C:\Qt"
 
 $component_groups = @(
     @{
-        version    = "6.4.3"
+        version    = "6.5.0"
         components = @(
-            "win64_msvc2019_64",
             "win64_mingw",
+            "win64_msvc2019_64",
+            "win64_msvc2019_arm64",
             "debug_info",
             "debug_info.win64_mingw",
             "debug_info.win64_msvc2019_64",
-            "debug_info.win64_msvc2019_arm64",
+            "debug_info.win64_msvc2019_arm64",       
 
             "addons.qt3d",
             "addons.qt3d.win64_mingw",
@@ -40,10 +41,15 @@ $component_groups = @(
             "addons.qtdatavis3d.win64_msvc2019_64",
             "addons.qtdatavis3d.win64_msvc2019_arm64",
 
+            "addons.qtgrpc",
+            "addons.qtgrpc.win64_mingw",
+            "addons.qtgrpc.win64_msvc2019_64",
+            "addons.qtgrpc.win64_msvc2019_arm64",
+
             "addons.qthttpserver",
             "addons.qthttpserver.win64_mingw",
             "addons.qthttpserver.win64_msvc2019_64",
-            "addons.qthttpserver.win64_msvc2019_arm64",            
+            "addons.qthttpserver.win64_msvc2019_arm64",
 
             "addons.qtimageformats",
             "addons.qtimageformats.win64_mingw",
@@ -53,7 +59,12 @@ $component_groups = @(
             "addons.qtlanguageserver",
             "addons.qtlanguageserver.win64_mingw",
             "addons.qtlanguageserver.win64_msvc2019_64",
-            "addons.qtlanguageserver.win64_msvc2019_arm64",               
+            "addons.qtlanguageserver.win64_msvc2019_arm64",
+
+            "addons.qtlocation",
+            "addons.qtlocation.win64_mingw",
+            "addons.qtlocation.win64_msvc2019_64",
+            "addons.qtlocation.win64_msvc2019_arm64",
 
             "addons.qtlottie",
             "addons.qtlottie.win64_mingw",
@@ -81,13 +92,17 @@ $component_groups = @(
             "addons.qtquick3dphysics",
             "addons.qtquick3dphysics.win64_mingw",
             "addons.qtquick3dphysics.win64_msvc2019_64",
-            "addons.qtquick3dphysics.win64_msvc2019_arm64",            
+            "addons.qtquick3dphysics.win64_msvc2019_arm64",
+
+            "addons.qtquickeffectmaker",
+            "addons.qtquickeffectmaker.win64_mingw",
+            "addons.qtquickeffectmaker.win64_msvc2019_64",
 
             "addons.qtremoteobjects",
             "addons.qtremoteobjects.win64_mingw",
             "addons.qtremoteobjects.win64_msvc2019_64",
             "addons.qtremoteobjects.win64_msvc2019_arm64",
-            
+
             "addons.qtscxml",
             "addons.qtscxml.win64_mingw",
             "addons.qtscxml.win64_msvc2019_64",
@@ -102,7 +117,7 @@ $component_groups = @(
             "addons.qtserialbus.win64_mingw",
             "addons.qtserialbus.win64_msvc2019_64",
             "addons.qtserialbus.win64_msvc2019_arm64",
-            
+
             "addons.qtserialport",
             "addons.qtserialport.win64_mingw",
             "addons.qtserialport.win64_msvc2019_64",
@@ -111,7 +126,7 @@ $component_groups = @(
             "addons.qtspeech",
             "addons.qtspeech.win64_mingw",
             "addons.qtspeech.win64_msvc2019_64",
-            "addons.qtspeech.win64_msvc2019_arm64",                 
+            "addons.qtspeech.win64_msvc2019_arm64",
 
             "addons.qtvirtualkeyboard",
             "addons.qtvirtualkeyboard.win64_mingw",
@@ -125,7 +140,7 @@ $component_groups = @(
 
             "addons.qtwebengine",
             "addons.qtwebengine.win64_msvc2019_64",
-            
+
             "addons.qtwebsockets",
             "addons.qtwebsockets.win64_mingw",
             "addons.qtwebsockets.win64_msvc2019_64",
@@ -144,7 +159,7 @@ $component_groups = @(
             "qtquick3d.win64_mingw",
             "qtquick3d.win64_msvc2019_64",
             "qtquick3d.win64_msvc2019_arm64",
-        
+
             "qtquicktimeline",
             "qtquicktimeline.win64_mingw",
             "qtquicktimeline.win64_msvc2019_64",
@@ -154,6 +169,7 @@ $component_groups = @(
             "qtshadertools.win64_mingw",
             "qtshadertools.win64_msvc2019_64",
             "qtshadertools.win64_msvc2019_arm64"
+
         )
     }
 )
@@ -161,7 +177,7 @@ $component_groups = @(
 if (-not $env:INSTALL_LATEST_ONLY) {
     $component_groups += @(
         @{
-            version    = "6.3.2"
+            version    = "6.4.3"
             components = @(
                 "win64_msvc2019_64",
                 "win64_mingw",
@@ -193,12 +209,22 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "addons.qtdatavis3d",
                 "addons.qtdatavis3d.win64_mingw",
                 "addons.qtdatavis3d.win64_msvc2019_64",
-                "addons.qtdatavis3d.win64_msvc2019_arm64",      
+                "addons.qtdatavis3d.win64_msvc2019_arm64",
+    
+                "addons.qthttpserver",
+                "addons.qthttpserver.win64_mingw",
+                "addons.qthttpserver.win64_msvc2019_64",
+                "addons.qthttpserver.win64_msvc2019_arm64",            
     
                 "addons.qtimageformats",
                 "addons.qtimageformats.win64_mingw",
                 "addons.qtimageformats.win64_msvc2019_64",
                 "addons.qtimageformats.win64_msvc2019_arm64",
+    
+                "addons.qtlanguageserver",
+                "addons.qtlanguageserver.win64_mingw",
+                "addons.qtlanguageserver.win64_msvc2019_64",
+                "addons.qtlanguageserver.win64_msvc2019_arm64",               
     
                 "addons.qtlottie",
                 "addons.qtlottie.win64_mingw",
@@ -215,10 +241,18 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "addons.qtnetworkauth.win64_msvc2019_64",
                 "addons.qtnetworkauth.win64_msvc2019_arm64",
     
+                "addons.qtpdf",
+                "addons.qtpdf.win64_msvc2019_64",
+    
                 "addons.qtpositioning",
                 "addons.qtpositioning.win64_mingw",
                 "addons.qtpositioning.win64_msvc2019_64",
                 "addons.qtpositioning.win64_msvc2019_arm64",
+    
+                "addons.qtquick3dphysics",
+                "addons.qtquick3dphysics.win64_mingw",
+                "addons.qtquick3dphysics.win64_msvc2019_64",
+                "addons.qtquick3dphysics.win64_msvc2019_arm64",            
     
                 "addons.qtremoteobjects",
                 "addons.qtremoteobjects.win64_mingw",
@@ -243,7 +277,12 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "addons.qtserialport",
                 "addons.qtserialport.win64_mingw",
                 "addons.qtserialport.win64_msvc2019_64",
-                "addons.qtserialport.win64_msvc2019_arm64",            
+                "addons.qtserialport.win64_msvc2019_arm64",
+    
+                "addons.qtspeech",
+                "addons.qtspeech.win64_mingw",
+                "addons.qtspeech.win64_msvc2019_64",
+                "addons.qtspeech.win64_msvc2019_arm64",                 
     
                 "addons.qtvirtualkeyboard",
                 "addons.qtvirtualkeyboard.win64_mingw",
@@ -287,7 +326,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "qtshadertools.win64_msvc2019_64",
                 "qtshadertools.win64_msvc2019_arm64"
             )
-        }        
+        }
         @{
             version    = "6.2.4"
             components = @(
