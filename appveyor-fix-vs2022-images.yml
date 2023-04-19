@@ -17,9 +17,9 @@ environment:
 # GCE
 # =======
 
-# - job_name: VS 2022 on GCE us-central1
-#   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
-#   APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
+- job_name: VS 2022 on GCE us-central1
+  APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
+  APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
 
 init:
   - appveyor version
@@ -46,9 +46,9 @@ build_script:
   # - dir C:\Qt\6.2
   # - dir C:\Qt\Tools
   # - dir C:\Qt\Tools\QtInstallerFramework
-  - ps: .\add_ssh_known_hosts.ps1
+  #- ps: .\add_ssh_known_hosts.ps1
   # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
-
+  - ps: .\install_qt_fast_windows.ps1
   # Restart VM
   # - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
