@@ -17,9 +17,9 @@ environment:
 # GCE
 # =======
 
-  - job_name: VS 2022 on GCE us-central1
-    APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
-    APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
+    - job_name: VS 2022 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
 
 init:
   - appveyor version
