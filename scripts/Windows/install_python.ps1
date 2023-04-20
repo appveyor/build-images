@@ -341,43 +341,43 @@ InstallPythonEXE "3.9.13" "x86" "$env:SystemDrive\Python39"
 UpdatePip "$env:SystemDrive\Python39"
 UpdatePip "$env:SystemDrive\Python39-x64"
 
-# Python 3.10.10
-$python310 = (GetUninstallString 'Python 3.10.10 (32-bit)')
+# Python 3.10.11
+$python310 = (GetUninstallString 'Python 3.10.11 (32-bit)')
 if ($python310) {
-    Write-Host 'Python 3.10.10 already installed'
+    Write-Host 'Python 3.10.11 already installed'
 }
 else {
-    InstallPythonEXE "3.10.10" "x86" "$env:SystemDrive\Python310"
+    InstallPythonEXE "3.10.11" "x86" "$env:SystemDrive\Python310"
 }
 
-# Python 3.10.10 x64
-$python310_x64 = (GetUninstallString 'Python 3.10.10 (64-bit)')
+# Python 3.10.11 x64
+$python310_x64 = (GetUninstallString 'Python 3.10.11 (64-bit)')
 if ($python310_x64) {
-    Write-Host 'Python 3.10.10 x64 already installed'
+    Write-Host 'Python 3.10.11 x64 already installed'
 }
 else {
-    InstallPythonEXE "3.10.10" "x64" "$env:SystemDrive\Python310-x64"
+    InstallPythonEXE "3.10.11" "x64" "$env:SystemDrive\Python310-x64"
 }
 
 UpdatePip "$env:SystemDrive\Python310"
 UpdatePip "$env:SystemDrive\Python310-x64"
 
-# Python 3.11.2 x64
-$python311_x64 = (GetUninstallString 'Python 3.11.2 (64-bit)')
+# Python 3.11.3 x64
+$python311_x64 = (GetUninstallString 'Python 3.11.3 (64-bit)')
 if ($python311_x64) {
-    Write-Host 'Python 3.11.2 x64 already installed'
+    Write-Host 'Python 3.11.3 x64 already installed'
 }
 else {
-    InstallPythonEXE "3.11.2" "x64" "$env:SystemDrive\Python311-x64"
+    InstallPythonEXE "3.11.3" "x64" "$env:SystemDrive\Python311-x64"
 }
 
-# Python 3.11.2
-$python311 = (GetUninstallString 'Python 3.11.2 (32-bit)')
+# Python 3.11.3
+$python311 = (GetUninstallString 'Python 3.11.3 (32-bit)')
 if ($python311) {
-    Write-Host 'Python 3.11.2 already installed'
+    Write-Host 'Python 3.11.3 already installed'
 }
 else {
-    InstallPythonEXE "3.11.2" "x86" "$env:SystemDrive\Python311"
+    InstallPythonEXE "3.11.3" "x86" "$env:SystemDrive\Python311"
 }
 
 UpdatePip "$env:SystemDrive\Python311"
