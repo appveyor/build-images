@@ -48,7 +48,8 @@ build_script:
   # - dir C:\Qt\Tools\QtInstallerFramework
   #- ps: .\add_ssh_known_hosts.ps1
   # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
-  - ps: .\install_qt_fast_windows.ps1
+  # - ps: .\install_qt_fast_windows.ps1
+  - ps: .\install_sql_server_2022.ps1
   # Restart VM
   # - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
