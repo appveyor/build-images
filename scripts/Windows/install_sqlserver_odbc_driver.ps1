@@ -1,3 +1,26 @@
+function GetUninstallString($productName) {
+    $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
+    $uninstallString = ($x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
+        | ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
+        | Where-Object { $_.DisplayName -and $_.DisplayName -eq $productName } `
+        | Select UninstallString).UninstallString
+
+    if ($uninstallString) {
+        return $uninstallString.replace('MsiExec.exe /I{', '/x{').replace('MsiExec.exe /X{', '/x{')
+    }
+    else {
+        return $uninstallString
+    }
+}
+
+$odbc17Name = "Microsoft ODBC Driver 17 for SQL Server"
+$uninstallCommand = (GetUninstallString $odbc17Name)
+if ($uninstallCommand) {
+    Write-Host "Uninstalling $odbc17Name..."
+    cmd /c start /wait msiexec.exe $uninstallCommand /quiet   
+}
+
+
 Write-Host "Installing ODBC driver 18..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
