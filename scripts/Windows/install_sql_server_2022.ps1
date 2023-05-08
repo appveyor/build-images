@@ -7,7 +7,7 @@ Write-Host "Extracting..."
 7z x $isoPath -aoa -o"$extractPath" | Out-Null
 
 Write-Host "Installing..."
-cmd /c start /wait $extractPath\setup.exe /q /ACTION=Install /FEATURES=SQLEngine,FullText,RS,ADV_SSMS /INSTANCENAME=SQL2022 /SQLSYSADMINACCOUNTS="BUILTIN\ADMINISTRATORS" /TCPENABLED=1 /NPENABLED=1 /SECURITYMODE=SQL /SAPWD=Password12! /IACCEPTSQLSERVERLICENSETERMS
+cmd /c start /wait $extractPath\setup.exe /q /ACTION=Install /FEATURES=SQLEngine,FullText,RS,Client-Tools-Connectivity /INSTANCENAME=SQL2022 /SQLSYSADMINACCOUNTS="BUILTIN\ADMINISTRATORS" /TCPENABLED=1 /NPENABLED=1 /SECURITYMODE=SQL /SAPWD=Password12! /IACCEPTSQLSERVERLICENSETERMS
 
 Write-Host "Deleting temporary files..."
 Remove-Item $isoPath -Force -ErrorAction Ignore
