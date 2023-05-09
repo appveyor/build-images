@@ -31,6 +31,14 @@ Write-Host "Installing..."
 cmd /c start /wait msiexec /quiet /passive /qn /i $msiPath IACCEPTMSODBCSQLLICENSETERMS=YES ADDLOCAL=ALL
 #Remove-Item $msiPath
 
+
+Write-Host "Installing SQLCMD utility..." -ForegroundColor Cyan
+$msiPath = "$env:TEMP\MsSqlCmdLnUtils.msi"
+(New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/a/a/4/aa47b3b0-9f67-441d-8b00-e74cd845ea9f/EN/x64/MsSqlCmdLnUtils.msi', $msiPath)
+
+cmd /c start /wait msiexec /passive /qn /i $msiPath
+
+
 Write-Host "ODBC version 18 installed" -ForegroundColor Green
 
 
