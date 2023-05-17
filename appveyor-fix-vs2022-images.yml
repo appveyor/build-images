@@ -3,9 +3,9 @@ environment:
     # Hyper-V
     # =======
 
-    - job_name: VS 2022 on Hyper-V
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
-      APPVEYOR_BAKE_IMAGE: vs2022-master
+    # - job_name: VS 2022 on Hyper-V
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
+    #   APPVEYOR_BAKE_IMAGE: vs2022-master
 
 # Azure
 # =======
@@ -48,10 +48,20 @@ build_script:
   # - dir C:\Qt\Tools\QtInstallerFramework
   #- ps: .\add_ssh_known_hosts.ps1
   # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
-  - ps: .\install_qt_fast_windows.ps1
-  # Restart VM
-  # - ps: Start-Sleep -s 5; Restart-Computer -Force
+  # - ps: .\install_qt_fast_windows.ps1
+  
+  - ps: .\install_sql_server_2022.ps1
+  #- ps: .\install_sqlserver_odbc_driver.ps1
+  #- ps: set-itemproperty -path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL16.SQL2022\MSSQLServer\SuperSocketNetLib\Tcp\IPAll' -name tcpport -value 1433
+  - ps: Start-Sleep -s 5; Restart-Computer
+  - ps: Start-Sleep -s 5
+  - ps: .\install_sql_server_2022_after_restart.ps1
+  #  Restart VM
+  #  - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
 
   - appveyor version
   - ps: .\cleanup_windows.ps1
+
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
