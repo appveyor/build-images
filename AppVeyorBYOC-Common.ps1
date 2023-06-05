@@ -260,7 +260,7 @@ function ValidateDependencies ($cloudType) {
 }
 
 function GetPackerPath ([switch]$prerelease) {
-    $packerVersion = if ($prerelease) {"1.4.5"} else {"1.4.3"}
+    $packerVersion = if ($prerelease) {"1.8.7"} else {"1.4.3"}
     Write-host "`nChecking if Hashicorp Packer version $packerVersion is installed..."  -ForegroundColor Cyan
     if ((Get-Command packer -ErrorAction Ignore) -and (packer --version) -eq $packerVersion) {
         Write-Host "Packer version $packerVersion found" -ForegroundColor DarkGray
@@ -319,12 +319,16 @@ function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $Im
         $imageFeatures | % {
             $scriptName1 = "install_$($_)_after_reboot.ps1"
             $scriptName2 = "$($_)_after_reboot.ps1"
+			$scriptName3 = "install_$($_)_after_restart.ps1"
             if (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName1") {
                 $after_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName1"
                 }
             elseif (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName2") {
                 $after_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName2"
                 }
+			elseif (Test-Path "$PSScriptRoot/scripts/Windows/$scriptName3") {
+				$after_reboot_scripts += "{{ template_dir }}/scripts/Windows/$scriptName3"
+				}
         }
 
         $before_reboot = @{
@@ -350,7 +354,17 @@ function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $Im
             }
             $packer_file.provisioners +=$after_reboot
         }
-
+		
+		$disableWindowsFeatures = @{
+			'type' = 'powershell'
+            'scripts' = @("{{ template_dir }}/scripts/Windows/disable_windows_background_services.ps1")
+			'only' = @('hyperv-iso')
+            'elevated_user' = '{{user `install_user`}}'
+            'elevated_password' = '{{user `install_password`}}'
+		}
+		
+		$packer_file.provisioners += $disableWindowsFeatures
+		
 
     }
 
@@ -406,6 +420,7 @@ function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $Im
     Copy-Item -Path "$PSScriptRoot\hyper-v" -Destination $(Split-Path $imageTemplateCustom -Parent) -recurse -Force
     Copy-Item -Path "$PSScriptRoot\http" -Destination $(Split-Path $imageTemplateCustom -Parent) -recurse -Force
     $packer_file | ConvertTo-Json -Depth 20 | Set-Content -Path $imageTemplateCustom
+	
     return $imageTemplateCustom
 }
 
