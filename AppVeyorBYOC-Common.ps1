@@ -350,6 +350,8 @@ function ParseImageFeaturesAndCustomScripts ($imageFeatures, $imageTemplate, $Im
             }
             $packer_file.provisioners +=$after_reboot
         }
+
+
     }
 
     if($ImageCustomScript) {
