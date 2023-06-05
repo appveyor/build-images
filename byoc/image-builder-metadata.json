@@ -77,6 +77,10 @@
                "title":"SQL Server 2019 Developer Edition"
             },
             {
+               "id":"sql_server_2022",
+               "title":"SQL Server 2022 Developer Edition"
+            },
+            {
                "id":"nodejs_latest",
                "title":"Node.js"
             },
