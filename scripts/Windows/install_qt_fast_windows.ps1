@@ -6,7 +6,7 @@ $installDir = "C:\Qt"
 
 $component_groups = @(
     @{
-        version    = "6.5.0"
+        version    = "6.5.1"
         components = @(
             "win64_mingw",
             "win64_msvc2019_64",
@@ -328,7 +328,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             )
         }
         @{
-            version    = "6.2.4"
+            version    = "6.2.8"
             components = @(
                 "win64_msvc2019_64",
                 "win64_mingw",
