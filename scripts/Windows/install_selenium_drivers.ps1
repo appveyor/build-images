@@ -12,7 +12,7 @@ Add-Path $destPath
 Write-Host "Installing Chrome Selenium driver..." -ForegroundColor Cyan
 
 $zipPath = "$env:TEMP\chromedriver_win32.zip"
-(New-Object Net.WebClient).DownloadFile('https://chromedriver.storage.googleapis.com/112.0.5615.49/chromedriver_win32.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_win32.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 Remove-Item $zipPath
 
@@ -26,7 +26,7 @@ Write-Host "Installed Chrome Selenium driver" -ForegroundColor Green
 Write-Host "Installing Edge Selenium driver..." -ForegroundColor Cyan
 
 $zipPath = "$env:TEMP\edgedriver_win32.zip"
-(New-Object Net.WebClient).DownloadFile('https://msedgedriver.azureedge.net/111.0.1661.62/edgedriver_win32.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://msedgedriver.azureedge.net/115.0.1860.0/edgedriver_win32.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 Remove-Item $zipPath
 
@@ -39,7 +39,7 @@ Write-Host "Installing FireFox Selenium driver..." -ForegroundColor Cyan
 
 # https://github.com/mozilla/geckodriver/releases
 
-$zipPath = "$env:TEMP\geckodriver-v0.26.0-win32.zip"
+$zipPath = "$env:TEMP\geckodriver-v0.33.0-win32.zip"
 (New-Object Net.WebClient).DownloadFile('https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-win32.zip', $zipPath)
 7z x $zipPath -o"$destPath" -aoa
 Remove-Item $zipPath
