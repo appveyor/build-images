@@ -576,7 +576,7 @@ $component_groups += @(
             "qt.tools.win32_mingw810",
             "qt.tools.win64_mingw810",
             "qt.tools.win64_mingw900",
-            "qt.tools.ifw.45",
+            "qt.tools.ifw.46",
             "qt.license.thirdparty"
         )
     }
