@@ -20,7 +20,7 @@ Function InstallVS
     Invoke-WebRequest -Uri $VSBootstrapperURL -OutFile "${env:Temp}\vs_$Sku.exe"
 
     $FilePath = "${env:Temp}\vs_$Sku.exe"
-	$Arguments = ($WorkLoads, '--norestart', '--wait', '--nocache')
+	$Arguments = ($WorkLoads, '--passive', '--norestart', '--wait', '--nocache')
 
 	if ($ChannelUri) {
 		Write-host "Adding channelUri..."
