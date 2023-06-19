@@ -41,12 +41,25 @@ Function InstallVS
     }
     else
     {
-      Write-Host -Object "Non zero exit code returned by the installation process : $exitCode."
+	  $setupErrorLogPath = "$env:TEMP\dd_setup_*_errors.log"
+	  if (Test-Path -Path $setupErrorLogPath)
+	  {
+		Write-Host "Log file found"
+	  	$logErrors = Get-Content -Path $setupErrorLogPath -Raw
+	  	Write-Host "$logErrors"
+	  }
+
+	  Write-Host "Non zero exit code returned by the installation process : $exitCode"
+	  exit $exitCode
+      
+	 
+	  #Write-Host -Object "Non zero exit code returned by the installation process : $exitCode."
 
       # this wont work because of log size limitation in extension manager
       # Get-Content $customLogFilePath | Write-Host
 
-      exit $exitCode
+      #exit $exitCode
+
     }
   }
   catch
