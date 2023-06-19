@@ -115,8 +115,9 @@ for:
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
-      - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 } else { .\install_docker_desktop.ps1 }
-
+      #- ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 } else { .\install_docker_desktop.ps1 }
+      - ps: .\install_docker_desktop.ps1
+      
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
