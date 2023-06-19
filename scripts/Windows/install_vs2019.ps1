@@ -281,9 +281,9 @@ if ($env:install_vs2019_preview) {
 	$VSBootstrapperURL = 'https://aka.ms/vs/16/pre/vs_community.exe'
 } else {
 	Write-Host "Installing from 'Release' channel"
-	#$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
-	$VSBootstrapperURL = 'https://download.visualstudio.microsoft.com/download/pr/7c09e2e8-2b3e-4213-93ab-5646874f8a2b/5383ec66848fff294c5536043026affaf924615cbae82a05441d6d4c8372ead7/vs_Professional.exe'
-	$ChannelUri = 'https://aka.ms/vs/16/release/112851321_818166240/channel'
+	$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
+	#$VSBootstrapperURL = 'https://download.visualstudio.microsoft.com/download/pr/7c09e2e8-2b3e-4213-93ab-5646874f8a2b/5383ec66848fff294c5536043026affaf924615cbae82a05441d6d4c8372ead7/vs_Professional.exe'
+	#$ChannelUri = 'https://aka.ms/vs/16/release/112851321_818166240/channel'
 
 	# This is how to know channelUri for previous versions of VS 2019
 	# - Download previous bootstrapper for Professional edition: https://docs.microsoft.com/en-us/visualstudio/releases/2019/history#release-dates-and-build-numbers
