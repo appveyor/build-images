@@ -49,44 +49,39 @@ if (-not $installed) {
 
 # $hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
 # $hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
-Write-Host "Starting Stevedore installation..." -ForegroundColor Cyan
-$msiPath =  "$($env:TEMP)\stevedore.msi"
-Write-Host "Downloading..."
-(New-Object Net.WebClient).DownloadFile('https://github.com/slonopotamus/stevedore/releases/download/0.16.0/stevedore-0.16.0-x86_64.msi', $msiPath)
-Write-Host "Installing..."
-cmd /c start /wait msiexec /i $msiPath ADDLOCAL=FeatureHyperV /quiet 
-del $msiPath
+Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/microsoft/Windows-Containers/Main/helpful_tools/Install-DockerCE/install-docker-ce.ps1" -o install-docker-ce.ps1
+.\install-docker-ce.ps1
 
-if ($hypervInstalled -and $osVerBuild -ge 16299) {
-	# 1709 and above is required for LCOW and if only Hyper-V enabled
+# if ($hypervInstalled -and $osVerBuild -ge 16299) {
+# 	# 1709 and above is required for LCOW and if only Hyper-V enabled
 	
-	Write-Host "Enable LCOW"
-	(New-Object Net.WebClient).DownloadFile('https://github.com/linuxkit/lcow/releases/download/v4.14.35-v0.3.9/release.zip', "$env:TEMP\linuxkit-lcow.zip")
-	Expand-Archive -Path "$env:TEMP\linuxkit-lcow.zip" -DestinationPath "$env:ProgramFiles\Linux Containers" -Force
-	Remove-Item "$env:TEMP\linuxkit-lcow.zip"
+# 	Write-Host "Enable LCOW"
+# 	(New-Object Net.WebClient).DownloadFile('https://github.com/linuxkit/lcow/releases/download/v4.14.35-v0.3.9/release.zip', "$env:TEMP\linuxkit-lcow.zip")
+# 	Expand-Archive -Path "$env:TEMP\linuxkit-lcow.zip" -DestinationPath "$env:ProgramFiles\Linux Containers" -Force
+# 	Remove-Item "$env:TEMP\linuxkit-lcow.zip"
 
-	Write-Host "Stopping Docker"
-	Stop-Service docker
+# 	Write-Host "Stopping Docker"
+# 	Stop-Service docker
 
-	Write-Host "Re-registering Docker with experimental features enabled"
-	dockerd --unregister-service
-	dockerd --register-service --experimental
-	Start-Service docker
+# 	Write-Host "Re-registering Docker with experimental features enabled"
+# 	dockerd --unregister-service
+# 	dockerd --register-service --experimental
+# 	Start-Service docker
 
-	# run simplest test
-	docker run --rm busybox echo hello_world
-}
+# 	# run simplest test
+# 	docker run --rm busybox echo hello_world
+# }
 
 Write-Host "Installing docker-compose"
-(New-Object Net.WebClient).DownloadFile('https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Windows-x86_64.exe', "$env:ProgramFiles\Docker\docker-compose.exe")
+(New-Object Net.WebClient).DownloadFile('https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Windows-x86_64.exe', "$env:windir\System32\docker-compose.exe")
 
 Write-Host "Starting Docker"
 Start-Service docker
 
-$env:path = "$env:ProgramFiles\Docker;$env:path"
+#$env:path = "$env:ProgramFiles\Docker;$env:path"
 
 Write-Host "Downloading docker-credential-wincred"
 (New-Object Net.WebClient).DownloadFile('https://github.com/docker/docker-credential-helpers/releases/download/v0.6.0/docker-credential-wincred-v0.6.0-amd64.zip', "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip")
-Expand-Archive -Path "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip" -DestinationPath "$env:ProgramFiles\Docker" -Force
+Expand-Archive -Path "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip" -DestinationPath "$env:windir\System32" -Force
 Remove-Item "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip"
 Write-Host "docker-credential-wincred installed"
