@@ -38,17 +38,24 @@ if (-not $installed) {
     return
 }
 
-Write-Host "Configure PSGallery trust policy"
-Set-PSRepository -InstallationPolicy Trusted -Name PSGallery
+# Write-Host "Configure PSGallery trust policy"
+# Set-PSRepository -InstallationPolicy Trusted -Name PSGallery
 
-Write-Host "Install-Module DockerProvider"
-Install-Module DockerMsftProvider -Force
+# Write-Host "Install-Module DockerProvider"
+# Install-Module DockerMsftProvider -Force
 
-Write-Host "Install-Package Docker"
-Install-Package -Name docker -RequiredVersion 20.10.7 -ProviderName DockerMsftProvider -Force
+# Write-Host "Install-Package Docker"
+# Install-Package -Name docker -RequiredVersion 20.10.7 -ProviderName DockerMsftProvider -Force
 
-$hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
-$hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
+# $hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
+# $hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
+Write-Host "Starting Stevedore installation..." -ForegroundColor Cyan
+$msiPath =  "$($env:TEMP)\stevedore.msi"
+Write-Host "Downloading..."
+(New-Object Net.WebClient).DownloadFile('https://github.com/slonopotamus/stevedore/releases/download/0.16.0/stevedore-0.16.0-x86_64.msi', $msiPath)
+Write-Host "Installing..."
+cmd /c start /wait msiexec /i $msiPath ADDLOCAL=FeatureHyperV /quiet 
+del $msiPath
 
 if ($hypervInstalled -and $osVerBuild -ge 16299) {
 	# 1709 and above is required for LCOW and if only Hyper-V enabled
