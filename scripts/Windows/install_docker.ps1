@@ -38,14 +38,6 @@ if (-not $installed) {
     return
 }
 
-# Write-Host "Configure PSGallery trust policy"
-# Set-PSRepository -InstallationPolicy Trusted -Name PSGallery
-
-# Write-Host "Install-Module DockerProvider"
-# Install-Module DockerMsftProvider -Force
-
-# Write-Host "Install-Package Docker"
-# Install-Package -Name docker -RequiredVersion 20.10.7 -ProviderName DockerMsftProvider -Force
 
 # $hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
 # $hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
