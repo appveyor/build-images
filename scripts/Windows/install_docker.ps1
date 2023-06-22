@@ -15,7 +15,7 @@ $osVerBuild = (Get-CimInstance Win32_OperatingSystem).BuildNumber
 function ContainersFeatureInstalled () {
   $containersFeature = (Get-WindowsOptionalFeature -FeatureName Containers -Online)
   if (-not $containersFeature -or $containersFeature.State -ne 'Enabled') {
-	return $false
+	  return $false
   }
   else {
     return $true
@@ -39,33 +39,44 @@ if (-not $installed) {
 }
 
 
-# $hypervFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online)
-# $hypervInstalled = ($hypervFeature -and $hypervFeature.State -eq 'Enabled')
-Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/microsoft/Windows-Containers/Main/helpful_tools/Install-DockerCE/install-docker-ce.ps1" -o install-docker-ce.ps1
-.\install-docker-ce.ps1
-
-# if ($hypervInstalled -and $osVerBuild -ge 16299) {
-# 	# 1709 and above is required for LCOW and if only Hyper-V enabled
-	
-# 	Write-Host "Enable LCOW"
-# 	(New-Object Net.WebClient).DownloadFile('https://github.com/linuxkit/lcow/releases/download/v4.14.35-v0.3.9/release.zip', "$env:TEMP\linuxkit-lcow.zip")
-# 	Expand-Archive -Path "$env:TEMP\linuxkit-lcow.zip" -DestinationPath "$env:ProgramFiles\Linux Containers" -Force
-# 	Remove-Item "$env:TEMP\linuxkit-lcow.zip"
-
-# 	Write-Host "Stopping Docker"
-# 	Stop-Service docker
-
-# 	Write-Host "Re-registering Docker with experimental features enabled"
-# 	dockerd --unregister-service
-# 	dockerd --register-service --experimental
-# 	Start-Service docker
-
-# 	# run simplest test
-# 	docker run --rm busybox echo hello_world
+#Get the list of .zip packages available from docker.
+$availableVersions = ((Invoke-WebRequest -Uri $DefaultDockerLocation -UseBasicParsing).Links | Where-Object {$_.href -like "docker*"}).href | Sort-Object -Descending
+       
+#Parse the versions from the file names
+$availableVersions = ($availableVersions | Select-String -Pattern "docker-(\d+\.\d+\.\d+).+"  -AllMatches | Select-Object -Expand Matches | %{ $_.Groups[1].Value })
+$version = $availableVersions[0]
+# if($DockerVersion -ne "latest") {
+#     $version = $DockerVersion
+#     if(!($availableVersions | Select-String $DockerVersion)) {
+#         Write-Error "Docker version supplied $DockerVersion was invalid, please choose from the list of available versions: $availableVersions"
+#         throw "Invalid docker version supplied."
+#     }
 # }
 
+$zipUrl = "https://download.docker.com/win/static/stable/x86_64/docker-$version.zip"
+$destinationFolder = "$env:UserProfile\DockerDownloads"
+if(!(Test-Path "$destinationFolder")) {
+    md -Path $destinationFolder | Out-Null
+} elseif(Test-Path "$destinationFolder\docker-$version") {
+    Remove-Item -Recurse -Force "$destinationFolder\docker-$version"
+}
+Write-Output "Downloading $zipUrl to $destinationFolder\docker-$version.zip"
+Copy-File -SourcePath $zipUrl -DestinationPath "$destinationFolder\docker-$version.zip"
+Expand-Archive -Path "$destinationFolder\docker-$version.zip" -DestinationPath "$destinationFolder\docker-$version"
+
+$DockerPath = "$destinationFolder\docker-$version\docker\docker.exe"
+$DockerDPath = "$destinationFolder\docker-$version\docker\dockerd.exe"
+
+Write-Output "Installing Docker..."
+Copy-File -SourcePath $DockerPath -DestinationPath $env:ProgramFiles\Docker\docker.exe
+    
+Write-Output "Installing Docker daemon..."
+Copy-File -SourcePath $DockerDPath -DestinationPath $env:ProgramFiles\Docker\dockerd.exe
+
+
+
 Write-Host "Installing docker-compose"
-(New-Object Net.WebClient).DownloadFile('https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Windows-x86_64.exe', "$env:windir\System32\docker-compose.exe")
+(New-Object Net.WebClient).DownloadFile('https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Windows-x86_64.exe', "$env:ProgramFiles\Docker\docker-compose.exe")
 
 Write-Host "Starting Docker"
 Start-Service docker
@@ -74,6 +85,6 @@ Start-Service docker
 
 Write-Host "Downloading docker-credential-wincred"
 (New-Object Net.WebClient).DownloadFile('https://github.com/docker/docker-credential-helpers/releases/download/v0.6.0/docker-credential-wincred-v0.6.0-amd64.zip', "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip")
-Expand-Archive -Path "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip" -DestinationPath "$env:windir\System32" -Force
+Expand-Archive -Path "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip" -DestinationPath "$env:ProgramFiles\Docker" -Force
 Remove-Item "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip"
 Write-Host "docker-credential-wincred installed"
