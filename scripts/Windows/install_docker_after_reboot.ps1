@@ -21,8 +21,7 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		$isolation = $null
 		if ($osVerBuild -gt $minOsBuild -and $hypervInstalled) {
 			$isolation = 'hyperv'
-		} 
-		else {
+		} elseif ($osVerBuild -eq $minOsBuild) {
 			$isolation = 'default'
 		}
 		
@@ -37,9 +36,9 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 	}
 }
 
-PullRunDockerImages 14393 'ltsc2016' 'sac2016'
-PullRunDockerImages 16299 '1709' '1709'
-PullRunDockerImages 17134 '1803' '1803'
+#PullRunDockerImages 14393 'ltsc2016' 'sac2016'
+#PullRunDockerImages 16299 '1709' '1709'
+#PullRunDockerImages 17134 '1803' '1803'
 PullRunDockerImages 17763 'ltsc2019' '1809'
 
 docker pull mcr.microsoft.com/dotnet/framework/aspnet:4.8
