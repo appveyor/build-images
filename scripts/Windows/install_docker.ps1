@@ -1,3 +1,4 @@
+$ErrorActionPreference = "Stop"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # What Windows is that?
@@ -46,13 +47,6 @@ $availableVersions = ((Invoke-WebRequest -Uri $dockerDownloadUrl -UseBasicParsin
 #Parse the versions from the file names
 $availableVersions = ($availableVersions | Select-String -Pattern "docker-(\d+\.\d+\.\d+).+"  -AllMatches | Select-Object -Expand Matches | %{ $_.Groups[1].Value })
 $version = $availableVersions[0]
-# if($DockerVersion -ne "latest") {
-#     $version = $DockerVersion
-#     if(!($availableVersions | Select-String $DockerVersion)) {
-#         Write-Error "Docker version supplied $DockerVersion was invalid, please choose from the list of available versions: $availableVersions"
-#         throw "Invalid docker version supplied."
-#     }
-# }
 
 $packageUrl = $dockerDownloadUrl + "docker-$version.zip"
 $tempDownloadFolder = "$env:UserProfile\DockerDownloads"
@@ -67,10 +61,11 @@ Write-Output "Downloading from $packageUrl to $tempDownloadFolder\docker-$versio
 Expand-Archive -Path "$tempDownloadFolder\docker-$version.zip" -DestinationPath "$tempDownloadFolder\docker-$version"
 
 
-Write-Output "Copying Docker executable..."
-Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\docker.exe" -Destination $env:ProgramFiles\Docker\docker.exe
-Write-Output "Copying Docker daemon executable..."
-Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\dockerd.exe" -Destination $env:ProgramFiles\Docker\dockerd.exe
+Write-Output "Copying Docker folder..."
+[IO.Directory]::Move("$tempDownloadFolder\docker-$version\docker", "$env:ProgramFiles\Docker")
+# Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\docker.exe" -Destination $env:ProgramFiles\Docker\docker.exe
+# Write-Output "Copying Docker daemon executable..."
+# Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\dockerd.exe" -Destination $env:ProgramFiles\Docker\dockerd.exe
 
 & dockerd --register-service --service-name docker
 
