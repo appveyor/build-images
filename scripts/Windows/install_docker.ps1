@@ -39,8 +39,9 @@ if (-not $installed) {
 }
 
 
-#Get the list of .zip packages available from docker.
-$availableVersions = ((Invoke-WebRequest -Uri $DefaultDockerLocation -UseBasicParsing).Links | Where-Object {$_.href -like "docker*"}).href | Sort-Object -Descending
+#Get list of avaliable docker versions
+$dockerDownloadUrl = "https://download.docker.com/win/static/stable/x86_64/"
+$availableVersions = ((Invoke-WebRequest -Uri $dockerDownloadUrl -UseBasicParsing).Links | Where-Object {$_.href -like "docker*"}).href | Sort-Object -Descending
        
 #Parse the versions from the file names
 $availableVersions = ($availableVersions | Select-String -Pattern "docker-(\d+\.\d+\.\d+).+"  -AllMatches | Select-Object -Expand Matches | %{ $_.Groups[1].Value })
@@ -53,26 +54,26 @@ $version = $availableVersions[0]
 #     }
 # }
 
-$zipUrl = "https://download.docker.com/win/static/stable/x86_64/docker-$version.zip"
-$destinationFolder = "$env:UserProfile\DockerDownloads"
-if(!(Test-Path "$destinationFolder")) {
-    md -Path $destinationFolder | Out-Null
-} elseif(Test-Path "$destinationFolder\docker-$version") {
-    Remove-Item -Recurse -Force "$destinationFolder\docker-$version"
+$packageUrl = $dockerDownloadUrl + "docker-$version.zip"
+$tempDownloadFolder = "$env:UserProfile\DockerDownloads"
+if(!(Test-Path "$tempDownloadFolder")) {
+    mkdir -Path $tempDownloadFolder | Out-Null
+} elseif(Test-Path "$tempDownloadFolder\docker-$version") {
+    Remove-Item -Recurse -Force "$tempDownloadFolder\docker-$version"
 }
-Write-Output "Downloading $zipUrl to $destinationFolder\docker-$version.zip"
-Copy-File -SourcePath $zipUrl -DestinationPath "$destinationFolder\docker-$version.zip"
-Expand-Archive -Path "$destinationFolder\docker-$version.zip" -DestinationPath "$destinationFolder\docker-$version"
+Write-Output "Downloading from $packageUrl to $tempDownloadFolder\docker-$version.zip"
+(New-Object Net.WebClient).DownloadFile($packageUrl, "$tempDownloadFolder\docker-$version.zip")
 
-$DockerPath = "$destinationFolder\docker-$version\docker\docker.exe"
-$DockerDPath = "$destinationFolder\docker-$version\docker\dockerd.exe"
+Expand-Archive -Path "$tempDownloadFolder\docker-$version.zip" -DestinationPath "$tempDownloadFolder\docker-$version"
 
-Write-Output "Installing Docker..."
-Copy-File -SourcePath $DockerPath -DestinationPath $env:ProgramFiles\Docker\docker.exe
+
+Write-Output "Copying Docker executable..."
+Copy-File -SourcePath "$tempDownloadFolder\docker-$version\docker\docker.exe" -DestinationPath $env:ProgramFiles\Docker\docker.exe
     
-Write-Output "Installing Docker daemon..."
-Copy-File -SourcePath $DockerDPath -DestinationPath $env:ProgramFiles\Docker\dockerd.exe
+Write-Output "Copying Docker daemon executable..."
+Copy-File -SourcePath "$tempDownloadFolder\docker-$version\docker\dockerd.exe" -DestinationPath $env:ProgramFiles\Docker\dockerd.exe
 
+& dockerd --register-service --service-name docker
 
 
 Write-Host "Installing docker-compose"
@@ -81,10 +82,10 @@ Write-Host "Installing docker-compose"
 Write-Host "Starting Docker"
 Start-Service docker
 
-#$env:path = "$env:ProgramFiles\Docker;$env:path"
-
 Write-Host "Downloading docker-credential-wincred"
 (New-Object Net.WebClient).DownloadFile('https://github.com/docker/docker-credential-helpers/releases/download/v0.6.0/docker-credential-wincred-v0.6.0-amd64.zip', "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip")
 Expand-Archive -Path "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip" -DestinationPath "$env:ProgramFiles\Docker" -Force
 Remove-Item "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip"
 Write-Host "docker-credential-wincred installed"
+
+$env:path = "$env:ProgramFiles\Docker;$env:path"
