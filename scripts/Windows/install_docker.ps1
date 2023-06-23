@@ -66,12 +66,12 @@ Write-Output "Copying Docker folder..."
 # Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\docker.exe" -Destination $env:ProgramFiles\Docker\docker.exe
 # Write-Output "Copying Docker daemon executable..."
 # Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\dockerd.exe" -Destination $env:ProgramFiles\Docker\dockerd.exe
-$env:path = "$env:ProgramFiles\Docker;$env:path"
+
 Add-Path "${env:ProgramFiles}\Docker"
 Add-SessionPath "${env:ProgramFiles}\Docker"
 $env:path -split ';'
 
-
+& dockerd --register-service --service-name docker
 
 Write-Host "Installing docker-compose"
 (New-Object Net.WebClient).DownloadFile('https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Windows-x86_64.exe', "$env:ProgramFiles\Docker\docker-compose.exe")
@@ -84,5 +84,3 @@ Write-Host "Downloading docker-credential-wincred"
 Expand-Archive -Path "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip" -DestinationPath "$env:ProgramFiles\Docker" -Force
 Remove-Item "$env:TEMP\docker-credential-wincred-v0.6.0-amd64.zip"
 Write-Host "docker-credential-wincred installed"
-
-& dockerd --register-service --service-name docker
