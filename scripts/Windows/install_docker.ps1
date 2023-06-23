@@ -68,10 +68,9 @@ Expand-Archive -Path "$tempDownloadFolder\docker-$version.zip" -DestinationPath 
 
 
 Write-Output "Copying Docker executable..."
-Copy-File -SourcePath "$tempDownloadFolder\docker-$version\docker\docker.exe" -DestinationPath $env:ProgramFiles\Docker\docker.exe
-    
+Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\docker.exe" -Destination $env:ProgramFiles\Docker\docker.exe
 Write-Output "Copying Docker daemon executable..."
-Copy-File -SourcePath "$tempDownloadFolder\docker-$version\docker\dockerd.exe" -DestinationPath $env:ProgramFiles\Docker\dockerd.exe
+Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\dockerd.exe" -Destination $env:ProgramFiles\Docker\dockerd.exe
 
 & dockerd --register-service --service-name docker
 
