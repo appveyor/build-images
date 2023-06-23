@@ -68,6 +68,7 @@ Write-Output "Copying Docker folder..."
 # Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\dockerd.exe" -Destination $env:ProgramFiles\Docker\dockerd.exe
 #$env:path = "$env:ProgramFiles\Docker;$env:path"
 Add-Path "${env:ProgramFiles}\Docker"
+Add-SessionPath "${env:ProgramFiles}\Docker"
 $env:path -split ';'
 
 
