@@ -66,7 +66,9 @@ Write-Output "Copying Docker folder..."
 # Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\docker.exe" -Destination $env:ProgramFiles\Docker\docker.exe
 # Write-Output "Copying Docker daemon executable..."
 # Copy-Item -Path "$tempDownloadFolder\docker-$version\docker\dockerd.exe" -Destination $env:ProgramFiles\Docker\dockerd.exe
-$env:path = "$env:ProgramFiles\Docker;$env:path"
+#$env:path = "$env:ProgramFiles\Docker;$env:path"
+[Environment]::SetEnvironmentVariable("Path", "$env:ProgramFiles\Docker;" + $env:path, "Machine")
+$env:path -split ';'
 
 & dockerd --register-service --service-name docker
 
