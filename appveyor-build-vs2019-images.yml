@@ -124,7 +124,7 @@ for:
       # Finalize Docker installation
       - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
       - ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
-      
+
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
@@ -160,6 +160,7 @@ for:
         - bake_phase: 3
 
     build_script:
+      - ps: .\install_azure_powershell.ps1
       - ps: .\install_openssl.ps1    
       - ps: .\install_msys64.ps1
       - ps: .\install_chrome_browser.ps1
@@ -209,7 +210,7 @@ for:
       - ps: .\install_aws_cli.ps1
       - ps: .\install_aws_powershell.ps1
       - ps: .\install_azure_cli.ps1
-      - ps: .\install_azure_powershell.ps1
+      
       - ps: .\install_azure_cosmosdb_emulator.ps1
       - ps: .\install_gcloud_sdk.ps1
       - ps: .\install_winsdk_81.ps1

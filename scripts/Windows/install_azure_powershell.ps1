@@ -14,7 +14,7 @@ Write-Host "Testing new cmdlets"
 Get-Command Connect-AzAccount
 Get-Command Get-AzRmStorageContainer
 
-Uninstall-Module -Name Az.Accounts
+Uninstall-Module -Name Az.Accounts -Force
 Install-Module -Name Az.Accounts -RequiredVersion 2.12.1
 
 Write-Host "Testing cmdlets in compatibility mode"
