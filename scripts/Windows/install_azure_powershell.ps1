@@ -14,6 +14,9 @@ Write-Host "Testing new cmdlets"
 Get-Command Connect-AzAccount
 Get-Command Get-AzRmStorageContainer
 
+Uninstall-Module -Name Az.Accounts
+Install-Module -Name Az.Accounts -RequiredVersion 2.12.1
+
 Write-Host "Testing cmdlets in compatibility mode"
 Enable-AzureRmAlias
 Get-Command Login-AzureRmAccount
