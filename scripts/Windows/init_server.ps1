@@ -77,7 +77,7 @@ Write-Host "Disabled IE Welcome screen" -ForegroundColor Green
 Write-Host "Disabling Antivirus"
 Write-Host "==================="
 
-Set-MpPreference -DisableRealtimeMonitoring $true
+Set-MpPreference -DisableRealtimeMonitoring $true -Force
 
 
 # Disable Windows Update
