@@ -1,5 +1,7 @@
 ﻿Write-Host "Installing Azure PowerShell ..." -ForegroundColor Cyan
 
+
+Install-Module -Name Az.Accounts -RequiredVersion 2.10.3
 Install-Module -Name Az -Scope CurrentUser -AllowClobber -RequiredVersion 9.1.1
 
 Write-Host "Installed" -ForegroundColor Green
