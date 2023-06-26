@@ -328,7 +328,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             )
         }
         @{
-            version    = "6.2.8"
+            version    = "6.2.4"
             components = @(
                 "win64_msvc2019_64",
                 "win64_mingw",
