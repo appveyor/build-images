@@ -59,6 +59,7 @@ init:
   - ps: $ErrorActionPreference = 'Stop'
   - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
   - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 clone_folder: '%USERPROFILE%\image-bake-scripts'
 
