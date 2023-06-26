@@ -79,6 +79,7 @@ for:
         - bake_phase: 1
 
     build_script:
+      - ps: Start-Sleep -s 5
       - ps: .\init_server.ps1
       - ps: if ($env:cloud_type -eq 'Azure' -or $env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
 
