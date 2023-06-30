@@ -9,7 +9,7 @@ environment:
       APPVEYOR_BAKE_IMAGE: vs2022-temp-p1
 
     - job_name: VS 2022 on Hyper-V - Wait for Part I image to be ready
-      bake_phase: wait-50-min
+      bake_phase: wait-90-min
       job_depends_on: VS 2022 on Hyper-V - Part I
 
     - job_name: VS 2022 on Hyper-V - Part II
@@ -150,10 +150,10 @@ for:
 
   - matrix:
       only:
-        - bake_phase: wait-50-min
+        - bake_phase: wait-90-min
 
     build_script:
-      - ps: Start-Sleep -s 3000
+      - ps: Start-Sleep -s 5400
 
   - matrix:
       only:
