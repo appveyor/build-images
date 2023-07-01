@@ -25,6 +25,9 @@ function UninstallOpenSSL($productName) {
 
 
 
+
+
+UninstallOpenSSL "OpenSSL 1.0.2"
 UninstallOpenSSL "OpenSSL 3.1.1 (32-bit)"
 UninstallOpenSSL "OpenSSL 3.1.1 (64-bit)"
 
