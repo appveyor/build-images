@@ -3,7 +3,7 @@
 $go_versions = @(
     @{
         "version" = "1.20.5"
-        "folder"  = "go119"
+        "folder"  = "go120"
     }
 )
 
