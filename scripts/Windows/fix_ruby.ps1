@@ -379,7 +379,7 @@ function Update-Ruby($ruby) {
 
 for ($i = 0; $i -lt $rubies.Count; $i++) {
     $ruby = $rubies[$i]
-    if ($ruby.version.startsWith("Ruby 2.4.") -or $ruby.version.startsWith("Ruby 2.5.")) {
+    if ($ruby.version.startsWith("Ruby 3.0.")) {
         Install-Ruby $ruby
     }
 }

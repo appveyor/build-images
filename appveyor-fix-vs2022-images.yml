@@ -50,7 +50,8 @@ build_script:
   # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
   # - ps: .\install_qt_fast_windows.ps1
   
-  - ps: .\install_go.ps1
+  #- ps: .\install_go.ps1
+  - ps: .\fix_ruby.ps1
   #  Restart VM
   #  - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5

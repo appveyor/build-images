@@ -106,8 +106,8 @@ Remove-Item $exePath
 Write-Host "Installed" -ForegroundColor Green
 Copy-Item C:\OpenSSL-v30-Win64-temp -Destination C:\OpenSSL-v30-Win64 -Recurse
 
-UninstallOpenSSL "OpenSSL 3.1.0 (32-bit)"
-UninstallOpenSSL "OpenSSL 3.1.0 (64-bit)"
+UninstallOpenSSL "OpenSSL 3.1.1 (32-bit)"
+UninstallOpenSSL "OpenSSL 3.1.1 (64-bit)"
 
 # -----------------------------------------------------------------------------------------------------------------
 
