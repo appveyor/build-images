@@ -3,9 +3,9 @@ environment:
     # Hyper-V
     # =======
 
-    - job_name: VS 2022 on Hyper-V
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
-      APPVEYOR_BAKE_IMAGE: vs2022-master
+    # - job_name: VS 2022 on Hyper-V
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
+    #   APPVEYOR_BAKE_IMAGE: vs2022-master
 
 # Azure
 # =======
