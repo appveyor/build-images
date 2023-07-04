@@ -245,7 +245,7 @@ function Install-Ruby($ruby) {
         (New-Object Net.WebClient).DownloadFile($ruby.download_url, $exePath)
 
         Write-Host "Installing..." -ForegroundColor Gray
-        cmd /c start /wait $exePath /verysilent /alusers /dir="$($ruby.install_path.replace('\', '/'))" /tasks="noassocfiles,nomodpath,noridkinstall"
+        cmd /c start /wait $exePath /verysilent /allusers /dir="$($ruby.install_path.replace('\', '/'))" /tasks="noassocfiles,nomodpath,noridkinstall"
         del $exePath
         Write-Host "Installed" -ForegroundColor Green
 
