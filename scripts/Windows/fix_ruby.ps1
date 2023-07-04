@@ -384,6 +384,12 @@ for ($i = 0; $i -lt $rubies.Count; $i++) {
     }
 }
 
+for ($i = 0; $i -lt $rubies.Count; $i++) {
+    $ruby = $rubies[$i]
+    if ($ruby.version.startsWith("Ruby 3.0.")) {
+        Update-Ruby $ruby
+    }
+}
 # Fix bundler.bat
 # @("Ruby193","Ruby200","Ruby200-x64","Ruby21","Ruby21-x64","Ruby22","Ruby22-x64","Ruby23","Ruby23-x64","Ruby24","Ruby24-x64") | % { Copy-Item "C:\$_\bin\bundle.bat" -Destination "C:\$_\bin\bundler.bat" -Force; Copy-Item "C:\$_\bin\bundle" -Destination "C:\$_\bin\bundler" -Force }
 
