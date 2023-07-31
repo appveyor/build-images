@@ -30,11 +30,11 @@ environment:
     #   bake_phase: wait-15-min
     #   job_depends_on: VS 2019 on GCE us-central1 - Part I
 
-    - job_name: VS 2019 on GCE us-central1 - Part II
-      bake_phase: 3
-      job_depends_on: VS 2019 on GCE us-central1 - Wait for Part I image to be ready
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-gce-us-central1
-      APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
+    # - job_name: VS 2019 on GCE us-central1 - Part II
+    #   bake_phase: 3
+    #   job_depends_on: VS 2019 on GCE us-central1 - Wait for Part I image to be ready
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-gce-us-central1
+    #   APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
 
     # # Azure
     # # =======
@@ -59,6 +59,7 @@ init:
   - ps: $ErrorActionPreference = 'Stop'
   - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
   - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
+  #- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 clone_folder: '%USERPROFILE%\image-bake-scripts'
 
@@ -79,6 +80,7 @@ for:
         - bake_phase: 1
 
     build_script:
+      - ps: Start-Sleep -s 10
       - ps: .\init_server.ps1
       - ps: if ($env:cloud_type -eq 'Azure' -or $env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
 
@@ -114,9 +116,9 @@ for:
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
-
+      
       - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 } else { .\install_docker_desktop.ps1 }
-
+      
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
@@ -242,8 +244,9 @@ for:
       - ps: .\install_cygwin.ps1
       - ps: .\install_mingw.ps1
       - ps: .\install_mingw-w64.ps1
-      - ps: .\install_boost_1.73.0_vs2019.ps1
+      #- ps: .\install_boost_1.73.0_vs2019.ps1
       - ps: .\install_boost_1.77.0_vs2019.ps1
+      - ps: .\install_boost_1.82.0_vs2019.ps1
 
       - ps: .\install_android_sdk.ps1
       - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip

@@ -44,7 +44,8 @@ build_script:
   #- ps: .\fix_ruby.ps1
   #- ps: .\install_selenium_drivers.ps1
   #- ps: .\install_dotnet_core_sdks.ps1
-  - ps: .\install_maven.ps1
+  #- ps: .\install_maven.ps1
+  - ps: .\fix_ruby.ps1
   #- dir C:\Qt\6.2.2
   #- dir C:\Qt\Tools
   #- dir C:\Qt\Tools\QtInstallerFramework
@@ -53,6 +54,7 @@ build_script:
   # Restart VM
   # - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
+  #- ps: New-Item -ItemType SymbolicLink -Path "C:\Qt\6.5" -Target "C:\Qt\6.5.1" -Force | Out-Null
 
   - appveyor version
   - ps: .\cleanup_windows.ps1

@@ -20,9 +20,10 @@ Function InstallVS
     Invoke-WebRequest -Uri $VSBootstrapperURL -OutFile "${env:Temp}\vs_$Sku.exe"
 
     $FilePath = "${env:Temp}\vs_$Sku.exe"
-	$Arguments = ($WorkLoads, '--quiet', '--norestart', '--wait', '--nocache')
+	$Arguments = ($WorkLoads, '--quiet', '--norestart', '--wait', '--nocache', '--force')
 
 	if ($ChannelUri) {
+		Write-host "Adding channelUri..."
 		$Arguments += (
 			'--channelUri', $ChannelUri,
 			'--installChannelUri', $ChannelUri
@@ -40,12 +41,25 @@ Function InstallVS
     }
     else
     {
-      Write-Host -Object "Non zero exit code returned by the installation process : $exitCode."
+	  $setupErrorLogPath = "$env:TEMP\dd_setup_*_errors.log"
+	  if (Test-Path -Path $setupErrorLogPath)
+	  {
+		Write-Host "Log file found"
+	  	$logErrors = Get-Content -Path $setupErrorLogPath -Raw
+	  	Write-Host "$logErrors"
+	  }
+
+	  Write-Host "Non zero exit code returned by the installation process : $exitCode"
+	  exit $exitCode
+      
+	 
+	  #Write-Host -Object "Non zero exit code returned by the installation process : $exitCode."
 
       # this wont work because of log size limitation in extension manager
       # Get-Content $customLogFilePath | Write-Host
 
-      exit $exitCode
+      #exit $exitCode
+
     }
   }
   catch
@@ -268,6 +282,8 @@ if ($env:install_vs2019_preview) {
 } else {
 	Write-Host "Installing from 'Release' channel"
 	$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
+	#$VSBootstrapperURL = 'https://download.visualstudio.microsoft.com/download/pr/7c09e2e8-2b3e-4213-93ab-5646874f8a2b/5383ec66848fff294c5536043026affaf924615cbae82a05441d6d4c8372ead7/vs_Professional.exe'
+	#$ChannelUri = 'https://aka.ms/vs/16/release/112851321_818166240/channel'
 
 	# This is how to know channelUri for previous versions of VS 2019
 	# - Download previous bootstrapper for Professional edition: https://docs.microsoft.com/en-us/visualstudio/releases/2019/history#release-dates-and-build-numbers
@@ -279,7 +295,6 @@ if ($env:install_vs2019_preview) {
 
 	# Pin VS 2019 16.5.5 for now because of issues with devenv.com: https://developercommunity.visualstudio.com/content/problem/1048804/cannot-build-project-with-devenvcom-in-visual-stud.html
 	#$ChannelUri = 'https://aka.ms/vs/16/release/149189645_1152370582/channel'
-	
 	#$VSBootstrapperURL = 'https://download.visualstudio.microsoft.com/download/pr/68d6b204-9df0-4fcc-abcc-08ee0eff9cb2/b029547488a9383b0c8d8a9c813e246feb3ec19e0fe55020d4878fde5f0983fe/vs_Community.exe'
 }
 

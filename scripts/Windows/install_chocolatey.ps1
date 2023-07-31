@@ -1,6 +1,8 @@
 ﻿Write-Host "Installing Chocolatey"
 Write-Host "====================="
 
+$env:chocolateyVersion = '1.4.0'
+
 if(Test-Path 'C:\ProgramData\chocolatey\bin') {
     # update
     Write-Host "Updating Chocolatey..." -ForegroundColor Cyan

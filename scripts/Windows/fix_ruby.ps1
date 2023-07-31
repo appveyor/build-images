@@ -156,17 +156,17 @@ else {
 
 $rubies = $rubies + @(
     @{
-        "version"      = "Ruby 3.0.4-1"
+        "version"      = "Ruby 3.0.6-1"
         "install_path" = "C:\Ruby30"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.4-1/rubyinstaller-3.0.4-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.6-1/rubyinstaller-3.0.6-1-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV2"    = $true
     }    
     @{
-        "version"      = "Ruby 3.0.4-1 (x64)"
+        "version"      = "Ruby 3.0.6-1 (x64)"
         "install_path" = "C:\Ruby30-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.4-1/rubyinstaller-3.0.4-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.6-1/rubyinstaller-3.0.6-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV2"    = $true
@@ -245,7 +245,7 @@ function Install-Ruby($ruby) {
         (New-Object Net.WebClient).DownloadFile($ruby.download_url, $exePath)
 
         Write-Host "Installing..." -ForegroundColor Gray
-        cmd /c start /wait $exePath /verysilent /dir="$($ruby.install_path.replace('\', '/'))" /tasks="noassocfiles,nomodpath,noridkinstall"
+        cmd /c start /wait $exePath /verysilent /allusers /dir="$($ruby.install_path.replace('\', '/'))" /tasks="noassocfiles,nomodpath,noridkinstall"
         del $exePath
         Write-Host "Installed" -ForegroundColor Green
 
@@ -379,11 +379,17 @@ function Update-Ruby($ruby) {
 
 for ($i = 0; $i -lt $rubies.Count; $i++) {
     $ruby = $rubies[$i]
-    if ($ruby.version.startsWith("Ruby 2.4.") -or $ruby.version.startsWith("Ruby 2.5.")) {
+    if ($ruby.version.startsWith("Ruby 3.0.")) {
         Install-Ruby $ruby
     }
 }
 
+for ($i = 0; $i -lt $rubies.Count; $i++) {
+    $ruby = $rubies[$i]
+    if ($ruby.version.startsWith("Ruby 3.0.")) {
+        Update-Ruby $ruby
+    }
+}
 # Fix bundler.bat
 # @("Ruby193","Ruby200","Ruby200-x64","Ruby21","Ruby21-x64","Ruby22","Ruby22-x64","Ruby23","Ruby23-x64","Ruby24","Ruby24-x64") | % { Copy-Item "C:\$_\bin\bundle.bat" -Destination "C:\$_\bin\bundler.bat" -Force; Copy-Item "C:\$_\bin\bundle" -Destination "C:\$_\bin\bundler" -Force }
 

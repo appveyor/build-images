@@ -363,21 +363,21 @@ UpdatePip "$env:SystemDrive\Python310"
 UpdatePip "$env:SystemDrive\Python310-x64"
 
 # Python 3.11.3 x64
-$python311_x64 = (GetUninstallString 'Python 3.11.3 (64-bit)')
+$python311_x64 = (GetUninstallString 'Python 3.11.4 (64-bit)')
 if ($python311_x64) {
-    Write-Host 'Python 3.11.3 x64 already installed'
+    Write-Host 'Python 3.11.4 x64 already installed'
 }
 else {
-    InstallPythonEXE "3.11.3" "x64" "$env:SystemDrive\Python311-x64"
+    InstallPythonEXE "3.11.4" "x64" "$env:SystemDrive\Python311-x64"
 }
 
 # Python 3.11.3
-$python311 = (GetUninstallString 'Python 3.11.3 (32-bit)')
+$python311 = (GetUninstallString 'Python 3.11.4 (32-bit)')
 if ($python311) {
-    Write-Host 'Python 3.11.3 already installed'
+    Write-Host 'Python 3.11.4 already installed'
 }
 else {
-    InstallPythonEXE "3.11.3" "x86" "$env:SystemDrive\Python311"
+    InstallPythonEXE "3.11.4" "x86" "$env:SystemDrive\Python311"
 }
 
 UpdatePip "$env:SystemDrive\Python311"

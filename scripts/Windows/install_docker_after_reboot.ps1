@@ -28,17 +28,17 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		if ($isolation) {
 			Write-Host "Pulling and running '$serverCoreTag' images in '$isolation' mode"
 			docker pull mcr.microsoft.com/windows/servercore:$serverCoreTag
-			#docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
+			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
 
 			docker pull mcr.microsoft.com/windows/nanoserver:$nanoServerTag
-			#docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
+			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
 		}
 	}
 }
 
-PullRunDockerImages 14393 'ltsc2016' 'sac2016'
-PullRunDockerImages 16299 '1709' '1709'
-PullRunDockerImages 17134 '1803' '1803'
+#PullRunDockerImages 14393 'ltsc2016' 'sac2016'
+#PullRunDockerImages 16299 '1709' '1709'
+#PullRunDockerImages 17134 '1803' '1803'
 PullRunDockerImages 17763 'ltsc2019' '1809'
 
 docker pull mcr.microsoft.com/dotnet/framework/aspnet:4.8
