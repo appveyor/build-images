@@ -600,7 +600,7 @@ function update_git() {
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        GIT_VERSION=2.39.2
+        GIT_VERSION=2.41.0
     else
         GIT_VERSION=$1
     fi
@@ -631,7 +631,7 @@ function make_git() {
 function install_gitlfs() {
     echo "[INFO] Running install_gitlfs..."
 
-    GITLFS_VERSION="3.3.0"
+    GITLFS_VERSION="3.4.0"
     FILENAME="git-lfs-linux-${OS_ARCH}-v${GITLFS_VERSION}.tar.gz"
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
