@@ -570,9 +570,9 @@ function install_nvm_nodejs() {
     local v
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare NVM_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" )
+        declare NVM_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" "20" )
     else
-        declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" )
+        declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" "20" )
     fi
     
     for v in "${NVM_VERSIONS[@]}"; do
