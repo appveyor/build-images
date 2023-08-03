@@ -1932,7 +1932,7 @@ function install_curl() {
     echo "[INFO] Running install_curl..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=7.88.1
+        VERSION=8.2.1
     else
         VERSION=$1
     fi
