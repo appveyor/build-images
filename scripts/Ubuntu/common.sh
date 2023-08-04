@@ -350,8 +350,10 @@ function install_tools() {
     fi
 
     # python packages
-    if [[ $OS_ARCH == "amd64" ]]; then
+    if [[ $OS_ARCH == "amd64" ]] && [[$OS_CODENAME != "jammy"]]; then
         tools_array+=( "python" "python-dev" "python3-dev" "python-setuptools" )
+    elif [[$OS_ARCH == "amd64"]] && [[$OS_CODENAME == "jammy"]]; then
+        tools_array+=( "python2" "python2-dev" "python3-dev" "python-setuptools" )
     fi
     tools_array+=( "python3" "python3-setuptools" )
     tools_array+=( "apt-transport-https" )
