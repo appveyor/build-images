@@ -87,3 +87,20 @@ function install_nvm_nodejs() {
     log_version node --version
     log_version npm --version
 }
+
+function install_gcc() {
+    echo "[INFO] Running install_gcc..."
+
+    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+    apt-get -y -qq update ||
+        { echo "[ERROR] Cannot add gcc repository to APT sources." 1>&2; return 10; }
+    apt-get -y -q install gcc-9 g++-9 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 20 --slave /usr/bin/g++ g++ /usr/bin/g++-9 ||
+        { echo "[ERROR] Cannot install gcc-9." 1>&2; return 20; }
+    apt-get -y -q install gcc-10 g++-10 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 30 --slave /usr/bin/g++ g++ /usr/bin/g++-10 ||
+        { echo "[ERROR] Cannot install gcc-10." 1>&2; return 30; }
+    apt-get -y -q install gcc-11 g++-11 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 40 --slave /usr/bin/g++ g++ /usr/bin/g++-11 ||
+        { echo "[ERROR] Cannot install gcc-11." 1>&2; return 40; }
+}
