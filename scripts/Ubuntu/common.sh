@@ -761,10 +761,10 @@ function install_pip() {
     
     curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py" ||
         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    python get-pip.py ||
+    python3 get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
-    python -m pip install --upgrade pip setuptools wheel virtualenv
+    python3 -m pip install --upgrade pip setuptools wheel virtualenv
 
     log_version pip --version
 
