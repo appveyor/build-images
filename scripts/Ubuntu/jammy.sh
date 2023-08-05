@@ -34,7 +34,6 @@ function configure_firefox_repository() {
 
 function install_jdks_from_repository() {
     echo "[INFO] Running install_jdks_from_repository..."
-    add-apt-repository -y ppa:openjdk-r/ppa
     apt-get -y -qq update && {
         apt-get -y -q install --no-install-recommends openjdk-8-jdk
     } ||
