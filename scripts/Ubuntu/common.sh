@@ -1398,7 +1398,7 @@ function configure_docker_repository() {
 
 function install_docker() {
     echo "[INFO] Running install_docker..."
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
+    #curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - &&
 
     configure_docker_repository
 

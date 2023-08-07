@@ -54,7 +54,7 @@ function configure_sqlserver_repository() {
 }
 
 function configure_docker_repository() {
-    echo "[INFO] Running configure_docker_repository..."
+    echo "[INFO] Running custom configure_docker_repository..."
 
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
