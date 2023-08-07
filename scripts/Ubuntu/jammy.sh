@@ -33,18 +33,18 @@ function configure_firefox_repository() {
 }
 
 function install_jdks_from_repository() {
-    echo "[INFO] Running install_jdks_from_repository..."
-    apt-get -y -qq update && {
-        apt-get -y -q install --no-install-recommends openjdk-8-jdk
-    } ||
-        { echo "[ERROR] Cannot install JDKs." 1>&2; return 10; }
-    update-java-alternatives --set java-1.8.0-openjdk-amd64
+    echo "[INFO] Skipping install_jdks_from_repository..."
+    # apt-get -y -qq update && {
+    #     apt-get -y -q install --no-install-recommends openjdk-8-jdk
+    # } ||
+    #     { echo "[ERROR] Cannot install JDKs." 1>&2; return 10; }
+    # update-java-alternatives --set java-1.8.0-openjdk-amd64
 
-    # hold openjdk 11 package if it was installed
-    # newer version of openjdk will be installed later on
-    if dpkg -l openjdk-11-jre-headless; then
-        echo "openjdk-11-jre-headless hold" | dpkg --set-selections
-    fi
+    # # hold openjdk 11 package if it was installed
+    # # newer version of openjdk will be installed later on
+    # if dpkg -l openjdk-11-jre-headless; then
+    #     echo "openjdk-11-jre-headless hold" | dpkg --set-selections
+    # fi
 }
 
 function configure_sqlserver_repository() {
