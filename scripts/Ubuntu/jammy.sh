@@ -54,7 +54,7 @@ function configure_sqlserver_repository() {
 }
 
 function configure_docker_repository() {
-    echo "[INFO] Running custom configure_docker_repository..."
+    echo "[INFO] Running configure_docker_repository on Ubuntu 22.04..."
 
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -152,4 +152,10 @@ function configure_mono_repository () {
     echo "[INFO] Running install_mono..."
     add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-focal main" ||
         { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
+}
+
+function configure_sqlserver_repository() {
+    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 22.04..."
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)" ||
+        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
 }
