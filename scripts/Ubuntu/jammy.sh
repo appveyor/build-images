@@ -147,3 +147,9 @@ function install_clang_version() {
     apt-get -y -q install clang-$LLVM_VERSION lldb-$LLVM_VERSION lld-$LLVM_VERSION clangd-$LLVM_VERSION ||
         { echo "[ERROR] Cannot install clang-${LLVM_VERSION}." 1>&2; return 20; }
 }
+
+function configure_mono_repository () {
+    echo "[INFO] Running install_mono..."
+    add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-focal main" ||
+        { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
+}
