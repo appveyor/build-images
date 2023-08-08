@@ -1402,7 +1402,7 @@ function install_docker() {
 
     configure_docker_repository
 
-    #apt-get -y -qq update &&
+    apt-get -y -qq update &&
     apt-get -y -q install docker-ce ||
         { echo "[ERROR] Cannot install Docker." 1>&2; return 20; }
 
