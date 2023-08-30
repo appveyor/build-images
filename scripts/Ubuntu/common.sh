@@ -350,8 +350,10 @@ function install_tools() {
     fi
 
     # python packages
-    if [[ $OS_ARCH == "amd64" ]]; then
+    if [[ $OS_ARCH == "amd64" ]] && [[$OS_CODENAME != "jammy"]]; then
         tools_array+=( "python" "python-dev" "python3-dev" "python-setuptools" )
+    elif [[$OS_ARCH == "amd64"]] && [[$OS_CODENAME == "jammy"]]; then
+        tools_array+=( "python2" "python2-dev" "python3-dev" "python-setuptools" )
     fi
     tools_array+=( "python3" "python3-setuptools" )
     tools_array+=( "apt-transport-https" )
@@ -543,7 +545,7 @@ function install_nvm() {
         return 1
     fi
     #TODO have to figure out latest release version automatically
-    curl -fsSLo- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+    curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
     #shellcheck disable=SC2016
@@ -570,9 +572,9 @@ function install_nvm_nodejs() {
     local v
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare NVM_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" )
+        declare NVM_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" "20" )
     else
-        declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" )
+        declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" "20" )
     fi
     
     for v in "${NVM_VERSIONS[@]}"; do
@@ -600,7 +602,7 @@ function update_git() {
 function make_git() {
     local GIT_VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        GIT_VERSION=2.39.2
+        GIT_VERSION=2.41.0
     else
         GIT_VERSION=$1
     fi
@@ -631,7 +633,7 @@ function make_git() {
 function install_gitlfs() {
     echo "[INFO] Running install_gitlfs..."
 
-    GITLFS_VERSION="3.3.0"
+    GITLFS_VERSION="3.4.0"
     FILENAME="git-lfs-linux-${OS_ARCH}-v${GITLFS_VERSION}.tar.gz"
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
@@ -750,7 +752,7 @@ function install_virtualenv() {
     #     { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
     # log_version python3 -m virtualenv --version
     install_pip
-    log_version python -m virtualenv --version
+    log_version python3 -m virtualenv --version
     log_version virtualenv --version
 }
 
@@ -759,10 +761,10 @@ function install_pip() {
     
     curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py" ||
         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    python get-pip.py ||
+    python3 get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
-    python -m pip install --upgrade pip setuptools wheel virtualenv
+    python3 -m pip install --upgrade pip setuptools wheel virtualenv
 
     log_version pip --version
 
@@ -781,9 +783,9 @@ function install_pythons(){
     echo "[INFO] Running install_pythons..."
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.16" "3.8.16" "3.9.16" "3.10.10" "3.11.2" )
+        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.16" "3.8.17" "3.9.17" "3.10.12" "3.11.4" "3.12.0" )
     else
-        declare PY_VERSIONS=( "2.7.18" "3.7.16" "3.8.16" "3.9.16" "3.10.10" "3.11.2" )
+        declare PY_VERSIONS=( "2.7.18" "3.7.16" "3.8.17" "3.9.17" "3.10.12" "3.11.4" "3.12.0" )
     fi
 
     for i in "${PY_VERSIONS[@]}"; do
@@ -810,7 +812,7 @@ function install_pythons(){
         else
             PY_BIN=python
         fi
-        python -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
+        python3 -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
         popd
         echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
@@ -845,7 +847,7 @@ function install_powershell() {
 function install_powershell_arm64() {
     echo "[INFO] Running install_powershell_arm64..."
 
-    POWERSHELL_VERSION="7.3.3"
+    POWERSHELL_VERSION="7.3.6"
     FILENAME="powershell-${POWERSHELL_VERSION}-linux-arm64.tar.gz"
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
@@ -981,7 +983,7 @@ function install_dotnets() {
 function install_dotnet_arm64() {
     echo "[INFO] Running install_dotnet_arm64..."
 
-    curl -SL -o dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/35901872-1f00-48e4-9f55-e6c79823e7fd/8af43bb5e25d090c0af921974287ac2c/dotnet-sdk-7.0.201-linux-arm64.tar.gz
+    curl -SL -o dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/fb648e91-a4b9-4fc1-b6a3-acd293668e75/ccdc8a107bdb8b8f59ae6bb66ebecb6e/dotnet-sdk-7.0.306-linux-arm64.tar.gz
     mkdir -p /usr/share/dotnet
     tar -zxf dotnet.tar.gz -C /usr/share/dotnet
     ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
@@ -1015,7 +1017,7 @@ function install_flutter() {
     pushd -- "${TMP_DIR}"
 
     local RELEASE_URL
-    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.7.5-stable.tar.xz"
+    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.10.6-stable.tar.xz"
     curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
         { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
     
@@ -1268,9 +1270,9 @@ function install_rubies() {
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.3" "ruby-3.2.1" "ruby-head" )
+        declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.4" "ruby-3.2.2" "ruby-head" )
     else
-        declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.3" "ruby-3.2.1" "ruby-head" )
+        declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.4" "ruby-3.2.2" "ruby-head" )
     fi
     
     for v in "${RUBY_VERSIONS[@]}"; do
@@ -1344,7 +1346,7 @@ function install_golangs() {
     gvm use go1.4 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.6" "go1.20.1" )
+    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.12" "go1.20.7" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} -B ||
@@ -1378,7 +1380,7 @@ function install_golang_arm64() {
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
-    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:6.0" "mcr.microsoft.com/dotnet/aspnet:.0" "mcr.microsoft.com/mssql/server:2019-latest" "debian" "ubuntu" "centos" "alpine" "busybox" )
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:7.0" "mcr.microsoft.com/dotnet/aspnet:7.0" "mcr.microsoft.com/mssql/server:2022-latest" "debian" "ubuntu" "centos" "alpine" "busybox" )
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
         docker pull "$IMAGE" ||
             { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
@@ -1457,7 +1459,7 @@ function install_docker_compose() {
         declare TAR_ARCH="aarch64"
     fi
 
-    sudo curl -L "https://github.com/docker/compose/releases/download/v2.16.0/docker-compose-linux-${TAR_ARCH}" -o /usr/local/bin/docker-compose
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-${TAR_ARCH}" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     log_version docker-compose --version    
 }
@@ -1593,8 +1595,8 @@ function install_postgresql() {
 
 function configure_mongodb_repo() {
     echo "[INFO] Running configure_mongodb_repo..."
-    curl -fsSL https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add - &&
-    add-apt-repository "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/5.0 multiverse" ||
+    curl -fsSL https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add - &&
+    add-apt-repository "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/6.0 multiverse" ||
         { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
 }
 
@@ -1835,7 +1837,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.25.2
+        VERSION=3.27.1
     else
         VERSION=$1
     fi
@@ -1932,7 +1934,7 @@ function install_curl() {
     echo "[INFO] Running install_curl..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=7.88.1
+        VERSION=8.2.1
     else
         VERSION=$1
     fi
