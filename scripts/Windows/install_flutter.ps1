@@ -1,6 +1,6 @@
 . "$PSScriptRoot\common.ps1"
 
-$version = '3.10.5'
+$version = '3.13.2'
 
 Write-Host "Installing Flutter SDK $version"
 Write-Host "====================="
