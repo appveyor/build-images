@@ -3,6 +3,9 @@
 if (-not (Test-Path $destPath)) {
     New-Item $destPath -ItemType directory -Force | Out-Null
 }
+else {
+    Get-ChildItem "$destPath\*" -Recurse | Remove-Item -Recurse
+}
 
 Add-Path $destPath
 
@@ -13,7 +16,7 @@ Write-Host "Installing Chrome Selenium driver..." -ForegroundColor Cyan
 
 $zipPath = "$env:TEMP\chromedriver_win32.zip"
 (New-Object Net.WebClient).DownloadFile('https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/win32/chromedriver-win32.zip', $zipPath)
-7z x $zipPath -aoa -o"$destPath"
+7z e $zipPath -spe -o"$destPath"
 Remove-Item $zipPath
 
 Write-Host "Installed Chrome Selenium driver" -ForegroundColor Green
