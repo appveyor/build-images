@@ -18,7 +18,7 @@ Write-Host "Unpacking Flutter SDK..."
 Add-SessionPath "$env:SystemDrive\flutter\bin"
 Add-Path "$env:SystemDrive\flutter\bin"
 
-Start-ProcessWithOutput "flutter upgrade"
+Start-ProcessWithOutput "flutter upgrade --force"
 Start-ProcessWithOutput "flutter doctor -v"
 
 Write-Host "Flutter SDK installed"
