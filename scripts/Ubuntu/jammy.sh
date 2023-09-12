@@ -165,3 +165,30 @@ function configure_sqlserver_repository() {
     add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)" ||
         { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
 }
+
+function install_virtualenv() {
+    echo "[INFO] Running install_virtualenv..."
+    install_pip3
+    # pip3 install virtualenv ||
+    #     { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
+    # log_version python3 -m virtualenv --version
+    install_pip
+    log_version python -m virtualenv --version
+    log_version virtualenv --version
+}
+
+function install_pip() {
+    echo "[INFO] Running install_pip..."
+    
+    curl "https://bootstrap.pypa.io/pip/3.6/get-pip.py" -o "get-pip.py" ||
+        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
+    python get-pip.py ||
+        { echo "[WARNING] Cannot install pip." ; return 10; }
+
+    python -m pip install --upgrade pip setuptools wheel virtualenv
+
+    log_version pip --version
+
+    # cleanup
+    rm get-pip.py
+}
