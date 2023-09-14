@@ -13,15 +13,16 @@ Measure-Command {
 
     Write-Host "Downloading x86..."
     $exePath = "$env:TEMP\boost_1_78_0-msvc-14.3-32.exe"
-    (New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/misc/boost_1_78_0-msvc-14.3-32.exe', $exePath)
+    (New-Object Net.WebClient).DownloadFile('https://boostorg.jfrog.io/artifactory/main/release/1.78.0/binaries/boost_1_78_0-msvc-14.3-32.exe', $exePath)
 
     Write-Host "Installing x86..."
     cmd /c start /wait "$exePath" /verysilent
     del $exePath
+
     
     Write-Host "Downloading x64..."
     $exePath = "$env:TEMP\boost_1_78_0-msvc-14.3-64.exe"
-    (New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/misc/boost_1_78_0-msvc-14.3-64.exe', $exePath)
+    (New-Object Net.WebClient).DownloadFile('https://boostorg.jfrog.io/artifactory/main/release/1.78.0/binaries/boost_1_78_0-msvc-14.3-64.exe', $exePath)
 
     Write-Host "Installing x64..."
     cmd /c start /wait "$exePath" /verysilent
