@@ -3,9 +3,9 @@ environment:
     # Hyper-V
     # =======
 
-    # - job_name: VS 2019 on Hyper-V
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master
-    #   APPVEYOR_BAKE_IMAGE: vs2019-master
+    - job_name: VS 2019 on Hyper-V
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master
+      APPVEYOR_BAKE_IMAGE: vs2019-master
 
     # GCE
     # =======
@@ -49,7 +49,8 @@ build_script:
   #- dir C:\Qt\6.2.2
   #- dir C:\Qt\Tools
   #- dir C:\Qt\Tools\QtInstallerFramework
-  - ps: .\install_nodejs_latest.ps1
+  #- ps: .\install_nodejs_latest.ps1
+  - ps: .\install_boost_1.77.0_vs2019.ps1
 
 
   # Restart VM

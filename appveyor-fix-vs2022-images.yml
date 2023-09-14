@@ -52,7 +52,8 @@ build_script:
   
   #- ps: .\install_go.ps1
   #- ps: ./install_nodejs_latest.ps1
-  - ps: ./install_selenium_drivers.ps1
+  #- ps: ./install_selenium_drivers.ps1
+  - ps: ./install_boost_1.78.0_vs2022.ps1
   #  Restart VM
   #  - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
