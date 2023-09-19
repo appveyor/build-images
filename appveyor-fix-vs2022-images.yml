@@ -14,8 +14,8 @@ environment:
 #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-azure-westus
 #   APPVEYOR_BAKE_IMAGE: vs2022-master-azure-westus
 
-# GCE
-# =======
+  # GCE
+  # =======
 
     - job_name: VS 2022 on GCE us-central1
       APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
@@ -51,7 +51,9 @@ build_script:
   # - ps: .\install_qt_fast_windows.ps1
   
   #- ps: .\install_go.ps1
-  - ps: .\fix_ruby.ps1
+  #- ps: ./install_nodejs_latest.ps1
+  #- ps: ./install_selenium_drivers.ps1
+  - ps: ./install_boost_1.78.0_vs2022.ps1
   #  Restart VM
   #  - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5

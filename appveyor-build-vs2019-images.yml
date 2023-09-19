@@ -12,11 +12,11 @@ environment:
     #   bake_phase: wait-50-min
     #   job_depends_on: VS 2019 on Hyper-V - Part I
 
-    - job_name: VS 2019 on Hyper-V - Part II
-      bake_phase: 3
-      job_depends_on: VS 2019 on Hyper-V - Wait for Part I image to be ready
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1
-      APPVEYOR_BAKE_IMAGE: vs2019-master
+    # - job_name: VS 2019 on Hyper-V - Part II
+    #   bake_phase: 3
+    #   job_depends_on: VS 2019 on Hyper-V - Wait for Part I image to be ready
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1
+    #   APPVEYOR_BAKE_IMAGE: vs2019-master
 
     # GCE
     # =======
@@ -30,11 +30,11 @@ environment:
     #   bake_phase: wait-15-min
     #   job_depends_on: VS 2019 on GCE us-central1 - Part I
 
-    # - job_name: VS 2019 on GCE us-central1 - Part II
-    #   bake_phase: 3
-    #   job_depends_on: VS 2019 on GCE us-central1 - Wait for Part I image to be ready
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-gce-us-central1
-    #   APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
+    - job_name: VS 2019 on GCE us-central1 - Part II
+      bake_phase: 3
+      job_depends_on: VS 2019 on GCE us-central1 - Wait for Part I image to be ready
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
 
     # # Azure
     # # =======
@@ -244,9 +244,7 @@ for:
       - ps: .\install_cygwin.ps1
       - ps: .\install_mingw.ps1
       - ps: .\install_mingw-w64.ps1
-      #- ps: .\install_boost_1.73.0_vs2019.ps1
-      - ps: .\install_boost_1.77.0_vs2019.ps1
-      - ps: .\install_boost_1.82.0_vs2019.ps1
+      - ps: .\install_boost_1.83.0_vs2019.ps1
 
       - ps: .\install_android_sdk.ps1
       - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip

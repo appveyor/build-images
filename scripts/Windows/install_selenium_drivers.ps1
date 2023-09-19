@@ -3,6 +3,9 @@
 if (-not (Test-Path $destPath)) {
     New-Item $destPath -ItemType directory -Force | Out-Null
 }
+else {
+    Get-ChildItem "$destPath\*" -Recurse | Remove-Item -Recurse
+}
 
 Add-Path $destPath
 
@@ -12,8 +15,8 @@ Add-Path $destPath
 Write-Host "Installing Chrome Selenium driver..." -ForegroundColor Cyan
 
 $zipPath = "$env:TEMP\chromedriver_win32.zip"
-(New-Object Net.WebClient).DownloadFile('https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_win32.zip', $zipPath)
-7z x $zipPath -aoa -o"$destPath"
+(New-Object Net.WebClient).DownloadFile('https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/win32/chromedriver-win32.zip', $zipPath)
+7z e $zipPath -spe -o"$destPath"
 Remove-Item $zipPath
 
 Write-Host "Installed Chrome Selenium driver" -ForegroundColor Green
@@ -26,7 +29,7 @@ Write-Host "Installed Chrome Selenium driver" -ForegroundColor Green
 Write-Host "Installing Edge Selenium driver..." -ForegroundColor Cyan
 
 $zipPath = "$env:TEMP\edgedriver_win32.zip"
-(New-Object Net.WebClient).DownloadFile('https://msedgedriver.azureedge.net/115.0.1860.0/edgedriver_win32.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://msedgedriver.azureedge.net/116.0.1938.62/edgedriver_win32.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 Remove-Item $zipPath
 
