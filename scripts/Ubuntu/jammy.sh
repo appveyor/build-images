@@ -192,3 +192,36 @@ function install_pip() {
     # cleanup
     rm get-pip.py
 }
+
+function install_sqlserver() {
+    echo "[INFO] Running install_sqlserver..."
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+    curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
+    configure_sqlserver_repository
+
+    apt-get -y -qq update &&
+    apt-get -y -q install mssql-server ||
+        { echo "[ERROR] Cannot install mssql-server." 1>&2; return 20; }
+    MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD \
+        MSSQL_PID=developer \
+        /opt/mssql/bin/mssql-conf -n setup accept-eula ||
+        { echo "[ERROR] Cannot configure mssql-server." 1>&2; return 30; }
+
+    ACCEPT_EULA=Y apt-get -y -q install mssql-tools unixodbc-dev
+
+    if type -t fix_sqlserver; then
+        fix_sqlserver
+    fi
+
+    systemctl restart mssql-server
+    systemctl is-active mssql-server ||
+        { echo "[ERROR] mssql-server service failed to start." 1>&2; return 40; }
+    log_version dpkg -l mssql-server
+}
+
+function configure_sqlserver_repository() {
+    echo "[INFO] Running configure_sqlserver_repository..."
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2019.list)" &&
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/prod.list)" ||
+        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
+}
