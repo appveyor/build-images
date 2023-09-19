@@ -197,7 +197,7 @@ function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
     curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
-    configure_sqlserver_repository
+    #configure_sqlserver_repository
 
     apt-get -y -qq update &&
     apt-get -y -q install mssql-server ||
@@ -219,9 +219,3 @@ function install_sqlserver() {
     log_version dpkg -l mssql-server
 }
 
-function configure_sqlserver_repository() {
-    echo "[INFO] Running configure_sqlserver_repository..."
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2019.list)" &&
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/prod.list)" ||
-        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
-}
