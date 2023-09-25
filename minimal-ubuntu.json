@@ -1,7 +1,7 @@
 {
   "variables": {
-    "iso_url": "http://cdimage.ubuntu.com/releases/bionic/release/ubuntu-18.04.6-server-amd64.iso",
-    "iso_checksum": "f5cbb8104348f0097a8e513b10173a07dbc6684595e331cb06f93f385d0aecf6",
+    "iso_url": "https://releases.ubuntu.com/20.04.6/ubuntu-20.04.6-live-server-amd64.iso",
+    "iso_checksum": "b8f31413336b9393ad5d8ef0282717b2ab19f007df2e9ed5196c13d8f9153c8b",
     "iso_checksum_type": "sha256"
   },
   "provisioners": [
@@ -50,7 +50,7 @@
       "account_file": "{{user `gce_account_file`}}",
       "project_id": "{{ user `gce_project` }}",
       "zone": "{{ user `gce_zone` }}",
-      "source_image_family": "ubuntu-1804-lts",
+      "source_image_family": "ubuntu-2004-lts",
       "state_timeout" : "15m",
       "scopes": [
           "https://www.googleapis.com/auth/userinfo.email",
@@ -65,8 +65,8 @@
         ],
       "machine_type": "n1-standard-1",
       "ssh_username": "{{ user `install_user` }}",
-      "instance_name": "packer-ubuntu1804-{{uuid}}",
-      "image_name": "packer-ubuntu1804-{{timestamp}}",
+      "instance_name": "packer-ubuntu2004-{{uuid}}",
+      "image_name": "packer-ubuntu2004-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",
       "disk_size": 40,
       "disk_type": "pd-ssd",
@@ -80,7 +80,7 @@
       "source_ami_filter": {
         "filters": {
         "virtualization-type": "hvm",
-        "name": "ubuntu/images/*ubuntu-bionic-18.04-amd64-server-*",
+        "name": "ubuntu/images/*ubuntu-focal-20.04-amd64-server-*",
         "root-device-type": "ebs"
         },
         "owners": ["099720109477"],
@@ -91,7 +91,7 @@
       "ssh_keypair_name": "{{user `aws_ssh_keypair_name`}}",
       "ssh_private_key_file": "{{user `aws_ssh_private_key_file`}}",
       "ssh_timeout": "1000s",
-      "ami_name": "Appveyor Worker Ubuntu1804 {{timestamp}}",
+      "ami_name": "Appveyor Worker Ubuntu2004 {{timestamp}}",
       "ami_description": "{{user `image_description`}}",
       "launch_block_device_mappings": [
         {
@@ -102,14 +102,14 @@
         }
       ],
       "run_tags": {
-        "OS_Version": "Ubuntu1804",
+        "OS_Version": "Ubuntu2004",
         "datemark": "{{user `datemark`}}",
         "description": "{{user `image_description`}}",
         "Base_AMI_Name": "{{ .SourceAMIName }}",
         "Extra": "{{ .SourceAMITags.TagName }}"
       },
       "tags": {
-        "OS_Version": "Ubuntu1804",
+        "OS_Version": "Ubuntu2004",
         "datemark": "{{user `datemark`}}",
         "description": "{{user `image_description`}}",
         "Base_AMI_Name": "{{ .SourceAMIName }}",
@@ -123,17 +123,17 @@
       "client_secret": "{{ user `azure_client_secret` }}",
       "location": "{{ user `azure_location` }}",
 
-      "temp_resource_group_name": "packer-RG-u18-{{uuid}}",
-      "temp_compute_name": "packer-u18-{{uuid}}",
+      "temp_resource_group_name": "packer-RG-u20-{{uuid}}",
+      "temp_compute_name": "packer-u20-{{uuid}}",
 
       "os_type": "Linux",
       "image_publisher": "Canonical",
       "image_offer": "UbuntuServer",
-      "image_sku": "18.04-LTS",
+      "image_sku": "20.04-LTS",
       "vm_size": "{{user `azure_vm_size`}}",
 
-      "capture_container_name": "appveyor-images-u18",
-      "capture_name_prefix": "u18-{{user `datemark`}}",
+      "capture_container_name": "appveyor-images-u20",
+      "capture_name_prefix": "u20-{{user `datemark`}}",
       "resource_group_name": "{{ user `azure_resource_group_name` }}",
       "storage_account": "{{ user `azure_storage_account` }}",
 
@@ -141,7 +141,7 @@
 
       "azure_tags": {
         "automation": "packer",
-        "OS": "ubuntu1804",
+        "OS": "ubuntu2004",
         "description": "{{user `image_description`}}",
         "date": "{{user `datemark`}}"
       }
