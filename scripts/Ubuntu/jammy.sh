@@ -219,3 +219,79 @@ function install_sqlserver() {
     log_version dpkg -l mssql-server
 }
 
+
+
+function install_nvm() {
+    echo "[INFO] Running install_nvm..."
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}' user. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    #This should install the latest release version automatically
+    curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    #shellcheck disable=SC2016
+    write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
+    #shellcheck disable=SC2016
+    write_line "${HOME}/.profile" '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'
+    #shellcheck disable=SC2016
+    write_line "${HOME}/.profile" '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'
+}
+
+function install_nvm_nodejs() {
+    echo "[INFO] Running install_nvm_nodejs..."
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    local CURRENT_NODEJS
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        CURRENT_NODEJS=16
+    else
+        CURRENT_NODEJS=$1
+    fi
+    command -v nvm ||
+        { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
+    local v
+
+    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" )
+
+    
+    for v in "${NVM_VERSIONS[@]}"; do
+        nvm install ${v} ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+
+    nvm alias default ${CURRENT_NODEJS}
+
+    log_version nvm --version
+    log_version nvm list
+    log_version node --version
+    log_version npm --version
+}
+
+function install_rubies() {
+    echo "[INFO] Running install_rubies..."
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    local DEFAULT_RUBY
+    DEFAULT_RUBY="ruby-2.7"
+    command -v rvm ||
+        { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
+    local v
+
+    declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.4" "ruby-3.2.2" "ruby-head" )
+    
+    for v in "${RUBY_VERSIONS[@]}"; do
+        rvm install ${v} ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+
+    rvm use "$DEFAULT_RUBY" --default
+    log_version rvm --version
+    log_version rvm list
+}
