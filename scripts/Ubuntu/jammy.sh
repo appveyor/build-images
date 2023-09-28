@@ -283,7 +283,7 @@ function install_rvm() {
 
     # Install mpapis public key (might need `gpg2` and or `sudo`)
     curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
-    curl -sSL https://rvm.io/pkuczynski.asc | gpg22 --import -
+    curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
 
     # Download the installer
     curl -fsSL -O https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer &&
