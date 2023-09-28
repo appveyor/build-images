@@ -271,6 +271,36 @@ function install_nvm_nodejs() {
     log_version npm --version
 }
 
+function install_rvm() {
+    echo "[INFO] Running install_rvm..."
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    sudo apt update &&
+    sudo apt install gnupg2
+
+    # Install mpapis public key (might need `gpg2` and or `sudo`)
+    curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
+    curl -sSL https://rvm.io/pkuczynski.asc | gpg22 --import -
+
+    # Download the installer
+    curl -fsSL -O https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer &&
+    curl -fsSL -O https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer.asc ||
+        { echo "[ERROR] Cannot download rvm-installer." 1>&2; return 10; }
+
+    # Verify the installer signature (might need `gpg2`), and if it validates...
+    gpg2 --verify rvm-installer.asc &&
+
+    # Run the installer
+    bash rvm-installer stable ||
+        { echo "[ERROR] Cannot install RVM." 1>&2; return 20; }
+
+    # cleanup
+    rm rvm-installer rvm-installer.asc
+}
+
 function install_rubies() {
     echo "[INFO] Running install_rubies..."
     # this must be executed as appveyor user
@@ -278,6 +308,7 @@ function install_rubies() {
         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
         return 1
     fi
+    rvm pkg install openssl
     local DEFAULT_RUBY
     DEFAULT_RUBY="ruby-2.7"
     command -v rvm ||
@@ -287,11 +318,58 @@ function install_rubies() {
     declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.4" "ruby-3.2.2" "ruby-head" )
     
     for v in "${RUBY_VERSIONS[@]}"; do
-        rvm install ${v} ||
+        rvm install ${v} --with-openssl-dir=$HOME/.rvm/usr ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
 
     rvm use "$DEFAULT_RUBY" --default
     log_version rvm --version
     log_version rvm list
+}
+
+# https://jdk.java.net/archive/
+function install_jdks() {
+    echo "[INFO] Running install_jdks..."
+
+    if [[ $OS_ARCH == "amd64" ]]; then
+        TAR_ARCH="x64"
+        install_jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 10 https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 11 https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 12 https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 13 https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz ||
+            return $?
+        install_jdk 14 https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_linux-x64_bin.tar.gz ||
+            return $?
+    else
+        TAR_ARCH="aarch64"
+    fi
+    install_jdk 15 https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?
+    install_jdk 16 https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-16.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?  
+    install_jdk 17 https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?                     
+    install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?        
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        OFS=$IFS
+        IFS=$'\n'
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_jdk)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            $(declare -f log_version)
+            configure_jdk" <<< "${PROFILE_LINES[*]}" ||
+                return $?
+        IFS=$OFS
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_jdk"
+    fi
 }
