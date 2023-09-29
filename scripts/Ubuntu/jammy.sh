@@ -55,7 +55,7 @@ function install_dotnets() {
     # it seems like there is dependency for mysql somethere in dotnet-* packages
     configure_apt_mysql
 
-    apt -y -q install --no-install-recommends "${PACKAGES[@]}" ||
+    apt-get -y -q install --no-install-recommends "${PACKAGES[@]}" ||
         { echo "[ERROR] Cannot install dotnet packages ${PACKAGES[*]}." 1>&2; return 20; }
 
     #set env
