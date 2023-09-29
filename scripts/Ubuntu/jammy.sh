@@ -29,7 +29,7 @@ function config_dotnet_repository() {
     echo -e 'Package: *\nPin: origin "packages.microsoft.com"\nPin-Priority: 1001' | sudo tee /etc/apt/preferences
     curl -fsSL -O https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/packages-microsoft-prod.deb &&
     dpkg -i packages-microsoft-prod.deb &&
-    apt -y -qq update ||
+    apt-get -y -q update ||
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
 }
 

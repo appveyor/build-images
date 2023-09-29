@@ -214,7 +214,24 @@ if [[ $OS_ARCH == "amd64" ]]; then
     install_clang ||
         _abort $?
 fi
-
+# .NET stuff
+if [[ $OS_ARCH == "amd64" ]]; then
+    install_dotnets ||
+        _abort $?
+else
+    install_dotnet_arm64 ||
+        _abort $?
+fi
+preheat_dotnet_sdks &&
+log_version dotnet --list-sdks &&
+log_version dotnet --list-runtimes ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        $(declare -f configure_nuget)
+        configure_nuget" ||
+    _abort $?
 install_cvs ||
     _abort $?
 su -l ${USER_NAME} -c "
@@ -291,24 +308,24 @@ else
     echo "TODO: install_flutter for ARM"
 fi
 
-# .NET stuff
-if [[ $OS_ARCH == "amd64" ]]; then
-    install_dotnets ||
-        _abort $?
-else
-    install_dotnet_arm64 ||
-        _abort $?
-fi
-preheat_dotnet_sdks &&
-log_version dotnet --list-sdks &&
-log_version dotnet --list-runtimes ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        OS_ARCH=${OS_ARCH}
-        $(declare -f configure_nuget)
-        configure_nuget" ||
-    _abort $?
+# # .NET stuff
+# if [[ $OS_ARCH == "amd64" ]]; then
+#     install_dotnets ||
+#         _abort $?
+# else
+#     install_dotnet_arm64 ||
+#         _abort $?
+# fi
+# preheat_dotnet_sdks &&
+# log_version dotnet --list-sdks &&
+# log_version dotnet --list-runtimes ||
+#     _abort $?
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
+#         $(declare -f configure_nuget)
+#         configure_nuget" ||
+#     _abort $?
 
 if [[ $OS_ARCH == "amd64" ]]; then
     su -l ${USER_NAME} -c "
