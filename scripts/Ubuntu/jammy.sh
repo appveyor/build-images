@@ -17,12 +17,59 @@ function configure_mercurial_repository() {
 }
 
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=("6.0" "7.0" )
+    SDK_VERSIONS=("3.1" "6.0" "7.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
+
+    RUNTIME_VERSIONS=( "2.1" "2.2" )
+    dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
+}
+
+function config_dotnet_repository() {
+    touch /etc/apt/preferences
+    echo -e 'Package: *\nPin: origin "packages.microsoft.com"\nPin-Priority: 1001' | sudo tee /etc/apt/preferences
+    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/packages-microsoft-prod.deb &&
+    dpkg -i packages-microsoft-prod.deb &&
+    apt -y -qq update ||
+        { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
 }
 
 function install_outdated_dotnets() {
     echo "[INFO] Running install_outdated_dotnets on Ubuntu 22.04...skipped"
+}
+
+function install_dotnets() {
+    echo "[INFO] Running install_dotnets..."
+    prepare_dotnet_packages
+    config_dotnet_repository
+
+    #TODO REPO_LIST might be empty
+    #REPO_LIST=$(apt-cache search dotnet-)
+    # for i in "${!PACKAGES[@]}"; do
+    #     if [[ ! ${REPO_LIST} =~ ${PACKAGES[i]} ]]; then
+    #         echo "[WARNING] ${PACKAGES[i]} package not found in apt repositories. Skipping it."
+    #         unset 'PACKAGES[i]'
+    #     fi
+    # done
+    #TODO PACKAGES might be empty
+
+    # it seems like there is dependency for mysql somethere in dotnet-* packages
+    configure_apt_mysql
+
+    apt -y -q install --no-install-recommends "${PACKAGES[@]}" ||
+        { echo "[ERROR] Cannot install dotnet packages ${PACKAGES[*]}." 1>&2; return 20; }
+
+    #set env
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
+        write_line "$USER_HOME/.profile" "export DOTNET_PRINT_TELEMETRY_MESSAGE=false" 'DOTNET_PRINT_TELEMETRY_MESSAGE='
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
+    fi
+
+    #cleanup
+    if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
+
+    install_outdated_dotnets
 }
 
 function configure_firefox_repository() {
