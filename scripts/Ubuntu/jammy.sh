@@ -25,8 +25,8 @@ function prepare_dotnet_packages() {
 }
 
 function config_dotnet_repository() {
-    touch /etc/apt/preferences
-    echo -e 'Package: *\nPin: origin "packages.microsoft.com"\nPin-Priority: 1001' | sudo tee /etc/apt/preferences
+    #touch /etc/apt/preferences
+    #echo -e 'Package: *\nPin: origin "packages.microsoft.com"\nPin-Priority: 1001' | sudo tee /etc/apt/preferences
     curl -fsSL -O https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/packages-microsoft-prod.deb &&
     dpkg -i packages-microsoft-prod.deb &&
     apt-get -y -q update ||
