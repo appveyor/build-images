@@ -17,11 +17,11 @@ function configure_mercurial_repository() {
 }
 
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=( "3.1" "6.0" "7.0" )
+    SDK_VERSIONS=( "6.0" "7.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
-    RUNTIME_VERSIONS=( "3.1" "6.0" )
-    dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
+    # RUNTIME_VERSIONS=( "3.1" "6.0" )
+    # dotnet_packages "dotnet-runtime-" RUNTIME_VERSIONS[@]
 }
 
 function config_dotnet_repository() {
