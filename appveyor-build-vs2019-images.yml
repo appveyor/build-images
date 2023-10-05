@@ -90,6 +90,7 @@ for:
 
       - appveyor version
       - ps: .\install_path_utils.ps1
+      - ps: (Test-Path -Path "C:\Program Files\Eclipse Foundation") ? Exit-AppveyorBuild : throw
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
       - ps: .\install_7zip.ps1
@@ -97,7 +98,7 @@ for:
       - ps: .\install_webpi.ps1
       - ps: .\install_nuget.ps1
       - ps: .\install_pstools.ps1
-
+      
       - ps: .\install_git.ps1
       - ps: .\install_git_lfs.ps1
       - ps: .\install_mercurial.ps1
@@ -132,6 +133,8 @@ for:
       - ps: Start-Sleep -s 5
 
       - ps: .\install_vs2019.ps1
+      
+      #- ps: if ( -not ( Test-Path -Path "C:\Program Files\Eclipse Foundation" ) )
       - ps: .\update_msbuild_path.ps1
       - ps: .\install_xunit_192.ps1
       - ps: .\install_xunit_20.ps1
