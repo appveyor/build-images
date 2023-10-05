@@ -132,9 +132,9 @@ for:
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
-      - ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Exit-AppveyorBuild } else { throw }
 
       - ps: .\install_vs2019.ps1
+      - ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Exit-AppveyorBuild } else { throw }
       
       #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
       #- ps: if ( -not ( Test-Path -Path "C:\Program Files\Eclipse Foundation" ) )

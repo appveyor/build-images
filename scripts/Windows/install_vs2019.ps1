@@ -79,7 +79,7 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Component.Microsoft.VisualStudio.RazorExtension ' + `
 	'--add Component.Microsoft.VisualStudio.Web.AzureFunctions ' + `
 	'--add Component.Microsoft.Web.LibraryManager ' + `
-	'--add Component.OpenJDK ' + `
+#	'--add Component.OpenJDK ' + `
 	'--add Component.Xamarin ' + `
 	'--add Component.Xamarin.RemotedSimulator ' + `
 	'--add Microsoft.Component.Azure.DataLake.Tools ' + `
