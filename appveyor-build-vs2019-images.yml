@@ -83,9 +83,8 @@ for:
 
       - ps: Start-Sleep -s 10
       - ps: .\init_server.ps1
-      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
       - ps: if ($env:cloud_type -eq 'Azure' -or $env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }    
-      - ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Write-Host "no eclipse folder" } else { Write-Host "continue build" }
+      - ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Write-Host "eclipse folder found" } else { Write-Host "no eclipse folder found" }
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
@@ -136,6 +135,7 @@ for:
 
       - ps: .\install_vs2019.ps1
       
+      #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
       - ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Exit-AppveyorBuild } else { throw }
       #- ps: if ( -not ( Test-Path -Path "C:\Program Files\Eclipse Foundation" ) )
       - ps: .\update_msbuild_path.ps1
