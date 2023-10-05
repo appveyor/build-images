@@ -90,7 +90,7 @@ for:
 
       - appveyor version
       - ps: .\install_path_utils.ps1
-      - ps: (Test-Path -Path "C:\Program Files\Eclipse Foundation") ? Exit-AppveyorBuild : throw
+      - ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Exit-AppveyorBuild } else { throw }
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
       - ps: .\install_7zip.ps1
