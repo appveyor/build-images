@@ -105,7 +105,6 @@ for:
       - ps: .\install_mercurial.ps1
       - ps: .\install_subversion.ps1
       - ps: .\add_ssh_known_hosts.ps1
-      - ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Exit-AppveyorBuild } else { throw }
 
       - ps: .\install_docker_hyperv_wsl_features.ps1
 
@@ -133,6 +132,7 @@ for:
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
+      - ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Exit-AppveyorBuild } else { throw }
 
       - ps: .\install_vs2019.ps1
       
