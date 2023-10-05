@@ -80,6 +80,8 @@ for:
         - bake_phase: 1
 
     build_script:
+
+      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
       - ps: Start-Sleep -s 10
       - ps: .\init_server.ps1
       - ps: if ($env:cloud_type -eq 'Azure' -or $env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }    
