@@ -70,11 +70,11 @@ Function InstallVS
   }
 }
 
-$WorkLoads = '--add Component.Linux.CMake ' + `
-	#'--add Component.Android.SDK25.Private ' + `
-	#'--add Component.Android.SDK28 ' + `
-	#'--add Component.Android.NDK.R16B ' + `
-	#'--add Component.MDD.Android ' + `
+$WorkLoads = '--add Component.Android.NDK.R16B ' + `
+	'--add Component.Android.SDK25.Private ' + `
+	'--add Component.Android.SDK28 ' + `
+	'--add Component.Linux.CMake ' + `
+	'--add Component.MDD.Android ' + `
 	'--add Component.MDD.Linux ' + `
 	'--add Component.Microsoft.VisualStudio.RazorExtension ' + `
 	'--add Component.Microsoft.VisualStudio.Web.AzureFunctions ' + `
