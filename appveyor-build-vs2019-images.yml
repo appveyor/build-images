@@ -80,18 +80,16 @@ for:
         - bake_phase: 1
 
     build_script:
-
       - ps: Start-Sleep -s 10
       - ps: .\init_server.ps1
-      - ps: if ($env:cloud_type -eq 'Azure' -or $env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }    
-      - ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Write-Host "eclipse folder found" } else { Write-Host "no eclipse folder found" }
+      - ps: if ($env:cloud_type -eq 'Azure' -or $env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
+
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
       - appveyor version
       - ps: .\install_path_utils.ps1
-      
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
       - ps: .\install_7zip.ps1
@@ -99,7 +97,7 @@ for:
       - ps: .\install_webpi.ps1
       - ps: .\install_nuget.ps1
       - ps: .\install_pstools.ps1
-      
+
       - ps: .\install_git.ps1
       - ps: .\install_git_lfs.ps1
       - ps: .\install_mercurial.ps1
@@ -134,9 +132,7 @@ for:
       - ps: Start-Sleep -s 5
 
       - ps: .\install_vs2019.ps1
-      #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-      - ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Exit-AppveyorBuild } else { throw }
-      
+      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
       - ps: .\update_msbuild_path.ps1
       - ps: .\install_xunit_192.ps1
       - ps: .\install_xunit_20.ps1
@@ -267,3 +263,5 @@ for:
       - ps: .\disable_windows_background_services.ps1
       - ps: .\enforce_windows_firewall.ps1
       - ps: .\cleanup_windows.ps1
+
+#- ps: if (Test-Path -Path "C:\Program Files\Eclipse Foundation") { Exit-AppveyorBuild } else { throw }
