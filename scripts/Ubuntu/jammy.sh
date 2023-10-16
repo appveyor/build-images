@@ -382,7 +382,7 @@ function install_jdks() {
         TAR_ARCH="x64"
         install_jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz ||
             return $?
-        install_jdk 10 https://download.java.net/java/GA/jdk10/10.0.1/fb4372174a714e6b8c52526dc134031e/10/openjdk-10.0.1_linux-x64_bin.tar.gz ||
+        install_jdk 10 https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_linux-x64_bin.tar.gz ||
             return $?
         install_jdk 11 https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz ||
             return $?
@@ -403,21 +403,21 @@ function install_jdks() {
         return $?                     
     install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?        
-    # if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-    #     OFS=$IFS
-    #     IFS=$'\n'
-    #     su -l ${USER_NAME} -c "
-    #         USER_NAME=${USER_NAME}
-    #         $(declare -f configure_jdk)
-    #         $(declare -f write_line)
-    #         $(declare -f add_line)
-    #         $(declare -f replace_line)
-    #         $(declare -f log_version)
-    #         configure_jdk" <<< "${PROFILE_LINES[*]}" ||
-    #             return $?
-    #     IFS=$OFS
-    # else
-    #     echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_jdk"
-    # fi
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+        OFS=$IFS
+        IFS=$'\n'
+        su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_jdk)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            $(declare -f log_version)
+            configure_jdk" <<< "${PROFILE_LINES[*]}" ||
+                return $?
+        IFS=$OFS
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_jdk"
+    fi
     echo "skipping configure_jdk"
 }

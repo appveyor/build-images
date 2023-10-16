@@ -1126,7 +1126,7 @@ function install_jdk() {
 
     echo "[INFO] Running install_jdk ${JDK_VERSION}..."
 
-    JDK_PATH=/usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64/
+    JDK_PATH=/usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64
     JDK_LINK=/usr/lib/jvm/java-1.${JDK_VERSION}.0-openjdk-amd64
 
     local TMP_DIR
