@@ -403,20 +403,21 @@ function install_jdks() {
         return $?                     
     install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?        
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        OFS=$IFS
-        IFS=$'\n'
-        su -l ${USER_NAME} -c "
-            USER_NAME=${USER_NAME}
-            $(declare -f configure_jdk)
-            $(declare -f write_line)
-            $(declare -f add_line)
-            $(declare -f replace_line)
-            $(declare -f log_version)
-            configure_jdk" <<< "${PROFILE_LINES[*]}" ||
-                return $?
-        IFS=$OFS
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_jdk"
-    fi
+    # if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
+    #     OFS=$IFS
+    #     IFS=$'\n'
+    #     su -l ${USER_NAME} -c "
+    #         USER_NAME=${USER_NAME}
+    #         $(declare -f configure_jdk)
+    #         $(declare -f write_line)
+    #         $(declare -f add_line)
+    #         $(declare -f replace_line)
+    #         $(declare -f log_version)
+    #         configure_jdk" <<< "${PROFILE_LINES[*]}" ||
+    #             return $?
+    #     IFS=$OFS
+    # else
+    #     echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_jdk"
+    # fi
+    echo "skipping configure_jdk"
 }
