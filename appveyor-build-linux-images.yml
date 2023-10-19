@@ -20,10 +20,10 @@ environment:
     #   APPVEYOR_BAKE_IMAGE: ubuntu1604-master-gce-us-central1
     #   BUILD_AGENT_MODE: GCE
 
-    # - job_name: Ubuntu 22.04 on Hyper-V
-    #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-2204-hyperv
-    #   APPVEYOR_BAKE_IMAGE: ubuntu2204-master
-    #   BUILD_AGENT_MODE: HyperV
+    - job_name: Ubuntu 22.04 on Hyper-V
+      APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-2204-hyperv
+      APPVEYOR_BAKE_IMAGE: ubuntu2204-master
+      BUILD_AGENT_MODE: HyperV
 
     # - job_name: Ubuntu 20.04 on Hyper-V
     #   APPVEYOR_BUILD_WORKER_IMAGE: base-ubuntu-2004-hyperv
