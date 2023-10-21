@@ -1046,7 +1046,7 @@ function configure_mono_repository () {
 
 function install_mono() {
     echo "[INFO] Running install_mono..."
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+    #apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
 
     configure_mono_repository
 
@@ -1126,7 +1126,7 @@ function install_jdk() {
 
     echo "[INFO] Running install_jdk ${JDK_VERSION}..."
 
-    JDK_PATH=/usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64/
+    JDK_PATH=/usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64
     JDK_LINK=/usr/lib/jvm/java-1.${JDK_VERSION}.0-openjdk-amd64
 
     local TMP_DIR
@@ -1342,9 +1342,9 @@ function install_golangs() {
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
     
-    gvm install go1.4 -B &&
-    gvm use go1.4 ||
-        { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
+    #gvm install go1.4 -B &&
+    #gvm use go1.4 ||
+     #   { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
     declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.12" "go1.20.7" )
     
