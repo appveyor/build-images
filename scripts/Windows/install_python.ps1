@@ -4,7 +4,7 @@
 # https://stackoverflow.com/questions/30699782/access-is-denied-while-upgrading-pip-exe-on-windows/35580525#35580525
 #
 
-$pipVersion = "22.3.1"
+$pipVersion = "23.2.1"
 
 function UpdatePythonPath($pythonPath) {
     $env:path = ($env:path -split ';' | Where-Object { -not $_.contains('\Python') }) -join ';'
