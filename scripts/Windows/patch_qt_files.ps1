@@ -1,4 +1,4 @@
-$qt_base_dir = "C:\Qt\6.5.2\msvc2019_arm64\bin\"
+$qt_base_dir = "C:\Qt\6.5.3\msvc2019_arm64\bin\"
 $batch_files = @("qtpaths.bat", "qtpaths6.bat", "qmake.bat", "qmake6.bat")
 
 $patch_content = @"
