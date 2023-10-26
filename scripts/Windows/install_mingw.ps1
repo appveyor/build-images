@@ -12,7 +12,7 @@ $zipPath = "$env:TEMP\mingw-get-0.6.3-mingw32-pre-20170905-1-bin.zip"
 Write-Host "Downloading..."
 [Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
 #(New-Object Net.WebClient).DownloadFile('https://osdn.net/frs/redir.php?m=plug&f=mingw%2F68260%2Fmingw-get-0.6.3-mingw32-pre-20170905-1-bin.zip', $zipPath)
-Invoke-WebRequest -Uri 'https://osdn.net/frs/redir.php?m=plug&f=mingw%2F68260%2Fmingw-get-0.6.3-mingw32-pre-20170905-1-bin.zip' -OutFile $zipPath
+Invoke-WebRequest -Uri 'https://osdn.net/projects/mingw/downloads/68260/mingw-get-0.6.3-mingw32-pre-20170905-1-bin.zip' -OutFile $zipPath
 #(New-Object Net.WebClient).DownloadFile('https://osdn.net/projects/mingw/downloads/68260/mingw-get-0.6.3-mingw32-pre-20170905-1-bin.zip', $zipPath)
 Write-Host "Unzipping..."
 7z x $zipPath -y -o"$mingwPath" | Out-Null
