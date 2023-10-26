@@ -9,7 +9,7 @@ function Install-SDK($sdkVersion) {
     }
     else {
         Write-Host "Installing .NET Core SDK $sdkVersion"
-        Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
+        Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -Verbose -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
         & $env:temp\dotnet-install.ps1 -Architecture x64 -Version $sdkVersion -InstallDir "$env:ProgramFiles\dotnet"
     }
 

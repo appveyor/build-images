@@ -219,6 +219,11 @@ for:
       - ps: Start-Sleep -s 5
       - ps: .\install_sql_server_2022_after_restart.ps1
 
+      - ps: .\install_dotnet_core_sdks.ps1
+      - ps: .\install_dotnet_runtimes.ps1
+      - ps: .\install_dotnet_devpacks.ps1
+
+      
       - ps: .\install_aws_cli.ps1
       - ps: .\install_aws_powershell.ps1
       - ps: .\install_azure_cli.ps1
@@ -258,9 +263,9 @@ for:
       - ps: .\install_boost_1.78.0_vs2022.ps1
       - ps: .\install_boost_1.83.0_vs2022.ps1
 
-      - ps: .\install_dotnet_core_sdks.ps1
-      - ps: .\install_dotnet_runtimes.ps1
-      - ps: .\install_dotnet_devpacks.ps1
+      # - ps: .\install_dotnet_core_sdks.ps1
+      # - ps: .\install_dotnet_runtimes.ps1
+      # - ps: .\install_dotnet_devpacks.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
