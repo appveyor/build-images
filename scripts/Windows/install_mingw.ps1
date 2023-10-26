@@ -16,7 +16,7 @@ Write-Host "Downloading..."
 #(New-Object Net.WebClient).DownloadFile('https://osdn.net/projects/mingw/downloads/68260/mingw-get-0.6.3-mingw32-pre-20170905-1-bin.zip', $zipPath)
 Write-Host "Unzipping..."
 7z x $zipPath -y -o"$mingwPath" | Out-Null
-Get-ChildItem -Path $mingwPath -Recurse
+#Get-ChildItem -Path $mingwPath -Recurse
 Remove-Item $zipPath
 
 # install MinGW
