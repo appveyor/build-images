@@ -52,7 +52,7 @@ build_script:
   #- ps: .\install_nodejs_latest.ps1
   #- ps: .\install_boost_1.77.0_vs2019.ps1
   #- ps: .\fix_qt_symlinks.ps1
-  - ps: .\patch_qt_files.ps1
+  - ps: .\install_mingw.ps1
   #- ps: Remove-Path "${env:ProgramFiles}\Eclipse Foundation\jdk-8.0.302.8-hotspot\bin" -ErrorAction Stop
   # Restart VM
   # - ps: Start-Sleep -s 5; Restart-Computer -Force
