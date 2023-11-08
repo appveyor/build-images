@@ -1,6 +1,6 @@
 . "$PSScriptRoot\common.ps1"
 
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [System.Net.SecurityProtocolType]::Tls11 -bor [System.Net.SecurityProtocolType]::Tls13
 
 function Install-SDK($sdkVersion) {
     
@@ -12,7 +12,7 @@ function Install-SDK($sdkVersion) {
         Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
         & $env:temp\dotnet-install.ps1 -Architecture x64 -Version $sdkVersion -InstallDir "$env:ProgramFiles\dotnet"
     }
-
+    #install location for 1.1.14 is "https://dotnetcli.azureedge.net/dotnet/Sdk/1.1.14/dotnet-dev-win-x64.1.1.14.zip"
     Write-Host "Warming up .NET Core SDK $sdkVersion..."
     $projectPath = "$env:temp\TestApp"
     New-Item -Path $projectPath -Force -ItemType Directory | Out-Null
@@ -44,8 +44,8 @@ if ($vs2019 -or $vs2022) {
 
 # VS 2022 image only
 if ($vs2022) {
-    Install-SDK "6.0.413"
-    Install-SDK "7.0.400"
+    Install-SDK "6.0.415"
+    Install-SDK "7.0.402"
 }
 
 # VS 2019 Preview

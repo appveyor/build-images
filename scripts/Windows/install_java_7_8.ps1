@@ -89,6 +89,7 @@ $env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
 Remove-Path "C:\ProgramData\Oracle\Java\javapath" -ErrorAction Ignore
 Remove-Path "${env:ProgramFiles(x86)}\Common Files\Oracle\Java\javapath" -ErrorAction Ignore
 Remove-Path "${env:ProgramFiles}\Java\jdk1.7.0\bin" -ErrorAction Ignore
+Remove-Path "${env:ProgramFiles}\Eclipse Foundation\jdk-8.0.302.8-hotspot\bin" -ErrorAction Stop
 Add-Path "${env:ProgramFiles}\Java\jdk1.8.0\bin" -ErrorAction Ignore
 Remove-Item "C:\Windows\System32\java.exe" -ErrorAction Ignore
 Remove-Item "C:\Windows\System32\javaw.exe" -ErrorAction Ignore

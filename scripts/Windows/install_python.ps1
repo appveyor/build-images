@@ -4,7 +4,7 @@
 # https://stackoverflow.com/questions/30699782/access-is-denied-while-upgrading-pip-exe-on-windows/35580525#35580525
 #
 
-$pipVersion = "22.3.1"
+$pipVersion = "23.2.1"
 
 function UpdatePythonPath($pythonPath) {
     $env:path = ($env:path -split ';' | Where-Object { -not $_.contains('\Python') }) -join ';'
@@ -363,28 +363,49 @@ UpdatePip "$env:SystemDrive\Python310"
 UpdatePip "$env:SystemDrive\Python310-x64"
 
 # Python 3.11 x64
-$python311_x64 = (GetUninstallString 'Python 3.11.5 (64-bit)')
+$python311_x64 = (GetUninstallString 'Python 3.11.6 (64-bit)')
 if ($python311_x64) {
-    Write-Host 'Python 3.11.5 x64 already installed'
+    Write-Host 'Python 3.11.6 x64 already installed'
 }
 else {
-    InstallPythonEXE "3.11.5" "x64" "$env:SystemDrive\Python311-x64"
+    InstallPythonEXE "3.11.6" "x64" "$env:SystemDrive\Python311-x64"
 }
 
 # Python 3.11
-$python311 = (GetUninstallString 'Python 3.11.5 (32-bit)')
+$python311 = (GetUninstallString 'Python 3.11.6 (32-bit)')
 if ($python311) {
-    Write-Host 'Python 3.11.5 already installed'
+    Write-Host 'Python 3.11.6 already installed'
 }
 else {
-    InstallPythonEXE "3.11.5" "x86" "$env:SystemDrive\Python311"
+    InstallPythonEXE "3.11.6" "x86" "$env:SystemDrive\Python311"
 }
 
 UpdatePip "$env:SystemDrive\Python311"
 UpdatePip "$env:SystemDrive\Python311-x64"
 
-Add-Path C:\Python311
-Add-Path C:\Python311\Scripts
+# Python 3.12 x64
+$python312_x64 = (GetUninstallString 'Python 3.12.0 (64-bit)')
+if ($python312_x64) {
+    Write-Host 'Python 3.12.0 x64 already installed'
+}
+else {
+    InstallPythonEXE "3.12.0" "x64" "$env:SystemDrive\Python312-x64"
+}
+
+# Python 3.12
+$python312 = (GetUninstallString 'Python 3.12.0 (32-bit)')
+if ($python312) {
+    Write-Host 'Python 3.12.0 already installed'
+}
+else {
+    InstallPythonEXE "3.12.0" "x86" "$env:SystemDrive\Python312"
+}
+
+UpdatePip "$env:SystemDrive\Python312"
+UpdatePip "$env:SystemDrive\Python312-x64"
+
+Add-Path C:\Python312
+Add-Path C:\Python312\Scripts
 
 # restore .py file mapping
 # https://github.com/appveyor/ci/issues/575
@@ -446,3 +467,5 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
 CheckPython 'C:\Python311'
 CheckPython 'C:\Python311-x64'
+CheckPython 'C:\Python312'
+CheckPython 'C:\Python312-x64'

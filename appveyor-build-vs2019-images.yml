@@ -12,11 +12,11 @@ environment:
     #   bake_phase: wait-50-min
     #   job_depends_on: VS 2019 on Hyper-V - Part I
 
-    # - job_name: VS 2019 on Hyper-V - Part II
-    #   bake_phase: 3
-    #   job_depends_on: VS 2019 on Hyper-V - Wait for Part I image to be ready
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1
-    #   APPVEYOR_BAKE_IMAGE: vs2019-master
+    - job_name: VS 2019 on Hyper-V - Part II
+      bake_phase: 3
+      job_depends_on: VS 2019 on Hyper-V - Wait for Part I image to be ready
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1
+      APPVEYOR_BAKE_IMAGE: vs2019-master
 
     # GCE
     # =======
@@ -141,6 +141,7 @@ for:
 
       - ps: .\install_qt_fast_windows.ps1
       - ps: .\install_ruby.ps1
+      - ps: .\patch_qt_files.ps1
 
   - matrix:
       only:

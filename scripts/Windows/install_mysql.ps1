@@ -1,23 +1,23 @@
 ﻿. "$PSScriptRoot\common.ps1"
 
 $mySqlRoot = "$($env:ProgramFiles)\MySQL"
-$mySqlPath = "$mySqlRoot\MySQL Server 5.7"
+$mySqlPath = "$mySqlRoot\MySQL Server 8.0"
 $mySqlIniPath = "$mySqlPath\my.ini"
 $mySqlDataPath = "$mySqlPath\data"
 $mySqlTemp = "$($env:temp)\mysql_temp"
-$mySqlServiceName = "MySQL57"
+$mySqlServiceName = "MySQL80"
 $mySqlRootPassword = 'Password12!'
 
-Write-Host "Installing MySQL Server 5.7" -ForegroundColor Cyan
+Write-Host "Installing MySQL Server 8.0" -ForegroundColor Cyan
 
 Write-Host "Downloading MySQL..."
-$zipPath = "$($env:temp)\mysql-5.7.27-winx64.zip"
-(New-Object Net.WebClient).DownloadFile('https://cdn.mysql.com//archives/mysql-5.7/mysql-5.7.27-winx64.zip', $zipPath)
+$zipPath = "$($env:temp)\mysql-8.0.34-winx64.zip"
+(New-Object Net.WebClient).DownloadFile('https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.34-winx64.zip', $zipPath)
 
 Write-Host "Unpacking..."
 New-Item $mySqlRoot -ItemType Directory -Force | Out-Null
 7z x $zipPath -o"$mySqlTemp" | Out-Null
-[IO.Directory]::Move("$mySqlTemp\mysql-5.7.27-winx64", $mySqlPath)
+[IO.Directory]::Move("$mySqlTemp\mysql-8.0.34-winx64", $mySqlPath)
 Remove-Item $mySqlTemp -Recurse -Force
 Remove-Item $zipPath
 

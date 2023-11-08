@@ -17,13 +17,13 @@ environment:
   # GCE
   # =======
 
-    - job_name: VS 2022 on GCE us-central1
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
-      APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
+    # - job_name: VS 2022 on GCE us-central1
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
+    #   APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
 
 init:
   - appveyor version
-  - ps: $ErrorActionPreference = 'Stop'
+  #- ps: $ErrorActionPreference = 'Stop'
   - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
   - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
 
@@ -53,7 +53,7 @@ build_script:
   #- ps: .\install_go.ps1
   #- ps: ./install_nodejs_latest.ps1
   #- ps: ./install_selenium_drivers.ps1
-  - ps: ./install_boost_1.78.0_vs2022.ps1
+  - ps: ./install_mingw.ps1
   #  Restart VM
   #  - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
