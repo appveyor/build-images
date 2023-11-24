@@ -1,6 +1,6 @@
 ﻿. "$PSScriptRoot\common.ps1"
 
-$firefoxVersion = "119.0"
+$firefoxVersion = "120.0"
 
 Write-Host "Installing FireFox $firefoxVersion..." -ForegroundColor Cyan
 
@@ -22,3 +22,4 @@ Remove-Item $exePath
 GetProductVersion "Firefox"
 
 Write-Host "Installed FireFox $firefoxVersion" -ForegroundColor Green
+https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/e23c074b-1771-4f3a-91b6-5cb01e793912/MicrosoftEdgeEnterpriseX64.msi
