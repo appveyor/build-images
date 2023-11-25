@@ -27,7 +27,7 @@ function Install-SDK($sdkVersion) {
 $vs2019 = (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019")
 $vs2022 = (Test-Path "${env:ProgramFiles}\Microsoft Visual Studio\2022")
 
-if (-not ($env:INSTALL_LATEST_ONLY -and ($vs2019 -or $vs2022))) {
+if ((-not $env:INSTALL_LATEST_ONLY) -and (-not ($vs2019 -or $vs2022))) {
     Install-SDK "1.1.14"
     Install-SDK "2.1.202"
     Install-SDK "2.1.806"
