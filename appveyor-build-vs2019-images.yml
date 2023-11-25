@@ -163,7 +163,6 @@ for:
         - bake_phase: 3
 
     build_script:
-      - ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_openssl.ps1    
       - ps: .\install_msys64.ps1
       - ps: .\install_chrome_browser.ps1
@@ -252,7 +251,7 @@ for:
       - ps: .\install_android_sdk.ps1
       - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 
-      #- ps: .\install_dotnet_core_sdks.ps1
+      - ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_dotnet_runtimes.ps1
       - ps: .\install_dotnet_devpacks.ps1
 
