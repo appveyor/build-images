@@ -39,6 +39,7 @@ setx ANDROID_HOME $sdk_root /M
 Push-Location -Path $sdkPath
 #& '.\tools\bin\sdkmanager.bat' --licenses
 if ($env:INSTALL_LATEST_ONLY) {
+    Write-Host "Install latest Only"
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
         "platform-tools" `
         "platforms;android-30" `
@@ -66,7 +67,7 @@ if ($env:INSTALL_LATEST_ONLY) {
         "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 }
 else {
-    & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
+    & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root --install --verbose `
         "platform-tools" `
         "platforms;android-30" `
         "platforms;android-29" `
