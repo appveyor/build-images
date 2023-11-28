@@ -12,8 +12,8 @@ $sdkPath = "$env:temp\android-sdk"
 $licenseZipPath = "$env:temp\android-sdk-licenses.zip"
 
 Write-Host "Downloading..."
-#(New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/sdk-tools-windows-4333796.zip", $zipPath)
-(New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/commandlinetools-win-10406996_latest.zip", $zipPath)
+(New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/sdk-tools-windows-4333796.zip", $zipPath)
+#(New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/commandlinetools-win-10406996_latest.zip", $zipPath)
 if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
 7z x $zipPath -aoa -o"$sdkPath"
 Tree "$sdkPath"
