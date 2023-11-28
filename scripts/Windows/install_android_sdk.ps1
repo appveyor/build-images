@@ -67,6 +67,7 @@ if ($env:INSTALL_LATEST_ONLY) {
         "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 }
 else {
+    Write-Host "Install all"
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root --install --verbose `
         "platform-tools" `
         "platforms;android-30" `
