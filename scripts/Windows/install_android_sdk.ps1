@@ -119,8 +119,7 @@ else {
         "add-ons;addon-google_apis-google-23" `
         "add-ons;addon-google_apis-google-22" `
         "add-ons;addon-google_apis-google-21" `
-        "cmake;3.6.4111459" `
-        "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
+        "cmake;3.6.4111459" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 }
 
 7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
