@@ -16,6 +16,7 @@ Write-Host "Downloading..."
 (New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/commandlinetools-win-10406996_latest.zip", $zipPath)
 if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
 7z x $zipPath -aoa -o"$sdkPath"
+Tree "$sdkPath"
 Remove-Item $zipPath -Force -ErrorAction Ignore
 
 
