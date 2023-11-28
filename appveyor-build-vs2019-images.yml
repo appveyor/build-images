@@ -188,6 +188,8 @@ for:
       - ps: .\install_jdk18.ps1
       - ps: .\install_jdk19.ps1
       - ps: .\install_jdk21.ps1
+      - ps: .\install_android_sdk.ps1
+      - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
       - ps: .\install_erlang.ps1
       - ps: .\install_flutter.ps1
 
@@ -250,8 +252,8 @@ for:
       - ps: .\install_boost_1.83.0_vs2019.ps1
       - ps: .\install_boost_1.77.0_vs2019.ps1
 
-      - ps: .\install_android_sdk.ps1
-      - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
+      # - ps: .\install_android_sdk.ps1
+      # - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 
       #- ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_dotnet_runtimes.ps1
