@@ -16,7 +16,6 @@ Write-Host "Downloading..."
 (New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/commandlinetools-win-10406996_latest.zip", $zipPath)
 if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
 7z x $zipPath -aoa -o"$sdkPath"
-Tree "$sdkPath"
 Remove-Item $zipPath -Force -ErrorAction Ignore
 
 
@@ -38,7 +37,7 @@ if (Test-Path $ndk_root) {
 setx ANDROID_HOME $sdk_root /M
 
 Push-Location -Path $sdkPath
-#& '.\tools\bin\sdkmanager.bat' --licenses
+& '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root --list
 if ($env:INSTALL_LATEST_ONLY) {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
         "platform-tools" `
@@ -67,7 +66,7 @@ if ($env:INSTALL_LATEST_ONLY) {
         "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 }
 else {
-    '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root --install `
+    & '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
         "platform-tools" `
         "platforms;android-30" `
         "platforms;android-29" `
@@ -121,7 +120,7 @@ else {
         "add-ons;addon-google_apis-google-23" `
         "add-ons;addon-google_apis-google-22" `
         "add-ons;addon-google_apis-google-21" `
-        "cmake;3.6.4111459"
+        "cmake;3.6.4111459" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 }
 
 7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
