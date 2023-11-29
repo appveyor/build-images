@@ -39,7 +39,7 @@ Tree /F $sdkPath
 Push-Location -Path $sdkPath
 type ".\cmdline-tools\bin\sdkmanager.bat"
 Write-Host "listing packages in $sdkRoot"
-& ".\cmdline-tools\bin\sdkmanager.bat" --sdk_root=$sdk_root --list | Out-File -FilePath "$env:TEMP\android-sdkmanager.log"
+& ".\cmdline-tools\bin\sdkmanager.bat" --sdk_root=$sdk_root --list
 if ($env:INSTALL_LATEST_ONLY) {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
         "platform-tools" `
