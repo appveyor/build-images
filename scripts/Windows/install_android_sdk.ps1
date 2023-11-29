@@ -38,7 +38,7 @@ setx ANDROID_HOME $sdk_root /M
 Tree /F $sdkPath
 Push-Location -Path $sdkPath
 Write-Host "listing packages..."
-& '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root --list
+& '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root --list | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 if ($env:INSTALL_LATEST_ONLY) {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
         "platform-tools" `
@@ -121,7 +121,7 @@ else {
         "add-ons;addon-google_apis-google-23" `
         "add-ons;addon-google_apis-google-22" `
         "add-ons;addon-google_apis-google-21" `
-        "cmake;3.6.4111459" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
+        "cmake;3.6.4111459" 
 }
 
 7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
