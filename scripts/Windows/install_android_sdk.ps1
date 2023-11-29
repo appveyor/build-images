@@ -35,7 +35,7 @@ if (Test-Path $ndk_root) {
 }
 
 setx ANDROID_HOME $sdk_root /M
-Tree /F $sdk_path
+Tree /F $sdkPath
 Push-Location -Path $sdkPath
 Write-Host "listing packages..."
 & '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root --list
