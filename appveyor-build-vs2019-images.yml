@@ -176,6 +176,7 @@ for:
       - ps: .\install_jdk21.ps1
       - ps: .\install_android_sdk.ps1
       - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
+      - appveyor PushArtifact %TEMP%\test-listing.txt 
 
       - ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_openssl.ps1    
