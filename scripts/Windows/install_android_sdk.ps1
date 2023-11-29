@@ -37,7 +37,7 @@ if (Test-Path $ndk_root) {
 setx ANDROID_HOME $sdk_root /M
 
 Push-Location -Path $sdkPath
-& '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root --list
+& '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root --list
 if ($env:INSTALL_LATEST_ONLY) {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
         "platform-tools" `
