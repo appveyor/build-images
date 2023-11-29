@@ -19,6 +19,7 @@ if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
 Remove-Item $zipPath -Force -ErrorAction Ignore
 
 Write-Host "listing packages..."
+type "$sdkPath\cmdline-tools\bin\sdkmanager.bat"
 & "$sdkPath\cmdline-tools\bin\sdkmanager.bat" --sdk_root=$sdk_root --list | Out-File -FilePath "$env:TEMP\test-listing.txt"
 
 
