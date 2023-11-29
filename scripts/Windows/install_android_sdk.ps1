@@ -127,6 +127,9 @@ else {
 Pop-Location
 
 Remove-Item $sdkPath -Recurse -Force -ErrorAction Ignore
+# Resset JAVA_HOME variable and path
+[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk1.8.0", "machine")
+$env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
 
 $ErrorActionPreference = 'Stop'
 
