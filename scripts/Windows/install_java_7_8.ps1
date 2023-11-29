@@ -70,8 +70,8 @@ Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentV
 Disable-ScheduledTask -TaskPath '\' -TaskName 'JavaUpdateSched' -ErrorAction Ignore
 
 # Set Java home
-[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk1.8.0", "machine")
-$env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
+#[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk1.8.0", "machine")
+#$env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
 
 # Fix Java installs
 Remove-Path "C:\ProgramData\Oracle\Java\javapath" -ErrorAction Ignore
