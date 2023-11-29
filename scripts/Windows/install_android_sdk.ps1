@@ -37,8 +37,9 @@ if (Test-Path $ndk_root) {
 setx ANDROID_HOME $sdk_root /M
 Tree /F $sdkPath
 Push-Location -Path $sdkPath
+type ".\cmdline-tools\bin\sdkmanager.bat"
 Write-Host "listing packages..."
-& "$env:TEMP\android-sdk\cmdline-tools\bin\sdkmanager.bat" --sdk_root=$sdk_root --list | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
+& ".\cmdline-tools\bin\sdkmanager.bat" --sdk_root=$sdk_root --list | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 if ($env:INSTALL_LATEST_ONLY) {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
         "platform-tools" `
@@ -128,7 +129,7 @@ else {
 
 Pop-Location
 
-Remove-Item $sdkPath -Recurse -Force -ErrorAction Ignore
+#Remove-Item $sdkPath -Recurse -Force -ErrorAction Ignore
 
 $ErrorActionPreference = 'Stop'
 
