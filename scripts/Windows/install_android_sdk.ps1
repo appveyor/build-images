@@ -38,7 +38,7 @@ setx ANDROID_HOME $sdk_root /M
 Tree /F $sdkPath
 Push-Location -Path $sdkPath
 type ".\cmdline-tools\bin\sdkmanager.bat"
-Write-Host "listing packages in $sdkRoot"
+Write-Host "listing packages in $sdk_root"
 & ".\cmdline-tools\bin\sdkmanager.bat" --sdk_root=$sdk_root --list
 if ($env:INSTALL_LATEST_ONLY) {
     & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
