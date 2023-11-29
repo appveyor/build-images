@@ -163,22 +163,6 @@ for:
         - bake_phase: 3
 
     build_script:
-      - ps: .\install_java_7_8.ps1
-      - ps: .\install_jdk11.ps1
-      - ps: .\install_jdk12.ps1
-      - ps: .\install_jdk13.ps1
-      - ps: .\install_jdk14.ps1
-      - ps: .\install_jdk15.ps1
-      - ps: .\install_jdk16.ps1
-      - ps: .\install_jdk17.ps1
-      - ps: .\install_jdk18.ps1
-      - ps: .\install_jdk19.ps1
-      - ps: .\install_jdk21.ps1
-      - ps: .\install_android_sdk.ps1
-      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-      - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
-      - appveyor PushArtifact %TEMP%\test-listing.txt 
-
       - ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_openssl.ps1    
       - ps: .\install_msys64.ps1
@@ -192,20 +176,20 @@ for:
       - ps: .\install_nodejs_latest.ps1
       - ps: .\install_yarn.ps1
       - ps: .\install_go.ps1
-      ##- ps: .\install_rust.ps1
-      # - ps: .\install_java_7_8.ps1
-      # - ps: .\install_jdk11.ps1
-      # - ps: .\install_jdk12.ps1
-      # - ps: .\install_jdk13.ps1
-      # - ps: .\install_jdk14.ps1
-      # - ps: .\install_jdk15.ps1
-      # - ps: .\install_jdk16.ps1
-      # - ps: .\install_jdk17.ps1
-      # - ps: .\install_jdk18.ps1
-      # - ps: .\install_jdk19.ps1
-      # - ps: .\install_jdk21.ps1
-      # - ps: .\install_android_sdk.ps1
-      # - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
+      #- ps: .\install_rust.ps1
+      - ps: .\install_java_7_8.ps1
+      - ps: .\install_jdk11.ps1
+      - ps: .\install_jdk12.ps1
+      - ps: .\install_jdk13.ps1
+      - ps: .\install_jdk14.ps1
+      - ps: .\install_jdk15.ps1
+      - ps: .\install_jdk16.ps1
+      - ps: .\install_jdk17.ps1
+      - ps: .\install_jdk18.ps1
+      - ps: .\install_jdk19.ps1
+      - ps: .\install_jdk21.ps1
+      - ps: .\install_android_sdk.ps1
+      - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
       - ps: .\install_erlang.ps1
       - ps: .\install_flutter.ps1
 

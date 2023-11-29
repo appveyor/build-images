@@ -35,14 +35,10 @@ if (Test-Path $ndk_root) {
 }
 
 setx ANDROID_HOME $sdk_root /M
-#Tree /F $sdkPath
 Push-Location -Path $sdkPath
-Write-Host "listing packages..."
-#type "$sdkPath\cmdline-tools\bin\sdkmanager.bat"
-#& "$sdkPath\cmdline-tools\bin\sdkmanager.bat" --sdk_root=$sdk_root --list
-& '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root="$sdk_root" --list
+
 if ($env:INSTALL_LATEST_ONLY) {
-    & '.\tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
+    & '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
         "platform-tools" `
         "platforms;android-30" `
         "platforms;android-29" `
