@@ -169,6 +169,7 @@ for:
         - bake_phase: 3
 
     build_script:
+      - ps: .\install_cygwin.ps1
       - ps: .\install_mingw.ps1
       - ps: .\install_mingw-w64.ps1
       - ps: .\install_dotnet_core_sdks.ps1
@@ -257,7 +258,7 @@ for:
       - ps: .\install_meson_and_ninja.ps1
       - ps: .\install_maven.ps1
       - ps: .\install_gitversion.ps1
-      - ps: .\install_cygwin.ps1
+      #- ps: .\install_cygwin.ps1
       #- ps: .\install_mingw.ps1
       #- ps: .\install_mingw-w64.ps1
       - ps: .\install_boost_1.78.0_vs2022.ps1
