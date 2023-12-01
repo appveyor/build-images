@@ -164,6 +164,8 @@ for:
 
     build_script:
       - ps: .\install_dotnet_core_sdks.ps1
+      - ps: .\install_mingw.ps1
+      - ps: .\install_mingw-w64.ps1
       - ps: .\install_openssl.ps1    
       - ps: .\install_msys64.ps1
       - ps: .\install_chrome_browser.ps1
@@ -247,8 +249,8 @@ for:
       - ps: .\install_maven.ps1
       - ps: .\install_gitversion.ps1
       - ps: .\install_cygwin.ps1
-      - ps: .\install_mingw.ps1
-      - ps: .\install_mingw-w64.ps1
+      # - ps: .\install_mingw.ps1
+      # - ps: .\install_mingw-w64.ps1
       - ps: .\install_boost_1.83.0_vs2019.ps1
       - ps: .\install_boost_1.77.0_vs2019.ps1
 
