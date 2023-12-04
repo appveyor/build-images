@@ -55,7 +55,6 @@ build_script:
   #- ps: ./install_selenium_drivers.ps1
   #- ps: ./install_mingw.ps1
   - ps: .\install_sql_server_2019_after_restart.ps1
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   #  Restart VM
   #  - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
