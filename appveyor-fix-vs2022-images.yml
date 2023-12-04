@@ -53,7 +53,9 @@ build_script:
   #- ps: .\install_go.ps1
   #- ps: ./install_nodejs_latest.ps1
   #- ps: ./install_selenium_drivers.ps1
-  - ps: ./install_mingw.ps1
+  #- ps: ./install_mingw.ps1
+  - ps: .\install_sql_server_2019_after_restart.ps1
+
   #  Restart VM
   #  - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
