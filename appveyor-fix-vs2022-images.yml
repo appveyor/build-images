@@ -46,7 +46,7 @@ build_script:
   # - dir C:\Qt\6.2
   # - dir C:\Qt\Tools
   # - dir C:\Qt\Tools\QtInstallerFramework
-  #- ps: .\add_ssh_known_hosts.ps1
+  - ps: .\add_ssh_known_hosts.ps1
   # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
   # - ps: .\install_qt_fast_windows.ps1
   
@@ -54,7 +54,7 @@ build_script:
   #- ps: ./install_nodejs_latest.ps1
   #- ps: ./install_selenium_drivers.ps1
   #- ps: ./install_mingw.ps1
-  - ps: .\install_nunit3.ps1
+  #- ps: .\install_nunit3.ps1
   #  Restart VM
   #  - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
