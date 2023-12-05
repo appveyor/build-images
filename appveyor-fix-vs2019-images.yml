@@ -3,9 +3,9 @@ environment:
     # Hyper-V
     # =======
 
-    # - job_name: VS 2019 on Hyper-V
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master
-    #   APPVEYOR_BAKE_IMAGE: vs2019-master
+    - job_name: VS 2019 on Hyper-V
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master
+      APPVEYOR_BAKE_IMAGE: vs2019-master
 
     # GCE
     # =======
@@ -53,7 +53,7 @@ build_script:
   #- ps: .\install_boost_1.77.0_vs2019.ps1
   #- ps: .\fix_qt_symlinks.ps1
   #- ps: .\install_mingw.ps1
-  - ps: .\install_dotnet_core_sdks.ps1
+  - ps: .\install_nunit3.ps1
   #- ps: Remove-Path "${env:ProgramFiles}\Eclipse Foundation\jdk-8.0.302.8-hotspot\bin" -ErrorAction Stop
   # Restart VM
   # - ps: Start-Sleep -s 5; Restart-Computer -Force

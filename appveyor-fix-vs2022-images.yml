@@ -17,9 +17,9 @@ environment:
   # GCE
   # =======
 
-    # - job_name: VS 2022 on GCE us-central1
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
-    #   APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
+    - job_name: VS 2022 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
 
 init:
   - appveyor version
@@ -54,7 +54,7 @@ build_script:
   #- ps: ./install_nodejs_latest.ps1
   #- ps: ./install_selenium_drivers.ps1
   #- ps: ./install_mingw.ps1
-  - ps: .\install_sql_server_2019_after_restart.ps1
+  - ps: .\install_nunit3.ps1
   #  Restart VM
   #  - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
