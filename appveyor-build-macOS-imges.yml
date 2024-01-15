@@ -1,0 +1,55 @@
+environment:
+  matrix:
+    - job_name: macOS 13 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: base-ventura-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: ventura-master-gce-us-central1
+      BUILD_AGENT_MODE: GCE
+
+    - job_name: macOS 12 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: base-monterey-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: monterey-master-gce-us-central1
+      BUILD_AGENT_MODE: GCE
+
+    - job_name: macOS 11 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: base-bigsur-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: bigsur-master-gce-us-central1
+      BUILD_AGENT_MODE: GCE
+
+
+    - job_name: macOS 13 on Hyper-V
+      APPVEYOR_BUILD_WORKER_IMAGE: base-ventura-hyperv
+      APPVEYOR_BAKE_IMAGE: ventura-master
+      BUILD_AGENT_MODE: HyperV
+
+    - job_name: macOS 12 on Hyper-V
+      APPVEYOR_BUILD_WORKER_IMAGE: base-monterey-hyperv
+      APPVEYOR_BAKE_IMAGE: monterey-master
+      BUILD_AGENT_MODE: HyperV
+
+    - job_name: macOS 11 on Hyper-V
+      APPVEYOR_BUILD_WORKER_IMAGE: base-bigsur-hyperv
+      APPVEYOR_BAKE_IMAGE: bigsur-master
+      BUILD_AGENT_MODE: HyperV
+
+
+  BASE_DIR: src/build-images-${APPVEYOR_REPO_COMMIT}/scripts/macos
+  BOOTSTRAP: true
+
+clone_folder: ${HOME}/bake-scripts
+
+init:
+  - appveyor version
+  - echo $(sw_vers -productVersion)
+
+clone_script:
+  - curl -fsSL "https://github.com/appveyor/build-images/archive/$APPVEYOR_REPO_COMMIT.tar.gz" -o scripts.tar.gz
+  - mkdir src && tar -zxf scripts.tar.gz -C $APPVEYOR_BUILD_FOLDER/src
+
+build_script:
+  - cd $BASE_DIR && pwd
+  - sudo -E ./basicconfig.sh
+  - appveyor PushArtifact versions.log
+
+test: off
+#on_failure:
+#- sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e
