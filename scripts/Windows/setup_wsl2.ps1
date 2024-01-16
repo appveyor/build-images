@@ -1,0 +1,45 @@
+
+# Ubuntu 20.04
+# ============
+
+wsl -d Ubuntu-20.04 -u root adduser --gecos GECOS --disabled-password appveyor
+
+$ubuntuExe = "C:\WSL\Ubuntu2004\ubuntu.exe"
+. $ubuntuExe install --root
+. $ubuntuExe run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
+wsl -d Ubuntu-20.04 "echo 'appveyor:Password12!' | sudo chpasswd"
+wsl -d Ubuntu-20.04 usermod -aG sudo appveyor
+wsl -d Ubuntu-20.04 "echo -e `"`"appveyor\tALL=(ALL)\tNOPASSWD: ALL`"`" > /etc/sudoers.d/appveyor"
+wsl -d Ubuntu-20.04 chmod 0755 /etc/sudoers.d/appveyor
+wsl -d Ubuntu-20.04 sudo echo “[user]\ndefault=appveyor” >> /etc/wsl.conf
+wsl -d Ubuntu-20.04 sudo apt-get update
+
+. $ubuntuExe run sudo apt-get update
+
+
+# Ubuntu 22.04
+# ============
+
+Write-warning "Installing Ubuntu 22.04 for WSL"
+
+
+
+
+# Testing WSL
+# ===========
+
+# wslconfig /setdefault ubuntu-16.04
+# wsl lsb_release -a
+
+# wslconfig /setdefault ubuntu-18.04
+# wsl lsb_release -a
+
+# wslconfig /setdefault ubuntu
+# wsl lsb_release -a
+
+# Rename C:\Windows\System32\bash.exe to avoid conflicts with default Git's bash
+# ===========
+
+# takeown /F "$env:SystemRoot\System32\bash.exe"
+# icacls "$env:SystemRoot\System32\bash.exe" /grant administrators:F
+# ren "$env:SystemRoot\System32\bash.exe" wsl-bash.exe
