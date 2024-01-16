@@ -1,8 +1,8 @@
 environment:
   matrix:
 
-    Azure
-    =======
+    # Azure
+    # =======
 
     - job_name: WS 2022 on Azure West US - Part I
       bake_phase: 1
