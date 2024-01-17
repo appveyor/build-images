@@ -21,7 +21,7 @@ if ((Get-WmiObject Win32_Processor).VirtualizationFirmwareEnabled[0] -and (Get-W
 
 Start-Process -FilePath "wsl" -ArgumentList "--install --no-launch" -Wait -PassThru
 
-WSL feature
+# WSL feature
 
 $wslFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online)
 
