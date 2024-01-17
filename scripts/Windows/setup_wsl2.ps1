@@ -1,5 +1,8 @@
 # WSL 2 and distributions
-wsl --update
+
+wsl -l -v
+#wsl --update
+Start-Process -FilePath "wsl" -ArgumentList "--update" -Wait -PassThru
 #Start-Process -FilePath "wsl" -ArgumentList "--install --no-launch" -Wait -PassThru
 Start-Sleep -s 10
 Start-Process -FilePath "wsl" -ArgumentList "--install -d Ubuntu-20.04 --no-launch" -Wait -PassThru
