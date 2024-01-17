@@ -7,15 +7,16 @@ Start-Sleep -s 10
 
 wsl --set-default-version 2
 
+wsl -l -v
 
 # Ubuntu 20.04
 # ============
 
 wsl -d Ubuntu-20.04 -u root adduser --gecos GECOS --disabled-password appveyor
 
-$ubuntuExe = "C:\WSL\Ubuntu2004\ubuntu.exe"
-. $ubuntuExe install --root
-. $ubuntuExe run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
+#$ubuntuExe = "C:\WSL\Ubuntu2004\ubuntu.exe"
+#. $ubuntuExe install --root
+#. $ubuntuExe run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
 wsl -d Ubuntu-20.04 "echo 'appveyor:Password12!' | sudo chpasswd"
 wsl -d Ubuntu-20.04 usermod -aG sudo appveyor
 wsl -d Ubuntu-20.04 "echo -e `"`"appveyor\tALL=(ALL)\tNOPASSWD: ALL`"`" > /etc/sudoers.d/appveyor"
