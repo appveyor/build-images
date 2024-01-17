@@ -1,7 +1,9 @@
 # WSL 2 and distributions
 
 wsl --install -d Ubuntu-20.04 --no-launch
+Start-Sleep -s 10
 wsl --install -d Ubuntu-22.04 --no-launch
+Start-Sleep -s 10
 
 wsl --set-default-version 2
 
