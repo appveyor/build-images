@@ -69,7 +69,7 @@ for:
       - ps: .\install_subversion.ps1
       - ps: .\add_ssh_known_hosts.ps1
 
-      - ps: .\install_docker_hyperv_wsl2_features.ps1
+      - ps: .\install_docker_hyperv_wsl_features.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
