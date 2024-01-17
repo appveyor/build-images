@@ -1,12 +1,15 @@
 # WSL 2 and distributions
 wsl --update
 Start-Sleep -s 10
-wsl --install -d Ubuntu-20.04 --no-launch
-Start-Sleep -s 10
-wsl --install -d Ubuntu-22.04 --no-launch
+Start-Process -FilePath wsl.exe -ArgumentList "--install -d Ubuntu-20.04 --no-launch" -Wait -PassThru
+#wsl --install -d Ubuntu-20.04 --no-launch
+Start-Process -FilePath wsl.exe -ArgumentList "--install -d Ubuntu-22.04 --no-launch" -Wait -PassThru
+#Start-Sleep -s 10
+#wsl --install -d Ubuntu-22.04 --no-launch
 Start-Sleep -s 10
 
 wsl --set-default-version 2
+Start-Sleep -s 10
 
 wsl -l -v
 
