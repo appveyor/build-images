@@ -76,7 +76,7 @@ for:
       - ps: Start-Sleep -s 5
 
       # WSL
-      #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
       - ps: .\setup_wsl2.ps1
 
       # Restart VM
