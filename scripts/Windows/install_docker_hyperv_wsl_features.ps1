@@ -23,11 +23,11 @@ if ((Get-WmiObject Win32_Processor).VirtualizationFirmwareEnabled[0] -and (Get-W
 wsl --install --no-distribution
 # WSL feature
 
-$wslFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online)
+# $wslFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online)
 
-if ($wslFeature -and $wslFeature.State -ne 'Enabled') {
-	Write-Host "Installing WSL feature"
-	Enable-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online -All -NoRestart
-} else {
-	Write-Host "WSL feature is already enabled"
-}
+# if ($wslFeature -and $wslFeature.State -ne 'Enabled') {
+# 	Write-Host "Installing WSL feature"
+# 	Enable-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online -All -NoRestart
+# } else {
+# 	Write-Host "WSL feature is already enabled"
+# }
