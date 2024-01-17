@@ -1,5 +1,5 @@
 # WSL 2 and distributions
-
+Start-Process -FilePath "wsl" -ArgumentList "--set-default-version 2" -Wait -PassThru
 wsl -l -v
 #wsl --update
 Start-Process -FilePath "wsl" -ArgumentList "--update" -Wait -PassThru
@@ -12,7 +12,7 @@ Start-Process -FilePath "wsl" -ArgumentList "--install -d Ubuntu-20.04 --no-laun
 #wsl --install -d Ubuntu-22.04 --no-launch
 #Start-Sleep -s 10
 
-wsl --set-default-version 2
+
 Start-Sleep -s 10
 
 wsl -l -v

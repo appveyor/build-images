@@ -17,15 +17,17 @@ if ((Get-WmiObject Win32_Processor).VirtualizationFirmwareEnabled[0] -and (Get-W
 	Write-Host "Skipping Hyper-V installation - virtualization is not enabled"
 }
 
-# WSL feature
 
-# $wslFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online)
-
-# if ($wslFeature -and $wslFeature.State -ne 'Enabled') {
-# 	Write-Host "Installing WSL feature"
-# 	Enable-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online -All -NoRestart
-# } else {
-# 	Write-Host "WSL feature is already enabled"
-# }
 
 Start-Process -FilePath "wsl" -ArgumentList "--install --no-launch" -Wait -PassThru
+
+WSL feature
+
+$wslFeature = (Get-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online)
+
+if ($wslFeature -and $wslFeature.State -ne 'Enabled') {
+	Write-Host "Installing WSL feature"
+	Enable-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online -All -NoRestart
+} else {
+	Write-Host "WSL feature is already enabled"
+}
