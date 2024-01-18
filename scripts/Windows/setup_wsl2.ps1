@@ -1,6 +1,6 @@
 # WSL 2 and distributions
 #Start-Process -FilePath "wsl" -ArgumentList "--set-default-version 2" -Wait -PassThru
-
+wsl -l -v
 #Start-Process -FilePath "wsl" -ArgumentList "--update" -Wait -PassThru
 
 #Start-Sleep -s 10
