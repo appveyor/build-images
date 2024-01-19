@@ -46,7 +46,6 @@ install_gcc
 install_gpg
 install_openjdk
 install_rvm_and_rubies
-install_fastlane
 install_xcode
 fix_home_permissions
 su -l ${USER_NAME} -c "

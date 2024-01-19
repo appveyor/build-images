@@ -217,25 +217,6 @@ function install_gpg() {
     log_version gpg --version
 }
 
-function install_fastlane() {
-    echo "[INFO] Running install_fastlane..."
-
-    # fastlane dependencies requires Ruby version >= 2.4.0.
-    if command -v rvm; then
-        # We take as granted that install_rubies set latest version as default
-        rvm use default
-    else
-        echo "Cannot find rvm. Install rvm first!" 1>&2
-        return 10
-    fi
-
-    brew_install fastlane
-    if check_user; then
-        # shellcheck disable=SC2016
-        write_line "${HOME}/.profile" 'export PATH="$HOME/.fastlane/bin:$PATH"'
-    fi
-}
-
 function install_rvm() {
     echo "[INFO] Running install_rvm..."
     sudo -u appveyor brew install openssl@1.1
@@ -701,19 +682,17 @@ function install_xcode() {
         XCODE_VERSIONS=( "13.4.1" "14.1" )
     fi
     
-    # ventura
+    # ventura and sonoma
     if [ "$OSX_MAJOR_VER" -ge 13 ]; then
         XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
     fi
 
-    #check fastlane
+    # xcode-install
     if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
         [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
         gem install xcode-install
         export XCODE_INSTALL_USER=$APPLEID_USER
         export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
-        export FASTLANE_SESSION="$APPLEID_SESSION"
-        export FASTLANE_DONT_STORE_PASSWORD=1
 
         for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
             xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
@@ -726,7 +705,6 @@ function install_xcode() {
         fi
 
         # Cleanup
-        export FASTLANE_SESSION=
         export XCODE_INSTALL_USER=
         export XCODE_INSTALL_PASSWORD=
     else
