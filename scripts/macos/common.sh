@@ -238,6 +238,7 @@ function install_fastlane() {
 
 function install_rvm() {
     echo "[INFO] Running install_rvm..."
+    sudo -u appveyor brew install openssl@1.1
     which curl
     curl --version
     echo "gem: --no-document" >> $HOME/.gemrc
@@ -252,6 +253,13 @@ function install_rvm() {
     source "${HOME}/.rvm/scripts/rvm"
 }
 
+function install_rbenv() {
+    echo "[INFO] Running install_rbenv..."
+    sudo -u appveyor brew install rbenv ruby-build
+    touch ~/.zshrc
+    echo "eval '$(rbenv init - zsh)'" >> ~/.zshrc
+}
+
 function install_rubies() {
     echo "[INFO] Running install_rubies..."
     # this must be executed as appveyor user
@@ -264,7 +272,7 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3" "ruby-3.1.3" "ruby-head" )
+    declare RUBY_VERSIONS=( "ruby-2.7" "ruby-3" "ruby-3.3.0" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -302,8 +310,62 @@ function install_rvm_and_rubies() {
     fi
 }
 
+function install_rubies_rbenv() {
+    echo "[INFO] Running install_rubies with rbenv..."
+    ruby -v
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    local DEFAULT_RUBY
+    DEFAULT_RUBY="2.7.8"
+    command -v rbenv ||
+        { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
+    local v
+    #declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3" "ruby-3.1.3" "ruby-head" )
+    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.4" "3.2.2" )
+    for v in "${RUBY_VERSIONS[@]}"; do
+        rbenv install "${v}" ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+    local index
+
+    rbenv global "$DEFAULT_RUBY"
+    ruby --version
+    # add shims to path so system ruby is controlled by rbenv
+    export PATH=~/.rbenv/shims:$PATH
+    ruby --version
+    rbenv version
+
+    log_version rbenv --version
+    log_version rbenv install -l
+}
+
+function install_rbenv_and_rubies() {
+    echo "[INFO] Running install_rbenv_and_rubies..."
+    
+    if check_user; then
+        su -l ${USER_NAME} -c "
+            PATH=$PATH
+            USER_NAME=${USER_NAME}
+            $(declare -f install_rbenv)
+            install_rbenv" &&
+        su -l ${USER_NAME} -c "
+            PATH=$PATH
+            USER_NAME=${USER_NAME}
+            VERSIONS_FILE=${VERSIONS_FILE}
+            $(declare -f log_version)
+            $(declare -f install_rubies)
+            install_rubies" ||
+                return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install rbenv and rubies"
+    fi
+}
+
 function install_gcc() {
-    declare GCC_VERSIONS=( "gcc@6" "gcc@7" "gcc@8" )
+    declare GCC_VERSIONS=( "gcc@10" "gcc@11" "gcc@12" )
     brew_install "${GCC_VERSIONS[@]}"
 }
 
@@ -413,7 +475,7 @@ function install_pythons(){
     LDFLAGS="-L${SSL_PATH}/lib"
 
     command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.15" "3.8.15" "3.9.15" "3.10.8" "3.11.0" )
+    declare PY_VERSIONS=( "2.7.18" "3.8.18" "3.9.18" "3.10.13" "3.11.7" "3.12.1" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -542,7 +604,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.8" "go1.19.3" )
+    declare GO_VERSIONS=( "go1.19.13" "go1.20.13" "go1.21.6" )
     for v in "${GO_VERSIONS[@]}"; do
         # big sur
         if [ "$OSX_MAJOR_VER" -eq 10 ]; then
@@ -605,7 +667,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" )
+    declare NVM_VERSIONS=( "8" "10" "14" "18" "19" "20" "21" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -637,6 +699,11 @@ function install_xcode() {
     # monterey
     if [ "$OSX_MAJOR_VER" -eq 12 ]; then
         XCODE_VERSIONS=( "13.4.1" "14.1" )
+    fi
+    
+    # ventura
+    if [ "$OSX_MAJOR_VER" -ge 13 ]; then
+        XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
     fi
 
     #check fastlane
@@ -734,7 +801,7 @@ function install_openjdk() {
     if check_user; then
 
         # all versions
-        declare JDK_VERSIONS=( "8" "9" "10" "15" "16")
+        declare JDK_VERSIONS=( "11" "17" "18" "19" "20" "21" )
 
         # # big sur, monterey
         # if [ "$OSX_MAJOR_VER" -ge 11 ]; then
@@ -742,13 +809,13 @@ function install_openjdk() {
         # fi
 
         su -l ${USER_NAME} -c "
-            $BREW_CMD tap AdoptOpenJDK/openjdk
+            $BREW_CMD tap homebrew/cask-versions
         " || { echo "[ERROR] Cannot add AdoptOpenJDK/openjdk tap." 1>&2; return 20; }        
 
         # install JDKs
         for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
             su -l ${USER_NAME} -c "
-                $BREW_CMD install --cask adoptopenjdk${JDK_VERSION}
+                $BREW_CMD install --cask temurin${JDK_VERSION}
             " || { echo "[ERROR] Cannot install adoptopenjdk ${JDK_VERSION} with Homebrew." 1>&2; return 20; }
         done
 
