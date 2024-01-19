@@ -249,7 +249,7 @@ function install_rubies() {
         return 1
     fi
     local DEFAULT_RUBY
-    DEFAULT_RUBY="ruby-2.6"
+    DEFAULT_RUBY="ruby-3.3.0"
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
@@ -701,7 +701,7 @@ function install_xcode() {
         fi
 
         gem install xcode-install
-        
+
         export XCODE_INSTALL_USER=$APPLEID_USER
         export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
 
