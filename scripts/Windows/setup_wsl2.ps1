@@ -27,9 +27,11 @@ wsl -d Ubuntu-20.04 -u root adduser --gecos GECOS --disabled-password appveyor
 #. $ubuntuExe run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
 wsl -d Ubuntu-20.04 -- echo 'appveyor:Password12!' `| sudo chpasswd
 wsl -d Ubuntu-20.04 -- usermod -aG sudo appveyor
-wsl -d Ubuntu-20.04 -- echo -e `"appveyor\tALL=`(ALL`)\tNOPASSWD: ALL`" > /etc/sudoers.d/appveyor
+wsl -d Ubuntu-22.04 -- echo -e `"appveyor\tALL=`(ALL`)\tNOPASSWD: ALL`" `| sudo tee -a /etc/sudoers.d/appveyor
+#wsl -d Ubuntu-20.04 -- echo -e `"appveyor\tALL=`(ALL`)\tNOPASSWD: ALL`" > /etc/sudoers.d/appveyor
 wsl -d Ubuntu-20.04 -- chmod 0755 /etc/sudoers.d/appveyor
-wsl -d Ubuntu-20.04 -- sudo echo “[user]\ndefault=appveyor” `| sudo tee -a /etc/wsl.conf
+wsl -d Ubuntu-20.04 -- sudo echo “[user]” `| sudo tee -a /etc/wsl.conf
+wsl -d Ubuntu-20.04 -- sudo echo “default=appveyor” `| sudo tee -a /etc/wsl.conf
 wsl -d Ubuntu-20.04 -- sudo apt-get update
 
 . $ubuntuExe run sudo apt-get update
