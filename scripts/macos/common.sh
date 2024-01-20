@@ -255,8 +255,15 @@ function install_rubies() {
     local v
     declare RUBY_VERSIONS=( "ruby-2" "ruby-2.7" "ruby-3" "ruby-3.2.3" "ruby-3.3.0" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
-        rvm install "${v}" ||
-            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+        if [[ "${v}" == ruby-2* ]]; then
+            # 2.x
+            rvm install "${v}" ||
+                { echo "[WARNING] Cannot install ${v}." 1>&2; }
+        else
+            # 3.x
+            rvm install "${v}" --reconfigure --with-openssl-dir=$(brew --prefix openssl@3) ||
+                { echo "[WARNING] Cannot execute rvm install for ${v}." 1>&2; }
+        fi
     done
     local index
 
@@ -265,6 +272,7 @@ function install_rubies() {
     log_version ruby --version
     log_version rvm list
 }
+
 
 function install_rvm_and_rubies() {
     echo "[INFO] Running install_rvm_and_rubies..."
