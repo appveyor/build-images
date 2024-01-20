@@ -258,11 +258,11 @@ function install_rubies() {
     for v in "${RUBY_VERSIONS[@]}"; do
         if [[ "${v}" == ruby-2* ]]; then
             # 2.x
-            rvm install "${v}" --with-openssl-dir=$(brew --prefix openssl@1.1) ||
+            rvm install "${v}" --with-openssl-dir=/opt/homebrew/opt/openssl@1.1 ||
                 { echo "[WARNING] Cannot install ${v}." 1>&2; }
         else
             # 3.x
-            rvm install "${v}" --with-openssl-dir=$(brew --prefix openssl@1.1) ||
+            rvm install "${v}" --with-openssl-dir=/opt/homebrew/opt/openssl@1.1 ||
                 { echo "[WARNING] Cannot execute rvm install for ${v}." 1>&2; }
             return 10
         fi
