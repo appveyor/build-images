@@ -262,6 +262,7 @@ function install_rubies() {
 
     rvm use "$DEFAULT_RUBY" --default
     log_version rvm --version
+    log_version ruby --version
     log_version rvm list
 }
 
@@ -690,15 +691,6 @@ function install_xcode() {
     # xcode-install
     if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
         [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
-
-        # requires Ruby version >= 2.4.0.
-        if command -v rvm; then
-            # We take as granted that install_rubies set latest version as default
-            rvm use default
-        else
-            echo "Cannot find rvm. Install rvm first!" 1>&2
-            return 10
-        fi
 
         gem install xcode-install
 
