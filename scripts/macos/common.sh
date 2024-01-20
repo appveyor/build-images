@@ -219,7 +219,7 @@ function install_gpg() {
 
 function install_rvm() {
     echo "[INFO] Running install_rvm..."
-    sudo -u appveyor brew install openssl@1.1
+    brew install openssl@1.1
     which curl
     curl --version
     echo "gem: --no-document" >> $HOME/.gemrc
@@ -255,7 +255,7 @@ function install_rubies() {
     local v
     declare RUBY_VERSIONS=( "ruby-2" "ruby-2.7" "ruby-3" "ruby-3.2.3" "ruby-3.3.0" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
-        rvm install "${v}" -C --with-openssl-dir=/usr/local/etc/openssl@3 ||
+        rvm install "${v}" --with-openssl-dir=$(brew --prefix openssl@1.1) ||
             { echo "[WARNING] Cannot execute rvm install for ${v}." 1>&2; }
     done
     local index
