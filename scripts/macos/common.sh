@@ -262,7 +262,7 @@ function install_rubies() {
                 { echo "[WARNING] Cannot install ${v}." 1>&2; }
         else
             # 3.x
-            rvm install "${v}" --trace --with-openssl-dir=$(brew --prefix openssl@3) ||
+            rvm install "${v}" --with-openssl-dir=$(brew --prefix openssl@3) ||
                 { echo "[WARNING] Cannot execute rvm install for ${v}." 1>&2; }
             return 10
         fi

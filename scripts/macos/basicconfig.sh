@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )
