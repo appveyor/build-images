@@ -260,6 +260,7 @@ function install_rubies() {
             # 2.x
             rvm install "${v}" --with-openssl-dir=/opt/homebrew/opt/openssl@1.1 ||
                 { echo "[WARNING] Cannot install ${v}." 1>&2; }
+            read -p "Paused"
         else
             # 3.x
             rvm install "${v}" --with-openssl-dir=/opt/homebrew/opt/openssl@1.1 ||
