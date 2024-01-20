@@ -69,16 +69,16 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 	}
 }
 
-Write-Host "Setting experimental mode"
-$configPath = "$env:programdata\docker\config\daemon.json"
-if (Test-Path $configPath) {
-  $daemonConfig = Get-Content $configPath | ConvertFrom-Json
-  $daemonConfig | Add-Member NoteProperty "experimental" $true -force
-  $daemonConfig | ConvertTo-Json -Depth 20 | Set-Content -Path $configPath
-} else {
-  New-Item "$env:programdata\docker\config" -ItemType Directory -Force | Out-Null
-  Set-Content -Path $configPath -Value '{ "experimental": true }'
-}
+# Write-Host "Setting experimental mode"
+# $configPath = "$env:programdata\docker\config\daemon.json"
+# if (Test-Path $configPath) {
+#   $daemonConfig = Get-Content $configPath | ConvertFrom-Json
+#   $daemonConfig | Add-Member NoteProperty "experimental" $true -force
+#   $daemonConfig | ConvertTo-Json -Depth 20 | Set-Content -Path $configPath
+# } else {
+#   New-Item "$env:programdata\docker\config" -ItemType Directory -Force | Out-Null
+#   Set-Content -Path $configPath -Value '{ "experimental": true }'
+# }
 
 Write-Host "Switching Docker to Linux mode..."
 & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
