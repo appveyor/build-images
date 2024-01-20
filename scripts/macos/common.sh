@@ -254,18 +254,19 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2" "ruby-2.7" "ruby-3" "ruby-3.2.3" "ruby-3.3.0" "ruby-head" )
+    declare RUBY_VERSIONS=( "ruby-3.3.0" )
     for v in "${RUBY_VERSIONS[@]}"; do
-        if [[ "${v}" == ruby-2* ]]; then
-            # 2.x
-            rvm install "${v}" --with-openssl-dir=/opt/homebrew/opt/openssl@1.1 ||
-                { echo "[WARNING] Cannot install ${v}." 1>&2; }
-            sleep 60m
-        else
-            # 3.x
-            rvm install "${v}" --with-openssl-dir=/opt/homebrew/opt/openssl@1.1 ||
-                { echo "[WARNING] Cannot execute rvm install for ${v}." 1>&2; }
-        fi
+        rvm install "${v}" --with-openssl-dir=$(brew --prefix openssl) --with-readline-dir=$(brew --prefix readline) --with-libyaml-dir=$(brew --prefix libyaml) --disable-dtrace --disable-docs
+        # if [[ "${v}" == ruby-2* ]]; then
+        #     # 2.x
+        #     rvm install "${v}" --with-openssl-dir=/opt/homebrew/opt/openssl@1.1 ||
+        #         { echo "[WARNING] Cannot install ${v}." 1>&2; }
+        # else
+        #     # 3.x
+        #     rvm install "${v}" --with-openssl-dir=/opt/homebrew/opt/openssl@1.1 ||
+        #         { echo "[WARNING] Cannot execute rvm install for ${v}." 1>&2; }
+        # fi
+        sleep 3600
     done
     local index
 
