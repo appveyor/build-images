@@ -2,6 +2,7 @@ Write-Host "Completing the configuration of Docker for Desktop..."
 
 $ErrorActionPreference = "Stop"
 
+wsl --shutdown
 # start Docker
 & "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
 
