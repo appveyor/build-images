@@ -10,5 +10,5 @@ Remove-Item $exePath
 
 Write-Host "Docker Desktop installed" -ForegroundColor Green
 
-Write-Host "adding to docker-users group..."
-net localgroup docker-users "appveyor" /add
+#Write-Host "adding to docker-users group..."
+#net localgroup docker-users "appveyor" /add
