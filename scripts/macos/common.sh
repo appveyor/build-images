@@ -220,6 +220,7 @@ function install_gpg() {
 function install_rvm() {
     echo "[INFO] Running install_rvm..."
     brew install openssl@1.1
+    brew install openssl@3
     which curl
     curl --version
     echo "gem: --no-document" >> $HOME/.gemrc
@@ -255,8 +256,16 @@ function install_rubies() {
     local v
     declare RUBY_VERSIONS=( "ruby-2" "ruby-2.7" "ruby-3" "ruby-3.2.3" "ruby-3.3.0" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
-        rvm install "${v}" --with-openssl-dir=$(brew --prefix openssl@1.1) ||
-            { echo "[WARNING] Cannot execute rvm install for ${v}." 1>&2; }
+        if [[ "${v}" == ruby-2* ]]; then
+            # 2.x
+            rvm install "${v}" --with-openssl-dir=$(brew --prefix openssl@1.1) ||
+                { echo "[WARNING] Cannot install ${v}." 1>&2; }
+        else
+            # 3.x
+            rvm install "${v}" --trace --with-openssl-dir=$(brew --prefix openssl@3) ||
+                { echo "[WARNING] Cannot execute rvm install for ${v}." 1>&2; }
+            return 10
+        fi
     done
     local index
 
