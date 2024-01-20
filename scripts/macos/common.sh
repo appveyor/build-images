@@ -253,7 +253,7 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.7" "ruby-3" "ruby-3.3.0" "ruby-head" )
+    declare RUBY_VERSIONS=( "ruby-2" "ruby-2.7" "ruby-3" "ruby-3.2.3" "ruby-3.3.0" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
