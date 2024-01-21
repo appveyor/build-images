@@ -702,7 +702,7 @@ function install_xcode() {
         export FASTLANE_DONT_STORE_PASSWORD=1
 
         for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
-            xcodes install "$XCODE_VERSION" --no-show-release-notes --verbose
+            xcodes install "$XCODE_VERSION"
         done
 
         if [ "$OSX_MAJOR_VER" -ge 12 ]; then
