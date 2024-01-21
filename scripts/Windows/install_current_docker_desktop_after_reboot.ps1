@@ -1,20 +1,20 @@
 Write-Host "Completing the configuration of Docker for Desktop..." 
 
-Start-Sleep -s 10
+
 $ErrorActionPreference = "Stop"
 # stop docker first to remove sign up screen
 Stop-Process -Name "Docker Desktop"
 #wsl --shutdown
 # start Docker
-& "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
-Start-Sleep -s 20
+#& "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
+#Start-Sleep -s 20
 wsl -l -v
-& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
-Stop-Process -Name "Docker Desktop" -Force
+#& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
+#Stop-Process -Name "Docker Desktop" -Force
 
-wsl --unregister docker-desktop
-wsl --unregister docker-desktop-data
-Start-Sleep -s 10
+#wsl --unregister docker-desktop
+#wsl --unregister docker-desktop-data
+#Start-Sleep -s 10
 & "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
 Start-Sleep -s 60
 
