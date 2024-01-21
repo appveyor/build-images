@@ -33,6 +33,7 @@ function build_vm() {
         -var "images_directory=${IMAGES_DIR}" \
         -var "output_directory=${OUT_DIR}" \
         -var "build_agent_mode=${BUILD_AGENT_MODE}" \
+        -var "fastlaneSession=${FASTLANE_SESSION}" \
         macos.json
 
     if [[ "${PACKER_BUILDER}" = "parallels-pvm" ]]; then
@@ -46,6 +47,11 @@ function build_vm() {
 
 if [ -z "$1" ]; then
     echo "No macOS codename provided"
+    exit 1
+fi
+
+if [ -z "$FASTLANE_SESSION" ]; then
+    echo "FASTLANE_SESSION variable is not set"
     exit 1
 fi
 

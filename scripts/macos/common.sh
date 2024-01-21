@@ -698,6 +698,8 @@ function install_xcode() {
 
         export XCODE_INSTALL_USER=$APPLEID_USER
         export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
+        export FASTLANE_SESSION="$APPLEID_SESSION"
+        export FASTLANE_DONT_STORE_PASSWORD=1
 
         for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
             xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
@@ -710,6 +712,7 @@ function install_xcode() {
         fi
 
         # Cleanup
+        export FASTLANE_SESSION=
         export XCODE_INSTALL_USER=
         export XCODE_INSTALL_PASSWORD=
     else
