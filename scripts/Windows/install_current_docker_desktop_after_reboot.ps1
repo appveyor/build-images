@@ -1,9 +1,10 @@
 Write-Host "Completing the configuration of Docker for Desktop..." 
-
+$blockRdp = $true
+iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 $ErrorActionPreference = "Stop"
 # stop docker first to remove sign up screen
 Stop-Process -Name "Docker Desktop"
-wsl --shutdown
+#wsl --shutdown
 # start Docker
 & "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
 
