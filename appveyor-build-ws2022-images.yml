@@ -89,7 +89,7 @@ for:
       - ps: Start-Sleep -s 5
 
       # Finalize Docker installation
-      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+      #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
       - ps: .\install_current_docker_desktop_after_reboot.ps1
 
       # Restart VM

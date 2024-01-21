@@ -1,7 +1,8 @@
 Write-Host "Completing the configuration of Docker for Desktop..." 
 
 $ErrorActionPreference = "Stop"
-
+# stop docker first to remove sign up screen
+Stop-Process -Name "Docker Desktop"
 wsl --shutdown
 # start Docker
 & "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
