@@ -16,6 +16,7 @@ wsl --unregister docker-desktop
 wsl --unregister docker-desktop-data
 Start-Sleep -s 10
 & "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
+Start-Sleep -s 60
 
 # wait while  Docker Desktop is started
 
