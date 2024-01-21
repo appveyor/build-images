@@ -256,8 +256,8 @@ function install_rubies() {
     local v
     declare RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.6" "ruby-3.1.4" "ruby-3.2.3" "ruby-3.3.0" "ruby-head" )
     for v in "${RUBY_VERSIONS[@]}"; do
-        rvm install "${v}" --with-openssl-dir=$(brew --prefix openssl) --with-readline-dir=$(brew --prefix readline) --with-libyaml-dir=$(brew --prefix libyaml) --disable-dtrace --disable-docs ||
-                { echo "[ERROR] Cannot execute rvm install for ${v}." 1>&2; sleep 3600; }
+        rvm install "${v}" --with-openssl-dir=/usr/local/opt/openssl@1.1 ||
+            { echo "[ERROR] Cannot install Ruby ${v} with RVM." 1>&2; return 10; }
     done
     local index
 
