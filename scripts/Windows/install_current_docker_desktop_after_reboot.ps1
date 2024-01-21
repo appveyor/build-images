@@ -4,6 +4,9 @@ Start-Sleep -s 10
 $ErrorActionPreference = "Stop"
 # stop docker first to remove sign up screen
 Stop-Process -Name "Docker Desktop"
+wsl --unregister docker-desktop
+wsl --unregister docker-desktop-data
+Start-Sleep -s 10
 #wsl --shutdown
 # start Docker
 & "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
@@ -71,8 +74,8 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		}
 	}
 }
-$blockRdp = $true
-iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#$blockRdp = $true
+#iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # Write-Host "Setting experimental mode"
 # $configPath = "$env:programdata\docker\config\daemon.json"
