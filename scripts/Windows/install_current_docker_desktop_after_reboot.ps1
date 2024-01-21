@@ -29,7 +29,8 @@ while ($i -lt (300)) {
   Write-Host "Retrying in 5 seconds..."
   sleep 5;
 }
-
+Write-Host "Switching Docker to Linux mode..."
+& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
 if (-not $finished) {
     Throw "Docker has not started"
 }
