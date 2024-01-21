@@ -694,7 +694,7 @@ function install_xcode() {
     if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
         [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
 
-        brew install xcodesorg/made/xcodes
+        brew_install xcodesorg/made/xcodes
 
         export XCODES_USERNAME=$APPLEID_USER
         export XCODES_PASSWORD=$APPLEID_PWD
