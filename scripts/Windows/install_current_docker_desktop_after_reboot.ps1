@@ -7,6 +7,8 @@ Stop-Process -Name "Docker Desktop"
 #wsl --shutdown
 # start Docker
 & "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
+Start-Sleep -s 20
+wsl -l -v
 & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
 Stop-Process -Name "Docker Desktop" -Force
 
