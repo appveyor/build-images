@@ -694,27 +694,27 @@ function install_xcode() {
     if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
         [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
 
-        gem install xcode-install
+        brew install xcodesorg/made/xcodes
 
-        export XCODE_INSTALL_USER=$APPLEID_USER
-        export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
+        export XCODES_USERNAME=$APPLEID_USER
+        export XCODES_PASSWORD=$APPLEID_PWD
         export FASTLANE_SESSION="$APPLEID_SESSION"
         export FASTLANE_DONT_STORE_PASSWORD=1
 
         for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
-            xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
+            xcodes install "$XCODE_VERSION" --no-show-release-notes --verbose
         done
 
-        if [ "$OSX_MAJOR_VER" -lt 12 ]; then
-            xcversion simulators --install='iOS 12.4'
-            xcversion simulators --install='tvOS 12.4'
-            xcversion simulators --install='watchOS 5.3'
+        if [ "$OSX_MAJOR_VER" -ge 12 ]; then
+            xcodes runtimes install 'iOS 15.5'
+            xcodes runtimes install 'watchOS 8.5'
+            xcodes runtimes install 'tvOS 15.4'
         fi
 
         # Cleanup
         export FASTLANE_SESSION=
-        export XCODE_INSTALL_USER=
-        export XCODE_INSTALL_PASSWORD=
+        export XCODES_USERNAME=
+        export XCODES_PASSWORD=
     else
         echo "[ERROR] Variables APPLEID_USER and/or APPLEID_PWD not set."
         return 10
