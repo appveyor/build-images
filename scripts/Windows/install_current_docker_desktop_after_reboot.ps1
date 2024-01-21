@@ -1,8 +1,6 @@
 Write-Host "Completing the configuration of Docker for Desktop..." 
 
 Start-Sleep -s 10
-#$blockRdp = $true
-#iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 $ErrorActionPreference = "Stop"
 # stop docker first to remove sign up screen
 Stop-Process -Name "Docker Desktop"
@@ -18,21 +16,21 @@ $finished = $false
 Write-Host "Waiting for Docker to start..."
 
 while ($i -lt (300)) {
-  $i +=1
-  
-  $dockerSvc = (Get-Service com.docker.service -ErrorAction SilentlyContinue)
-  if ((Get-Process 'Docker Desktop' -ErrorAction SilentlyContinue) -and $dockerSvc -and $dockerSvc.status -eq 'Running') {
-    $finished = $true
-    Write-Host "Docker started!"
-    break
-  }
-  Write-Host "Retrying in 5 seconds..."
-  sleep 5;
+	$i +=1
+	
+	$dockerSvc = (Get-Service com.docker.service -ErrorAction SilentlyContinue)
+	if ((Get-Process 'Docker Desktop' -ErrorAction SilentlyContinue) -and $dockerSvc -and $dockerSvc.status -eq 'Running') {
+		$finished = $true
+		Write-Host "Docker started!"
+		break
+	}
+	Write-Host "Retrying in 5 seconds..."
+	sleep 5;
 }
-Write-Host "Switching Docker to Linux mode..."
-& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
+#Write-Host "Switching Docker to Linux mode..."
+#& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
 if (-not $finished) {
-    Throw "Docker has not started"
+	Throw "Docker has not started"
 }
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -67,18 +65,20 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 			Write-Host "Pulling and running '$serverCoreTag' images in '$isolation' mode"
 			docker pull mcr.microsoft.com/windows/servercore:$serverCoreTag
 			#docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
-
+			
 			docker pull mcr.microsoft.com/windows/nanoserver:$nanoServerTag
 			#docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
 		}
 	}
 }
+$blockRdp = $true
+iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # Write-Host "Setting experimental mode"
 # $configPath = "$env:programdata\docker\config\daemon.json"
 # if (Test-Path $configPath) {
-#   $daemonConfig = Get-Content $configPath | ConvertFrom-Json
-#   $daemonConfig | Add-Member NoteProperty "experimental" $true -force
+	#   $daemonConfig = Get-Content $configPath | ConvertFrom-Json
+	#   $daemonConfig | Add-Member NoteProperty "experimental" $true -force
 #   $daemonConfig | ConvertTo-Json -Depth 20 | Set-Content -Path $configPath
 # } else {
 #   New-Item "$env:programdata\docker\config" -ItemType Directory -Force | Out-Null
