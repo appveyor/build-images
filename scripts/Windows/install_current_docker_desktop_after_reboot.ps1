@@ -81,8 +81,6 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		}
 	}
 }
-$blockRdp = $true
-iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # Write-Host "Setting experimental mode"
 # $configPath = "$env:programdata\docker\config\daemon.json"
@@ -100,6 +98,8 @@ Write-Host "Switching Docker to Linux mode..."
 Start-Sleep -s 20
 docker version -f '{{.Server.Os}}'
 docker version
+$blockRdp = $true
+iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 docker pull busybox
 docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
