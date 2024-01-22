@@ -103,10 +103,10 @@ docker version
 #$blockRdp = $true
 #iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 Start-ProcessWithOutput "docker pull busybox"
-#docker pull busybox -q
+docker pull busybox -q
 docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
 
-docker pull alpine
+Start-ProcessWithOutput "docker pull alpine"
 docker run --rm alpine echo hello_world
 
 Write-Host "Switching Docker to Windows mode..."
@@ -124,7 +124,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 }
 PullRunDockerImages 17763 'ltsc2019' '1809'
 
-docker pull mcr.microsoft.com/dotnet/framework/aspnet:4.8
+Start-ProcessWithOutput "docker pull mcr.microsoft.com/dotnet/framework/aspnet:4.8"
 
 Write-Host "Disable SMB share for disk C:"
 Remove-SmbShare -Name C -ErrorAction SilentlyContinue -Force
