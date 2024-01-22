@@ -44,11 +44,19 @@ install_vcs
 install_virtualenv
 install_gcc
 install_gpg
-install_cocoapods
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
-        OSX_VERS=${OSX_VERS}
+        $(declare -f install_cocoapods)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f log_version)
+        install_cocoapods" ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
         $(declare -f install_flutter)
         $(declare -f write_line)
         $(declare -f add_line)

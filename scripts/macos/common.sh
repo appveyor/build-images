@@ -770,7 +770,7 @@ function install_vcpkg() {
 function install_cocoapods() {
     echo "[INFO] Running install_cocoapods..."
 
-    brew_install cocoapods
+    brew install cocoapods
     log_version pod --version
 }
 
