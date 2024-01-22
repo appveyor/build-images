@@ -1,3 +1,5 @@
+. "$PSScriptRoot\common.ps1"
+
 Write-Host "Completing the configuration of Docker for Desktop..." 
 
 Start-Sleep -s 10
@@ -100,8 +102,8 @@ docker version -f '{{.Server.Os}}'
 docker version
 #$blockRdp = $true
 #iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-docker pull busybox -q
+Start-ProcessWithOutput "docker pull busybox"
+#docker pull busybox -q
 docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
 
 docker pull alpine
