@@ -687,7 +687,7 @@ function install_xcode() {
     
     # ventura and sonoma
     if [ "$OSX_MAJOR_VER" -ge 13 ]; then
-        XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
+        XCODE_VERSIONS=( "15.2" )
     fi
 
     # xcode-install
@@ -704,6 +704,8 @@ function install_xcode() {
         for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
             xcodes install --use-fastlane-auth "$XCODE_VERSION"
         done
+
+        xcodes select "15.2"
 
         if [ "$OSX_MAJOR_VER" -ge 13 ]; then
             xcodes runtimes install 'iOS 17.2'
