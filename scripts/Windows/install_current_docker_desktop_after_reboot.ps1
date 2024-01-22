@@ -115,7 +115,7 @@ Start-Sleep -s 20
 docker version -f '{{.Server.Os}}'
 docker version
 
-docker pull busybox
+Start-ProcessWithOutput "docker pull busybox"
 docker run --rm -v "$env:USERPROFILE`:/user-profile" busybox ls /user-profile
 
 if (-not $env:INSTALL_LATEST_ONLY) {
