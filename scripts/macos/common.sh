@@ -705,7 +705,8 @@ function install_xcode() {
             xcodes install --use-fastlane-auth "$XCODE_VERSION"
         done
 
-        xcodes select "${XCODE_VERSIONS[-1]}"
+        local last_index=$(( ${#XCODE_VERSIONS[*]} - 1 ))
+        xcodes select "${XCODE_VERSIONS[$last_index]}"
 
         if [ "$OSX_MAJOR_VER" -ge 13 ]; then
             xcodes runtimes install 'iOS 17.2'
