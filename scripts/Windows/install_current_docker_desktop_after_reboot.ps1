@@ -81,8 +81,8 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		}
 	}
 }
-#$blockRdp = $true
-#iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+$blockRdp = $true
+iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # Write-Host "Setting experimental mode"
 # $configPath = "$env:programdata\docker\config\daemon.json"
@@ -101,8 +101,8 @@ Start-Sleep -s 20
 docker version -f '{{.Server.Os}}'
 docker version
 
-#docker pull busybox
-#docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
+docker pull busybox
+docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
 
 docker pull alpine
 docker run --rm alpine echo hello_world
