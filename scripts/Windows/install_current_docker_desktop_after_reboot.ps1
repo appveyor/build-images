@@ -101,8 +101,8 @@ Start-Sleep -s 20
 docker version -f '{{.Server.Os}}'
 docker version
 
-docker pull busybox
-docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
+#docker pull busybox
+#docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
 
 docker pull alpine
 docker run --rm alpine echo hello_world
