@@ -771,6 +771,7 @@ function install_cocoapods() {
     echo "[INFO] Running install_cocoapods..."
 
     brew_install cocoapods
+    log_version pod --version
 }
 
 function install_flutter() {
@@ -803,21 +804,6 @@ function install_mono() {
     export MONO_HOME=/Library/Frameworks/Mono.framework/Home
     export PATH=$MONO_HOME/bin:$PATH
     log_version mono --version
-}
-
-function install_cocoapods() {
-    echo "[INFO] Running install_cocoapods..."
-    if check_user; then
-        su -l ${USER_NAME} -c "
-            gem install cocoapods
-            VERSIONS_FILE=${VERSIONS_FILE}
-            $(declare -f log_version)
-            log_version pod --version
-        " ||
-            { echo "[ERROR] Cannot install cocoapods." 1>&2; return 20; }
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
-    fi
 }
 
 function install_openjdk() {
