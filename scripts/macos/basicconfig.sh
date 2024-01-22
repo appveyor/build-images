@@ -41,9 +41,21 @@ configure_sshd
 configure_autologin
 install_curl
 install_vcs
-# install_virtualenv
-# install_gcc
-# install_gpg
+install_virtualenv
+install_gcc
+install_gpg
+install_cocoapods
+su -l ${USER_NAME} -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        OSX_VERS=${OSX_VERS}
+        $(declare -f install_flutter)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f log_version)
+        install_flutter" ||
+    _abort $?
 # install_xcode
 # install_rvm_and_rubies
 # install_openjdk
@@ -129,5 +141,5 @@ install_vcs
 #         $(declare -f add_ssh_known_hosts)
 #         add_ssh_known_hosts" ||
 #     _abort $?
-configure_term
-cleanup
+# configure_term
+# cleanup

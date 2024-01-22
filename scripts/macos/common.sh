@@ -767,6 +767,35 @@ function install_vcpkg() {
     log_version vcpkg version
 }
 
+function install_cocoapods() {
+    echo "[INFO] Running install_cocoapods..."
+
+    brew_install cocoapods
+}
+
+function install_flutter() {
+    echo "[INFO] Running install_flutter..."
+
+    local FLUTTER_MACOS_ZIP="flutter_macos_3.16.8-stable.zip"
+    local FLUTTER_MACOS_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/$FLUTTER_MACOS_ZIP"
+    local TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+    curl $FLUTTER_MACOS_URL -o $FLUTTER_MACOS_ZIP &&
+    tar unzip -qq "$FLUTTER_MACOS_ZIP" -d $HOME ||
+        { echo "[ERROR] Cannot download and unzip Flutter." 1>&2; popd; return 10; }
+
+    export PATH="$PATH:$HOME/flutter/bin"
+    write_line "${HOME}/.profile" 'add2path_suffix ${HOME}/flutter/bin'
+
+    flutter channel stable
+    flutter upgrade
+    flutter config --enable-macos-desktop
+    log_version flutter doctor
+
+    popd &&
+    rm -rf "${TMP_DIR}"
+}
+
 function install_mono() {
     brew_cask_install mono-mdk
     write_line "${HOME}/.profile" 'export MONO_HOME=/Library/Frameworks/Mono.framework/Home'
