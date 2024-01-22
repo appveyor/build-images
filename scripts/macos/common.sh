@@ -262,6 +262,7 @@ function install_rubies() {
     local index
 
     rvm use "$DEFAULT_RUBY" --default
+
     log_version rvm --version
     log_version ruby --version
     log_version rvm list
@@ -765,13 +766,6 @@ function install_vcpkg() {
     popd
     popd
     log_version vcpkg version
-}
-
-function install_cocoapods() {
-    echo "[INFO] Running install_cocoapods..."
-
-    brew install cocoapods
-    log_version pod --version
 }
 
 function install_flutter() {

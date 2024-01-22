@@ -44,16 +44,10 @@ install_vcs
 install_virtualenv
 install_gcc
 install_gpg
-su -l ${USER_NAME} -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        $(declare -f install_cocoapods)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        $(declare -f log_version)
-        install_cocoapods" ||
-    _abort $?
+# install_xcode
+# install_rvm_and_rubies
+# install_openjdk
+fix_home_permissions
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -64,10 +58,6 @@ su -l ${USER_NAME} -c "
         $(declare -f log_version)
         install_flutter" ||
     _abort $?
-# install_xcode
-# install_rvm_and_rubies
-# install_openjdk
-# fix_home_permissions
 # su -l ${USER_NAME} -c "
 #         PATH=$PATH
 #         USER_NAME=${USER_NAME}
