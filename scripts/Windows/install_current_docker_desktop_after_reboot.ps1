@@ -1,6 +1,6 @@
 Write-Host "Completing the configuration of Docker for Desktop..." 
 
-
+Start-Sleep -s 10
 $ErrorActionPreference = "Stop"
 # stop docker first to remove sign up screen
 Stop-Process -Name "Docker Desktop"
