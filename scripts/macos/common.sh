@@ -781,7 +781,7 @@ function install_flutter() {
     local TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
     curl $FLUTTER_MACOS_URL -o $FLUTTER_MACOS_ZIP &&
-    tar unzip -qq "$FLUTTER_MACOS_ZIP" -d $HOME ||
+    unzip -qq "$FLUTTER_MACOS_ZIP" -d $HOME ||
         { echo "[ERROR] Cannot download and unzip Flutter." 1>&2; popd; return 10; }
 
     export PATH="$PATH:$HOME/flutter/bin"
