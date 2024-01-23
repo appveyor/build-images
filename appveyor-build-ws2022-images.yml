@@ -110,7 +110,7 @@ for:
       - ps: .\install_nunit3.ps1
       - ps: .\install_vstest_console_logger.ps1
 
-      - ps: .\install_ruby.ps1
+      - ps: .\install_current_rubies.ps1
 
 
   - matrix:
@@ -134,8 +134,8 @@ for:
 
     build_script:
 
-      - ps: .\install_java_7_8.ps1
-      - ps: .\install_jdk15.ps1
+      #- ps: .\install_java_7_8.ps1
+      #- ps: .\install_jdk15.ps1
       - ps: .\install_jdk16.ps1
       - ps: .\install_jdk17.ps1
       - ps: .\install_jdk18.ps1
@@ -159,9 +159,9 @@ for:
       - ps: .\install_erlang.ps1
       - ps: .\install_flutter.ps1
 
-      - ps: .\install_postgres96.ps1
-      - ps: .\install_postgres10.ps1
-      - ps: .\install_postgres11.ps1
+      #- ps: .\install_postgres96.ps1
+      #- ps: .\install_postgres10.ps1
+      #- ps: .\install_postgres11.ps1
       - ps: .\install_postgres12.ps1
       - ps: .\install_postgres13.ps1
       - ps: .\install_postgres14.ps1
