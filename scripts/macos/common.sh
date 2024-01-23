@@ -712,8 +712,6 @@ function install_xcode() {
         local last_index=$(( ${#XCODE_VERSIONS[*]} - 1 ))
         xcodes select "${XCODE_VERSIONS[$last_index]}"
 
-        xcode-select --install
-
         if [ "$OSX_MAJOR_VER" -ge 13 ]; then
             xcodes runtimes install 'iOS 17.2'
             xcodes runtimes install 'watchOS 10.2'
