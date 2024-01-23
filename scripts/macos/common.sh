@@ -795,7 +795,7 @@ function install_cocoapods() {
     echo "[INFO] Running install_cocoapods..."
     if check_user; then
         su -l ${USER_NAME} -c "
-            gem install cocoapods
+            sudo gem install cocoapods
             VERSIONS_FILE=${VERSIONS_FILE}
             $(declare -f log_version)
             log_version pod --version
