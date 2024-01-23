@@ -75,11 +75,11 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		
 		if ($isolation) {
 			Write-Host "Pulling and running '$serverCoreTag' images in '$isolation' mode"
-			docker pull mcr.microsoft.com/windows/servercore:$serverCoreTag
-			#docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
+			Start-ProcessWithOutput "docker pull mcr.microsoft.com/windows/servercore:$serverCoreTag"
+			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/servercore:$serverCoreTag cmd /c echo hello_world
 			
-			docker pull mcr.microsoft.com/windows/nanoserver:$nanoServerTag
-			#docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
+			Start-ProcessWithOutput "docker pull mcr.microsoft.com/windows/nanoserver:$nanoServerTag"
+			docker run --rm --isolation=$isolation mcr.microsoft.com/windows/nanoserver:$nanoServerTag cmd /c echo hello_world	
 		}
 	}
 }
@@ -118,10 +118,10 @@ docker version
 #Start-ProcessWithOutput "docker pull busybox"
 #docker run --rm -v "$env:USERPROFILE`:/user-profile" busybox ls /user-profile
 
-if (-not $env:INSTALL_LATEST_ONLY) {
-	PullRunDockerImages 14393 'ltsc2016' 'sac2016'
-	PullRunDockerImages 17134 '1803' '1803'
-}
+# if (-not $env:INSTALL_LATEST_ONLY) {
+# 	PullRunDockerImages 14393 'ltsc2016' 'sac2016'
+# 	PullRunDockerImages 17134 '1803' '1803'
+# }
 PullRunDockerImages 17763 'ltsc2019' '1809'
 
 Start-ProcessWithOutput "docker pull mcr.microsoft.com/dotnet/framework/aspnet:4.8"
