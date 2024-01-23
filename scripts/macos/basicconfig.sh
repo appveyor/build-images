@@ -44,102 +44,99 @@ install_vcs
 install_virtualenv
 install_gcc
 install_gpg
+install_xcode
 install_rvm_and_rubies
-install_cocoapods
-
-# install_xcode
-
-# install_openjdk
-# fix_home_permissions
-# su -l ${USER_NAME} -c "
-#         PATH=$PATH
-#         USER_NAME=${USER_NAME}
-#         $(declare -f install_flutter)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         $(declare -f log_version)
-#         install_flutter" ||
-#     _abort $?
-# su -l ${USER_NAME} -c "
-#         PATH=$PATH
-#         USER_NAME=${USER_NAME}
-#         OSX_VERS=${OSX_VERS}
-#         $(declare -f install_vcpkg)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         $(declare -f log_version)
-#         install_vcpkg" ||
-#     _abort $?
-# su -l "${USER_NAME}" -c "
-#         PATH=$PATH
-#         USER_NAME=${USER_NAME}
-#         $(declare -f log_version)
-#         $(declare -f check_user)
-#         $(declare -f brew_install)
-#         $(declare -f run_brew)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)        
-#         $(declare -f install_gvm)
-#         $(declare -f install_golangs)
-#         $(declare -f install_gvm_and_golangs)
-#         install_gvm_and_golangs" ||
-#     _abort $?
-# su -l "${USER_NAME}" -c "
-#         PATH=$PATH
-#         USER_NAME=${USER_NAME}
-#         $(declare -f log_version)
-#         $(declare -f write_line)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         $(declare -f install_nvm)
-#         $(declare -f install_nvm_nodejs)
-#         $(declare -f install_nvm_and_nodejs)
-#         install_nvm_and_nodejs" ||
-#     _abort $?
-# su -l "${USER_NAME}" -c "
-#         PATH=$PATH
-#         USER_NAME=${USER_NAME}
-#         $(declare -f log_version)
-#         $(declare -f install_pip)
-#         $(declare -f fix_python_six)
-#         $(declare -f install_virtualenv)
-#         $(declare -f install_pythons)
-#         install_pythons" ||
-#     _abort $?
-# su -l "${USER_NAME}" -c "
-#         PATH=$PATH
-#         USER_NAME=${USER_NAME}
-#         $(declare -f log_version)
-#         $(declare -f install_qt)
-#         install_qt" ||
-#     _abort $?
-# install_cmake
-# su -l "${USER_NAME}" -c "
-#         PATH=$PATH
-#         USER_NAME=${USER_NAME}
-#         VERSIONS_FILE=${VERSIONS_FILE}
-#         $(declare -f log_version)
-#         $(declare -f add_line)
-#         $(declare -f replace_line)
-#         $(declare -f write_line)
-#         $(declare -f global_json)
-#         $(declare -f preheat_dotnet_sdks)
-#         $(declare -f install_dotnets)
-#         install_dotnets
-#         preheat_dotnet_sdks
-#         log_version dotnet --list-sdks
-#         log_version dotnet --list-runtimes" ||
-#     _abort $?
-# install_mono
-# su -l "${USER_NAME}" -c "
-#         PATH=$PATH
-#         USER_NAME=${USER_NAME}
-#         $(declare -f log_version)
-#         $(declare -f add_ssh_known_hosts)
-#         add_ssh_known_hosts" ||
-#     _abort $?
-# configure_term
-# cleanup
+install_openjdk
+fix_home_permissions
+su -l ${USER_NAME} -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f install_flutter)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f log_version)
+        install_flutter" ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        OSX_VERS=${OSX_VERS}
+        $(declare -f install_vcpkg)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f log_version)
+        install_vcpkg" ||
+    _abort $?
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f check_user)
+        $(declare -f brew_install)
+        $(declare -f run_brew)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)        
+        $(declare -f install_gvm)
+        $(declare -f install_golangs)
+        $(declare -f install_gvm_and_golangs)
+        install_gvm_and_golangs" ||
+    _abort $?
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f install_nvm)
+        $(declare -f install_nvm_nodejs)
+        $(declare -f install_nvm_and_nodejs)
+        install_nvm_and_nodejs" ||
+    _abort $?
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_pip)
+        $(declare -f fix_python_six)
+        $(declare -f install_virtualenv)
+        $(declare -f install_pythons)
+        install_pythons" ||
+    _abort $?
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f install_qt)
+        install_qt" ||
+    _abort $?
+install_cmake
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        VERSIONS_FILE=${VERSIONS_FILE}
+        $(declare -f log_version)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f write_line)
+        $(declare -f global_json)
+        $(declare -f preheat_dotnet_sdks)
+        $(declare -f install_dotnets)
+        install_dotnets
+        preheat_dotnet_sdks
+        log_version dotnet --list-sdks
+        log_version dotnet --list-runtimes" ||
+    _abort $?
+install_mono
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f add_ssh_known_hosts)
+        add_ssh_known_hosts" ||
+    _abort $?
+configure_term
+cleanup
