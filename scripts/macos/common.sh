@@ -254,7 +254,8 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.6" "ruby-3.1.4" "ruby-3.2.3" "ruby-3.3.0" )
+    #declare RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.6" "ruby-3.1.4" "ruby-3.2.3" "ruby-3.3.0" )
+    declare RUBY_VERSIONS=( "ruby-3.3.0" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install "${v}" --with-openssl-dir=/usr/local/opt/openssl@1.1 ||
             { echo "[ERROR] Cannot install Ruby ${v} with RVM." 1>&2; return 10; }
@@ -449,11 +450,14 @@ function install_pythons(){
     find /Library/Developer/CommandLineTools/Packages/ -name 'macOS_SDK_headers_*.pkg' |
         xargs -I {} sudo installer -pkg {} -target /
 
-    ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/Current/Headers/X11 /usr/local/include/X11
+    #ls /opt/X11/include/X11 
+
+    #ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/Current/Headers/X11 /usr/local/include/X11
+    ln -s /opt/X11/include/X11 /usr/local/include/X11
 
     brew install openssl xz gdbm
 
-    SSL_PATH=$(brew --prefix openssl)
+    SSL_PATH=/usr/local/opt/openssl@1.1
     SDK_PATH=$(xcrun --show-sdk-path)
 
     CPPFLAGS="-I${SSL_PATH}/include -I${SDK_PATH}/usr/include"
@@ -687,8 +691,12 @@ function install_xcode() {
     fi
     
     # ventura and sonoma
+    # if [ "$OSX_MAJOR_VER" -ge 13 ]; then
+    #     XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
+    # fi
+
     if [ "$OSX_MAJOR_VER" -ge 13 ]; then
-        XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
+        XCODE_VERSIONS=( "15.2" )
     fi
 
     # xcode-install
@@ -703,6 +711,8 @@ function install_xcode() {
 
         local last_index=$(( ${#XCODE_VERSIONS[*]} - 1 ))
         xcodes select "${XCODE_VERSIONS[$last_index]}"
+
+        xcode-select --install
 
         if [ "$OSX_MAJOR_VER" -ge 13 ]; then
             xcodes runtimes install 'iOS 17.2'
