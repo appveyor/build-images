@@ -691,46 +691,35 @@ function install_xcode() {
         XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
     fi
 
-    # xcode-install
-    if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
-        [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
+    # xcodes
+    brew_install xcodesorg/made/xcodes
 
-        brew_install xcodesorg/made/xcodes
+    export FASTLANE_SESSION="$APPLEID_SESSION"
+    export FASTLANE_DONT_STORE_PASSWORD=1
 
-        export XCODES_USERNAME=$APPLEID_USER
-        export XCODES_PASSWORD=$APPLEID_PWD
-        export FASTLANE_SESSION="$APPLEID_SESSION"
-        export FASTLANE_DONT_STORE_PASSWORD=1
+    for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
+        xcodes install --use-fastlane-auth "$XCODE_VERSION"
+    done
 
-        for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
-            xcodes install --use-fastlane-auth "$XCODE_VERSION"
-        done
+    local last_index=$(( ${#XCODE_VERSIONS[*]} - 1 ))
+    xcodes select "${XCODE_VERSIONS[$last_index]}"
 
-        local last_index=$(( ${#XCODE_VERSIONS[*]} - 1 ))
-        xcodes select "${XCODE_VERSIONS[$last_index]}"
-
-        if [ "$OSX_MAJOR_VER" -ge 13 ]; then
-            xcodes runtimes install 'iOS 17.2'
-            xcodes runtimes install 'watchOS 10.2'
-            xcodes runtimes install 'tvOS 17.2'
-        elif [ "$OSX_MAJOR_VER" -eq 12 ]; then
-            xcodes runtimes install 'iOS 16.1'
-            xcodes runtimes install 'watchOS 9.1'
-            xcodes runtimes install 'tvOS 16.1'
-        elif [ "$OSX_MAJOR_VER" -eq 11 ]; then
-            xcodes runtimes install 'iOS 15.2'
-            xcodes runtimes install 'watchOS 8.3'
-            xcodes runtimes install 'tvOS 15.2'
-        fi
-
-        # Cleanup
-        export FASTLANE_SESSION=
-        export XCODES_USERNAME=
-        export XCODES_PASSWORD=
-    else
-        echo "[ERROR] Variables APPLEID_USER and/or APPLEID_PWD not set."
-        return 10
+    if [ "$OSX_MAJOR_VER" -ge 13 ]; then
+        xcodes runtimes install 'iOS 17.2'
+        xcodes runtimes install 'watchOS 10.2'
+        xcodes runtimes install 'tvOS 17.2'
+    elif [ "$OSX_MAJOR_VER" -eq 12 ]; then
+        xcodes runtimes install 'iOS 16.1'
+        xcodes runtimes install 'watchOS 9.1'
+        xcodes runtimes install 'tvOS 16.1'
+    elif [ "$OSX_MAJOR_VER" -eq 11 ]; then
+        xcodes runtimes install 'iOS 15.2'
+        xcodes runtimes install 'watchOS 8.3'
+        xcodes runtimes install 'tvOS 15.2'
     fi
+
+    # Cleanup
+    export FASTLANE_SESSION=
 }
 
 function install_vcpkg() {
