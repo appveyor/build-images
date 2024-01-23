@@ -791,6 +791,21 @@ function install_flutter() {
     rm -rf "${TMP_DIR}"
 }
 
+function install_cocoapods() {
+    echo "[INFO] Running install_cocoapods..."
+    if check_user; then
+        su -l ${USER_NAME} -c "
+            gem install cocoapods
+            VERSIONS_FILE=${VERSIONS_FILE}
+            $(declare -f log_version)
+            log_version pod --version
+        " ||
+            { echo "[ERROR] Cannot install cocoapods." 1>&2; return 20; }
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found." 1>&2
+    fi
+}
+
 function install_mono() {
     brew_cask_install mono-mdk
     write_line "${HOME}/.profile" 'export MONO_HOME=/Library/Frameworks/Mono.framework/Home'
