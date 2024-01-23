@@ -694,9 +694,6 @@ function install_xcode() {
     # xcodes
     brew_install xcodesorg/made/xcodes
 
-    export FASTLANE_SESSION="$APPLEID_SESSION"
-    export FASTLANE_DONT_STORE_PASSWORD=1
-
     for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
         xcodes install --use-fastlane-auth "$XCODE_VERSION"
     done

@@ -58,7 +58,7 @@
     {
       "type": "shell",
       "environment_vars": [
-        "APPLEID_SESSION={{user `fastlaneSession`}}",
+        "FASTLANE_SESSION={{user `fastlaneSession`}}",
         "INSTALL_PASSWORD={{user `install_password`}}"
       ],
       "execute_command": "{{.Vars}} sudo -S -E bash -ex '{{.Path}}'",
