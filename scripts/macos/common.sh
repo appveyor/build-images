@@ -691,32 +691,37 @@ function install_xcode() {
         XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
     fi
 
-    # xcodes
-    brew_install xcodesorg/made/xcodes
+    # xcode-install
+    if [ -n "${XCODES_USERNAME-}" ] && [ "${#XCODES_USERNAME}" -gt "0" ] &&
+        [ -n "${XCODES_PASSWORD-}" ] && [ "${#XCODES_PASSWORD}" -gt "0" ] ; then
 
-    for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
-        xcodes install --use-fastlane-auth "$XCODE_VERSION"
-    done
+        brew_install xcodesorg/made/xcodes
 
-    local last_index=$(( ${#XCODE_VERSIONS[*]} - 1 ))
-    xcodes select "${XCODE_VERSIONS[$last_index]}"
+        for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
+            xcodes install --use-fastlane-auth "$XCODE_VERSION"
+        done
 
-    if [ "$OSX_MAJOR_VER" -ge 13 ]; then
-        xcodes runtimes install 'iOS 17.2'
-        xcodes runtimes install 'watchOS 10.2'
-        xcodes runtimes install 'tvOS 17.2'
-    elif [ "$OSX_MAJOR_VER" -eq 12 ]; then
-        xcodes runtimes install 'iOS 16.1'
-        xcodes runtimes install 'watchOS 9.1'
-        xcodes runtimes install 'tvOS 16.1'
-    elif [ "$OSX_MAJOR_VER" -eq 11 ]; then
-        xcodes runtimes install 'iOS 15.2'
-        xcodes runtimes install 'watchOS 8.3'
-        xcodes runtimes install 'tvOS 15.2'
+        local last_index=$(( ${#XCODE_VERSIONS[*]} - 1 ))
+        xcodes select "${XCODE_VERSIONS[$last_index]}"
+
+        if [ "$OSX_MAJOR_VER" -ge 13 ]; then
+            xcodes runtimes install 'iOS 17.2'
+            xcodes runtimes install 'watchOS 10.2'
+            xcodes runtimes install 'tvOS 17.2'
+        elif [ "$OSX_MAJOR_VER" -eq 12 ]; then
+            xcodes runtimes install 'iOS 16.1'
+            xcodes runtimes install 'watchOS 9.1'
+            xcodes runtimes install 'tvOS 16.1'
+        elif [ "$OSX_MAJOR_VER" -eq 11 ]; then
+            xcodes runtimes install 'iOS 15.2'
+            xcodes runtimes install 'watchOS 8.3'
+            xcodes runtimes install 'tvOS 15.2'
+        fi
+
+    else
+        echo "[ERROR] Variables XCODES_USERNAME and/or XCODES_PASSWORD not set."
+        return 10
     fi
-
-    # Cleanup
-    export FASTLANE_SESSION=
 }
 
 function install_vcpkg() {

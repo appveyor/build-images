@@ -11,6 +11,8 @@
   },
   "sensitive-variables": [
     "install_password",
+    "appleIdUser",
+    "appleIdPasswd",
     "fastlaneSession"
   ],
   "provisioners": [
@@ -58,7 +60,10 @@
     {
       "type": "shell",
       "environment_vars": [
+        "XCODES_USERNAME={{user `appleIdUser`}}",
+        "XCODES_PASSWORD={{user `appleIdPasswd`}}",
         "FASTLANE_SESSION={{user `fastlaneSession`}}",
+        "FASTLANE_DONT_STORE_PASSWORD=1",
         "INSTALL_PASSWORD={{user `install_password`}}"
       ],
       "execute_command": "{{.Vars}} sudo -S -E bash -ex '{{.Path}}'",
