@@ -460,17 +460,24 @@ function install_pythons(){
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
 
         pyenv install "${i}" ||
-            { echo "[WARNING] Cannot install Python ${i}."; return 10; }
+            { echo "[ERROR] Cannot install Python ${i}."; return 10; }
 
         pyenv global "${i}"
-
         python --version
 
-        python -m pip install virtualenv ||
-            { echo "[WARNING] Cannot install virtualenv for Python ${i}."; return 10; }
+        python -m pip install --upgrade pip ||
+            { echo "[ERROR] Cannot upgrade pip for Python ${i}."; return 10; }
+        
+        if [ ${i:0:1} -eq 3 ]; then
+            python -m venv "${VENV_PATH}" ||
+                { echo "[ERROR] Cannot make virtualenv for Python ${i}."; return 10; }
+        else
+            python -m pip install virtualenv ||
+                { echo "[ERROR] Cannot install virtualenv for Python ${i}."; return 10; }
 
-        python -m venv "${VENV_PATH}" ||
-            { echo "[WARNING] Cannot make virtualenv for Python ${i}."; return 10; }
+            virtualenv "${VENV_PATH}" ||
+                { echo "[ERROR] Cannot make virtualenv for Python ${i}."; return 10; }
+        fi
 
         echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
         ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
