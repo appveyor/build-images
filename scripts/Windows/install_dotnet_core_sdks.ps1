@@ -1,5 +1,5 @@
 . "$PSScriptRoot\common.ps1"
-
+$env:INSTALL_LATEST_ONLY=$true
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [System.Net.SecurityProtocolType]::Tls11 -bor [System.Net.SecurityProtocolType]::Tls13
 
 function Install-SDK($sdkVersion) {
