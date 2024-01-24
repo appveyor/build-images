@@ -392,59 +392,6 @@ function install_qt() {
     fi
 }
 
-# function install_virtualenv() {
-#     echo "[INFO] Running install_virtualenv..."
-
-#     # monterey and above
-#     if [ "$OSX_MAJOR_VER" -ge 12 ]; then
-#         install_virtualenv_3
-#     else
-#         install_virtualenv_2
-#     fi
-# }
-
-# function install_virtualenv_2() {
-#     echo "[INFO] Running install_virtualenv_2..."
-#     command -v pip || install_pip
-#     pip install virtualenv ||
-#         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
-
-#     log_version virtualenv --version
-# }
-
-# function install_virtualenv_3() {
-#     echo "[INFO] Running install_virtualenv_3..."
-#     pip3 install virtualenv ||
-#         { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
-
-#     log_version virtualenv --version
-# }
-
-# function fix_python_six() {
-#     if [ "$OSX_MAJOR_VER" -eq 10 ] && [ "$OSX_MINOR_VER" -le 14 ]; then
-#         # output current version
-#         pip list 2>/dev/null | grep six || true
-#         pip install --ignore-installed six ||
-#             { echo "[WARNING] Cannot update python's lib 'six'." ; return 10; }
-#         # output version again
-#         pip list 2>/dev/null | grep six || true
-#     fi
-# }
-
-# function install_pip() {
-#     echo "[INFO] Running install_pip..."
-#     curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py" ||
-#         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-#     python get-pip.py ||
-#         { echo "[WARNING] Cannot install pip." ; return 10; }
-
-#     log_version pip --version
-
-#     fix_python_six
-#     #cleanup
-#     rm get-pip.py
-# }
-
 function install_pythons(){
     echo "[INFO] Running install_pythons..."
 
@@ -485,59 +432,6 @@ function install_pythons(){
 
     ls -al ~/venv*
 }
-
-# function install_pythons(){
-#     echo "[INFO] Running install_pythons..."
-#     find /Library/Developer/CommandLineTools/Packages/ -name 'macOS_SDK_headers_*.pkg' |
-#         xargs -I {} sudo installer -pkg {} -target /
-
-#     #ls /opt/X11/include/X11 
-
-#     #ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/Current/Headers/X11 /usr/local/include/X11
-#     ln -s /opt/X11/include/X11 /usr/local/include/X11
-
-#     brew install openssl xz gdbm
-
-#     SSL_PATH=/usr/local/opt/openssl@1.1
-#     SDK_PATH=$(xcrun --show-sdk-path)
-
-#     CPPFLAGS="-I${SSL_PATH}/include -I${SDK_PATH}/usr/include"
-#     LDFLAGS="-L${SSL_PATH}/lib"
-
-#     command -v virtualenv || install_virtualenv
-#     declare PY_VERSIONS=( "2.7.18" "3.8.18" "3.9.18" "3.10.13" "3.11.7" "3.12.1" )
-#     for i in "${PY_VERSIONS[@]}"; do
-#         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
-#         VENV_MINOR_PATH=${HOME}/venv${i%.*}
-#         if [ ! -d ${VENV_PATH} ]; then
-#         curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
-#             { echo "[WARNING] Cannot download Python ${i}."; continue; }
-#         tar -zxf Python-${i}.tgz &&
-#         pushd "Python-${i}" ||
-#             { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
-#         PY_PATH=${HOME}/.localpython${i}
-#         mkdir -p "${PY_PATH}"
-#         ./configure --enable-shared --silent "--prefix=${PY_PATH}" "CPPFLAGS=${CPPFLAGS}" "LDFLAGS=${LDFLAGS}" "--with-openssl=$SSL_PATH" &&
-#         make --silent &&
-#         make install --silent >/dev/null ||
-#             { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
-#         if [ ${i:0:1} -eq 3 ]; then
-#             PY_BIN=python3
-#         else
-#             PY_BIN=python
-#         fi
-#         virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
-#             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
-#         popd
-#         echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
-#         rm -f ${VENV_MINOR_PATH}
-#         ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
-#         fi
-#     done
-#     find "$HOME" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
-#     rm ${HOME}/Python-*.tgz
-#     rm /usr/local/include/X11
-# }
 
 function global_json() {
     echo "{
@@ -731,13 +625,9 @@ function install_xcode() {
         XCODE_VERSIONS=( "13.4.1" "14.2" )
     fi
     
-    # ventura and sonoma
-    # if [ "$OSX_MAJOR_VER" -ge 13 ]; then
-    #     XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
-    # fi
-
+    ventura and sonoma
     if [ "$OSX_MAJOR_VER" -ge 13 ]; then
-        XCODE_VERSIONS=( "15.2" )
+        XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
     fi
 
     # xcode-install
