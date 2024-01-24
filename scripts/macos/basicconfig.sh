@@ -41,7 +41,7 @@ configure_sshd
 configure_autologin
 install_curl
 install_vcs
-install_virtualenv
+#install_virtualenv
 install_gcc
 install_gpg
 #install_rvm_and_rubies
