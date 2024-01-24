@@ -475,7 +475,7 @@ function install_pythons(){
             python -m pip install virtualenv ||
                 { echo "[ERROR] Cannot install virtualenv for Python ${i}."; return 10; }
 
-            virtualenv "${VENV_PATH}" ||
+            python -m virtualenv "${VENV_PATH}" ||
                 { echo "[ERROR] Cannot make virtualenv for Python ${i}."; return 10; }
         fi
 
