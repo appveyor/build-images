@@ -625,7 +625,7 @@ function install_xcode() {
         XCODE_VERSIONS=( "13.4.1" "14.2" )
     fi
     
-    ventura and sonoma
+    # ventura and sonoma
     if [ "$OSX_MAJOR_VER" -ge 13 ]; then
         XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
     fi
