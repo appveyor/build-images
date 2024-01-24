@@ -1,4 +1,5 @@
-﻿function Install-Nodejs {
+﻿$env:INSTALL_LATEST_ONLY=$true
+function Install-Nodejs {
 
     $avvmRoot = "$env:SYSTEMDRIVE\avvm\node"
 
