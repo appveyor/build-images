@@ -466,6 +466,9 @@ function install_pythons(){
 
         python --version
 
+        python -m pip install virtualenv ||
+            { echo "[WARNING] Cannot install virtualenv for Python ${i}."; return 10; }
+
         python -m venv "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; return 10; }
 
