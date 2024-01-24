@@ -44,23 +44,22 @@ install_vcs
 install_virtualenv
 install_gcc
 install_gpg
-install_rvm_and_rubies
+#install_rvm_and_rubies
 install_xcode
-
+fix_home_permissions
 su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
         $(declare -f log_version)
-        $(declare -f install_pip)
-        $(declare -f fix_python_six)
-        $(declare -f install_virtualenv)
+        $(declare -f write_line)
+        $(declare -f add_line)
         $(declare -f install_pythons)
         install_pythons" ||
     _abort $?
 
 
 # install_openjdk
-# fix_home_permissions
+
 # su -l ${USER_NAME} -c "
 #         PATH=$PATH
 #         USER_NAME=${USER_NAME}
