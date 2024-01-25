@@ -611,7 +611,7 @@ function install_xcode() {
 
     # catalina
     if [ "$OSX_MAJOR_VER" -eq 10 ] && [ "$OSX_MINOR_VER" -gt 14 ]; then
-        XCODE_VERSIONS+=( "11.7" "12.3" )
+        XCODE_VERSIONS+=( "11.7" "12.4" )
     fi
 
     # big sur
