@@ -1,5 +1,5 @@
 ﻿Write-Host "Installing MinGW..." -ForegroundColor Cyan
-
+$ErrorActionPreference = 'SilentlyContinue'
 $mingwPath = "C:\MinGW"
 
 if(Test-Path $mingwPath) {
@@ -46,3 +46,4 @@ Write-Host "Installed MinGW" -ForegroundColor Green
 Write-Host "Compacting C:\MinGW..." -ForegroundColor Cyan -NoNewline
 compact /c /s:C:\MinGW | Out-Null
 Write-Host "OK"
+$ErrorActionPreference = 'Stop'

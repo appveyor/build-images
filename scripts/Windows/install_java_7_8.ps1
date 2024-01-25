@@ -49,18 +49,6 @@ function InstallJDKVersion($javaVersion, $jdkVersion, $url, $fileName, $jdkPath,
     Write-Host "$javaVersion installed" -ForegroundColor Green
 }
 
-$java7 = (GetUninstallString 'Java SE Development Kit 7 Update 80')
-if($java7) {
-    Write-Host "Latest Java 7 already installed" -ForegroundColor Green
-} else {
-    UninstallJava 'Java 7 Update 80 (64-bit)'
-    UninstallJava 'Java 7 Update 80'
-    UninstallJava 'Java SE Development Kit 7 Update 80'
-    UninstallJava 'Java SE Development Kit 7 Update 80 (64-bit)'
-
-    InstallJDKVersion "JDK 1.7 x86" 7 "https://storage.googleapis.com/appveyor-download-cache/jdk/jdk-7u80-windows-i586.exe" "jdk-7u80-windows-i586.exe" "${env:ProgramFiles(x86)}\Java\jdk1.7.0" "${env:ProgramFiles(x86)}\Java\jre7"
-    InstallJDKVersion "JDK 1.7 x64" 7 "https://storage.googleapis.com/appveyor-download-cache/jdk/jdk-7u80-windows-x64.exe" "jdk-7u80-windows-x64.exe" "$env:ProgramFiles\Java\jdk1.7.0" "$env:ProgramFiles\Java\jre7"
-}
 
 $java8 = (GetUninstallString 'Java SE Development Kit 8 Update 221')
 if($java8) {
@@ -82,13 +70,12 @@ Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentV
 Disable-ScheduledTask -TaskPath '\' -TaskName 'JavaUpdateSched' -ErrorAction Ignore
 
 # Set Java home
-[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk1.8.0", "machine")
-$env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
+#[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk1.8.0", "machine")
+#$env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
 
 # Fix Java installs
 Remove-Path "C:\ProgramData\Oracle\Java\javapath" -ErrorAction Ignore
 Remove-Path "${env:ProgramFiles(x86)}\Common Files\Oracle\Java\javapath" -ErrorAction Ignore
-Remove-Path "${env:ProgramFiles}\Java\jdk1.7.0\bin" -ErrorAction Ignore
 Remove-Path "${env:ProgramFiles}\Eclipse Foundation\jdk-8.0.302.8-hotspot\bin" -ErrorAction Stop
 Add-Path "${env:ProgramFiles}\Java\jdk1.8.0\bin" -ErrorAction Ignore
 Remove-Item "C:\Windows\System32\java.exe" -ErrorAction Ignore
