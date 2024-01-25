@@ -254,8 +254,7 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    #declare RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.6" "ruby-3.1.4" "ruby-3.2.3" "ruby-3.3.0" )
-    declare RUBY_VERSIONS=( "ruby-3.3.0" )
+    declare RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.6" "ruby-3.1.4" "ruby-3.2.3" "ruby-3.3.0" )
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install "${v}" --with-openssl-dir=/usr/local/opt/openssl@1.1 ||
             { echo "[ERROR] Cannot install Ruby ${v} with RVM." 1>&2; return 10; }
