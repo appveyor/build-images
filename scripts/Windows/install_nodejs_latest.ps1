@@ -327,4 +327,4 @@ Add-Path "$env:APPDATA\npm"
 
 # set AVVM URL
 [System.Environment]::SetEnvironmentVariable("AVVM_DOWNLOAD_URL", "https://appveyordownloads.blob.core.windows.net/avvm", "Machine")
-$env:INSTALL_LATEST_ONLY=$false
+$env:INSTALL_LATEST_ONLY=$null

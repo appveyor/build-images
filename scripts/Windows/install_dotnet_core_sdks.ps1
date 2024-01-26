@@ -56,4 +56,4 @@ if ($vs2022) {
 if ($env:install_vs2019_preview) {
     Install-SDK "6.0.100-preview.5.21302.13"
 }
-$env:INSTALL_LATEST_ONLY=$false
+$env:INSTALL_LATEST_ONLY=$null
