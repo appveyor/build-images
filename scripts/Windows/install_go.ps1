@@ -1,4 +1,5 @@
-﻿. "$PSScriptRoot\common.ps1"
+﻿$env:INSTALL_LATEST_ONLY=$false
+. "$PSScriptRoot\common.ps1"
 
 $go_versions = @(
     @{
