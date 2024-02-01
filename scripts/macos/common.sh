@@ -633,14 +633,24 @@ function install_xcode() {
     if [ -n "${XCODES_USERNAME-}" ] && [ "${#XCODES_USERNAME}" -gt "0" ] &&
         [ -n "${XCODES_PASSWORD-}" ] && [ "${#XCODES_PASSWORD}" -gt "0" ] ; then
 
-        brew_install xcodesorg/made/xcodes
+        if [ "$OSX_MAJOR_VER" -ge 12 ]; then
+            brew_install xcodesorg/made/xcodes
+        else
+            gem install xcode-install
+        fi
 
         for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
-            xcodes install --use-fastlane-auth "$XCODE_VERSION"
+            if [ "$OSX_MAJOR_VER" -ge 12 ]; then
+                xcodes install --use-fastlane-auth "$XCODE_VERSION"
+            else
+                xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
+            fi
         done
 
-        local last_index=$(( ${#XCODE_VERSIONS[*]} - 1 ))
-        xcodes select "${XCODE_VERSIONS[$last_index]}"
+        if [ "$OSX_MAJOR_VER" -ge 12 ]; then
+            local last_index=$(( ${#XCODE_VERSIONS[*]} - 1 ))
+            xcodes select "${XCODE_VERSIONS[$last_index]}"
+        fi
 
         if [ "$OSX_MAJOR_VER" -ge 13 ]; then
             xcodes runtimes install 'iOS 17.2'
@@ -651,9 +661,9 @@ function install_xcode() {
             xcodes runtimes install 'watchOS 9.1'
             xcodes runtimes install 'tvOS 16.1'
         elif [ "$OSX_MAJOR_VER" -eq 11 ]; then
-            xcodes runtimes install 'iOS 15.2'
-            xcodes runtimes install 'watchOS 8.3'
-            xcodes runtimes install 'tvOS 15.2'
+            xcversion simulators --install='iOS 15.2'
+            xcversion simulators --install='tvOS 15.2'
+            xcversion simulators --install='watchOS 8.3'
         fi
 
     else

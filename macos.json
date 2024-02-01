@@ -62,6 +62,8 @@
       "environment_vars": [
         "XCODES_USERNAME={{user `appleIdUser`}}",
         "XCODES_PASSWORD={{user `appleIdPasswd`}}",
+        "XCODE_INSTALL_USER={{user `appleIdUser`}}",
+        "XCODE_INSTALL_PASSWORD={{user `appleIdPasswd`}}",
         "FASTLANE_SESSION={{user `fastlaneSession`}}",
         "FASTLANE_DONT_STORE_PASSWORD=1",
         "INSTALL_PASSWORD={{user `install_password`}}"
