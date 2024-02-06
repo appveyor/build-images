@@ -217,27 +217,10 @@ function install_gpg() {
     log_version gpg --version
 }
 
-function install_fastlane() {
-    echo "[INFO] Running install_fastlane..."
-
-    # fastlane dependencies requires Ruby version >= 2.4.0.
-    if command -v rvm; then
-        # We take as granted that install_rubies set latest version as default
-        rvm use default
-    else
-        echo "Cannot find rvm. Install rvm first!" 1>&2
-        return 10
-    fi
-
-    brew_install fastlane
-    if check_user; then
-        # shellcheck disable=SC2016
-        write_line "${HOME}/.profile" 'export PATH="$HOME/.fastlane/bin:$PATH"'
-    fi
-}
-
 function install_rvm() {
     echo "[INFO] Running install_rvm..."
+    brew install openssl@1.1
+    #brew install openssl@3
     which curl
     curl --version
     echo "gem: --no-document" >> $HOME/.gemrc
@@ -252,6 +235,13 @@ function install_rvm() {
     source "${HOME}/.rvm/scripts/rvm"
 }
 
+function install_rbenv() {
+    echo "[INFO] Running install_rbenv..."
+    sudo -u appveyor brew install rbenv ruby-build
+    touch ~/.zshrc
+    echo "eval '$(rbenv init - zsh)'" >> ~/.zshrc
+}
+
 function install_rubies() {
     echo "[INFO] Running install_rubies..."
     # this must be executed as appveyor user
@@ -260,21 +250,24 @@ function install_rubies() {
         return 1
     fi
     local DEFAULT_RUBY
-    DEFAULT_RUBY="ruby-2.6"
+    DEFAULT_RUBY="ruby-3.3.0"
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3" "ruby-3.1.3" "ruby-head" )
+    declare RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.6" "ruby-3.1.4" "ruby-3.2.3" "ruby-3.3.0" )
     for v in "${RUBY_VERSIONS[@]}"; do
-        rvm install "${v}" ||
-            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+        rvm install "${v}" --with-openssl-dir=/usr/local/opt/openssl@1.1 ||
+            { echo "[ERROR] Cannot install Ruby ${v} with RVM." 1>&2; return 10; }
     done
     local index
 
     rvm use "$DEFAULT_RUBY" --default
+
     log_version rvm --version
+    log_version ruby --version
     log_version rvm list
 }
+
 
 function install_rvm_and_rubies() {
     echo "[INFO] Running install_rvm_and_rubies..."
@@ -302,8 +295,62 @@ function install_rvm_and_rubies() {
     fi
 }
 
+function install_rubies_rbenv() {
+    echo "[INFO] Running install_rubies with rbenv..."
+    ruby -v
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    local DEFAULT_RUBY
+    DEFAULT_RUBY="2.7.8"
+    command -v rbenv ||
+        { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
+    local v
+    #declare RUBY_VERSIONS=( "ruby-2.0" "ruby-2.1" "ruby-2.2" "ruby-2.3" "ruby-2.4" "ruby-2.5" "ruby-2.6" "ruby-2.7" "ruby-3" "ruby-3.1.3" "ruby-head" )
+    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.4" "3.2.2" )
+    for v in "${RUBY_VERSIONS[@]}"; do
+        rbenv install "${v}" ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+    local index
+
+    rbenv global "$DEFAULT_RUBY"
+    ruby --version
+    # add shims to path so system ruby is controlled by rbenv
+    export PATH=~/.rbenv/shims:$PATH
+    ruby --version
+    rbenv version
+
+    log_version rbenv --version
+    log_version rbenv install -l
+}
+
+function install_rbenv_and_rubies() {
+    echo "[INFO] Running install_rbenv_and_rubies..."
+    
+    if check_user; then
+        su -l ${USER_NAME} -c "
+            PATH=$PATH
+            USER_NAME=${USER_NAME}
+            $(declare -f install_rbenv)
+            install_rbenv" &&
+        su -l ${USER_NAME} -c "
+            PATH=$PATH
+            USER_NAME=${USER_NAME}
+            VERSIONS_FILE=${VERSIONS_FILE}
+            $(declare -f log_version)
+            $(declare -f install_rubies)
+            install_rubies" ||
+                return $?
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. Cannot install rbenv and rubies"
+    fi
+}
+
 function install_gcc() {
-    declare GCC_VERSIONS=( "gcc@6" "gcc@7" "gcc@8" )
+    declare GCC_VERSIONS=( "gcc@10" "gcc@11" "gcc@12" )
     brew_install "${GCC_VERSIONS[@]}"
 }
 
@@ -311,7 +358,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.25.1
+        VERSION=3.28.1
     else
         VERSION=$1
     fi
@@ -344,107 +391,45 @@ function install_qt() {
     fi
 }
 
-function install_virtualenv() {
-    echo "[INFO] Running install_virtualenv..."
-
-    # monterey and above
-    if [ "$OSX_MAJOR_VER" -ge 12 ]; then
-        install_virtualenv_3
-    else
-        install_virtualenv_2
-    fi
-}
-
-function install_virtualenv_2() {
-    echo "[INFO] Running install_virtualenv_2..."
-    command -v pip || install_pip
-    pip install virtualenv ||
-        { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
-
-    log_version virtualenv --version
-}
-
-function install_virtualenv_3() {
-    echo "[INFO] Running install_virtualenv_3..."
-    pip3 install virtualenv ||
-        { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
-
-    log_version virtualenv --version
-}
-
-function fix_python_six() {
-    if [ "$OSX_MAJOR_VER" -eq 10 ] && [ "$OSX_MINOR_VER" -le 14 ]; then
-        # output current version
-        pip list 2>/dev/null | grep six || true
-        pip install --ignore-installed six ||
-            { echo "[WARNING] Cannot update python's lib 'six'." ; return 10; }
-        # output version again
-        pip list 2>/dev/null | grep six || true
-    fi
-}
-
-function install_pip() {
-    echo "[INFO] Running install_pip..."
-    curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py" ||
-        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    python get-pip.py ||
-        { echo "[WARNING] Cannot install pip." ; return 10; }
-
-    log_version pip --version
-
-    fix_python_six
-    #cleanup
-    rm get-pip.py
-}
-
 function install_pythons(){
     echo "[INFO] Running install_pythons..."
-    find /Library/Developer/CommandLineTools/Packages/ -name 'macOS_SDK_headers_*.pkg' |
-        xargs -I {} sudo installer -pkg {} -target /
 
-    ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/Current/Headers/X11 /usr/local/include/X11
+    brew install pyenv
 
-    brew install openssl xz gdbm
+    write_line "${HOME}/.profile" 'export PYENV_ROOT="$HOME/.pyenv"'
+    write_line "${HOME}/.profile" 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
+    eval "$(pyenv init -)"
 
-    SSL_PATH=$(brew --prefix openssl)
-    SDK_PATH=$(xcrun --show-sdk-path)
-
-    CPPFLAGS="-I${SSL_PATH}/include -I${SDK_PATH}/usr/include"
-    LDFLAGS="-L${SSL_PATH}/lib"
-
-    command -v virtualenv || install_virtualenv
-    declare PY_VERSIONS=( "2.6.9" "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.15" "3.8.15" "3.9.15" "3.10.8" "3.11.0" )
+    declare PY_VERSIONS=( "2.7.18" "3.8.18" "3.9.18" "3.10.13" "3.11.7" "3.12.1" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
-        if [ ! -d ${VENV_PATH} ]; then
-        curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
-            { echo "[WARNING] Cannot download Python ${i}."; continue; }
-        tar -zxf Python-${i}.tgz &&
-        pushd "Python-${i}" ||
-            { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
-        PY_PATH=${HOME}/.localpython${i}
-        mkdir -p "${PY_PATH}"
-        ./configure --enable-shared --silent "--prefix=${PY_PATH}" "CPPFLAGS=${CPPFLAGS}" "LDFLAGS=${LDFLAGS}" "--with-openssl=$SSL_PATH" &&
-        make --silent &&
-        make install --silent >/dev/null ||
-            { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
+
+        pyenv install "${i}" ||
+            { echo "[ERROR] Cannot install Python ${i}."; return 10; }
+
+        pyenv global "${i}"
+        python --version
+
+        python -m pip install --upgrade pip ||
+            { echo "[ERROR] Cannot upgrade pip for Python ${i}."; return 10; }
+        
         if [ ${i:0:1} -eq 3 ]; then
-            PY_BIN=python3
+            python -m venv "${VENV_PATH}" ||
+                { echo "[ERROR] Cannot make virtualenv for Python ${i}."; return 10; }
         else
-            PY_BIN=python
+            python -m pip install virtualenv ||
+                { echo "[ERROR] Cannot install virtualenv for Python ${i}."; return 10; }
+
+            python -m virtualenv "${VENV_PATH}" ||
+                { echo "[ERROR] Cannot make virtualenv for Python ${i}."; return 10; }
         fi
-        virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
-            { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
-        popd
+
         echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
-        rm -f ${VENV_MINOR_PATH}
         ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
-        fi
     done
-    find "$HOME" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
-    rm ${HOME}/Python-*.tgz
-    rm /usr/local/include/X11
+
+    ls -al ~/venv*
 }
 
 function global_json() {
@@ -488,7 +473,7 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    declare DOTNET_VERSIONS=( "2.0" "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" "7.0"  )
+    declare DOTNET_VERSIONS=( "3.1" "6.0" "7.0" "8.0" )
     for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
         sudo ./dotnet-install.sh -channel "$v" --install-dir "$INSTALL_DIR"
@@ -542,7 +527,7 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    declare GO_VERSIONS=( "go1.10.8" "go1.11.13" "go1.12.17" "go1.13.15" "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.8" "go1.19.3" )
+    declare GO_VERSIONS=( "go1.19.13" "go1.20.13" "go1.21.6" )
     for v in "${GO_VERSIONS[@]}"; do
         # big sur
         if [ "$OSX_MAJOR_VER" -eq 10 ]; then
@@ -605,7 +590,7 @@ function install_nvm_nodejs() {
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
-    declare NVM_VERSIONS=( "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" )
+    declare NVM_VERSIONS=( "8" "10" "14" "18" "19" "20" "21" )
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install "${v}" ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -626,7 +611,7 @@ function install_xcode() {
 
     # catalina
     if [ "$OSX_MAJOR_VER" -eq 10 ] && [ "$OSX_MINOR_VER" -gt 14 ]; then
-        XCODE_VERSIONS+=( "11.7" "12.3" )
+        XCODE_VERSIONS+=( "11.7" "12.4" )
     fi
 
     # big sur
@@ -636,34 +621,53 @@ function install_xcode() {
 
     # monterey
     if [ "$OSX_MAJOR_VER" -eq 12 ]; then
-        XCODE_VERSIONS=( "13.4.1" "14.1" )
+        XCODE_VERSIONS=( "13.4.1" "14.2" )
+    fi
+    
+    # ventura and sonoma
+    if [ "$OSX_MAJOR_VER" -ge 13 ]; then
+        XCODE_VERSIONS=( "13.4.1" "14.3" "15.2" )
     fi
 
-    #check fastlane
-    if [ -n "${APPLEID_USER-}" ] && [ "${#APPLEID_USER}" -gt "0" ] &&
-        [ -n "${APPLEID_PWD-}" ] && [ "${#APPLEID_PWD}" -gt "0" ] ; then
-        gem install xcode-install
-        export XCODE_INSTALL_USER=$APPLEID_USER
-        export XCODE_INSTALL_PASSWORD=$APPLEID_PWD
-        export FASTLANE_SESSION="$APPLEID_SESSION"
-        export FASTLANE_DONT_STORE_PASSWORD=1
+    # xcode-install
+    if [ -n "${XCODES_USERNAME-}" ] && [ "${#XCODES_USERNAME}" -gt "0" ] &&
+        [ -n "${XCODES_PASSWORD-}" ] && [ "${#XCODES_PASSWORD}" -gt "0" ] ; then
 
-        for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
-            xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
-        done
-
-        if [ "$OSX_MAJOR_VER" -lt 12 ]; then
-            xcversion simulators --install='iOS 12.4'
-            xcversion simulators --install='tvOS 12.4'
-            xcversion simulators --install='watchOS 5.3'
+        if [ "$OSX_MAJOR_VER" -ge 12 ]; then
+            brew_install xcodesorg/made/xcodes
+        else
+            gem install xcode-install
         fi
 
-        # Cleanup
-        export FASTLANE_SESSION=
-        export XCODE_INSTALL_USER=
-        export XCODE_INSTALL_PASSWORD=
+        for XCODE_VERSION in "${XCODE_VERSIONS[@]}"; do
+            if [ "$OSX_MAJOR_VER" -ge 12 ]; then
+                xcodes install --use-fastlane-auth "$XCODE_VERSION"
+            else
+                xcversion install "$XCODE_VERSION" --no-show-release-notes --verbose
+            fi
+        done
+
+        if [ "$OSX_MAJOR_VER" -ge 12 ]; then
+            local last_index=$(( ${#XCODE_VERSIONS[*]} - 1 ))
+            xcodes select "${XCODE_VERSIONS[$last_index]}"
+        fi
+
+        if [ "$OSX_MAJOR_VER" -ge 13 ]; then
+            xcodes runtimes install 'iOS 17.2'
+            xcodes runtimes install 'watchOS 10.2'
+            xcodes runtimes install 'tvOS 17.2'
+        elif [ "$OSX_MAJOR_VER" -eq 12 ]; then
+            xcodes runtimes install 'iOS 16.1'
+            xcodes runtimes install 'watchOS 9.1'
+            xcodes runtimes install 'tvOS 16.1'
+        elif [ "$OSX_MAJOR_VER" -eq 11 ]; then
+            xcversion simulators --install='iOS 15.2'
+            xcversion simulators --install='tvOS 15.2'
+            xcversion simulators --install='watchOS 8.3'
+        fi
+
     else
-        echo "[ERROR] Variables APPLEID_USER and/or APPLEID_PWD not set."
+        echo "[ERROR] Variables XCODES_USERNAME and/or XCODES_PASSWORD not set."
         return 10
     fi
 }
@@ -703,20 +707,34 @@ function install_vcpkg() {
     log_version vcpkg version
 }
 
-function install_mono() {
-    brew_cask_install mono-mdk
-    write_line "${HOME}/.profile" 'export MONO_HOME=/Library/Frameworks/Mono.framework/Home'
-    write_line "${HOME}/.profile" 'export PATH=$MONO_HOME/bin:$PATH'
-    export MONO_HOME=/Library/Frameworks/Mono.framework/Home
-    export PATH=$MONO_HOME/bin:$PATH
-    log_version mono --version
+function install_flutter() {
+    echo "[INFO] Running install_flutter..."
+
+    local FLUTTER_MACOS_ZIP="flutter_macos_3.16.8-stable.zip"
+    local FLUTTER_MACOS_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/$FLUTTER_MACOS_ZIP"
+    local TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+    curl $FLUTTER_MACOS_URL -o $FLUTTER_MACOS_ZIP &&
+    unzip -qq "$FLUTTER_MACOS_ZIP" -d $HOME ||
+        { echo "[ERROR] Cannot download and unzip Flutter." 1>&2; popd; return 10; }
+
+    export PATH="$PATH:$HOME/flutter/bin"
+    write_line "${HOME}/.profile" 'add2path_suffix ${HOME}/flutter/bin'
+
+    flutter channel stable
+    flutter upgrade
+    flutter config --enable-macos-desktop
+    log_version flutter doctor
+
+    popd &&
+    rm -rf "${TMP_DIR}"
 }
 
 function install_cocoapods() {
     echo "[INFO] Running install_cocoapods..."
     if check_user; then
         su -l ${USER_NAME} -c "
-            gem install cocoapods
+            sudo gem install cocoapods
             VERSIONS_FILE=${VERSIONS_FILE}
             $(declare -f log_version)
             log_version pod --version
@@ -727,6 +745,15 @@ function install_cocoapods() {
     fi
 }
 
+function install_mono() {
+    brew_cask_install mono-mdk
+    write_line "${HOME}/.profile" 'export MONO_HOME=/Library/Frameworks/Mono.framework/Home'
+    write_line "${HOME}/.profile" 'export PATH=$MONO_HOME/bin:$PATH'
+    export MONO_HOME=/Library/Frameworks/Mono.framework/Home
+    export PATH=$MONO_HOME/bin:$PATH
+    log_version mono --version
+}
+
 function install_openjdk() {
     echo "[INFO] Running install_openjdk..."
     [ -x "${BREW_CMD-}" ] ||
@@ -734,7 +761,7 @@ function install_openjdk() {
     if check_user; then
 
         # all versions
-        declare JDK_VERSIONS=( "8" "9" "10" "15" "16")
+        declare JDK_VERSIONS=( "11" "17" "18" "19" "20" "21" )
 
         # # big sur, monterey
         # if [ "$OSX_MAJOR_VER" -ge 11 ]; then
@@ -742,13 +769,13 @@ function install_openjdk() {
         # fi
 
         su -l ${USER_NAME} -c "
-            $BREW_CMD tap AdoptOpenJDK/openjdk
+            $BREW_CMD tap homebrew/cask-versions
         " || { echo "[ERROR] Cannot add AdoptOpenJDK/openjdk tap." 1>&2; return 20; }        
 
         # install JDKs
         for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
             su -l ${USER_NAME} -c "
-                $BREW_CMD install --cask adoptopenjdk${JDK_VERSION}
+                $BREW_CMD install --cask temurin${JDK_VERSION}
             " || { echo "[ERROR] Cannot install adoptopenjdk ${JDK_VERSION} with Homebrew." 1>&2; return 20; }
         done
 

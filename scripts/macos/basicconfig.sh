@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )
@@ -41,14 +41,31 @@ configure_sshd
 configure_autologin
 install_curl
 install_vcs
-install_virtualenv
 install_gcc
 install_gpg
-install_openjdk
 install_rvm_and_rubies
-install_fastlane
+install_openjdk
 install_xcode
 fix_home_permissions
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f log_version)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f install_pythons)
+        install_pythons" ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        PATH=$PATH
+        USER_NAME=${USER_NAME}
+        $(declare -f install_flutter)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f log_version)
+        install_flutter" ||
+    _abort $?
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -91,16 +108,6 @@ su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
         $(declare -f log_version)
-        $(declare -f install_pip)
-        $(declare -f fix_python_six)
-        $(declare -f install_virtualenv)
-        $(declare -f install_pythons)
-        install_pythons" ||
-    _abort $?
-su -l "${USER_NAME}" -c "
-        PATH=$PATH
-        USER_NAME=${USER_NAME}
-        $(declare -f log_version)
         $(declare -f install_qt)
         install_qt" ||
     _abort $?
@@ -121,7 +128,6 @@ su -l "${USER_NAME}" -c "
         log_version dotnet --list-sdks
         log_version dotnet --list-runtimes" ||
     _abort $?
-install_cocoapods
 install_mono
 su -l "${USER_NAME}" -c "
         PATH=$PATH
