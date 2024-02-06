@@ -1,5 +1,5 @@
 . "$PSScriptRoot\common.ps1"
-$env:INSTALL_LATEST_ONLY=$true
+
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [System.Net.SecurityProtocolType]::Tls11 -bor [System.Net.SecurityProtocolType]::Tls13
 
 function Install-SDK($sdkVersion) {
@@ -24,17 +24,15 @@ function Install-SDK($sdkVersion) {
     Write-Host "Installed .NET Core SDK $sdkVersion" -ForegroundColor Green
 }
 
-$vs2019 = (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019")
-$vs2022 = (Test-Path "${env:ProgramFiles}\Microsoft Visual Studio\2022")
-
-if ((-not $env:INSTALL_LATEST_ONLY) -and (-not ($vs2019 -or $vs2022))) {
+if (-not $env:INSTALL_LATEST_ONLY) {
     Install-SDK "1.1.14"
     Install-SDK "2.1.202"
     Install-SDK "2.1.806"
-    Install-SDK "2.2.402"
 }
+Install-SDK "2.2.402"
 
-
+$vs2019 = (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019")
+$vs2022 = (Test-Path "${env:ProgramFiles}\Microsoft Visual Studio\2022")
 
 # VS 2019 and 2022 images only
 if ($vs2019 -or $vs2022) {
@@ -42,18 +40,15 @@ if ($vs2019 -or $vs2022) {
     Install-SDK "3.1.202"
     Install-SDK "3.1.426"
     Install-SDK "5.0.408"
-    Install-SDK "8.0.100"
 }
 
 # VS 2022 image only
 if ($vs2022) {
     Install-SDK "6.0.415"
     Install-SDK "7.0.402"
-    Install-SDK "8.0.100"
 }
 
 # VS 2019 Preview
 if ($env:install_vs2019_preview) {
     Install-SDK "6.0.100-preview.5.21302.13"
 }
-$env:INSTALL_LATEST_ONLY=$null

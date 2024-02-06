@@ -6,21 +6,14 @@ Start-Sleep -s 10
 $ErrorActionPreference = "Stop"
 # stop docker first to remove sign up screen
 Stop-Process -Name "Docker Desktop"
-#wsl --shutdown
-# start Docker
-#& "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
-#Start-Sleep -s 20
-wsl -l -v
-#& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
-#Stop-Process -Name "Docker Desktop" -Force
 
-#wsl --unregister docker-desktop
-#wsl --unregister docker-desktop-data
-#Start-Sleep -s 10
+wsl -l -v
+
 & "$env:ProgramFiles\Docker\Docker\Docker Desktop.exe"
-Start-Sleep -s 60
 
 # wait while  Docker Desktop is started
+Start-Sleep -s 60
+
 
 $i = 0
 $finished = $false
@@ -39,8 +32,7 @@ while ($i -lt (300)) {
 	Write-Host "Retrying in 5 seconds..."
 	sleep 5;
 }
-#Write-Host "Switching Docker to Linux mode..."
-#& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
+
 if (-not $finished) {
 	Throw "Docker has not started"
 }
@@ -84,24 +76,13 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 	}
 }
 
-# Write-Host "Setting experimental mode"
-# $configPath = "$env:programdata\docker\config\daemon.json"
-# if (Test-Path $configPath) {
-	#   $daemonConfig = Get-Content $configPath | ConvertFrom-Json
-	#   $daemonConfig | Add-Member NoteProperty "experimental" $true -force
-#   $daemonConfig | ConvertTo-Json -Depth 20 | Set-Content -Path $configPath
-# } else {
-#   New-Item "$env:programdata\docker\config" -ItemType Directory -Force | Out-Null
-#   Set-Content -Path $configPath -Value '{ "experimental": true }'
-# }
 
 Write-Host "Switching Docker to Linux mode..."
 & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
 Start-Sleep -s 20
 docker version -f '{{.Server.Os}}'
 docker version
-#$blockRdp = $true
-#iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 Start-ProcessWithOutput "docker pull busybox"
 docker pull busybox -q
 docker run --rm -v 'C:\:/user-profile' busybox ls /user-profile
@@ -115,13 +96,6 @@ Start-Sleep -s 20
 docker version -f '{{.Server.Os}}'
 docker version
 
-#Start-ProcessWithOutput "docker pull busybox"
-#docker run --rm -v "$env:USERPROFILE`:/user-profile" busybox ls /user-profile
-
-# if (-not $env:INSTALL_LATEST_ONLY) {
-# 	PullRunDockerImages 14393 'ltsc2016' 'sac2016'
-# 	PullRunDockerImages 17134 '1803' '1803'
-# }
 PullRunDockerImages 17763 'ltsc2019' '1809'
 
 Start-ProcessWithOutput "docker pull mcr.microsoft.com/dotnet/framework/aspnet:4.8"
@@ -145,5 +119,3 @@ if (Test-Path $settingsPath) {
 }
 
 Write-Host "Docker CE installed and configured"
-
-#Switch-DockerLinux

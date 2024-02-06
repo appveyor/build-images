@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 
 # Containers feature
 
@@ -17,3 +17,7 @@ if ((Get-WmiObject Win32_Processor).VirtualizationFirmwareEnabled[0] -and (Get-W
 	Write-Host "Skipping Hyper-V installation - virtualization is not enabled"
 }
 
+
+# WSL feature
+
+wsl --install --no-distribution
