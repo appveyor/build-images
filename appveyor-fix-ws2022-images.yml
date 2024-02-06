@@ -1,0 +1,39 @@
+environment:
+  matrix:
+  # Azure
+  # =======
+
+    - job_name: WS 2022 on Azure West US
+      APPVEYOR_BUILD_WORKER_IMAGE: ws2022-master-azure-westus
+      APPVEYOR_BAKE_IMAGE: ws2022-master-azure-westus
+
+init:
+  - appveyor version
+  #- ps: $ErrorActionPreference = 'Stop'
+  - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
+  - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
+
+clone_folder: '%USERPROFILE%\image-bake-scripts'
+
+clone_script:
+  - ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_COMMIT).zip" -OutFile "$env:temp\scripts.zip"
+  - ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
+  - ps: Copy-Item -Path "$env:temp\scripts\build-images-$($env:APPVEYOR_REPO_COMMIT)\scripts\Windows\*" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
+
+test: off
+
+
+build_script:
+  - ps: .\install_path_utils.ps1
+  - ps: Add-Path ${env:ProgramFiles}\Java\jdk17\bin
+  - ps: .\docker_autostart.ps1
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  #  Restart VM
+  #  - ps: Start-Sleep -s 5; Restart-Computer -Force
+  # - ps: Start-Sleep -s 5
+
+  - appveyor version
+  - ps: .\cleanup_windows.ps1
+
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

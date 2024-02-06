@@ -1,4 +1,5 @@
-﻿function Install-Nodejs {
+﻿$env:INSTALL_LATEST_ONLY=$true
+function Install-Nodejs {
 
     $avvmRoot = "$env:SYSTEMDRIVE\avvm\node"
 
@@ -19,10 +20,11 @@
         "14.17.6",
         "14.18.1",
         "14.20.1",
+        "18.18.2",
         "19.9.0",
-        "18.17.1",
         "20.5.1",
-        "20.6.0"
+        "20.10.0",
+        "21.2.0"
     )
 
     if (-not $env:INSTALL_LATEST_ONLY) {
@@ -35,10 +37,10 @@
             #"1.8.1",
             #"2.5.0",
             #"3.3.0",
-            "5.12.0",
-            "4.9.1",
-            "6.17.1",
-            "7.10.1",
+            #"5.12.0",
+            #"4.9.1",
+            #"6.17.1",
+            #"7.10.1",
             "8.17.0",
             "9.11.2",
             "10.24.1",
@@ -325,3 +327,4 @@ Add-Path "$env:APPDATA\npm"
 
 # set AVVM URL
 [System.Environment]::SetEnvironmentVariable("AVVM_DOWNLOAD_URL", "https://appveyordownloads.blob.core.windows.net/avvm", "Machine")
+$env:INSTALL_LATEST_ONLY=$null
