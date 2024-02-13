@@ -2079,12 +2079,15 @@ function install_clang() {
     echo "[INFO] Running install_clang..."
     curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-    install_clang_version 9
-    install_clang_version 10
+    # install_clang_version 9
+    # install_clang_version 10
     install_clang_version 11
     install_clang_version 12
     install_clang_version 13
     install_clang_version 14
+    install_clang_version 15
+    install_clang_version 16
+    install_clang_version 17
 
     # make clang 10 default
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
