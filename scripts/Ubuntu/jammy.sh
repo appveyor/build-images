@@ -17,7 +17,7 @@ function configure_mercurial_repository() {
 }
 
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=( "6.0" "7.0" )
+    SDK_VERSIONS=( "6.0" "7.0" "8.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     # RUNTIME_VERSIONS=( "3.1" "6.0" )
@@ -133,7 +133,7 @@ function install_nvm_nodejs() {
 
     local v
 
-    declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" "20")
+    declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" "20" "21")
 
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
