@@ -398,7 +398,9 @@ function install_jdks() {
     install_jdk 17 https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?                     
     install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-${TAR_ARCH}_bin.tar.gz ||
-        return $?        
+        return $?   
+    install_jdk 21 https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?     
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
         IFS=$'\n'
