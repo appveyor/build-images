@@ -1231,6 +1231,30 @@ function install_rvm_and_rubies() {
     fi
 }
 
+function install_rbenv() {
+    echo "[INFO] Running install_rbenv..."
+    git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
+    #git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+}
+
+function install_rbenv_rubies() {
+    echo "[INFO] Running install_rbenv_rubies..."
+    local DEFAULT_RUBY
+    DEFAULT_RUBY="2.7.8"
+    command -v rvm ||
+        { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
+    local v
+
+    declare RUBY_VERSIONS=( "2.1.10" "2.2.10" "2.3.8" "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.4" "3.2.3"  )
+
+    
+    for v in "${RUBY_VERSIONS[@]}"; do
+        rbenv install ${v} ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+}
+
 function install_rvm() {
     echo "[INFO] Running install_rvm..."
     # this must be executed as appveyor user
