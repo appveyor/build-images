@@ -240,7 +240,6 @@ su -l ${USER_NAME} -c "
         $(declare -f install_rbenv)
         install_rbenv" ||
     _abort $?
-source ~/.bashrc
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         OS_ARCH=${OS_ARCH}
