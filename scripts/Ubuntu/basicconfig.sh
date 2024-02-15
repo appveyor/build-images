@@ -232,6 +232,23 @@ su -l ${USER_NAME} -c "
         $(declare -f configure_nuget)
         configure_nuget" ||
     _abort $?
+
+# Ruby via rbenv
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        $(declare -f install_rbenv)
+        install_rbenv" ||
+    _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        OS_ARCH=${OS_ARCH}
+        
+        $(declare -f log_version)
+        $(declare -f install_rbenv_rubies)
+        install_rbenv_rubies" ||
+    _abort $?
+
 install_cvs ||
     _abort $?
 su -l ${USER_NAME} -c "
@@ -393,21 +410,21 @@ su -l ${USER_NAME} -c "
         install_golangs" ||
     _abort $?
 
-# Ruby
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        OS_ARCH=${OS_ARCH}
-        $(declare -f install_rbenv)
-        install_rbenv" ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        OS_ARCH=${OS_ARCH}
-        
-        $(declare -f log_version)
-        $(declare -f install_rbenv_rubies)
-        install_rbenv_rubies" ||
-    _abort $?
+# Ruby via rvm
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
+#         $(declare -f install_rvm)
+#         install_rvm" ||
+#     _abort $?
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
+#         [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
+#         $(declare -f log_version)
+#         $(declare -f install_rubies)
+#         install_rubies" ||
+#     _abort $?
 
 if [[ $OS_ARCH == "amd64" ]]; then
     install_mono ||

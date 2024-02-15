@@ -1242,7 +1242,7 @@ function install_rbenv_rubies() {
     echo "[INFO] Running install_rbenv_rubies..."
     local DEFAULT_RUBY
     DEFAULT_RUBY="2.7.8"
-    command -v rvm ||
+    command -v rbenv ||
         { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
