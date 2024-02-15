@@ -1233,7 +1233,8 @@ function install_rvm_and_rubies() {
 
 function install_rbenv() {
     echo "[INFO] Running install_rbenv..."
-    git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    #git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
     echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
     #git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
 }
