@@ -1240,11 +1240,12 @@ function install_rbenv() {
     cat ~/.bashrc
     #git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
     source ~/.bashrc
-    rbenv
+    #rbenv
 }
 
 function install_rbenv_rubies() {
     echo "[INFO] Running install_rbenv_rubies..."
+    source .bashrc
     local DEFAULT_RUBY
     DEFAULT_RUBY="2.7.8"
     command -v rbenv ||
