@@ -1240,6 +1240,7 @@ function install_rbenv() {
     source .bashrc
     echo $PATH
     if [ -e ~/.rbenv/bin/rbenv ]; then echo "rbenv file exists"; fi
+    export PATH=~/.rbenv/shims:$PATH
     rbenv
 }
 
