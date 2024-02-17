@@ -1238,11 +1238,11 @@ function install_rbenv() {
     echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
     #git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
     source .bashrc
-    echo $PATH
-    if [ -e ~/.rbenv/bin/rbenv ]; then echo "rbenv file exists"; fi
+    #echo $PATH
+    #if [ -e ~/.rbenv/bin/rbenv ]; then echo "rbenv file exists"; fi
     export PATH="/home/appveyor/.rbenv/shims:/home/appveyor/.rbenv/bin:${PATH}"
-    echo $PATH
-    rbenv
+    #echo $PATH
+    #rbenv
 }
 
 function install_rbenv_rubies() {
