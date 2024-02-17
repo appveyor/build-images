@@ -1237,9 +1237,10 @@ function install_rbenv() {
     #curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
     #eval "$(~/.rbenv/bin/rbenv init - bash)"
     echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
-    ~/.rbenv/bin/rbenv init - bash
-    #git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
-    #source .bashrc
+    source .bashrc
+    #~/.rbenv/bin/rbenv init - bash
+    
+    git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
     #echo $PATH
     #if [ -e ~/.rbenv/bin/rbenv ]; then echo "rbenv file exists"; fi
     
