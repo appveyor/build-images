@@ -240,6 +240,7 @@ su -l ${USER_NAME} -c "
         $(declare -f install_rbenv)
         install_rbenv" ||
     _abort $?
+export PATH="/home/appveyor/.rbenv/shims:/home/appveyor/.rbenv/bin:${PATH}"
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         OS_ARCH=${OS_ARCH}
