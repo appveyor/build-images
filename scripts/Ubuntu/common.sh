@@ -1242,8 +1242,8 @@ function install_rbenv() {
 function install_rbenv_rubies() {
     echo "[INFO] Running install_rbenv_rubies..."
     cat .bashrc
-    source .bashrc
-    #eval "$(~/.rbenv/bin/rbenv init - bash)"
+    #source .bashrc
+    eval "$(~/.rbenv/bin/rbenv init - bash)"
     echo $PATH
     git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
     local DEFAULT_RUBY
