@@ -1235,23 +1235,15 @@ function install_rbenv() {
     echo "[INFO] Running install_rbenv..."
     git clone https://github.com/rbenv/rbenv.git ~/.rbenv
     #curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
-    #eval "$(~/.rbenv/bin/rbenv init - bash)"
     echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
-    #~/.rbenv/bin/rbenv init - bash
-    #git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
-    #source .bashrc
-    #echo $PATH
-    #if [ -e ~/.rbenv/bin/rbenv ]; then echo "rbenv file exists"; fi
-    
-    #echo $PATH
-    #rbenv
+
 }
 
 function install_rbenv_rubies() {
     echo "[INFO] Running install_rbenv_rubies..."
     cat .bashrc
     source .bashrc
-    eval "$(~/.rbenv/bin/rbenv init - bash)"
+    #eval "$(~/.rbenv/bin/rbenv init - bash)"
     echo $PATH
     git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
     local DEFAULT_RUBY
