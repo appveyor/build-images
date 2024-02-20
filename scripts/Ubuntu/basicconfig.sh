@@ -427,7 +427,6 @@ su -l ${USER_NAME} -c "
         $(declare -f install_rbenv_rubies)
         install_rbenv_rubies" ||
     _abort $?
-    
 if [[ $OS_ARCH == "amd64" ]]; then
     install_mono ||
         _abort $?
