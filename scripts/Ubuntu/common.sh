@@ -1239,10 +1239,10 @@ function install_rbenv() {
 
     sudo sh -c "echo 'export PATH=~/.rbenv/shims:$PATH' > /etc/profile.d/system_env_vars.sh"
     
-    WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    # WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-    sudo cp ${WORK_DIR}/rvm_wrapper.sh /usr/bin/rvm
-    sudo chmod +x /usr/bin/rvm
+    # sudo cp "${WORK_DIR}"/rvm_wrapper.sh /usr/bin/rvm
+    # sudo chmod +x /usr/bin/rvm
 
 }
 
