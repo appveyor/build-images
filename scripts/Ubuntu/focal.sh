@@ -79,7 +79,7 @@ function fix_sqlserver() {
 }
 
 function configure_mono_repository () {
-    echo "[INFO] Running configure_mono_repository on Ubuntu 22.04..."
+    echo "[INFO] Running configure_mono_repository on Ubuntu 20.04..."
     
     sudo apt-get install ca-certificates gnupg
     sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF

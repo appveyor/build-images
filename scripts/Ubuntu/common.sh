@@ -1237,6 +1237,13 @@ function install_rbenv() {
     #curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
     echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
 
+    sudo sh -c "echo 'export PATH=~/.rbenv/shims:$PATH' > /etc/profile.d/system_env_vars.sh"
+    
+    WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+    sudo cp rvm_wrapper.sh /usr/bin/rvm
+    sudo chmod +x /usr/bin/rvm
+
 }
 
 function install_rbenv_rubies() {
@@ -1251,8 +1258,7 @@ function install_rbenv_rubies() {
 
     declare RUBY_VERSIONS=( "2.1.10" "2.2.10" "2.3.8" "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.4" "3.2.3"  )
 
-    
-    for v in "${RUBY_VERSIONS[@]}"; do
+    for v in "${RUBY_VERSIONS[@]}"; do  
         rbenv install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
