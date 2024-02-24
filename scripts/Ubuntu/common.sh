@@ -1241,7 +1241,7 @@ function install_rbenv() {
     
     WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-    sudo cp rvm_wrapper.sh /usr/bin/rvm
+    sudo cp ${WORK_DIR}/rvm_wrapper.sh /usr/bin/rvm
     sudo chmod +x /usr/bin/rvm
 
 }
