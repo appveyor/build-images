@@ -1237,7 +1237,8 @@ function install_rbenv() {
     #curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
     echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
 
-    sudo sh -c "echo 'export PATH=~/.rbenv/shims:$PATH' > /etc/profile.d/system_env_vars.sh"
+    #sudo sh -c "echo 'export PATH=~/.rbenv/shims:$PATH' > /etc/profile.d/system_env_vars.sh"
+    write_line "${HOME}/.profile" 'add2path ~/.rbenv/shims'
     
     # WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
