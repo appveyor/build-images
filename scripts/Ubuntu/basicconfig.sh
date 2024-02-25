@@ -214,21 +214,6 @@ if [[ $OS_ARCH == "amd64" ]]; then
     install_clang ||
         _abort $?
 fi
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         OS_ARCH=${OS_ARCH}
-#         $(declare -f install_rbenv)
-#         install_rbenv" ||
-#     _abort $?
-# export PATH="/home/appveyor/.rbenv/shims:/home/appveyor/.rbenv/bin:${PATH}"
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         OS_ARCH=${OS_ARCH}
-        
-#         $(declare -f log_version)
-#         $(declare -f install_rbenv_rubies)
-#         install_rbenv_rubies" ||
-#     _abort $?
 # .NET stuff
 if [[ $OS_ARCH == "amd64" ]]; then
     install_dotnets ||
