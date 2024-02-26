@@ -21,4 +21,7 @@ Remove-Item $zipPath -ErrorAction SilentlyContinue
 
 cmd /c "`"$jdkPath\bin\java`" --version"
 
+[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk17", "machine")
+$env:JAVA_HOME="C:\Progra~1\Java\jdk17"
+
 Write-Host "JDK 17 installed" -ForegroundColor Green
