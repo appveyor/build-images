@@ -417,6 +417,8 @@ su -l ${USER_NAME} -c "
         OS_ARCH=${OS_ARCH}
         $(declare -f install_rbenv)
         $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
         install_rbenv" ||
     _abort $?
 #export PATH="/home/appveyor/.rbenv/shims:/home/appveyor/.rbenv/bin:${PATH}"
@@ -424,6 +426,8 @@ su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         OS_ARCH=${OS_ARCH}
         $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
         $(declare -f log_version)
         $(declare -f install_rbenv_rubies)
         install_rbenv_rubies" ||
