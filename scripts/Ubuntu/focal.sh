@@ -45,7 +45,7 @@ function install_jdks_from_repository() {
     update-java-alternatives --set java-1.8.0-openjdk-amd64
 
     # there is no support for openJDK 7 in Ubuntu 18.04
-    install_jdk 7 https://download.java.net/openjdk/jdk7u75/ri/openjdk-7u75-b13-linux-x64-18_dec_2014.tar.gz
+    #install_jdk 7 https://download.java.net/openjdk/jdk7u75/ri/openjdk-7u75-b13-linux-x64-18_dec_2014.tar.gz
 
     # hold openjdk 11 package if it was installed
     # newer version of openjdk will be installed later on
