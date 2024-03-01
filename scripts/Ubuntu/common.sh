@@ -824,6 +824,48 @@ function install_pythons(){
     rm ${HOME}/Python-*.tgz
 }
 
+function install_python_312(){
+    echo "[INFO] Running install_python_312..."
+
+    declare PY_VERSIONS=( "3.12.0" )
+    
+
+    for i in "${PY_VERSIONS[@]}"; do
+        VENV_PATH=${HOME}/venv${i%%[abrcf]*}
+        VENV_MINOR_PATH=${HOME}/venv${i%.*}
+        if [ -d ${VENV_MINOR_PATH} ]; then
+            echo "Python is already installed at ${VENV_MINOR_PATH}." 
+            continue
+        fi
+        if [ ! -d ${VENV_PATH} ]; then
+        curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
+            { echo "[WARNING] Cannot download Python ${i}."; continue; }
+        tar -zxf "Python-${i}.tgz" &&
+        pushd "Python-${i}" ||
+            { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
+        PY_PATH=${HOME}/.localpython${i}
+        mkdir -p "${PY_PATH}"
+        sudo apt-get install tk-dev libdb-dev uuid-dev
+        ./configure --enable-shared --silent "--prefix=${PY_PATH}" "LDFLAGS=-Wl,-rpath=${PY_PATH}/lib" &&
+        make --silent &&
+        make install --silent >/dev/null ||
+            { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
+        if [ ${i:0:1} -eq 3 ]; then
+            PY_BIN=python3
+        else
+            PY_BIN=python
+        fi
+        python3 -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
+            { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
+        popd
+        echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
+        rm -f ${VENV_MINOR_PATH}
+        ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
+        fi
+    done
+    find "${HOME}" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
+    rm ${HOME}/Python-*.tgz
+}
 function install_powershell() {
     echo "[INFO] Running install_powershell..."
 

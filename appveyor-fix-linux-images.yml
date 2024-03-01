@@ -1,12 +1,12 @@
 environment:
   matrix:
-    - job_name: Ubuntu 20.04 on Hyper-V
-      APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2004-master
-      APPVEYOR_BAKE_IMAGE: ubuntu2004-master
+    # - job_name: Ubuntu 20.04 on Hyper-V
+    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2004-master
+    #   APPVEYOR_BAKE_IMAGE: ubuntu2004-master
 
-    # - job_name: Ubuntu 18.04 on Hyper-V
-    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1804-master
-    #   APPVEYOR_BAKE_IMAGE: ubuntu1804-master
+    - job_name: Ubuntu 18.04 on Hyper-V
+      APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1804-master
+      APPVEYOR_BAKE_IMAGE: ubuntu1804-master
 
     # - job_name: Ubuntu 16.04 on Hyper-V
     #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1604-master
@@ -41,7 +41,7 @@ clone_script:
 build_script:
   - cd $BASE_DIR && pwd
   - sudo -E ./fixconfig.sh
-  - sudo cp /opt/octopus/octo /usr/bin
+  #- sudo cp /opt/octopus/octo /usr/bin
   - appveyor PushArtifact versions.log
 
 test: off

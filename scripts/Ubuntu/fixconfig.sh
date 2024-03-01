@@ -79,7 +79,7 @@ configure_path
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
         $(declare -f install_pythons)
-        install_pythons" ||
+        install_python_312" ||
     _abort $?
 
 # install_docker_compose ||
