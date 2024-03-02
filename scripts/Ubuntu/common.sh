@@ -876,7 +876,7 @@ function install_python_312(){
             exit 1
         fi
         python -m ensurepip --upgrade
-        pip install --upgrade virtualenv
+        python -m pip install --upgrade virtualenv
         python -m pip install --upgrade setuptools
         deactivate
         popd
