@@ -833,8 +833,8 @@ function install_python_312(){
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
-        rm -f ${VENV_PATH}
-        rm -f ${VENV_MINOR_PATH}
+        rm -rf ${VENV_PATH}
+        rm -rf ${VENV_MINOR_PATH}
         if [ -d ${VENV_MINOR_PATH} ]; then
             echo "Python is already installed at ${VENV_MINOR_PATH}." 
             continue
