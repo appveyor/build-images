@@ -829,7 +829,7 @@ function install_python_312(){
 
     declare PY_VERSIONS=( "3.12.2" )
     
-    }
+    
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
