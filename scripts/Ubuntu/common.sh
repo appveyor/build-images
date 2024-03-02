@@ -861,7 +861,10 @@ function install_python_312(){
         fi
         python3 -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
-        python3 -m pip install --upgrade setuptools
+        source ${VENV_PATH}/bin/activate
+        python --version
+        python -m pip install --upgrade setuptools
+        deactivate
         popd
         echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
         rm -f ${VENV_MINOR_PATH}
