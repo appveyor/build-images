@@ -25,6 +25,18 @@ else
     echo "Running script as $(whoami)"
 fi
 
+OS_ARCH=$(uname -m)
+if [[ $OS_ARCH == x86_64 ]] || [[ $OS_ARCH == amd64 ]]; then
+    OS_ARCH="amd64"
+elif [[ $OS_ARCH == arm64 ]] || [[ $OS_ARCH == aarch64 ]]; then
+    OS_ARCH="arm64"
+elif [[ $arch == arm* ]]; then
+    OS_ARCH="arm"
+else
+    echo "Error: Unsupported architecture $OS_ARCH." 1>&2
+    exit 1
+fi
+
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )
 echo "[DEBUG] Searching installation scripts in ${LIB_FOLDERS[*]}"
@@ -78,7 +90,7 @@ configure_path
 
 su -l ${USER_NAME} -c "
         USER_NAME=${USER_NAME}
-        $(declare -f install_pythons)
+        $(declare -f install_python_312)
         install_python_312" ||
     _abort $?
 
