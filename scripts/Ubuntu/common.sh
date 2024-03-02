@@ -847,6 +847,7 @@ function install_python_312(){
             { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
         PY_PATH=${HOME}/.localpython${i}
         mkdir -p "${PY_PATH}"
+        sudo apt-get update -y
         sudo apt-get install -y libdb-dev libncurses5-dev libffi-dev libsqlite3-dev libreadline-dev libgdbm-dev libssl-dev tk-dev uuid-dev
 
         ./configure --enable-shared --silent "--prefix=${PY_PATH}" "LDFLAGS=-Wl,-rpath=${PY_PATH}/lib" &&
@@ -860,6 +861,7 @@ function install_python_312(){
         fi
         python3 -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
+        python3 -m pip install --upgrade setuptools
         popd
         echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
         rm -f ${VENV_MINOR_PATH}
