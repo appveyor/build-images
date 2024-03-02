@@ -827,7 +827,7 @@ function install_pythons(){
 function install_python_312(){
     echo "[INFO] Running install_python_312..."
 
-    declare PY_VERSIONS=( "3.12.0" )
+    declare PY_VERSIONS=( "3.12.2" )
     
 
     for i in "${PY_VERSIONS[@]}"; do
