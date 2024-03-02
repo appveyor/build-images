@@ -861,7 +861,19 @@ function install_python_312(){
         fi
         python3 -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
             { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
-        source ${VENV_PATH}/bin/activate
+        export PATH="${VENV_PATH}/bin:$PATH"
+        #source ${VENV_PATH}/bin/activate
+        required_minor=12
+        python --version
+        python_version=$(python --version 2>&1)
+        minor_version="${python_version#*.}"
+        minor_version="${minor_version%.*}"
+        # Check if the current version is greater than or equal to the required version
+        if [[ $minor_version -lt $required_minor; then
+        # Exit with an error message
+            echo "Error: Python version ${required_major}.${required_minor} or higher is required. You are using ${python_version}."
+            exit 1
+        fi
         python --version
         python -m pip install --upgrade setuptools
         deactivate
