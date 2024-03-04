@@ -115,38 +115,7 @@ function configure_docker_repository() {
     cat /etc/apt/sources.list.d/docker.list
 }
 
-function install_nvm_nodejs() {
-    echo "[INFO] Running install_nvm_nodejs..."
-    # this must be executed as appveyor user
-    if [ "$(whoami)" != "${USER_NAME}" ]; then
-        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
-        return 1
-    fi
-    local CURRENT_NODEJS
-    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        CURRENT_NODEJS=16
-    else
-        CURRENT_NODEJS=$1
-    fi
-    command -v nvm ||
-        { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
 
-    local v
-
-    declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" "20" "21")
-
-    for v in "${NVM_VERSIONS[@]}"; do
-        nvm install ${v} ||
-            { echo "[WARNING] Cannot install ${v}." 1>&2; }
-    done
-
-    nvm alias default ${CURRENT_NODEJS}
-
-    log_version nvm --version
-    log_version nvm list
-    log_version node --version
-    log_version npm --version
-}
 
 function install_gcc() {
     echo "[INFO] Running install_gcc..."
@@ -302,7 +271,7 @@ function install_nvm_nodejs() {
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
 
-    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" )
+    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" )
 
     
     for v in "${NVM_VERSIONS[@]}"; do
@@ -318,60 +287,96 @@ function install_nvm_nodejs() {
     log_version npm --version
 }
 
-function install_rvm() {
-    echo "[INFO] Running install_rvm..."
-    # this must be executed as appveyor user
-    if [ "$(whoami)" != "${USER_NAME}" ]; then
-        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
-        return 1
-    fi
-    sudo apt update &&
-    sudo apt install gnupg2
+# function install_rvm() {
+#     echo "[INFO] Running install_rvm..."
+#     # this must be executed as appveyor user
+#     if [ "$(whoami)" != "${USER_NAME}" ]; then
+#         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+#         return 1
+#     fi
+#     sudo apt update &&
+#     sudo apt install gnupg2
 
-    # Install mpapis public key (might need `gpg2` and or `sudo`)
-    curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
-    curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
+#     # Install mpapis public key (might need `gpg2` and or `sudo`)
+#     curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
+#     curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
 
-    # Download the installer
-    curl -fsSL -O https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer &&
-    curl -fsSL -O https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer.asc ||
-        { echo "[ERROR] Cannot download rvm-installer." 1>&2; return 10; }
+#     # Download the installer
+#     curl -fsSL -O https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer &&
+#     curl -fsSL -O https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer.asc ||
+#         { echo "[ERROR] Cannot download rvm-installer." 1>&2; return 10; }
 
-    # Verify the installer signature (might need `gpg2`), and if it validates...
-    gpg2 --verify rvm-installer.asc &&
+#     # Verify the installer signature (might need `gpg2`), and if it validates...
+#     gpg2 --verify rvm-installer.asc &&
 
-    # Run the installer
-    bash rvm-installer stable ||
-        { echo "[ERROR] Cannot install RVM." 1>&2; return 20; }
+#     # Run the installer
+#     bash rvm-installer stable ||
+#         { echo "[ERROR] Cannot install RVM." 1>&2; return 20; }
 
-    # cleanup
-    rm rvm-installer rvm-installer.asc
+#     # cleanup
+#     rm rvm-installer rvm-installer.asc
+# }
+
+# function install_rubies() {
+#     echo "[INFO] Running install_rubies..."
+#     # this must be executed as appveyor user
+#     if [ "$(whoami)" != "${USER_NAME}" ]; then
+#         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+#         return 1
+#     fi
+#     rvm pkg install openssl
+#     local DEFAULT_RUBY
+#     DEFAULT_RUBY="ruby-2.7"
+#     command -v rvm ||
+#         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
+#     local v
+
+#     declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.4" "ruby-3.2.2" "ruby-head" )
+    
+#     for v in "${RUBY_VERSIONS[@]}"; do
+#         rvm install ${v} --with-openssl-dir=$HOME/.rvm/usr ||
+#             { echo "[WARNING] Cannot install ${v}." 1>&2; }
+#     done
+
+#     rvm use "$DEFAULT_RUBY" --default
+#     log_version rvm --version
+#     log_version rvm list
+# }
+
+
+function install_rbenv() {
+    echo "[INFO] Running install_rbenv..."
+    git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    #curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
+    echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
+
+    #sudo sh -c "echo 'export PATH=~/.rbenv/shims:$PATH' > /etc/profile.d/system_env_vars.sh"
+    write_line "${HOME}/.profile" 'add2path_suffix /home/appveyor/.rbenv/shims'
+    write_line "${HOME}/.profile" 'add2path_suffix /home/appveyor/.rbenv/bin'
+    export PATH="$PATH:${HOME}/.rbenv/shims:${HOME}/.rbenv/bin"
+    # WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+    # sudo cp "${WORK_DIR}"/rvm_wrapper.sh /usr/bin/rvm
+    # sudo chmod +x /usr/bin/rvm
+
 }
 
-function install_rubies() {
-    echo "[INFO] Running install_rubies..."
-    # this must be executed as appveyor user
-    if [ "$(whoami)" != "${USER_NAME}" ]; then
-        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
-        return 1
-    fi
-    rvm pkg install openssl
+function install_rbenv_rubies() {
+    echo "[INFO] Running install_rbenv_rubies..."
+    eval "$(~/.rbenv/bin/rbenv init - bash)"
+    git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
     local DEFAULT_RUBY
-    DEFAULT_RUBY="ruby-2.7"
-    command -v rvm ||
-        { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
+    DEFAULT_RUBY="2.7.8"
+    command -v rbenv ||
+        { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
-    declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.4" "ruby-3.2.2" "ruby-head" )
-    
-    for v in "${RUBY_VERSIONS[@]}"; do
-        rvm install ${v} --with-openssl-dir=$HOME/.rvm/usr ||
+    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.4" "3.2.3"  )
+
+    for v in "${RUBY_VERSIONS[@]}"; do  
+        rbenv install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
-
-    rvm use "$DEFAULT_RUBY" --default
-    log_version rvm --version
-    log_version rvm list
 }
 
 # https://jdk.java.net/archive/
@@ -397,9 +402,9 @@ function install_jdks() {
         return $?  
     install_jdk 17 https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?                     
-    install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-${TAR_ARCH}_bin.tar.gz ||
+    install_jdk 18 https://download.java.net/java/GA/jdk18.0.2/f6ad4b4450fd4d298113270ec84f30ee/9/GPL/openjdk-18.0.2_${TAR_ARCH}_bin.tar.gz ||
         return $?   
-    install_jdk 21 https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-${TAR_ARCH}_bin.tar.gz ||
+    install_jdk 21 https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?     
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
