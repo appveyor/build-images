@@ -1303,7 +1303,8 @@ function install_rbenv() {
 
     #sudo sh -c "echo 'export PATH=~/.rbenv/shims:$PATH' > /etc/profile.d/system_env_vars.sh"
     write_line "${HOME}/.profile" 'add2path_suffix /home/appveyor/.rbenv/shims'
-    export PATH="$PATH:${HOME}/.rbenv/shims"
+    write_line "${HOME}/.profile" 'add2path_suffix /home/appveyor/.rbenv/bin'
+    export PATH="$PATH:${HOME}/.rbenv/shims:${HOME}/.rbenv/bin"
     # WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
     # sudo cp "${WORK_DIR}"/rvm_wrapper.sh /usr/bin/rvm
