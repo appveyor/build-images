@@ -91,11 +91,11 @@ configure_path
 write_line "${HOME}/.profile" 'add2path_suffix /home/appveyor/.rbenv/bin'
 export PATH="$PATH:${HOME}/.rbenv/bin"
 
-# su -l ${USER_NAME} -c "
-#         USER_NAME=${USER_NAME}
-#         $(declare -f install_python_312)
-#         install_python_312" ||
-#     _abort $?
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        $(declare -f install_python_312)
+        install_python_312" ||
+    _abort $?
 
 # install_docker_compose ||
 #     _abort $?
