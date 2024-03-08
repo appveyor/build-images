@@ -90,9 +90,11 @@ configure_path
 
 # write_line "${HOME}/.profile" 'add2path_suffix /home/appveyor/.rbenv/bin'
 # export PATH="$PATH:${HOME}/.rbenv/bin"
-apt-get -y -q install gcc-12 g++-12 && \
-update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 40 --slave /usr/bin/g++ g++ /usr/bin/g++-12 ||
-        { echo "[ERROR] Cannot install gcc-12." 1>&2; return 40; }
+# apt-get -y -q install gcc-12 g++-12 && \
+# update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 40 --slave /usr/bin/g++ g++ /usr/bin/g++-12 ||
+#         { echo "[ERROR] Cannot install gcc-12." 1>&2; return 40; }
+type cd
+unset -f cd
 # su -l ${USER_NAME} -c "
 #         USER_NAME=${USER_NAME}
 #         $(declare -f install_python_312)
