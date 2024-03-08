@@ -94,7 +94,9 @@ configure_path
 # update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 40 --slave /usr/bin/g++ g++ /usr/bin/g++-12 ||
 #         { echo "[ERROR] Cannot install gcc-12." 1>&2; return 40; }
 type cd
-unset -f cd
+cat $HOME/.profile
+write_line "${HOME}/.profile" 'unset -f cd'
+cat $HOME/.profile
 # su -l ${USER_NAME} -c "
 #         USER_NAME=${USER_NAME}
 #         $(declare -f install_python_312)
