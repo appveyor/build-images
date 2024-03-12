@@ -302,62 +302,6 @@ function install_nvm_nodejs() {
     log_version npm --version
 }
 
-# function install_rvm() {
-#     echo "[INFO] Running install_rvm..."
-#     # this must be executed as appveyor user
-#     if [ "$(whoami)" != "${USER_NAME}" ]; then
-#         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
-#         return 1
-#     fi
-#     sudo apt update &&
-#     sudo apt install gnupg2
-
-#     # Install mpapis public key (might need `gpg2` and or `sudo`)
-#     curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
-#     curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
-
-#     # Download the installer
-#     curl -fsSL -O https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer &&
-#     curl -fsSL -O https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer.asc ||
-#         { echo "[ERROR] Cannot download rvm-installer." 1>&2; return 10; }
-
-#     # Verify the installer signature (might need `gpg2`), and if it validates...
-#     gpg2 --verify rvm-installer.asc &&
-
-#     # Run the installer
-#     bash rvm-installer stable ||
-#         { echo "[ERROR] Cannot install RVM." 1>&2; return 20; }
-
-#     # cleanup
-#     rm rvm-installer rvm-installer.asc
-# }
-
-# function install_rubies() {
-#     echo "[INFO] Running install_rubies..."
-#     # this must be executed as appveyor user
-#     if [ "$(whoami)" != "${USER_NAME}" ]; then
-#         echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
-#         return 1
-#     fi
-#     rvm pkg install openssl
-#     local DEFAULT_RUBY
-#     DEFAULT_RUBY="ruby-2.7"
-#     command -v rvm ||
-#         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
-#     local v
-
-#     declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.4" "ruby-3.2.2" "ruby-head" )
-    
-#     for v in "${RUBY_VERSIONS[@]}"; do
-#         rvm install ${v} --with-openssl-dir=$HOME/.rvm/usr ||
-#             { echo "[WARNING] Cannot install ${v}." 1>&2; }
-#     done
-
-#     rvm use "$DEFAULT_RUBY" --default
-#     log_version rvm --version
-#     log_version rvm list
-# }
-
 
 function install_rbenv() {
     echo "[INFO] Running install_rbenv..."
