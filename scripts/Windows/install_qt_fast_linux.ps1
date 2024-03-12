@@ -6,7 +6,7 @@ $installDir = "$env:HOME/Qt"
 
 $component_groups = @(
     @{
-        version    = "6.4.2"
+        version    = "6.6.2"
         components = @(
             "gcc_64",
             "debug_info",
@@ -76,7 +76,7 @@ $component_groups = @(
 if (-not $env:INSTALL_LATEST_ONLY) {
     $component_groups += @(
         @{
-            version    = "6.3.2"
+            version    = "6.5.3"
             components = @(
                 "gcc_64",
                 "debug_info",
@@ -181,7 +181,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 $component_groups += @(
     @{
         components = @(
-            "qt.tools.ifw.45",
+            "qt.tools.ifw.46",
             "qt.license.thirdparty"
         )
     }
@@ -204,8 +204,8 @@ foreach ($componentGroup in $component_groups) {
 
 # set aliases
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/latest"
-ln -s "$HOME/Qt/6.4.2" "$HOME/Qt/6.4"
-ln -s "$HOME/Qt/6.3.2" "$HOME/Qt/6.3"
+ln -s "$HOME/Qt/6.6.2" "$HOME/Qt/6.6"
+ln -s "$HOME/Qt/6.5.3" "$HOME/Qt/6.5"
 ln -s "$HOME/Qt/6.2.4" "$HOME/Qt/6.2"
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/5.15"
 

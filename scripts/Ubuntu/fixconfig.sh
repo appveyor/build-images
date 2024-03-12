@@ -25,6 +25,18 @@ else
     echo "Running script as $(whoami)"
 fi
 
+OS_ARCH=$(uname -m)
+if [[ $OS_ARCH == x86_64 ]] || [[ $OS_ARCH == amd64 ]]; then
+    OS_ARCH="amd64"
+elif [[ $OS_ARCH == arm64 ]] || [[ $OS_ARCH == aarch64 ]]; then
+    OS_ARCH="arm64"
+elif [[ $arch == arm* ]]; then
+    OS_ARCH="arm"
+else
+    echo "Error: Unsupported architecture $OS_ARCH." 1>&2
+    exit 1
+fi
+
 # search for scripts we source
 LIB_FOLDERS=( "${HOME}/scripts" "${WORK_DIR}" "${HOME}" )
 echo "[DEBUG] Searching installation scripts in ${LIB_FOLDERS[*]}"
@@ -76,11 +88,20 @@ init_logging
 
 configure_path
 
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_pythons)
-        install_pythons" ||
-    _abort $?
+# write_line "${HOME}/.profile" 'add2path_suffix /home/appveyor/.rbenv/bin'
+# export PATH="$PATH:${HOME}/.rbenv/bin"
+# apt-get -y -q install gcc-12 g++-12 && \
+# update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 40 --slave /usr/bin/g++ g++ /usr/bin/g++-12 ||
+#         { echo "[ERROR] Cannot install gcc-12." 1>&2; return 40; }
+type cd
+cat $HOME/.profile
+write_line "${HOME}/.profile" 'unset -f cd'
+cat $HOME/.profile
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         $(declare -f install_python_312)
+#         install_python_312" ||
+#     _abort $?
 
 # install_docker_compose ||
 #     _abort $?

@@ -17,7 +17,7 @@ function configure_mercurial_repository() {
 }
 
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" "7.0" )
+    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" "7.0" "8.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
     
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
@@ -45,7 +45,7 @@ function install_jdks_from_repository() {
     update-java-alternatives --set java-1.8.0-openjdk-amd64
 
     # there is no support for openJDK 7 in Ubuntu 18.04
-    install_jdk 7 https://download.java.net/openjdk/jdk7u75/ri/openjdk-7u75-b13-linux-x64-18_dec_2014.tar.gz
+    #install_jdk 7 https://download.java.net/openjdk/jdk7u75/ri/openjdk-7u75-b13-linux-x64-18_dec_2014.tar.gz
 
     # hold openjdk 11 package if it was installed
     # newer version of openjdk will be installed later on
@@ -76,4 +76,16 @@ function fix_sqlserver() {
     ) > /etc/systemd/system/mssql-server.service.d/override.conf ||
         { echo "[ERROR] Cannot configure workaround for mssql-server." 1>&2; return 45; }
 
+}
+
+function configure_mono_repository () {
+    echo "[INFO] Running configure_mono_repository on Ubuntu 20.04..."
+    
+    sudo apt-get install ca-certificates gnupg
+    sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+    echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+    sudo apt-get update
+
+    #add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-focal main" ||
+     #   { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
 }

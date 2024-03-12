@@ -572,7 +572,7 @@ function install_nvm_nodejs() {
     local v
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare NVM_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" "20" )
+        declare NVM_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" "20" "21")
     else
         declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" "20" )
     fi
@@ -783,7 +783,7 @@ function install_pythons(){
     echo "[INFO] Running install_pythons..."
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.16" "3.8.17" "3.9.17" "3.10.12" "3.11.4" "3.12.0" )
+        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.16" "3.8.17" "3.9.18" "3.10.13" "3.11.8" "3.12.2" )
     else
         declare PY_VERSIONS=( "2.7.18" "3.7.16" "3.8.17" "3.9.17" "3.10.12" "3.11.4" "3.12.0" )
     fi
@@ -824,6 +824,70 @@ function install_pythons(){
     rm ${HOME}/Python-*.tgz
 }
 
+function install_python_312(){
+    echo "[INFO] Running install_python_312..."
+
+    declare PY_VERSIONS=( "3.12.2" )
+    
+    
+    for i in "${PY_VERSIONS[@]}"; do
+        VENV_PATH=${HOME}/venv${i%%[abrcf]*}
+        VENV_MINOR_PATH=${HOME}/venv${i%.*}
+        rm -rf ${VENV_PATH}
+        rm -rf ${VENV_MINOR_PATH}
+        if [ -d ${VENV_MINOR_PATH} ]; then
+            echo "Python is already installed at ${VENV_MINOR_PATH}." 
+            continue
+        fi
+        if [ ! -d ${VENV_PATH} ]; then
+        curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
+            { echo "[WARNING] Cannot download Python ${i}."; continue; }
+        tar -zxf "Python-${i}.tgz" &&
+        pushd "Python-${i}" ||
+            { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
+        PY_PATH=${HOME}/.localpython${i}
+        mkdir -p "${PY_PATH}"
+        sudo apt-get update -y
+        sudo apt-get install -y libdb-dev libncurses5-dev libffi-dev libsqlite3-dev libreadline-dev libgdbm-dev libssl-dev tk-dev uuid-dev
+
+        ./configure --enable-shared --silent "--prefix=${PY_PATH}" "LDFLAGS=-Wl,-rpath=${PY_PATH}/lib" &&
+        make --silent &&
+        make install --silent >/dev/null ||
+            { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
+        if [ ${i:0:1} -eq 3 ]; then
+            PY_BIN=python3
+        else
+            PY_BIN=python
+        fi
+        python3 -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
+            { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
+        export PATH="${VENV_PATH}/bin:$PATH"
+        #source ${VENV_PATH}/bin/activate
+        required_minor=12
+        python --version
+        python_version=$(python --version 2>&1)
+        minor_version="${python_version#*.}"
+        minor_version="${minor_version%.*}"
+        echo "Minor version: $minor_version"
+        # Check if the current version is greater than or equal to the required version
+        if [ $minor_version -lt $required_minor ]; then
+        # Exit with an error message
+            echo "Error: Python version ${required_major}.${required_minor} or higher is required. You are using ${python_version}."
+            exit 1
+        fi
+        python -m ensurepip --upgrade
+        python -m pip install --upgrade virtualenv
+        python -m pip install --upgrade setuptools
+        deactivate
+        popd
+        echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
+        rm -f ${VENV_MINOR_PATH}
+        ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
+        fi
+    done
+    find "${HOME}" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
+    rm ${HOME}/Python-*.tgz
+}
 function install_powershell() {
     echo "[INFO] Running install_powershell..."
 
@@ -1017,7 +1081,7 @@ function install_flutter() {
     pushd -- "${TMP_DIR}"
 
     local RELEASE_URL
-    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.10.6-stable.tar.xz"
+    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.19.1-stable.tar.xz"
     curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
         { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
     
@@ -1099,6 +1163,8 @@ function install_jdks() {
     install_jdk 17 https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?                     
     install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?        
+    install_jdk 21 https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?        
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
@@ -1229,6 +1295,41 @@ function install_rvm_and_rubies() {
     fi
 }
 
+function install_rbenv() {
+    echo "[INFO] Running install_rbenv..."
+    git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    #curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
+    echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
+
+    #sudo sh -c "echo 'export PATH=~/.rbenv/shims:$PATH' > /etc/profile.d/system_env_vars.sh"
+    write_line "${HOME}/.profile" 'add2path_suffix /home/appveyor/.rbenv/shims'
+    write_line "${HOME}/.profile" 'add2path_suffix /home/appveyor/.rbenv/bin'
+    export PATH="$PATH:${HOME}/.rbenv/shims:${HOME}/.rbenv/bin"
+    # WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+    # sudo cp "${WORK_DIR}"/rvm_wrapper.sh /usr/bin/rvm
+    # sudo chmod +x /usr/bin/rvm
+
+}
+
+function install_rbenv_rubies() {
+    echo "[INFO] Running install_rbenv_rubies..."
+    eval "$(~/.rbenv/bin/rbenv init - bash)"
+    git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+    local DEFAULT_RUBY
+    DEFAULT_RUBY="2.7.8"
+    command -v rbenv ||
+        { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
+    local v
+
+    declare RUBY_VERSIONS=( "2.1.10" "2.2.10" "2.3.8" "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.4" "3.2.3"  )
+
+    for v in "${RUBY_VERSIONS[@]}"; do  
+        rbenv install ${v} ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+}
+
 function install_rvm() {
     echo "[INFO] Running install_rvm..."
     # this must be executed as appveyor user
@@ -1346,7 +1447,7 @@ function install_golangs() {
     #gvm use go1.4 ||
      #   { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.12" "go1.20.7" )
+    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.13" "go1.20.14" "go1.21.7" "go1.22.0" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} -B ||
@@ -2077,12 +2178,32 @@ function install_clang() {
     echo "[INFO] Running install_clang..."
     curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-    install_clang_version 9
-    install_clang_version 10
+    # install_clang_version 9
+    # install_clang_version 10
     install_clang_version 11
     install_clang_version 12
     install_clang_version 13
     install_clang_version 14
+    install_clang_version 15
+    install_clang_version 16
+    install_clang_version 17
+
+    # make clang 10 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-10 1000
+    update-alternatives --config clang
+    update-alternatives --config clang++
+
+    log_version clang --version
+}
+
+function fix_clang() {
+    echo "[INFO] Running fix_clang..."
+    curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+
+    install_clang_version 9
+    install_clang_version 10
+
 
     # make clang 10 default
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
