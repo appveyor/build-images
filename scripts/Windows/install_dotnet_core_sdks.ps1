@@ -29,14 +29,14 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     Install-SDK "2.1.202"
     Install-SDK "2.1.806"
 }
-Install-SDK "2.2.402"
+#Install-SDK "2.2.402"
 
 $vs2019 = (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019")
 $vs2022 = (Test-Path "${env:ProgramFiles}\Microsoft Visual Studio\2022")
 
 # VS 2019 and 2022 images only
 if ($vs2019 -or $vs2022) {
-    Install-SDK "3.0.103"
+    #Install-SDK "3.0.103"
     Install-SDK "3.1.202"
     Install-SDK "3.1.426"
     Install-SDK "5.0.408"
@@ -46,6 +46,7 @@ if ($vs2019 -or $vs2022) {
 if ($vs2022) {
     Install-SDK "6.0.415"
     Install-SDK "7.0.402"
+    Install-SDK "8.0.202"
 }
 
 # VS 2019 Preview
