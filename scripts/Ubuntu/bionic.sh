@@ -88,7 +88,7 @@ function install_google_chrome() {
     local CHROME_VERSION=122.0.6261.128-1
     local DEBNAME=google-chrome-stable_${CHROME_VERSION}_amd64.deb
     curl -fsSL -O https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/${DEBNAME}
-    dpkg -i ${DEBNAME}
+    sudo dpkg -i ${DEBNAME}
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
 }
 
