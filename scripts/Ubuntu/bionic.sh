@@ -90,6 +90,7 @@ function install_google_chrome() {
     curl -fsSL -O https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/${DEBNAME}
     sudo dpkg -i ${DEBNAME}
     [ -f "${DEBNAME}" ] && rm -f "${DEBNAME}" || true
+    apt-get -y --fix-broken install
 }
 
 function install_postgresql() {
