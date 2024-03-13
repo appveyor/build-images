@@ -85,7 +85,7 @@ function install_doxygen() {
 
 function install_google_chrome() {
     echo "[INFO] Running install_google_chrome on Bionic..."
-    local CHROME_VERSION=107.0.5304.87-1
+    local CHROME_VERSION=122.0.6261.128-1
     local DEBNAME=google-chrome-stable_${CHROME_VERSION}_amd64.deb
     curl -fsSL -O https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/${DEBNAME}
     dpkg -i ${DEBNAME}
