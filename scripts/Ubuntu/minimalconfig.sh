@@ -22,6 +22,19 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
+OS_ARCH=$(uname -m)
+if [[ $OS_ARCH == x86_64 ]] || [[ $OS_ARCH == amd64 ]]; then
+    OS_ARCH="amd64"
+elif [[ $OS_ARCH == arm64 ]] || [[ $OS_ARCH == aarch64 ]]; then
+    OS_ARCH="arm64"
+elif [[ $arch == arm* ]]; then
+    OS_ARCH="arm"
+else
+    echo "Error: Unsupported architecture $OS_ARCH." 1>&2
+    exit 1
+fi
+
+
 # Check for execution in docker container
 if [[ -z "${IS_DOCKER-}" || "${#IS_DOCKER}" = "0" ]]; then
     if grep -Eq '/(lxc|docker)/[[:xdigit:]]{64}' /proc/1/cgroup; then
@@ -141,8 +154,6 @@ install_gitlfs ||
 # ====================================
 
 install_virtualbox ||
-    _abort $?
-install_mysql ||
     _abort $?
 install_postgresql ||
     _abort $?    
