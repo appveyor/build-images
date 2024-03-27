@@ -45,7 +45,7 @@ build_script:
   #- ps: .\fix_ruby.ps1
   #- ps: .\install_selenium_drivers.ps1
   #- ps: .\install_dotnet_core_sdks.ps1
-  - ps: [Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk17", "machine")
+  #- ps: [Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk17", "machine")
   - ps: $env:JAVA_HOME="C:\Progra~1\Java\jdk17"
   - ps: .\install_android_sdk.ps1
   - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
