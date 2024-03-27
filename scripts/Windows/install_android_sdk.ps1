@@ -7,7 +7,6 @@ $ErrorActionPreference = 'SilentlyContinue'
 $env:JAVA_HOME="C:\Progra~1\Java\jdk17"
 
 $sdk_root = Join-Path ${env:ProgramFiles(x86)} "Android\android-sdk"
-$sdk_bat = "$sdk_root\cmdline-tools\bin\sdkmanager.bat"
 $ndk_root = Join-Path $env:SystemDrive "Microsoft\AndroidNDK64\"
 if (-not (Test-Path $ndk_root)) {
     $ndk_root = Join-Path $env:SystemDrive "Microsoft\AndroidNDK\"
