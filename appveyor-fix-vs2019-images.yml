@@ -45,7 +45,7 @@ build_script:
   #- ps: .\fix_ruby.ps1
   #- ps: .\install_selenium_drivers.ps1
   #- ps: .\install_dotnet_core_sdks.ps1
-  - ps: .\set_java_home.ps1
+  #- ps: .\set_java_home.ps1
   - ps: .\install_android_sdk.ps1
   - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 

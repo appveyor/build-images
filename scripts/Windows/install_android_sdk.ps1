@@ -4,6 +4,7 @@ $ErrorActionPreference = 'SilentlyContinue'
 
 #newer sdk tools require newer java version, reset later in script
 [Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk17", "machine")
+[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk17", "user")
 $env:JAVA_HOME="C:\Progra~1\Java\jdk17"
 
 $sdk_root = Join-Path ${env:ProgramFiles(x86)} "Android\android-sdk"
@@ -144,8 +145,8 @@ Write-Output "The current location is: $($(Get-Location).path)"
 #Remove-Item $sdkPath -Recurse -Force -ErrorAction Ignore
 
 # Resset JAVA_HOME variable and path
-[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk1.8.0", "machine")
-$env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
+#[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk1.8.0", "machine")
+#$env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
 
 $ErrorActionPreference = 'Stop'
 
