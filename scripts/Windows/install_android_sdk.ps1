@@ -121,13 +121,13 @@ else {
         'add-ons;addon-google_apis-google-23' `
         'add-ons;addon-google_apis-google-22' `
         'add-ons;addon-google_apis-google-21' `
-        'cmake;3.6.4111459'" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.l'g"
+        'cmake;3.6.4111459'" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
 }
 
 
 # pwsh -CommandWithArgs "& .\cmdline-tools\bin\sdkmanager.bat --sdk_root=$sdk_root --license"
 # pwsh & '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root
-
+Get-ChildItem -Path $env:sdk_root\cmdline-tools\bin\platforms,$env:sdk_root\cmdline-tools\bin\build-tools -Name
 7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
 
 Pop-Location
