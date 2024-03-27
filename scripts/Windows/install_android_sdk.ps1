@@ -2,6 +2,10 @@
 
 $ErrorActionPreference = 'SilentlyContinue'
 
+#newer sdk tools require newer java version, reset later in script
+[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk17", "machine")
+$env:JAVA_HOME="C:\Progra~1\Java\jdk17"
+
 $sdk_root = Join-Path ${env:ProgramFiles(x86)} "Android\android-sdk"
 $sdk_bat = "$sdk_root\cmdline-tools\bin\sdkmanager.bat"
 $ndk_root = Join-Path $env:SystemDrive "Microsoft\AndroidNDK64\"
@@ -40,99 +44,99 @@ Push-Location -Path $sdkPath\cmdline-tools\bin
 
 Write-Output "The current location is: $($(Get-Location).path)"
 
-# if ($env:INSTALL_LATEST_ONLY) {
-#     & '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
-#         "platform-tools" `
-#         "platforms;android-30" `
-#         "platforms;android-29" `
-#         "platforms;android-28" `
-#         "build-tools;30.0.2" `
-#         "build-tools;29.0.2" `
-#         "build-tools;29.0.0" `
-#         "build-tools;28.0.3" `
-#         "build-tools;28.0.2" `
-#         "build-tools;28.0.1" `
-#         "build-tools;28.0.0" `
-#         "extras;android;m2repository" `
-#         "extras;google;m2repository" `
-#         "extras;google;google_play_services" `
-#         "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2" `
-#         "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.1" `
-#         "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" `
-#         "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" `
-#         "add-ons;addon-google_apis-google-24" `
-#         "add-ons;addon-google_apis-google-23" `
-#         "add-ons;addon-google_apis-google-22" `
-#         "add-ons;addon-google_apis-google-21" `
-#         "cmake;3.6.4111459" `
-#         "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
-# }
-# else {
-#     #This may work for powershell core
-#     pwsh --version
-#     Write-Output "y" | pwsh -CommandWithArgs "& ./sdkmanager.bat --sdk_root=$sdk_root `
-#         'platform-tools' `
-#         'platforms;android-30' `
-#         'platforms;android-29' `
-#         'platforms;android-28' `
-#         'platforms;android-27' `
-#         'platforms;android-26' `
-#         'platforms;android-25' `
-#         'platforms;android-24' `
-#         'platforms;android-23' `
-#         'platforms;android-22' `
-#         'platforms;android-21' `
-#         'platforms;android-19' `
-#         'build-tools;30.0.2' `
-#         'build-tools;29.0.2' `
-#         'build-tools;29.0.0' `
-#         'build-tools;28.0.3' `
-#         'build-tools;28.0.2' `
-#         'build-tools;28.0.1' `
-#         'build-tools;28.0.0' `
-#         'build-tools;27.0.3' `
-#         'build-tools;27.0.2' `
-#         'build-tools;27.0.1' `
-#         'build-tools;27.0.0' `
-#         'build-tools;26.0.3' `
-#         'build-tools;26.0.2' `
-#         'build-tools;26.0.1' `
-#         'build-tools;26.0.0' `
-#         'build-tools;25.0.3' `
-#         'build-tools;25.0.2' `
-#         'build-tools;25.0.1' `
-#         'build-tools;25.0.0' `
-#         'build-tools;24.0.3' `
-#         'build-tools;24.0.2' `
-#         'build-tools;24.0.1' `
-#         'build-tools;24.0.0' `
-#         'build-tools;23.0.3' `
-#         'build-tools;23.0.2' `
-#         'build-tools;23.0.1' `
-#         'build-tools;22.0.1' `
-#         'build-tools;21.1.2' `
-#         'build-tools;20.0.0' `
-#         'build-tools;19.1.0' `
-#         'extras;android;m2repository' `
-#         'extras;google;m2repository' `
-#         'extras;google;google_play_services' `
-#         'extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2' `
-#         'extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.1' `
-#         'extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2' `
-#         'extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1' `
-#         'add-ons;addon-google_apis-google-24' `
-#         'add-ons;addon-google_apis-google-23' `
-#         'add-ons;addon-google_apis-google-22' `
-#         'add-ons;addon-google_apis-google-21' `
-#         'cmake;3.6.4111459'" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
-# }
+if ($env:INSTALL_LATEST_ONLY) {
+    & '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root `
+        "platform-tools" `
+        "platforms;android-30" `
+        "platforms;android-29" `
+        "platforms;android-28" `
+        "build-tools;30.0.2" `
+        "build-tools;29.0.2" `
+        "build-tools;29.0.0" `
+        "build-tools;28.0.3" `
+        "build-tools;28.0.2" `
+        "build-tools;28.0.1" `
+        "build-tools;28.0.0" `
+        "extras;android;m2repository" `
+        "extras;google;m2repository" `
+        "extras;google;google_play_services" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.1" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" `
+        "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" `
+        "add-ons;addon-google_apis-google-24" `
+        "add-ons;addon-google_apis-google-23" `
+        "add-ons;addon-google_apis-google-22" `
+        "add-ons;addon-google_apis-google-21" `
+        "cmake;3.6.4111459" `
+        "patcher;v4" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
+}
+else {
+    #This may work for powershell core
+    pwsh --version
+    Write-Output "y" | pwsh -CommandWithArgs "& ./sdkmanager.bat --sdk_root=$sdk_root `
+        'platform-tools' `
+        'platforms;android-30' `
+        'platforms;android-29' `
+        'platforms;android-28' `
+        'platforms;android-27' `
+        'platforms;android-26' `
+        'platforms;android-25' `
+        'platforms;android-24' `
+        'platforms;android-23' `
+        'platforms;android-22' `
+        'platforms;android-21' `
+        'platforms;android-19' `
+        'build-tools;30.0.2' `
+        'build-tools;29.0.2' `
+        'build-tools;29.0.0' `
+        'build-tools;28.0.3' `
+        'build-tools;28.0.2' `
+        'build-tools;28.0.1' `
+        'build-tools;28.0.0' `
+        'build-tools;27.0.3' `
+        'build-tools;27.0.2' `
+        'build-tools;27.0.1' `
+        'build-tools;27.0.0' `
+        'build-tools;26.0.3' `
+        'build-tools;26.0.2' `
+        'build-tools;26.0.1' `
+        'build-tools;26.0.0' `
+        'build-tools;25.0.3' `
+        'build-tools;25.0.2' `
+        'build-tools;25.0.1' `
+        'build-tools;25.0.0' `
+        'build-tools;24.0.3' `
+        'build-tools;24.0.2' `
+        'build-tools;24.0.1' `
+        'build-tools;24.0.0' `
+        'build-tools;23.0.3' `
+        'build-tools;23.0.2' `
+        'build-tools;23.0.1' `
+        'build-tools;22.0.1' `
+        'build-tools;21.1.2' `
+        'build-tools;20.0.0' `
+        'build-tools;19.1.0' `
+        'extras;android;m2repository' `
+        'extras;google;m2repository' `
+        'extras;google;google_play_services' `
+        'extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2' `
+        'extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.1' `
+        'extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2' `
+        'extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1' `
+        'add-ons;addon-google_apis-google-24' `
+        'add-ons;addon-google_apis-google-23' `
+        'add-ons;addon-google_apis-google-22' `
+        'add-ons;addon-google_apis-google-21' `
+        'cmake;3.6.4111459'" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log"
+}
 
-Write-Output "y" | pwsh -CommandWithArgs "& ./sdkmanager.bat --sdk_root=$sdk_root 'platform-tools' 'platforms;android-30' 'build-tools;30.0.2'"
+#Write-Output "y" | pwsh -CommandWithArgs "& ./sdkmanager.bat --sdk_root=$sdk_root 'platform-tools' 'platforms;android-30' 'build-tools;30.0.2'"
 
 # pwsh -CommandWithArgs "& .\cmdline-tools\bin\sdkmanager.bat --sdk_root=$sdk_root --license"
 # pwsh & '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root
-Get-ChildItem -Path $env:sdk_root\cmdline-tools\bin\platforms,$env:sdk_root\cmdline-tools\bin\build-tools -Name
-#7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
+Get-ChildItem -Path $env:sdk_root\platforms,$env:sdk_root\build-tools -Name
+7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
 
 Pop-Location
 
@@ -141,8 +145,8 @@ Write-Output "The current location is: $($(Get-Location).path)"
 #Remove-Item $sdkPath -Recurse -Force -ErrorAction Ignore
 
 # Resset JAVA_HOME variable and path
-#[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk1.8.0", "machine")
-#$env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
+[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Progra~1\Java\jdk1.8.0", "machine")
+$env:JAVA_HOME="C:\Progra~1\Java\jdk1.8.0"
 
 $ErrorActionPreference = 'Stop'
 
