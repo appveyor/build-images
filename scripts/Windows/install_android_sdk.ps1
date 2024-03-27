@@ -13,8 +13,8 @@ $sdkPath = "$env:temp\android-sdk"
 $licenseZipPath = "$env:temp\android-sdk-licenses.zip"
 
 Write-Host "Downloading..."
-(New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/sdk-tools-windows-4333796.zip", $zipPath)
-#(New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip", $zipPath)
+#(New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/sdk-tools-windows-4333796.zip", $zipPath)
+(New-Object Net.WebClient).DownloadFile("https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip", $zipPath)
 if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
 7z x $zipPath -aoa -o"$sdkPath"
 Remove-Item $zipPath -Force -ErrorAction Ignore
@@ -132,7 +132,7 @@ Write-Output "y" | pwsh -CommandWithArgs "& ./sdkmanager.bat --sdk_root=$sdk_roo
 # pwsh -CommandWithArgs "& .\cmdline-tools\bin\sdkmanager.bat --sdk_root=$sdk_root --license"
 # pwsh & '.\cmdline-tools\bin\sdkmanager.bat' --sdk_root=$sdk_root
 Get-ChildItem -Path $env:sdk_root\cmdline-tools\bin\platforms,$env:sdk_root\cmdline-tools\bin\build-tools -Name
-7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
+#7z a "$env:TEMP\android-sdkmanager.log.zip" "$env:TEMP\android-sdkmanager.log"
 
 Pop-Location
 
