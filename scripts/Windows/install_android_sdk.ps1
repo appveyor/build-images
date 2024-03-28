@@ -188,7 +188,8 @@ Get-ChildItem -Force
 # }
 
 foreach ($package in $Packages) {
-    Write-Output "y" | pwsh -CommandWithArgs "& ./sdkmanager.bat --install "$package" --sdk_root='$sdk_root'" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log" -Append
+    Write-Output "Installing $package..."
+    Write-Output "y" | pwsh -CommandWithArgs "& ./sdkmanager.bat --sdk_root='$sdk_root' --install '$package'" | Out-File -Width 240 -FilePath "$env:TEMP\android-sdkmanager.log" -Append
     if ($LASTEXITCODE -ne 0) {
         $errors += "Failed to install package $package with exit code $LASTEXITCODE"
     }
