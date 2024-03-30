@@ -44,16 +44,17 @@ build_script:
   #- ps: if ($env:cloud_type -eq 'Azure' -or $env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
   #- ps: .\fix_ruby.ps1
   #- ps: .\install_selenium_drivers.ps1
-  - ps: .\install_dotnet_core_sdks.ps1
+  #- ps: .\install_dotnet_core_sdks.ps1
   #- ps: .\set_java_home.ps1
   #- ps: .\install_android_sdk.ps1
   #- appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 
  # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   #- ps: .\fix_ruby.ps1
+  - ps: .\install_qt_fast_windows.ps1
   #- dir C:\Qt\6.2.2
-  #- dir C:\Qt\Tools
-  #- dir C:\Qt\Tools\QtInstallerFramework
+  - dir C:\Qt\Tools
+  - dir C:\Qt\Tools\QtInstallerFramework
   #- ps: .\install_nodejs_latest.ps1
   #- ps: .\install_boost_1.77.0_vs2019.ps1
   #- ps: .\fix_qt_symlinks.ps1
