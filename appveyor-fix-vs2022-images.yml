@@ -7,19 +7,19 @@ environment:
       APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
       APPVEYOR_BAKE_IMAGE: vs2022-master
 
-# Azure
-# =======
+    # GCE
+    # =======
 
-# - job_name: VS 2022 on Azure West US
-#   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-azure-westus
-#   APPVEYOR_BAKE_IMAGE: vs2022-master-azure-westus
+    - job_name: VS 2022 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
 
-  # GCE
-  # =======
+    # Azure
+    # =======
 
-    # - job_name: VS 2022 on GCE us-central1
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
-    #   APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
+    # - job_name: VS 2022 on Azure West US
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-azure-westus
+    #   APPVEYOR_BAKE_IMAGE: vs2022-master-azure-westus
 
 init:
   - appveyor version
@@ -43,10 +43,12 @@ build_script:
   #- ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
   #- ps: .\install_dotnet_core_sdks.ps1
   # - ps: .\install_qt_ifw_windows.ps1
+  - ps: .\install_cmake.ps1
+  - ps: .\install_qt_fast_windows.ps1
   # - dir C:\Qt\6.2
   # - dir C:\Qt\Tools
   # - dir C:\Qt\Tools\QtInstallerFramework
-  - ps: .\add_ssh_known_hosts.ps1
+  #- ps: .\add_ssh_known_hosts.ps1
   # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
   # - ps: .\install_qt_fast_windows.ps1
   
