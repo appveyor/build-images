@@ -1,7 +1,7 @@
 ﻿Write-Host "Installing Chocolatey"
 Write-Host "====================="
 
-$env:chocolateyVersion = '2.2.2'
+$env:chocolateyVersion = '1.4.0'
 
 if(Test-Path 'C:\ProgramData\chocolatey\bin') {
     # update
