@@ -25,9 +25,9 @@ function Install-SDK($sdkVersion) {
 }
 
 if (-not $env:INSTALL_LATEST_ONLY) {
-    Install-SDK "1.1.14"
-    Install-SDK "2.1.202"
-    Install-SDK "2.1.806"
+    #Install-SDK "1.1.14"
+    #Install-SDK "2.1.202"
+    #Install-SDK "2.1.806"
 }
 #Install-SDK "2.2.402"
 
@@ -40,13 +40,14 @@ if ($vs2019 -or $vs2022) {
     Install-SDK "3.1.202"
     Install-SDK "3.1.426"
     Install-SDK "5.0.408"
+    Install-SDK "8.0.202"
 }
 
 # VS 2022 image only
 if ($vs2022) {
     Install-SDK "6.0.415"
     Install-SDK "7.0.402"
-    Install-SDK "8.0.202"
+    #Install-SDK "8.0.202"
 }
 
 # VS 2019 Preview
