@@ -1033,7 +1033,7 @@ function install_dotnets() {
     #set env
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
-        write_line "$USER_HOME/.profile" "export DOTNET_PRINT_TELEMETRY_MESSAGE=false" 'DOTNET_PRINT_TELEMETRY_MESSAGE='
+        write_line "$USER_HOME/.profile" "export DOTNET_NOLOGO=1" 'DOTNET_NOLOGO='
     else
         echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
     fi
