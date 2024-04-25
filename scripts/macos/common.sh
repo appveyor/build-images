@@ -792,7 +792,9 @@ function configure_autologin() {
 
 function configure_term() {
     echo "[INFO] Running configure_term..."
+    write_line "${HOME}/.profile" 'export ASPNETCORE_ENVIRONMENT=Production'
     write_line "${HOME}/.profile" 'export TERM=xterm-256color'
+    write_line "${HOME}/.profile" 'export BUILDKIT_PROGRESS=plain'
 }
 
 function enable_vnc() {

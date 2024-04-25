@@ -503,6 +503,7 @@ SyslogIdentifier=appveyor-build-agent
 User=appveyor
 Environment=ASPNETCORE_ENVIRONMENT=Production
 Environment=TERM=xterm-256color
+Environment=BUILDKIT_PROGRESS=plain
 
 [Install]
 WantedBy=multi-user.target" > /etc/systemd/system/${SERVICE_NAME} &&

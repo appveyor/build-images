@@ -128,6 +128,9 @@ if(-not $PSModulePath.contains($AppVeyorModulesPath)) {
     [Environment]::SetEnvironmentVariable('PSModulePath', "$PSModulePath;$AppVeyorModulesPath", 'Machine')
 }
 
+[Environment]::SetEnvironmentVariable('ASPNETCORE_ENVIRONMENT', 'Production')
+[Environment]::SetEnvironmentVariable('BUILDKIT_PROGRESS', 'plain')
+
 Write-Host "AppVeyor Build Agent installed" -ForegroundColor Green
 
 if ($build_agent_mode -eq 'Azure' -and $appveyor_url -and $appveyor_workerId) {
