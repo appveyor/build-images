@@ -1829,7 +1829,7 @@ function install_7zip() {
         declare TAR_ARCH="arm64"
     fi
 
-    FILENAME="7z2201-linux-${TAR_ARCH}.tar.xz"
+    FILENAME="7z2301-linux-${TAR_ARCH}.tar.xz"
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
 
