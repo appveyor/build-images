@@ -6,7 +6,7 @@ $installDir = "C:\Qt"
 
 $component_groups = @(
     @{
-        version    = "6.7.0"
+        version    = "6.7.1"
         components = @(
             "win64_mingw",
             "win64_msvc2019_64",
