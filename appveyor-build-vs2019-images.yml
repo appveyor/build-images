@@ -193,13 +193,14 @@ for:
       - ps: .\install_erlang.ps1
       - ps: .\install_flutter.ps1
 
-      - ps: .\install_postgres96.ps1
-      - ps: .\install_postgres10.ps1
-      - ps: .\install_postgres11.ps1
+      #- ps: .\install_postgres96.ps1
+      #- ps: .\install_postgres10.ps1
+      #- ps: .\install_postgres11.ps1
       - ps: .\install_postgres12.ps1
       - ps: .\install_postgres13.ps1
       - ps: .\install_postgres14.ps1
       - ps: .\install_postgres15.ps1
+      - ps: .\install_postgres16.ps1
       - ps: .\install_mysql.ps1
       - ps: .\install_mongo.ps1
 
