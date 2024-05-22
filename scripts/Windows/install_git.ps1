@@ -1,4 +1,4 @@
-$version = '2.41.0'
+$version = '2.45.1'
 
 Write-Host "Installing Git $version"
 Write-Host "====================="
