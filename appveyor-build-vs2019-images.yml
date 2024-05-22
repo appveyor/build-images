@@ -253,6 +253,7 @@ for:
       - ps: .\install_boost_1.77.0_vs2019.ps1
       - ps: .\install_boost_1.83.0_vs2019.ps1
       - ps: .\install_boost_1.84.0_vs2019.ps1
+      - ps: .\install_boost_1.85.0_vs2019.ps1
 
       # - ps: .\install_android_sdk.ps1
       # - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
