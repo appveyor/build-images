@@ -93,6 +93,11 @@ for:
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
       - ps: .\install_7zip.ps1
+      - ps: .\install_dotnet_runtimes.ps1
+
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+
       - ps: .\install_chocolatey.ps1
       - ps: .\install_webpi.ps1
       - ps: .\install_nuget.ps1
@@ -262,9 +267,7 @@ for:
       - ps: .\install_boost_1.83.0_vs2022.ps1
       - ps: .\install_boost_1.84.0_vs2022.ps1
       - ps: .\install_boost_1.85.0_vs2022.ps1
-
       # - ps: .\install_dotnet_core_sdks.ps1
-      - ps: .\install_dotnet_runtimes.ps1
       - ps: .\install_dotnet_devpacks.ps1
 
       # Restart VM
