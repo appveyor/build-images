@@ -11,13 +11,14 @@ Write-Host "Downloading..."
 (New-Object Net.WebClient).DownloadFile("https://github.com/git-for-windows/git/releases/download/v$version.windows.1/Git-$version-64-bit.exe", $exePath)
 
 # uninstall if this is a fix
-$gitFolder = "$env:ProgramFiles\Git"
+$gitUninstaller = "$env:ProgramFiles\Git\unins000.exe"
 
 if (Test-Path -Path $gitFolder) {
     "git already installed, removing..."
-    pushd $gitFolder
-    ./unins000.exe /silent
-    popd
+    #pushd $gitFolder
+    #./unins000.exe /silent
+    & $gitUninstaller /silent
+    #popd
 } else {
     "Git not installed, skipping removal..."
 }
