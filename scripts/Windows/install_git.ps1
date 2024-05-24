@@ -13,7 +13,7 @@ Write-Host "Downloading..."
 # uninstall if this is a fix
 $gitUninstaller = "$env:ProgramFiles\Git\unins000.exe"
 
-if (Test-Path -Path $gitFolder) {
+if (Test-Path -Path $gitUninstaller) {
     "git already installed, removing..."
     #pushd $gitFolder
     #./unins000.exe /silent
