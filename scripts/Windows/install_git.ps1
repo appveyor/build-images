@@ -17,7 +17,8 @@ if (Test-Path -Path $gitUninstaller) {
     "git already installed, removing..."
     #pushd $gitFolder
     #./unins000.exe /silent
-    & $gitUninstaller /silent
+    Start-Process "$gitUninstaller" -ArgumentList "/silent" -Wait -PassThru
+    #& $gitUninstaller /silent
     #popd
 } else {
     "Git not installed, skipping removal..."
