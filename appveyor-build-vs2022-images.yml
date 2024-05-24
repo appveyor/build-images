@@ -226,9 +226,10 @@ for:
       - ps: Start-Sleep -s 5
       - ps: .\install_sql_server_2022_after_restart.ps1
 
-      - ps: .\install_git_lfs.ps1
+      ### REMOVE AFTER IMAGE FIX
+      - ps: .\install_git.ps1
       - ps: .\install_mercurial.ps1
-
+      ###############################
       - ps: .\install_aws_cli.ps1
       - ps: .\install_aws_powershell.ps1
       - ps: .\install_azure_cli.ps1
