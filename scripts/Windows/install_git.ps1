@@ -16,7 +16,7 @@ $gitFolder = "$env:ProgramFiles\Git"
 if (Test-Path -Path $gitFolder) {
     "git already installed, removing..."
     pushd $gitFolder
-    ./uins000.exe /silent
+    ./unins000.exe /silent
     popd
 } else {
     "Git not installed, skipping removal..."
