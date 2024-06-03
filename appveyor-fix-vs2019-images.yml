@@ -10,9 +10,9 @@ environment:
     # GCE
     # =======
 
-    # - job_name: VS 2019 on GCE us-central1
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
-    #   APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
+    - job_name: VS 2019 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
 
     # # Azure
     # # =======
@@ -51,12 +51,12 @@ build_script:
 
  # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   #- ps: .\fix_ruby.ps1
-  - ps: .\install_cmake.ps1
-  - ps: .\install_qt_fast_windows.ps1
+  - ps: .\install_dotnet_core_sdks.ps1
+  #- ps: .\install_qt_fast_windows.ps1
   #- dir C:\Qt\6.2.2
-  - dir C:\Qt\Tools
-  - dir C:\Qt\Tools\QtInstallerFramework
-  #- ps: .\install_nodejs_latest.ps1
+  #- dir C:\Qt\Tools
+  #- dir C:\Qt\Tools\QtInstallerFramework
+  - ps: .\install_nodejs_latest.ps1
   #- ps: .\install_boost_1.77.0_vs2019.ps1
   #- ps: .\fix_qt_symlinks.ps1
   #- ps: .\install_mingw.ps1
