@@ -318,13 +318,13 @@ function Install-Nodejs {
     }
 }
 
-Install-Nodejs
+#Install-Nodejs
 
-# Add-Path "${env:ProgramFiles(x86)}\nodejs"
-# Add-Path "$env:ProgramFiles\nodejs"
-# Add-Path "${env:ProgramFiles(x86)}\iojs"
-# Add-Path "$env:ProgramFiles\iojs"
-# Add-Path "$env:APPDATA\npm"
+Add-Path "${env:ProgramFiles(x86)}\nodejs"
+Add-Path "$env:ProgramFiles\nodejs"
+Add-Path "${env:ProgramFiles(x86)}\iojs"
+Add-Path "$env:ProgramFiles\iojs"
+Add-Path "$env:APPDATA\npm"
 
 # set AVVM URL
 [System.Environment]::SetEnvironmentVariable("AVVM_DOWNLOAD_URL", "https://appveyordownloads.blob.core.windows.net/avvm", "Machine")
