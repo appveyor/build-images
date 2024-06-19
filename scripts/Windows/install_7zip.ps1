@@ -3,8 +3,9 @@ Write-Host "================"
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$exePath = "$env:TEMP\7z2201-x64.exe"
-Invoke-WebRequest "https://www.7-zip.org/a/7z2201-x64.exe" -OutFile $exePath
+$exePath = "$env:TEMP\7z2405-x64.exe"
+
+Invoke-WebRequest "https://www.7-zip.org/a/7z2405-x64.exe" -OutFile $exePath
 cmd /c start /wait $exePath /S
 del $exePath
 

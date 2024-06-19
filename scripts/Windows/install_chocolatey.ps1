@@ -1,7 +1,8 @@
 ﻿Write-Host "Installing Chocolatey"
 Write-Host "====================="
 
-$env:chocolateyVersion = '1.4.0'
+# without this environment variable latest stable version should be installed
+#$env:chocolateyVersion = '1.4.0'
 
 if(Test-Path 'C:\ProgramData\chocolatey\bin') {
     # update

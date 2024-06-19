@@ -156,65 +156,65 @@ else {
 
 $rubies = $rubies + @(
     @{
-        "version"      = "Ruby 3.0.6-1"
+        "version"      = "Ruby 3.0.7-1"
         "install_path" = "C:\Ruby30"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.6-1/rubyinstaller-3.0.6-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.7-1/rubyinstaller-3.0.7-1-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV2"    = $true
     }    
     @{
-        "version"      = "Ruby 3.0.6-1 (x64)"
+        "version"      = "Ruby 3.0.7-1 (x64)"
         "install_path" = "C:\Ruby30-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.6-1/rubyinstaller-3.0.6-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.7-1/rubyinstaller-3.0.7-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV2"    = $true
     }
     @{
-        "version"      = "Ruby 3.1.4-1"
+        "version"      = "Ruby 3.1.5-1"
         "install_path" = "C:\Ruby31"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.1.4-1/rubyinstaller-3.1.4-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.1.5-1/rubyinstaller-3.1.5-1-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV2"    = $true
     }
     @{
-        "version"      = "Ruby 3.1.4-1 (x64)"
+        "version"      = "Ruby 3.1.5-1 (x64)"
         "install_path" = "C:\Ruby31-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.1.4-1/rubyinstaller-3.1.4-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.1.5-1/rubyinstaller-3.1.5-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV2"    = $true
     }
     @{
-        "version"      = "Ruby 3.2.3-1"
+        "version"      = "Ruby 3.2.4-1"
         "install_path" = "C:\Ruby32"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.3-1/rubyinstaller-3.2.3-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.4-1/rubyinstaller-3.2.4-1-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV2"    = $true
     }
     @{
-        "version"      = "Ruby 3.2.3-1 (x64)"
+        "version"      = "Ruby 3.2.4-1 (x64)"
         "install_path" = "C:\Ruby32-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.3-1/rubyinstaller-3.2.3-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.4-1/rubyinstaller-3.2.4-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV2"    = $true
     }
     @{
-        "version"      = "Ruby 3.3.0-1"
+        "version"      = "Ruby 3.3.1-1"
         "install_path" = "C:\Ruby33"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.0-1/rubyinstaller-3.3.0-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.1-1/rubyinstaller-3.3.1-1-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV2"    = $true
     }
     @{
-        "version"      = "Ruby 3.3.0-1 (x64)"
+        "version"      = "Ruby 3.3.1-1 (x64)"
         "install_path" = "C:\Ruby33-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.0-1/rubyinstaller-3.3.0-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.1-1/rubyinstaller-3.3.1-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV2"    = $true

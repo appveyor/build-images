@@ -8,7 +8,8 @@ function Install-Nodejs {
         "12.22.6",
         "12.22.7",
         "12.22.12",
-        "13.14.0",        
+        "13.14.0",
+        "14.21.1"     
         "15.14.0",
         "16.3.0",
         "16.8.0",
@@ -20,11 +21,11 @@ function Install-Nodejs {
         "14.17.6",
         "14.18.1",
         "14.20.1",
-        "18.18.2",
+        "18.20.3", 
         "19.9.0",
-        "20.5.1",
-        "20.10.0",
-        "21.2.0"
+        "20.13.1",
+        "21.7.3",
+        "22.2.0"
     )
 
     if (-not $env:INSTALL_LATEST_ONLY) {
@@ -317,7 +318,7 @@ function Install-Nodejs {
     }
 }
 
-Install-Nodejs
+#Install-Nodejs
 
 Add-Path "${env:ProgramFiles(x86)}\nodejs"
 Add-Path "$env:ProgramFiles\nodejs"

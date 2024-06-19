@@ -43,8 +43,8 @@ build_script:
   #- ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
   #- ps: .\install_dotnet_core_sdks.ps1
   # - ps: .\install_qt_ifw_windows.ps1
-  - ps: .\install_cmake.ps1
-  - ps: .\install_qt_fast_windows.ps1
+  #- ps: .\install_cmake.ps1
+  #- ps: .\install_qt_fast_windows.ps1
   # - dir C:\Qt\6.2
   # - dir C:\Qt\Tools
   # - dir C:\Qt\Tools\QtInstallerFramework
@@ -60,6 +60,11 @@ build_script:
   #  Restart VM
   #  - ps: Start-Sleep -s 5; Restart-Computer -Force
   # - ps: Start-Sleep -s 5
+
+  - ps: .\install_sql_server_2022.ps1
+  - ps: Start-Sleep -s 5; Restart-Computer
+  - ps: Start-Sleep -s 5
+  - ps: .\install_sql_server_2022_after_restart.ps1
 
   - appveyor version
   - ps: .\cleanup_windows.ps1

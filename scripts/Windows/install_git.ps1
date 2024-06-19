@@ -1,4 +1,4 @@
-$version = '2.41.0'
+$version = '2.45.2'
 
 Write-Host "Installing Git $version"
 Write-Host "====================="
@@ -10,6 +10,19 @@ $exePath = "$env:TEMP\Git-install.exe"
 Write-Host "Downloading..."
 (New-Object Net.WebClient).DownloadFile("https://github.com/git-for-windows/git/releases/download/v$version.windows.1/Git-$version-64-bit.exe", $exePath)
 
+# uninstall if this is a fix
+$gitUninstaller = "$env:ProgramFiles\Git\unins000.exe"
+
+if (Test-Path -Path $gitUninstaller) {
+    "git already installed, removing..."
+    #pushd $gitFolder
+    #./unins000.exe /silent
+    Start-Process "$gitUninstaller" -ArgumentList "/silent" -Wait -PassThru
+    #& $gitUninstaller /silent
+    #popd
+} else {
+    "Git not installed, skipping removal..."
+}
 Write-Host "Installing..."
 cmd /c start /wait $exePath /VERYSILENT /NORESTART /NOCANCEL /SP- /NOICONS /COMPONENTS="icons,icons\quicklaunch,ext,ext\reg,ext\reg\shellhere,ext\reg\guihere,assoc,assoc_sh" /LOG
 del $exePath
