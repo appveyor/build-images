@@ -146,6 +146,8 @@ function install_clang() {
     install_clang_version 15
     install_clang_version 16
     install_clang_version 17
+    install_clang_version 18
+
 
     # make clang 10 default
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000

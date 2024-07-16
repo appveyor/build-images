@@ -784,7 +784,7 @@ function install_pythons(){
     echo "[INFO] Running install_pythons..."
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.16" "3.8.17" "3.9.18" "3.10.13" "3.11.8" "3.12.2" )
+        declare PY_VERSIONS=( "2.7.18" "3.6.15" "3.7.16" "3.8.17" "3.9.18" "3.10.14" "3.11.9" "3.13.0b3" "3.12.4" )
     else
         declare PY_VERSIONS=( "2.7.18" "3.7.16" "3.8.17" "3.9.17" "3.10.12" "3.11.4" "3.12.0" )
     fi
@@ -1042,7 +1042,7 @@ function install_dotnets() {
     #cleanup
     if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
 
-    install_outdated_dotnets
+    #install_outdated_dotnets
 }
 
 function install_dotnet_arm64() {
@@ -1939,7 +1939,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.27.1
+        VERSION=3.29.7
     else
         VERSION=$1
     fi
@@ -2179,8 +2179,8 @@ function install_clang() {
     echo "[INFO] Running install_clang..."
     curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-    # install_clang_version 9
-    # install_clang_version 10
+    install_clang_version 9
+    install_clang_version 10
     install_clang_version 11
     install_clang_version 12
     install_clang_version 13
@@ -2188,6 +2188,8 @@ function install_clang() {
     install_clang_version 15
     install_clang_version 16
     install_clang_version 17
+    install_clang_version 18
+
 
     # make clang 10 default
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
