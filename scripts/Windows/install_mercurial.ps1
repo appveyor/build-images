@@ -2,8 +2,8 @@
 Write-Host "===================="
 
 Write-Host "Downloading..."
-$msiPath = "$env:TEMP\mercurial-6.1.4-x64.msi"
-(New-Object Net.WebClient).DownloadFile('https://www.mercurial-scm.org/release/windows/mercurial-6.1.4-x64.msi', $msiPath)
+$msiPath = "$env:TEMP\mercurial-6.3.1-x64.msi"
+(New-Object Net.WebClient).DownloadFile('https://www.mercurial-scm.org/release/windows/mercurial-6.3.1-x64.msi', $msiPath)
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i $msiPath /quiet
