@@ -1249,7 +1249,7 @@ function install_jdks_arm64() {
 function install_android_sdk() {
     echo "[INFO] Running install_android_sdk..."
 
-    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip"
+    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
 
     write_line "${HOME}/.profile" 'export ANDROID_SDK_ROOT="/usr/lib/android-sdk"'
     export ANDROID_SDK_ROOT="/usr/lib/android-sdk"
@@ -1267,6 +1267,7 @@ function install_android_sdk() {
     echo "y" | sdkmanager "tools" > /dev/null
     echo "y" | sdkmanager "build-tools;28.0.3" > /dev/null
     echo "y" | sdkmanager "build-tools;30.0.3" > /dev/null
+    echo "y" | sdkmanager "build-tools;33.0.3" > /dev/null
     echo "y" | sdkmanager "platforms;android-30" > /dev/null
     echo "y" | sdkmanager "platforms;android-31" > /dev/null
     echo "y" | sdkmanager "platform-tools" > /dev/null
