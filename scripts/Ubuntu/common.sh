@@ -2121,7 +2121,7 @@ function install_browsers_arm64() {
 function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
 
-    local VB_VERSION=6.1
+    local VB_VERSION=7.0.20
     retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc -o oracle_vbox_2016.asc ||
         { echo "[ERROR] Cannot download oracle_vbox_2016.asc." 1>&2; return 10; }
 
