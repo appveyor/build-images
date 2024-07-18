@@ -546,7 +546,7 @@ function install_nvm() {
         return 1
     fi
     #TODO have to figure out latest release version automatically
-    curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+    curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
     #shellcheck disable=SC2016
@@ -573,7 +573,7 @@ function install_nvm_nodejs() {
     local v
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare NVM_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" "20" "21")
+        declare NVM_VERSIONS=( "8" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" "20" "21" "22")
     else
         declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" "20" )
     fi
