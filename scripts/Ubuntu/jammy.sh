@@ -133,7 +133,7 @@ function install_gcc() {
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 40 --slave /usr/bin/g++ g++ /usr/bin/g++-11 ||
         { echo "[ERROR] Cannot install gcc-11." 1>&2; return 40; }
     apt-get -y -q install gcc-12 g++-12 && \
-    upate-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 40 --slave /usr/bin/g++ g++ /usr/bin/g++-12 ||
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 40 --slave /usr/bin/g++ g++ /usr/bin/g++-12 ||
         { echo "[ERROR] Cannot install gcc-12." 1>&2; return 40; }
 }
 
