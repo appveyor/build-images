@@ -89,3 +89,15 @@ function configure_mono_repository () {
     #add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-focal main" ||
      #   { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
 }
+
+function pull_dockerimages() {
+    local DOCKER_IMAGES
+    local IMAGE
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:7.0" "mcr.microsoft.com/dotnet/aspnet:7.0" "mcr.microsoft.com/mssql/server:2022-latest" "debian" "ubuntu" "centos" "alpine" "busybox" "quay.io/pypa/manylinux2014_x86_64")
+    for IMAGE in "${DOCKER_IMAGES[@]}"; do
+        docker pull "$IMAGE" ||
+            { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
+    done
+    log_version docker images
+    log_version docker system df
+}
