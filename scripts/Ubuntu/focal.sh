@@ -101,3 +101,21 @@ function pull_dockerimages() {
     log_version docker images
     log_version docker system df
 }
+
+function install_rbenv_rubies() {
+    echo "[INFO] Running install_rbenv_rubies..."
+    eval "$(~/.rbenv/bin/rbenv init - bash)"
+    git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+    local DEFAULT_RUBY
+    DEFAULT_RUBY="2.7.8"
+    command -v rbenv ||
+        { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
+    local v
+
+    declare RUBY_VERSIONS=( "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.4" "3.3.4" )
+
+    for v in "${RUBY_VERSIONS[@]}"; do
+        rbenv install ${v} ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+}
