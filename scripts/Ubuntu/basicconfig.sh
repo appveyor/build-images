@@ -178,6 +178,19 @@ configure_locale
 install_tools ||
     _abort $?
 
+#################### temp
+if [[ $OS_ARCH == "amd64" ]]; then
+    install_virtualbox ||
+        _abort $?
+    install_mongodb ||
+        _abort $?
+    install_rabbitmq ||
+        _abort $?
+    install_qt ||
+        _abort $?     
+fi
+####################### temp
+
 if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
     install_KVP_packages ||
         _abort $?
@@ -367,16 +380,16 @@ install_postgresql ||
 install_redis ||
     _abort $?
 
-if [[ $OS_ARCH == "amd64" ]]; then
-    install_virtualbox ||
-        _abort $?
-    install_mongodb ||
-        _abort $?
-    install_rabbitmq ||
-        _abort $?
-    install_qt ||
-        _abort $?     
-fi
+# if [[ $OS_ARCH == "amd64" ]]; then
+#     install_virtualbox ||
+#         _abort $?
+#     install_mongodb ||
+#         _abort $?
+#     install_rabbitmq ||
+#         _abort $?
+#     install_qt ||
+#         _abort $?     
+# fi
 
 # Go lang
 su -l ${USER_NAME} -c "

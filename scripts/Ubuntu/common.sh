@@ -2121,7 +2121,7 @@ function install_browsers_arm64() {
 function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
 
-    local VB_VERSION=7.0.20
+    local VB_VERSION=7.0.18
     retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc -o oracle_vbox_2016.asc ||
         { echo "[ERROR] Cannot download oracle_vbox_2016.asc." 1>&2; return 10; }
 
@@ -2142,7 +2142,7 @@ function install_virtualbox_core() {
 function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
 
-    local VERSION=7.0.20
+    local VERSION=7.0.18
     #https://download.virtualbox.org/virtualbox/7.0.20/Oracle_VM_VirtualBox_Extension_Pack-7.0.20.vbox-extpack
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
