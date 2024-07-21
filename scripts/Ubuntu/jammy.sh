@@ -280,7 +280,7 @@ function install_nvm_nodejs() {
     fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        CURRENT_NODEJS=16
+        CURRENT_NODEJS=22
     else
         CURRENT_NODEJS=$1
     fi
@@ -288,7 +288,7 @@ function install_nvm_nodejs() {
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
 
-    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" )
+    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" )
 
     
     for v in "${NVM_VERSIONS[@]}"; do

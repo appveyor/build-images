@@ -119,3 +119,36 @@ function install_rbenv_rubies() {
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
 }
+
+function install_nvm_nodejs() {
+    echo "[INFO] Running install_nvm_nodejs..."
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    local CURRENT_NODEJS
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        CURRENT_NODEJS=22
+    else
+        CURRENT_NODEJS=$1
+    fi
+    command -v nvm ||
+        { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
+    local v
+
+    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" )
+
+    
+    for v in "${NVM_VERSIONS[@]}"; do
+        nvm install ${v} ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+
+    nvm alias default ${CURRENT_NODEJS}
+
+    log_version nvm --version
+    log_version nvm list
+    log_version node --version
+    log_version npm --version
+}

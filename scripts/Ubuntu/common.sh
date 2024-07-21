@@ -573,7 +573,7 @@ function install_nvm_nodejs() {
     local v
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare NVM_VERSIONS=( "8" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" "20" "21" "22")
+        declare NVM_VERSIONS=( "8" "10" "11" "12" "13" "14" "15" "16" "17" )
     else
         declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" "20" )
     fi
@@ -1410,6 +1410,10 @@ function install_gvm_and_golangs() {
     else
         echo "[WARNING] User '${USER_NAME-}' not found. Cannot install GVM and Go Langs"
     fi
+
+    # Unset cd as an overridden function by gvm
+    write_line "${HOME}/.profile" 'unset -f cd'
+    cat $HOME/.profile
 }
 
 function install_gvm() {
