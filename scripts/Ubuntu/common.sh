@@ -1439,6 +1439,10 @@ function install_gvm() {
     [[ -s "${HOME}/.gvm/scripts/gvm" ]] && (
             write_line "${HOME}/.profile" '[[ -s "/home/appveyor/.gvm/scripts/gvm" ]] && source "/home/appveyor/.gvm/scripts/gvm"'
     ) || true
+
+    # Unset cd as an overridden function by gvm
+    write_line "${HOME}/.profile" 'unset -f cd'
+    cat $HOME/.profile
 }
 
 function install_golangs() {
