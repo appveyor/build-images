@@ -526,12 +526,18 @@ function install_nvm_and_nodejs() {
             $(declare -f add_line)
             $(declare -f replace_line)
             install_nvm" &&
+        # su -l ${USER_NAME} -c "
+        #     [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+        #     USER_NAME=${USER_NAME}
+        #     $(declare -f log_version)
+        #     $(declare -f install_nvm_nodejs)
+        #     install_nvm_nodejs ${CURRENT_NODEJS}" ||
         su -l ${USER_NAME} -c "
             [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
             USER_NAME=${USER_NAME}
             $(declare -f log_version)
             $(declare -f install_nvm_nodejs)
-            install_nvm_nodejs ${CURRENT_NODEJS}" ||
+            install_nvm_nodejs" ||
         return $?
     else
         echo "[WARNING] User '${USER_NAME-}' not found. Cannot install NVM and Nodejs"
