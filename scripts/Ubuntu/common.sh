@@ -570,7 +570,7 @@ function install_nvm_nodejs() {
     fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        CURRENT_NODEJS=16
+        CURRENT_NODEJS=17
     else
         CURRENT_NODEJS=$1
     fi
