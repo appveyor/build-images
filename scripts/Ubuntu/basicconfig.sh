@@ -351,13 +351,21 @@ su -l ${USER_NAME} -c "
         $(declare -f replace_line)
         install_nvm" ||
     _abort $?
+# su -l ${USER_NAME} -c "
+#         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+#         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
+#         $(declare -f log_version)
+#         $(declare -f install_nvm_nodejs)
+#         install_nvm_nodejs ${CURRENT_NODEJS}" ||
+#     _abort $?
 su -l ${USER_NAME} -c "
         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
         USER_NAME=${USER_NAME}
         OS_ARCH=${OS_ARCH}
         $(declare -f log_version)
         $(declare -f install_nvm_nodejs)
-        install_nvm_nodejs ${CURRENT_NODEJS}" ||
+        install_nvm_nodejs ||
     _abort $?
 
 install_mysql ||

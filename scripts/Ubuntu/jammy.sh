@@ -149,9 +149,9 @@ function install_clang() {
     install_clang_version 18
 
 
-    # make clang 10 default
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-10 1000
+    # make clang 13 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-13 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-13 1000
     update-alternatives --config clang
     update-alternatives --config clang++
 
@@ -281,8 +281,10 @@ function install_nvm_nodejs() {
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
         CURRENT_NODEJS=22
+        echo "Current nodejs set to ${CURRENT_NODEJS}"
     else
         CURRENT_NODEJS=$1
+        echo "Current nodejs (as param) set to ${CURRENT_NODEJS}"
     fi
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
