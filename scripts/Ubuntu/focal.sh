@@ -17,7 +17,7 @@ function configure_mercurial_repository() {
 }
 
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" "7.0" "8.0" )
+    SDK_VERSIONS=( "3.0" "3.1" "5.0" "6.0" "7.0" "8.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
     
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
@@ -88,4 +88,87 @@ function configure_mono_repository () {
 
     #add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-focal main" ||
      #   { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
+}
+
+function pull_dockerimages() {
+    local DOCKER_IMAGES
+    local IMAGE
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:7.0" "mcr.microsoft.com/dotnet/aspnet:7.0" "mcr.microsoft.com/mssql/server:2022-latest" "debian" "ubuntu" "centos" "alpine" "busybox" "quay.io/pypa/manylinux2014_x86_64")
+    for IMAGE in "${DOCKER_IMAGES[@]}"; do
+        docker pull "$IMAGE" ||
+            { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
+    done
+    log_version docker images
+    log_version docker system df
+}
+
+function install_rbenv_rubies() {
+    echo "[INFO] Running install_rbenv_rubies..."
+    eval "$(~/.rbenv/bin/rbenv init - bash)"
+    git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+    local DEFAULT_RUBY
+    DEFAULT_RUBY="2.7.8"
+    command -v rbenv ||
+        { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
+    local v
+
+    declare RUBY_VERSIONS=( "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.4" "3.3.4" )
+
+    for v in "${RUBY_VERSIONS[@]}"; do
+        rbenv install ${v} ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+}
+
+function install_nvm_nodejs() {
+    echo "[INFO] Running install_nvm_nodejs..."
+    # this must be executed as appveyor user
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    local CURRENT_NODEJS
+    if [[ -z "${1-}" || "${#1}" = "0" ]]; then
+        CURRENT_NODEJS=22
+    else
+        CURRENT_NODEJS=$1
+    fi
+    command -v nvm ||
+        { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
+    local v
+
+    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" )
+
+    
+    for v in "${NVM_VERSIONS[@]}"; do
+        nvm install ${v} ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+
+    nvm alias default ${CURRENT_NODEJS}
+
+    log_version nvm --version
+    log_version nvm list
+    log_version node --version
+    log_version npm --version
+}
+
+function install_gcc() {
+    echo "[INFO] Running install_gcc..."
+
+    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+    apt-get -y -qq update ||
+        { echo "[ERROR] Cannot add gcc repository to APT sources." 1>&2; return 10; }
+    apt-get -y -q install gcc-9 g++-9 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 20 --slave /usr/bin/g++ g++ /usr/bin/g++-9 ||
+        { echo "[ERROR] Cannot install gcc-9." 1>&2; return 20; }
+    apt-get -y -q install gcc-10 g++-10 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 30 --slave /usr/bin/g++ g++ /usr/bin/g++-10 ||
+        { echo "[ERROR] Cannot install gcc-10." 1>&2; return 30; }
+    apt-get -y -q install gcc-11 g++-11 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 40 --slave /usr/bin/g++ g++ /usr/bin/g++-11 ||
+        { echo "[ERROR] Cannot install gcc-11." 1>&2; return 40; }
+    apt-get -y -q install gcc-12 g++-12 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 40 --slave /usr/bin/g++ g++ /usr/bin/g++-12 ||
+        { echo "[ERROR] Cannot install gcc-12." 1>&2; return 40; }
 }
