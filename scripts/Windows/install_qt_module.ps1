@@ -80,7 +80,7 @@ function FetchToolsUpdatePackages($toolsId) {
 
 function FetchReleaseUpdatePackages($version) {
     FetchUpdatePackages "$(GetReleaseRootUrl $version)"
-    FetchUpdatePackages "$(GetReleaseRootUrl $version)_src_doc_examples"
+    # FetchUpdatePackages "$(GetReleaseRootUrl $version)_src_doc_examples"
 }
 
 function SplitString($str) {
