@@ -10,7 +10,7 @@ HOST_NAME=appveyor-vm
 MSSQL_SA_PASSWORD=Password12!
 MYSQL_ROOT_PASSWORD=Password12!
 POSTGRES_ROOT_PASSWORD=Password12!
-CURRENT_NODEJS=16
+CURRENT_NODEJS=17
 AGENT_DIR=/opt/appveyor/build-agent
 WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 VERSIONS_FILE=$WORK_DIR/versions.log
@@ -177,6 +177,7 @@ configure_locale
 
 install_tools ||
     _abort $?
+
 
 if [ "${BUILD_AGENT_MODE}" == "HyperV" ]; then
     install_KVP_packages ||
@@ -350,13 +351,21 @@ su -l ${USER_NAME} -c "
         $(declare -f replace_line)
         install_nvm" ||
     _abort $?
+# su -l ${USER_NAME} -c "
+#         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+#         USER_NAME=${USER_NAME}
+#         OS_ARCH=${OS_ARCH}
+#         $(declare -f log_version)
+#         $(declare -f install_nvm_nodejs)
+#         install_nvm_nodejs ${CURRENT_NODEJS}" ||
+#     _abort $?
 su -l ${USER_NAME} -c "
         [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
         USER_NAME=${USER_NAME}
         OS_ARCH=${OS_ARCH}
         $(declare -f log_version)
         $(declare -f install_nvm_nodejs)
-        install_nvm_nodejs ${CURRENT_NODEJS}" ||
+        install_nvm_nodejs" ||
     _abort $?
 
 install_mysql ||

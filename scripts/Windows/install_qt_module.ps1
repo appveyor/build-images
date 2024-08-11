@@ -35,8 +35,8 @@ $TOOL_IDS = @(
 
 if ($isLinux) {
     $TOOL_IDS += @(
-        "openssl_src"
-        "openssl_x64"        
+        "opensslv3_src"
+        #"openssl_x64"        
     )
 } elseif ($isMacOS) {
     $TOOL_IDS += @(
@@ -48,7 +48,7 @@ if ($isLinux) {
         "mingw"
         "mingw90"
         "opensslv3_src"
-        "opensslv3_x64"        
+        "opensslv3_x64"
         #"openssl_x86"
         "qt3dstudio_runtime"
         "qt3dstudio_runtime_210"
@@ -80,7 +80,7 @@ function FetchToolsUpdatePackages($toolsId) {
 
 function FetchReleaseUpdatePackages($version) {
     FetchUpdatePackages "$(GetReleaseRootUrl $version)"
-    FetchUpdatePackages "$(GetReleaseRootUrl $version)_src_doc_examples"
+    # FetchUpdatePackages "$(GetReleaseRootUrl $version)_src_doc_examples"
 }
 
 function SplitString($str) {

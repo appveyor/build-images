@@ -133,8 +133,11 @@ function install_gcc() {
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 40 --slave /usr/bin/g++ g++ /usr/bin/g++-11 ||
         { echo "[ERROR] Cannot install gcc-11." 1>&2; return 40; }
     apt-get -y -q install gcc-12 g++-12 && \
-    upate-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 40 --slave /usr/bin/g++ g++ /usr/bin/g++-12 ||
-        { echo "[ERROR] Cannot install gcc-12." 1>&2; return 40; }
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 50 --slave /usr/bin/g++ g++ /usr/bin/g++-12 ||
+        { echo "[ERROR] Cannot install gcc-12." 1>&2; return 50; }
+    apt-get -y -q install gcc-13 g++-13 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 60 --slave /usr/bin/g++ g++ /usr/bin/g++-13 ||
+        { echo "[ERROR] Cannot install gcc-13." 1>&2; return 60; }
 }
 
 function install_clang() {
@@ -146,10 +149,12 @@ function install_clang() {
     install_clang_version 15
     install_clang_version 16
     install_clang_version 17
+    install_clang_version 18
 
-    # make clang 10 default
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-10 1000
+
+    # make clang 13 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-13 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-13 1000
     update-alternatives --config clang
     update-alternatives --config clang++
 
@@ -278,15 +283,17 @@ function install_nvm_nodejs() {
     fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        CURRENT_NODEJS=16
+        CURRENT_NODEJS=22
+        echo "Current nodejs set to ${CURRENT_NODEJS}"
     else
         CURRENT_NODEJS=$1
+        echo "Current nodejs (as param) set to ${CURRENT_NODEJS}"
     fi
     command -v nvm ||
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
 
-    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" )
+    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" )
 
     
     for v in "${NVM_VERSIONS[@]}"; do
@@ -330,9 +337,9 @@ function install_rbenv_rubies() {
         { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
-    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.4" "3.2.3"  )
+    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.4" "3.3.4"  )
 
-    for v in "${RUBY_VERSIONS[@]}"; do  
+    for v in "${RUBY_VERSIONS[@]}"; do
         rbenv install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
@@ -364,7 +371,9 @@ function install_jdks() {
     install_jdk 18 https://download.java.net/java/GA/jdk18.0.2/f6ad4b4450fd4d298113270ec84f30ee/9/GPL/openjdk-18.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?   
     install_jdk 21 https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
-        return $?     
+        return $? 
+    install_jdk 22 https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?       
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
         IFS=$'\n'
@@ -382,4 +391,16 @@ function install_jdks() {
         echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_jdk"
     fi
     echo "skipping configure_jdk"
+}
+
+function pull_dockerimages() {
+    local DOCKER_IMAGES
+    local IMAGE
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:7.0" "mcr.microsoft.com/dotnet/aspnet:7.0" "mcr.microsoft.com/mssql/server:2022-latest" "debian" "ubuntu" "centos" "alpine" "busybox" "quay.io/pypa/manylinux2014_x86_64")
+    for IMAGE in "${DOCKER_IMAGES[@]}"; do
+        docker pull "$IMAGE" ||
+            { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
+    done
+    log_version docker images
+    log_version docker system df
 }

@@ -28,7 +28,7 @@ function install_outdated_dotnets() {
 
 function prepare_dotnet_packages() {
 
-    SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" "7.0" "8.0" )
+    SDK_VERSIONS=("3.0" "3.1" "5.0" "6.0" "7.0" "8.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     declare RUNTIME_VERSIONS=( "2.1" "2.2" )
@@ -177,4 +177,23 @@ function configure_mono_repository () {
     echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-bionic main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
     sudo apt-get update
 
+}
+
+
+function install_rbenv_rubies() {
+    echo "[INFO] Running install_rbenv_rubies..."
+    eval "$(~/.rbenv/bin/rbenv init - bash)"
+    git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+    local DEFAULT_RUBY
+    DEFAULT_RUBY="2.7.8"
+    command -v rbenv ||
+        { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
+    local v
+
+    declare RUBY_VERSIONS=( "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.4" "3.3.4"  )
+
+    for v in "${RUBY_VERSIONS[@]}"; do
+        rbenv install ${v} ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
 }

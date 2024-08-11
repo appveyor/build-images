@@ -97,13 +97,16 @@ configure_path
 # cat $HOME/.profile
 # write_line "${HOME}/.profile" 'unset -f cd'
 # cat $HOME/.profile
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        $(declare -f install_google_chrome)
-        install_google_chrome" ||
-    _abort $?
+# su -l ${USER_NAME} -c "
+#         USER_NAME=${USER_NAME}
+#         $(declare -f install_google_chrome)
+#         install_google_chrome" ||
+#     _abort $?
+
 
 # install_docker_compose ||
 #     _abort $?
+install_qt ||
+    _abort $?
 
 cleanup

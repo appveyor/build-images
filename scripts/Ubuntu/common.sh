@@ -419,7 +419,7 @@ function install_azure_linux_agent(){
 
 function copy_appveyoragent() {
     if [[ -z "${APPVEYOR_BUILD_AGENT_VERSION-}" || "${#APPVEYOR_BUILD_AGENT_VERSION}" = "0" ]]; then
-        APPVEYOR_BUILD_AGENT_VERSION=7.0.3279;
+        APPVEYOR_BUILD_AGENT_VERSION=7.0.3311;
     fi
 
     echo "[INFO] Installing AppVeyor Build Agent v${APPVEYOR_BUILD_AGENT_VERSION}"
@@ -526,12 +526,18 @@ function install_nvm_and_nodejs() {
             $(declare -f add_line)
             $(declare -f replace_line)
             install_nvm" &&
+        # su -l ${USER_NAME} -c "
+        #     [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
+        #     USER_NAME=${USER_NAME}
+        #     $(declare -f log_version)
+        #     $(declare -f install_nvm_nodejs)
+        #     install_nvm_nodejs ${CURRENT_NODEJS}" ||
         su -l ${USER_NAME} -c "
             [ -s \"${HOME}/.nvm/nvm.sh\" ] && . \"${HOME}/.nvm/nvm.sh\"
             USER_NAME=${USER_NAME}
             $(declare -f log_version)
             $(declare -f install_nvm_nodejs)
-            install_nvm_nodejs ${CURRENT_NODEJS}" ||
+            install_nvm_nodejs" ||
         return $?
     else
         echo "[WARNING] User '${USER_NAME-}' not found. Cannot install NVM and Nodejs"
@@ -546,7 +552,7 @@ function install_nvm() {
         return 1
     fi
     #TODO have to figure out latest release version automatically
-    curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+    curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
     #shellcheck disable=SC2016
@@ -564,7 +570,7 @@ function install_nvm_nodejs() {
     fi
     local CURRENT_NODEJS
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        CURRENT_NODEJS=16
+        CURRENT_NODEJS=17
     else
         CURRENT_NODEJS=$1
     fi
@@ -573,7 +579,7 @@ function install_nvm_nodejs() {
     local v
 
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare NVM_VERSIONS=( "8" "9" "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" "20" "21")
+        declare NVM_VERSIONS=( "8" "10" "11" "12" "13" "14" "15" "16" "17" )
     else
         declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" "19" "20" )
     fi
@@ -782,9 +788,8 @@ function install_pip3() {
 
 function install_pythons(){
     echo "[INFO] Running install_pythons..."
-
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.4.10" "3.5.10" "3.6.15" "3.7.16" "3.8.17" "3.9.18" "3.10.13" "3.11.8" "3.12.2" )
+        declare PY_VERSIONS=( "2.7.18" "3.6.15" "3.7.16" "3.8.17" "3.9.18" "3.10.14" "3.11.9" "3.13.0b4" "3.12.4" )
     else
         declare PY_VERSIONS=( "2.7.18" "3.7.16" "3.8.17" "3.9.17" "3.10.12" "3.11.4" "3.12.0" )
     fi
@@ -1042,7 +1047,7 @@ function install_dotnets() {
     #cleanup
     if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
 
-    install_outdated_dotnets
+    #install_outdated_dotnets
 }
 
 function install_dotnet_arm64() {
@@ -1082,7 +1087,7 @@ function install_flutter() {
     pushd -- "${TMP_DIR}"
 
     local RELEASE_URL
-    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.19.1-stable.tar.xz"
+    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.22.2-stable.tar.xz"
     curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
         { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
     
@@ -1167,6 +1172,8 @@ function install_jdks() {
         return $?        
     install_jdk 21 https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?        
+    install_jdk 22 https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?        
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
         IFS=$'\n'
@@ -1247,7 +1254,7 @@ function install_jdks_arm64() {
 function install_android_sdk() {
     echo "[INFO] Running install_android_sdk..."
 
-    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip"
+    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
 
     write_line "${HOME}/.profile" 'export ANDROID_SDK_ROOT="/usr/lib/android-sdk"'
     export ANDROID_SDK_ROOT="/usr/lib/android-sdk"
@@ -1265,6 +1272,7 @@ function install_android_sdk() {
     echo "y" | sdkmanager "tools" > /dev/null
     echo "y" | sdkmanager "build-tools;28.0.3" > /dev/null
     echo "y" | sdkmanager "build-tools;30.0.3" > /dev/null
+    echo "y" | sdkmanager "build-tools;33.0.3" > /dev/null
     echo "y" | sdkmanager "platforms;android-30" > /dev/null
     echo "y" | sdkmanager "platforms;android-31" > /dev/null
     echo "y" | sdkmanager "platform-tools" > /dev/null
@@ -1325,7 +1333,7 @@ function install_rbenv_rubies() {
 
     declare RUBY_VERSIONS=( "2.1.10" "2.2.10" "2.3.8" "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.4" "3.2.3"  )
 
-    for v in "${RUBY_VERSIONS[@]}"; do  
+    for v in "${RUBY_VERSIONS[@]}"; do
         rbenv install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
     done
@@ -1407,6 +1415,10 @@ function install_gvm_and_golangs() {
     else
         echo "[WARNING] User '${USER_NAME-}' not found. Cannot install GVM and Go Langs"
     fi
+
+    # Unset cd as an overridden function by gvm
+    write_line "${HOME}/.profile" 'unset -f cd'
+    cat $HOME/.profile
 }
 
 function install_gvm() {
@@ -1432,6 +1444,10 @@ function install_gvm() {
     [[ -s "${HOME}/.gvm/scripts/gvm" ]] && (
             write_line "${HOME}/.profile" '[[ -s "/home/appveyor/.gvm/scripts/gvm" ]] && source "/home/appveyor/.gvm/scripts/gvm"'
     ) || true
+
+    # Unset cd as an overridden function by gvm
+    write_line "${HOME}/.profile" 'unset -f cd'
+    cat $HOME/.profile
 }
 
 function install_golangs() {
@@ -1448,7 +1464,7 @@ function install_golangs() {
     #gvm use go1.4 ||
      #   { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.13" "go1.20.14" "go1.21.7" "go1.22.0" )
+    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.13" "go1.20.14" "go1.21.12" "go1.22.5" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} -B ||
@@ -1482,7 +1498,7 @@ function install_golang_arm64() {
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
-    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:7.0" "mcr.microsoft.com/dotnet/aspnet:7.0" "mcr.microsoft.com/mssql/server:2022-latest" "debian" "ubuntu" "centos" "alpine" "busybox" )
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:7.0" "mcr.microsoft.com/dotnet/aspnet:7.0" "mcr.microsoft.com/mssql/server:2022-latest" "debian" "ubuntu" "centos" "alpine" "busybox" "quay.io/pypa/manylinux2014_x86_64")
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
         docker pull "$IMAGE" ||
             { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
@@ -1939,7 +1955,7 @@ function install_cmake() {
     echo "[INFO] Running install_cmake..."
     local VERSION
     if [[ -z "${1-}" || "${#1}" = "0" ]]; then
-        VERSION=3.27.1
+        VERSION=3.29.7
     else
         VERSION=$1
     fi
@@ -2118,7 +2134,7 @@ function install_browsers_arm64() {
 function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
 
-    local VB_VERSION=6.1
+    local VB_VERSION=7.0
     retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc -o oracle_vbox_2016.asc ||
         { echo "[ERROR] Cannot download oracle_vbox_2016.asc." 1>&2; return 10; }
 
@@ -2139,7 +2155,8 @@ function install_virtualbox_core() {
 function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
 
-    local VERSION=6.1.28
+    local VERSION=7.0.18
+    #https://download.virtualbox.org/virtualbox/7.0.20/Oracle_VM_VirtualBox_Extension_Pack-7.0.20.vbox-extpack
     local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
     install_virtualbox_core || return $?
@@ -2179,8 +2196,8 @@ function install_clang() {
     echo "[INFO] Running install_clang..."
     curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-    # install_clang_version 9
-    # install_clang_version 10
+    install_clang_version 9
+    install_clang_version 10
     install_clang_version 11
     install_clang_version 12
     install_clang_version 13
@@ -2188,6 +2205,8 @@ function install_clang() {
     install_clang_version 15
     install_clang_version 16
     install_clang_version 17
+    install_clang_version 18
+
 
     # make clang 10 default
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
