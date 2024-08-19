@@ -1,6 +1,6 @@
 ﻿. "$PSScriptRoot\common.ps1"
 
-$firefoxVersion = "126.0"
+$firefoxVersion = "129.0.1"
 
 Write-Host "Installing FireFox $firefoxVersion..." -ForegroundColor Cyan
 
