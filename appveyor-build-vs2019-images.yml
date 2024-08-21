@@ -178,7 +178,7 @@ for:
       - ps: .\install_selenium_drivers.ps1
 
       - ps: .\install_miniconda.ps1
-      - ps: .\install_python.ps1
+      - ps: .\install_python_new.ps1
       - ps: .\install_nodejs_latest.ps1
       - ps: .\install_yarn.ps1
       - ps: .\install_go.ps1
