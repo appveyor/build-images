@@ -274,27 +274,6 @@ else {
 UpdatePip "$env:SystemDrive\Python311"
 UpdatePip "$env:SystemDrive\Python311-x64"
 
-# Python 3.12 x64
-$python312_x64 = (GetUninstallString 'Python 3.12.5 (64-bit)')
-if ($python312_x64) {
-    Write-Host 'Python 3.12.5 x64 already installed'
-}
-else {
-    InstallPythonEXE "3.12.5" "x64" "$env:SystemDrive\Python312-x64"
-}
-
-# Python 3.12
-$python312 = (GetUninstallString 'Python 3.12.5 (32-bit)')
-if ($python312) {
-    Write-Host 'Python 3.12.5 already installed'
-}
-else {
-    InstallPythonEXE "3.12.5" "x86" "$env:SystemDrive\Python312"
-}
-
-UpdatePip "$env:SystemDrive\Python312"
-UpdatePip "$env:SystemDrive\Python312-x64"
-
 # Python 3.13 x64
 $python312_x64 = (GetUninstallString 'Python 3.13.0rc1 (64-bit)')
 if ($python312_x64) {
@@ -316,6 +295,27 @@ else {
 UpdatePip "$env:SystemDrive\Python313"
 UpdatePip "$env:SystemDrive\Python313-x64"
 
+# Python 3.12 x64
+$python312_x64 = (GetUninstallString 'Python 3.12.5 (64-bit)')
+if ($python312_x64) {
+    Write-Host 'Python 3.12.5 x64 already installed'
+}
+else {
+    InstallPythonEXE "3.12.5" "x64" "$env:SystemDrive\Python312-x64"
+}
+
+# Python 3.12
+$python312 = (GetUninstallString 'Python 3.12.5 (32-bit)')
+if ($python312) {
+    Write-Host 'Python 3.12.5 already installed'
+}
+else {
+    InstallPythonEXE "3.12.5" "x86" "$env:SystemDrive\Python312"
+}
+
+UpdatePip "$env:SystemDrive\Python312"
+UpdatePip "$env:SystemDrive\Python312-x64"
+
 # Ensure python named here is the default
 Add-Path C:\Python312
 Add-Path C:\Python312\Scripts
@@ -327,6 +327,7 @@ cmd /c ftype Python.File="C:\Windows\py.exe" "`"%1`"" %*
 # check default python
 Write-Host "Default Python installed:" -ForegroundColor Cyan
 $r = (cmd /c python.exe --version 2>&1)
+$r
 $r.Exception
 
 # py.exe
