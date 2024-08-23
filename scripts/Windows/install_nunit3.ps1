@@ -14,7 +14,7 @@ $tempPath = "$env:TEMP\NUnit.Console"
     (New-Object Net.WebClient).DownloadFile('https://github.com/nunit/nunit-console/releases/download/3.18.1/NUnit.Console-3.18.1.zip', $zipPath)
 7z x $zipPath -y -o"$tempPath" | Out-Null
 New-Item -Path "$nunitPath" -ItemType Directory -Force | Out-Null
-[IO.Directory]::Move("$tempPath\bin\net35", "$nunitPath\bin")
+[IO.Directory]::Move("$tempPath\bin\net462", "$nunitPath\bin")
 Copy-Item -Path "$tempPath\bin\agents" -Destination $nunitPath -Recurse
 Remove-Item $zipPath
 
