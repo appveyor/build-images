@@ -320,6 +320,7 @@ UpdatePip "$env:SystemDrive\Python312-x64"
 Add-Path C:\Python312
 Add-Path C:\Python312\Scripts
 [Environment]::SetEnvironmentVariable("PY_PYTHON", "3.12", "Machine")
+$env:PY_PYTHON="3.12"
 
 # restore .py file mapping
 # https://github.com/appveyor/ci/issues/575
