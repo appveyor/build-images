@@ -319,6 +319,7 @@ UpdatePip "$env:SystemDrive\Python312-x64"
 # Ensure python named here is the default
 Add-Path C:\Python312
 Add-Path C:\Python312\Scripts
+[Environment]::SetEnvironmentVariable("PY_PYTHON", "3.12", "Machine")
 
 # restore .py file mapping
 # https://github.com/appveyor/ci/issues/575
@@ -333,6 +334,11 @@ $r.Exception
 # py.exe
 Write-Host "Py.exe installed:" -ForegroundColor Cyan
 $r = (py.exe --version)
+$r
+
+# py.exe versions
+Write-Host "Py.exe versionsinstalled:" -ForegroundColor Cyan
+$r = (py.exe -0p)
 $r
 
 function CheckPython($path) {
