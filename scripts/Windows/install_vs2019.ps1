@@ -20,8 +20,7 @@ Function InstallVS
     Invoke-WebRequest -Uri $VSBootstrapperURL -OutFile "${env:Temp}\vs_$Sku.exe"
 
     $FilePath = "${env:Temp}\vs_$Sku.exe"
-	#$Arguments = ($WorkLoads, '--quiet', '--norestart', '--wait', '--nocache', '--force')
-	$Arguments = ($WorkLoads, '--norestart', '--wait', '--nocache', '--force')
+	$Arguments = ($WorkLoads, '--quiet', '--norestart', '--wait', '--nocache', '--force')
 
 	if ($ChannelUri) {
 		Write-host "Adding channelUri..."
@@ -73,7 +72,7 @@ Function InstallVS
 
 $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Component.Android.SDK25.Private ' + `
-	'--add Component.Android.SDK28 ' + `
+	'--add Component.Android.SDK30 ' + `
 	'--add Component.Linux.CMake ' + `
 	'--add Component.MDD.Android ' + `
 	'--add Component.MDD.Linux ' + `
