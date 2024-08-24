@@ -156,7 +156,7 @@ $WorkLoads = '--add Component.Android.NDK.R16B ' + `
 	'--add Microsoft.VisualStudio.Component.SQL.SSDT ' + `
 	'--add Microsoft.VisualStudio.Component.TeamOffice ' + `
 	'--add Microsoft.VisualStudio.Component.TextTemplating ' + `
-	'--add Microsoft.VisualStudio.Component.TypeScript.3.6 ' + `
+	'--add Microsoft.VisualStudio.Component.TypeScript.4.3 ' + `
 	'--add Microsoft.VisualStudio.Component.VC.14.20.ATL ' + `
 	'--add Microsoft.VisualStudio.Component.VC.14.20.ATL.Spectre ' + `
 	'--add Microsoft.VisualStudio.Component.VC.14.20.CLI.Support ' + `
