@@ -139,8 +139,8 @@ for:
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
-       - ps: .\install_vs2019.ps1
-       - ps: .\update_msbuild_path.ps1
+      - ps: .\install_vs2019.ps1
+      - ps: .\update_msbuild_path.ps1
       - ps: .\install_xunit_192.ps1
       - ps: .\install_xunit_20.ps1
       - ps: .\install_nunit.ps1
