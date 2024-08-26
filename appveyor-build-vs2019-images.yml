@@ -101,7 +101,7 @@ for:
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
-      - ps: .\install_chocolatey.ps1
+      #- ps: .\install_chocolatey.ps1
       - ps: .\install_webpi.ps1
       - ps: .\install_nuget.ps1
       - ps: .\install_pstools.ps1
@@ -138,7 +138,7 @@ for:
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 10
-      
+
       - ps: .\install_dotnet_runtimes.ps1
       - ps: .\install_vs2019.ps1
       - ps: .\update_msbuild_path.ps1
@@ -147,7 +147,8 @@ for:
       - ps: .\install_nunit.ps1
       - ps: .\install_nunit3.ps1
       - ps: .\install_vstest_console_logger.ps1
-
+      - ps: .\install_chocolatey.ps1
+      
       - ps: .\install_qt_fast_windows.ps1
       - ps: .\install_ruby.ps1
       - ps: .\patch_qt_files.ps1
