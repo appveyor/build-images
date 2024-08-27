@@ -93,7 +93,7 @@ for:
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
       - ps: .\install_7zip.ps1
-      #- ps: .\install_dotnet_runtimes.ps1
+      - ps: .\install_dotnet_runtimes.ps1
       #- ps: .\install_vs2019.ps1
       #- ps: .\update_msbuild_path.ps1
 
@@ -137,18 +137,23 @@ for:
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
-      - ps: Start-Sleep -s 10
+      - ps: Start-Sleep -s 5
 
-      - ps: .\install_dotnet_runtimes.ps1
+      #- ps: .\install_dotnet_runtimes.ps1
       - ps: .\install_vs2019.ps1
       - ps: .\update_msbuild_path.ps1
+      
+      # Restart VM
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+      
       - ps: .\install_xunit_192.ps1
       - ps: .\install_xunit_20.ps1
       - ps: .\install_nunit.ps1
       - ps: .\install_nunit3.ps1
       - ps: .\install_vstest_console_logger.ps1
       - ps: .\install_chocolatey.ps1
-      
+
       - ps: .\install_qt_fast_windows.ps1
       - ps: .\install_ruby.ps1
       - ps: .\patch_qt_files.ps1
