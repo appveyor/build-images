@@ -60,7 +60,8 @@ build_script:
   #- ps: .\install_boost_1.77.0_vs2019.ps1
   #- ps: .\fix_qt_symlinks.ps1
   #- ps: .\install_mingw.ps1
-  - ps: .\install_nunit3.ps1
+  - ps: .\install_wix.ps1
+  - ps: .\install_wix_toolset_vs2019.ps1
   #- ps: Remove-Path "${env:ProgramFiles}\Eclipse Foundation\jdk-8.0.302.8-hotspot\bin" -ErrorAction Stop
   # Restart VM
   # - ps: Start-Sleep -s 5; Restart-Computer -Force
