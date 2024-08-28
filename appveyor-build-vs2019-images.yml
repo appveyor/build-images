@@ -99,7 +99,7 @@ for:
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
-      - ps: Start-Sleep -s 5
+      - ps: Start-Sleep -s 10
 
 
 
