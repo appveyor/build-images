@@ -98,10 +98,8 @@ for:
       #- ps: .\update_msbuild_path.ps1
 
       # Restart VM
-      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 10; Restart-Computer
       - ps: Start-Sleep -s 10
-
-
 
       - ps: .\check_dotnet_runtimes.ps1
       - ps: .\install_chocolatey.ps1
@@ -119,20 +117,20 @@ for:
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
-      - ps: Start-Sleep -s 5
+      - ps: Start-Sleep -s 10
 
       # WSL
       - ps: .\install_wsl.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
-      - ps: Start-Sleep -s 5
+      - ps: Start-Sleep -s 10
       
       - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 } else { .\install_docker_desktop.ps1 }
       
       # Restart VM
-      - ps: Start-Sleep -s 5; Restart-Computer
-      - ps: Start-Sleep -s 5
+      - ps: Start-Sleep -s 10; Restart-Computer
+      - ps: Start-Sleep -s 10
 
       # Finalize Docker installation
       - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
@@ -140,7 +138,7 @@ for:
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
-      - ps: Start-Sleep -s 5
+      - ps: Start-Sleep -s 10
 
       - ps: .\install_vs2019.ps1
       - ps: .\update_msbuild_path.ps1
