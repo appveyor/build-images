@@ -31,8 +31,6 @@ while ($i -lt (300)) {
   sleep 5;
 }
 
-Restart-Service -Name com.docker.service
-
 if (-not $finished) {
     Throw "Docker has not started"
 }
@@ -75,6 +73,8 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		}
 	}
 }
+
+Restart-Service -Name com.docker.service
 
 Write-Host "Setting experimental mode"
 $configPath = "$env:programdata\docker\config\daemon.json"
