@@ -18,9 +18,9 @@ while ($i -lt (300)) {
   
   $dockerSvc = (Get-Service com.docker.service -ErrorAction SilentlyContinue)
 
-  if ($dockerSvc -and ($i -lt 3)) {
-	Restart-Service -Name com.docker.service
-  }
+#   if ($dockerSvc -and ($i -lt 3)) {
+# 	Restart-Service -Name com.docker.service
+#   }
 
   if ((Get-Process 'Docker Desktop' -ErrorAction SilentlyContinue) -and $dockerSvc -and $dockerSvc.status -eq 'Running') {
     $finished = $true
@@ -30,6 +30,8 @@ while ($i -lt (300)) {
   Write-Host "Retrying in 5 seconds..."
   sleep 5;
 }
+
+Restart-Service -Name com.docker.service
 
 if (-not $finished) {
     Throw "Docker has not started"
