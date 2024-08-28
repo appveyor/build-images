@@ -13,9 +13,15 @@ $finished = $false
 Write-Host "Waiting for Docker to start..."
 
 while ($i -lt (300)) {
+
   $i +=1
   
   $dockerSvc = (Get-Service com.docker.service -ErrorAction SilentlyContinue)
+
+  if ($dockerSvc -and ($i -lt 3)) {
+	Restart-Service -Name com.docker.service
+  }
+
   if ((Get-Process 'Docker Desktop' -ErrorAction SilentlyContinue) -and $dockerSvc -and $dockerSvc.status -eq 'Running') {
     $finished = $true
     Write-Host "Docker started!"
