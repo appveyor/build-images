@@ -93,7 +93,7 @@ for:
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
       - ps: .\install_7zip.ps1
-      #- ps: .\install_dotnet_runtimes.ps1
+      - ps: .\install_dotnet_runtimes.ps1
       #- ps: .\install_vs2019.ps1
       #- ps: .\update_msbuild_path.ps1
 
@@ -103,8 +103,8 @@ for:
 
 
 
-      #- ps: .\check_dotnet_runtimes.ps1
-      #- ps: .\install_chocolatey.ps1
+      - ps: .\check_dotnet_runtimes.ps1
+      - ps: .\install_chocolatey.ps1
       - ps: .\install_webpi.ps1
       - ps: .\install_nuget.ps1
       - ps: .\install_pstools.ps1
@@ -142,16 +142,9 @@ for:
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
-      - ps: .\install_dotnet_runtimes.ps1
-      - ps: .\check_dotnet_runtimes.ps1
       - ps: .\install_vs2019.ps1
       - ps: .\update_msbuild_path.ps1
-
-      # Restart VM
-      - ps: Start-Sleep -s 5; Restart-Computer
-      - ps: Start-Sleep -s 5
-      
-      - ps: .\install_chocolatey.ps1     
+   
       - ps: .\install_xunit_192.ps1
       - ps: .\install_xunit_20.ps1
       - ps: .\install_nunit.ps1
@@ -213,9 +206,6 @@ for:
       - ps: .\install_erlang.ps1
       - ps: .\install_flutter.ps1
 
-      #- ps: .\install_postgres96.ps1
-      #- ps: .\install_postgres10.ps1
-      #- ps: .\install_postgres11.ps1
       - ps: .\install_postgres12.ps1
       - ps: .\install_postgres13.ps1
       - ps: .\install_postgres14.ps1
@@ -250,7 +240,7 @@ for:
       - ps: .\install_vdproj_vs2019.ps1
       - ps: .\install_service_fabric.ps1
       - ps: .\install_ssis_vs2019.ps1
-      - ps: .\install_wix311.ps1
+      - ps: .\install_wix314.ps1
       - ps: .\install_wix_toolset_vs2019.ps1
       - ps: .\install_doxygen.ps1
       - ps: .\install_graphviz.ps1
@@ -268,9 +258,7 @@ for:
       - ps: .\install_maven.ps1
       - ps: .\install_gitversion.ps1
       - ps: .\install_cygwin.ps1
-      # - ps: .\install_mingw.ps1
       - ps: .\install_mingw-w64.ps1
-      #- ps: .\install_boost_1.77.0_vs2019.ps1
       - ps: .\install_boost_1.83.0_vs2019.ps1
       - ps: .\install_boost_1.84.0_vs2019.ps1
       - ps: .\install_boost_1.85.0_vs2019.ps1
@@ -280,7 +268,6 @@ for:
       # - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 
       #- ps: .\install_dotnet_core_sdks.ps1
-      #- ps: .\install_dotnet_runtimes.ps1
       - ps: .\install_dotnet_devpacks.ps1
 
       # Restart VM
