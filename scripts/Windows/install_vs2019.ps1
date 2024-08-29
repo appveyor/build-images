@@ -281,7 +281,9 @@ if ($env:install_vs2019_preview) {
 	$VSBootstrapperURL = 'https://aka.ms/vs/16/pre/vs_community.exe'
 } else {
 	Write-Host "Installing from 'Release' channel"
-	$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
+	# Pin to 16.11.34
+	$VSBootstrapperURL = 'https://download.visualstudio.microsoft.com/download/pr/30682086-8872-4c7d-b066-0446b278141b/6c2a4176652e213613187c22e92d15d6e37347f8cfa51b5e5da1ad4871155635/vs_Community.exe'
+	#$VSBootstrapperURL = 'https://aka.ms/vs/16/release/vs_community.exe'
 	#$VSBootstrapperURL = 'https://download.visualstudio.microsoft.com/download/pr/7c09e2e8-2b3e-4213-93ab-5646874f8a2b/5383ec66848fff294c5536043026affaf924615cbae82a05441d6d4c8372ead7/vs_Professional.exe'
 	#$ChannelUri = 'https://aka.ms/vs/16/release/112851321_818166240/channel'
 
