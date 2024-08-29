@@ -134,4 +134,15 @@ if (Test-Path $settingsPath) {
 
 Write-Host "Docker CE installed and configured"
 
-#Switch-DockerLinux
+# forcibly terminate docker as suggested here (https://stackoverflow.com/questions/78053075/setup-configuration-of-docker-desktop-programatically-via-powershell-scripting)
+Stop-Service -Name "com.docker.*" -ErrorAction SilentlyContinue
+
+$processesToStop = @(
+  'Docker Desktop',
+  'com.docker.backend',
+  'com.docker.extensions'
+)
+$processesToStop | ForEach-Object {
+  Get-Process -Name $_ -ErrorAction Ignore |
+    Stop-Process -Force -ErrorAction Ignore
+}
