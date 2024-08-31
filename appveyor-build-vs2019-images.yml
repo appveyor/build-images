@@ -89,7 +89,6 @@ for:
       - ps: Start-Sleep -s 5
 
       - appveyor version
-      - ps: choco feature enable -n allowGlobalConfirmation
       - ps: .\install_path_utils.ps1
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
@@ -174,6 +173,7 @@ for:
         - bake_phase: 3
 
     build_script:
+      - ps: choco feature enable -n allowGlobalConfirmation
       - ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_openssl.ps1    
       - ps: .\install_msys64.ps1
