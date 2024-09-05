@@ -226,7 +226,7 @@ $WorkLoads = '--add Component.Android.NDK.R21E ' + `
 	'--add Microsoft.VisualStudio.Component.Windows10SDK.17763 ' + `
 	'--add Microsoft.VisualStudio.Component.Windows10SDK.18362 ' + `
 	'--add Microsoft.VisualStudio.Component.Windows10SDK.20348 ' + `
-	'--add Microsoft.VisualStudio.Component.Windows11SDK.22000 ' + `
+	'--add Microsoft.VisualStudio.Component.Windows11SDK.26100 ' + `
 	'--add Microsoft.VisualStudio.Component.WinXP ' + `
 	'--add Microsoft.VisualStudio.Component.Workflow ' + `
 	'--add Microsoft.VisualStudio.ComponentGroup.Azure.CloudServices ' + `
