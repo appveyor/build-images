@@ -156,41 +156,41 @@ UpdatePip "$env:SystemDrive\Python27"
 UpdatePip "$env:SystemDrive\Python27-x64"
 
 
-if (-not $env:INSTALL_LATEST_ONLY) {
+# if (-not $env:INSTALL_LATEST_ONLY) {
 
-    # Python 3.7 x64
-    $python37_x64 = (GetUninstallString 'Python 3.7.9 (64-bit)')
-    if ($python37_x64) {
-        Write-Host 'Python 3.7.9 x64 already installed'
-    }
-    else {
+#     # Python 3.7 x64
+#     $python37_x64 = (GetUninstallString 'Python 3.7.9 (64-bit)')
+#     if ($python37_x64) {
+#         Write-Host 'Python 3.7.9 x64 already installed'
+#     }
+#     else {
 
-        UninstallPython "Python 3.7.0 (64-bit)"
-        UninstallPython "Python 3.7.5 (64-bit)"
-        UninstallPython "Python 3.7.7 (64-bit)"
-        UninstallPython "Python 3.7.8 (64-bit)"
+#         UninstallPython "Python 3.7.0 (64-bit)"
+#         UninstallPython "Python 3.7.5 (64-bit)"
+#         UninstallPython "Python 3.7.7 (64-bit)"
+#         UninstallPython "Python 3.7.8 (64-bit)"
 
-        InstallPythonEXE "3.7.9" "x64" "$env:SystemDrive\Python37-x64"
-    }
+#         InstallPythonEXE "3.7.9" "x64" "$env:SystemDrive\Python37-x64"
+#     }
 
 
-    # Python 3.7
-    $python37 = (GetUninstallString 'Python 3.7.9 (32-bit)')
-    if ($python37) {
-        Write-Host 'Python 3.7.9 already installed'
-    }
-    else {
-        UninstallPython "Python 3.7.0 (32-bit)"
-        UninstallPython "Python 3.7.5 (32-bit)"
-        UninstallPython "Python 3.7.7 (32-bit)"
-        UninstallPython "Python 3.7.8 (32-bit)"
+#     # Python 3.7
+#     $python37 = (GetUninstallString 'Python 3.7.9 (32-bit)')
+#     if ($python37) {
+#         Write-Host 'Python 3.7.9 already installed'
+#     }
+#     else {
+#         UninstallPython "Python 3.7.0 (32-bit)"
+#         UninstallPython "Python 3.7.5 (32-bit)"
+#         UninstallPython "Python 3.7.7 (32-bit)"
+#         UninstallPython "Python 3.7.8 (32-bit)"
 
-        InstallPythonEXE "3.7.9" "x86" "$env:SystemDrive\Python37"
-    }
+#         InstallPythonEXE "3.7.9" "x86" "$env:SystemDrive\Python37"
+#     }
 
-    UpdatePip "$env:SystemDrive\Python37"
-    UpdatePip "$env:SystemDrive\Python37-x64"
-}
+#     UpdatePip "$env:SystemDrive\Python37"
+#     UpdatePip "$env:SystemDrive\Python37-x64"
+# }
 
 # Python 3.8 x64
 $python38_x64 = (GetUninstallString 'Python 3.8.10 (64-bit)')
