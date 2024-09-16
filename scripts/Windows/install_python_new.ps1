@@ -1,10 +1,12 @@
-﻿. "$PSScriptRoot\common.ps1"
+. "$PSScriptRoot\common.ps1"
 #
 # Upgrading PIP:
 # https://stackoverflow.com/questions/30699782/access-is-denied-while-upgrading-pip-exe-on-windows/35580525#35580525
 #
 
 $pipVersion = "23.2.1"
+
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 function UpdatePythonPath($pythonPath) {
     $env:path = ($env:path -split ';' | Where-Object { -not $_.contains('\Python') }) -join ';'
@@ -47,23 +49,9 @@ function UpdatePip($pythonPath) {
     Start-ProcessWithOutput "pip install virtualenv" -IgnoreExitCode
 }
 
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-# Write-Host "Downloading get-pip.py..." -ForegroundColor Cyan
-# $pipPath = "$env:TEMP\get-pip.py"
-# (New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/get-pip.py', $pipPath)
-
 Write-Host "Downloading get-pip.py v2.6..." -ForegroundColor Cyan
 $pipPath26 = "$env:TEMP\get-pip-26.py"
 (New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/pip/2.6/get-pip.py', $pipPath26)
-
-Write-Host "Downloading get-pip.py v3.3..." -ForegroundColor Cyan
-$pipPath33 = "$env:TEMP\get-pip-33.py"
-(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/pip/3.3/get-pip.py', $pipPath33)
-
-Write-Host "Downloading get-pip.py v3.4..." -ForegroundColor Cyan
-$pipPath34 = "$env:TEMP\get-pip-34.py"
-(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/pip/3.4/get-pip.py', $pipPath34)
 
 function InstallPythonMSI($version, $platform, $targetPath) {
     $urlPlatform = ""
@@ -93,9 +81,19 @@ function InstallPythonEXE($version, $platform, $targetPath) {
         $urlPlatform = "-amd64"
     }
 
+    $sfx = ""
+    if ($version -match '(?<version>[0-9]*\.[0-9]*\.[0-9]*)(?<sfx>[abrc0-9]*)') {
+      write-host "found suffix"
+      
+      $Matches
+
+      $version = $Matches.version
+      $sfx = $Matches.sfx
+    }
+
     Write-Host "Installing Python $version $platform to $($targetPath)..." -ForegroundColor Cyan
 
-    $downloadUrl = "https://www.python.org/ftp/python/$version/python-$version$urlPlatform.exe"
+    $downloadUrl = "https://www.python.org/ftp/python/$version/python-$version$sfx$urlPlatform.exe"
     Write-Host "Downloading $($downloadUrl)..."
     $exePath = "$env:TEMP\python-$version.exe"
     (New-Object Net.WebClient).DownloadFile($downloadUrl, $exePath)
@@ -156,41 +154,41 @@ UpdatePip "$env:SystemDrive\Python27"
 UpdatePip "$env:SystemDrive\Python27-x64"
 
 
-# if (-not $env:INSTALL_LATEST_ONLY) {
+if (-not $env:INSTALL_LATEST_ONLY) {
 
-#     # Python 3.7 x64
-#     $python37_x64 = (GetUninstallString 'Python 3.7.9 (64-bit)')
-#     if ($python37_x64) {
-#         Write-Host 'Python 3.7.9 x64 already installed'
-#     }
-#     else {
+    # Python 3.7 x64
+    $python37_x64 = (GetUninstallString 'Python 3.7.9 (64-bit)')
+    if ($python37_x64) {
+        Write-Host 'Python 3.7.9 x64 already installed'
+    }
+    else {
 
-#         UninstallPython "Python 3.7.0 (64-bit)"
-#         UninstallPython "Python 3.7.5 (64-bit)"
-#         UninstallPython "Python 3.7.7 (64-bit)"
-#         UninstallPython "Python 3.7.8 (64-bit)"
+        UninstallPython "Python 3.7.0 (64-bit)"
+        UninstallPython "Python 3.7.5 (64-bit)"
+        UninstallPython "Python 3.7.7 (64-bit)"
+        UninstallPython "Python 3.7.8 (64-bit)"
 
-#         InstallPythonEXE "3.7.9" "x64" "$env:SystemDrive\Python37-x64"
-#     }
+        InstallPythonEXE "3.7.9" "x64" "$env:SystemDrive\Python37-x64"
+    }
 
 
-#     # Python 3.7
-#     $python37 = (GetUninstallString 'Python 3.7.9 (32-bit)')
-#     if ($python37) {
-#         Write-Host 'Python 3.7.9 already installed'
-#     }
-#     else {
-#         UninstallPython "Python 3.7.0 (32-bit)"
-#         UninstallPython "Python 3.7.5 (32-bit)"
-#         UninstallPython "Python 3.7.7 (32-bit)"
-#         UninstallPython "Python 3.7.8 (32-bit)"
+    # Python 3.7
+    $python37 = (GetUninstallString 'Python 3.7.9 (32-bit)')
+    if ($python37) {
+        Write-Host 'Python 3.7.9 already installed'
+    }
+    else {
+        UninstallPython "Python 3.7.0 (32-bit)"
+        UninstallPython "Python 3.7.5 (32-bit)"
+        UninstallPython "Python 3.7.7 (32-bit)"
+        UninstallPython "Python 3.7.8 (32-bit)"
 
-#         InstallPythonEXE "3.7.9" "x86" "$env:SystemDrive\Python37"
-#     }
+        InstallPythonEXE "3.7.9" "x86" "$env:SystemDrive\Python37"
+    }
 
-#     UpdatePip "$env:SystemDrive\Python37"
-#     UpdatePip "$env:SystemDrive\Python37-x64"
-# }
+    UpdatePip "$env:SystemDrive\Python37"
+    UpdatePip "$env:SystemDrive\Python37-x64"
+}
 
 # Python 3.8 x64
 $python38_x64 = (GetUninstallString 'Python 3.8.10 (64-bit)')
@@ -276,29 +274,53 @@ else {
 UpdatePip "$env:SystemDrive\Python311"
 UpdatePip "$env:SystemDrive\Python311-x64"
 
-# Python 3.12 x64
-$python312_x64 = (GetUninstallString 'Python 3.12.3 (64-bit)')
+# Python 3.13 x64
+$python312_x64 = (GetUninstallString 'Python 3.13.0rc1 (64-bit)')
 if ($python312_x64) {
-    Write-Host 'Python 3.12.3 x64 already installed'
+    Write-Host 'Python 3.13.0rc1 x64 already installed'
 }
 else {
-    InstallPythonEXE "3.12.3" "x64" "$env:SystemDrive\Python312-x64"
+    InstallPythonEXE "3.13.0rc1" "x64" "$env:SystemDrive\Python313-x64"
+}
+
+# Python 3.13
+$python312 = (GetUninstallString 'Python 3.13.0rc1 (32-bit)')
+if ($python312) {
+    Write-Host 'Python 3.13.0rc1 already installed'
+}
+else {
+    InstallPythonEXE "3.13.0rc1" "x86" "$env:SystemDrive\Python313"
+}
+
+UpdatePip "$env:SystemDrive\Python313"
+UpdatePip "$env:SystemDrive\Python313-x64"
+
+# Python 3.12 x64
+$python312_x64 = (GetUninstallString 'Python 3.12.5 (64-bit)')
+if ($python312_x64) {
+    Write-Host 'Python 3.12.5 x64 already installed'
+}
+else {
+    InstallPythonEXE "3.12.5" "x64" "$env:SystemDrive\Python312-x64"
 }
 
 # Python 3.12
-$python312 = (GetUninstallString 'Python 3.12.3 (32-bit)')
+$python312 = (GetUninstallString 'Python 3.12.5 (32-bit)')
 if ($python312) {
-    Write-Host 'Python 3.12.3 already installed'
+    Write-Host 'Python 3.12.5 already installed'
 }
 else {
-    InstallPythonEXE "3.12.3" "x86" "$env:SystemDrive\Python312"
+    InstallPythonEXE "3.12.5" "x86" "$env:SystemDrive\Python312"
 }
 
 UpdatePip "$env:SystemDrive\Python312"
 UpdatePip "$env:SystemDrive\Python312-x64"
 
+# Ensure python named here is the default
 Add-Path C:\Python312
 Add-Path C:\Python312\Scripts
+[Environment]::SetEnvironmentVariable("PY_PYTHON", "3.12", "Machine")
+$env:PY_PYTHON="3.12"
 
 # restore .py file mapping
 # https://github.com/appveyor/ci/issues/575
@@ -307,11 +329,17 @@ cmd /c ftype Python.File="C:\Windows\py.exe" "`"%1`"" %*
 # check default python
 Write-Host "Default Python installed:" -ForegroundColor Cyan
 $r = (cmd /c python.exe --version 2>&1)
+$r
 $r.Exception
 
 # py.exe
 Write-Host "Py.exe installed:" -ForegroundColor Cyan
 $r = (py.exe --version)
+$r
+
+# py.exe versions
+Write-Host "Py.exe versionsinstalled:" -ForegroundColor Cyan
+$r = (py.exe -0p)
 $r
 
 function CheckPython($path) {
@@ -362,3 +390,5 @@ CheckPython 'C:\Python311'
 CheckPython 'C:\Python311-x64'
 CheckPython 'C:\Python312'
 CheckPython 'C:\Python312-x64'
+CheckPython 'C:\Python313'
+CheckPython 'C:\Python313-x64'

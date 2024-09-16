@@ -12,11 +12,11 @@ environment:
     #   bake_phase: wait-50-min
     #   job_depends_on: VS 2019 on Hyper-V - Part I
 
-    - job_name: VS 2019 on Hyper-V - Part II
-      bake_phase: 3
-      job_depends_on: VS 2019 on Hyper-V - Wait for Part I image to be ready
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1
-      APPVEYOR_BAKE_IMAGE: vs2019-master
+    # - job_name: VS 2019 on Hyper-V - Part II
+    #   bake_phase: 3
+    #   job_depends_on: VS 2019 on Hyper-V - Wait for Part I image to be ready
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1
+    #   APPVEYOR_BAKE_IMAGE: vs2019-master
 
     # GCE
     # =======
@@ -30,11 +30,11 @@ environment:
     #   bake_phase: wait-15-min
     #   job_depends_on: VS 2019 on GCE us-central1 - Part I
 
-    # - job_name: VS 2019 on GCE us-central1 - Part II
-    #   bake_phase: 3
-    #   job_depends_on: VS 2019 on GCE us-central1 - Wait for Part I image to be ready
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-gce-us-central1
-    #   APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
+    - job_name: VS 2019 on GCE us-central1 - Part II
+      bake_phase: 3
+      job_depends_on: VS 2019 on GCE us-central1 - Wait for Part I image to be ready
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-temp-p1-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2019-master-gce-us-central1
 
     # # Azure
     # # =======
@@ -94,11 +94,14 @@ for:
       - ps: .\install_powershell_get.ps1
       - ps: .\install_7zip.ps1
       - ps: .\install_dotnet_runtimes.ps1
+      #- ps: .\install_vs2019.ps1
+      #- ps: .\update_msbuild_path.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
+      - ps: .\check_dotnet_runtimes.ps1
       - ps: .\install_chocolatey.ps1
       - ps: .\install_webpi.ps1
       - ps: .\install_nuget.ps1
@@ -139,6 +142,7 @@ for:
 
       - ps: .\install_vs2019.ps1
       - ps: .\update_msbuild_path.ps1
+   
       - ps: .\install_xunit_192.ps1
       - ps: .\install_xunit_20.ps1
       - ps: .\install_nunit.ps1
@@ -169,6 +173,7 @@ for:
         - bake_phase: 3
 
     build_script:
+      - ps: choco feature enable -n allowGlobalConfirmation
       - ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_openssl.ps1    
       - ps: .\install_msys64.ps1
@@ -178,7 +183,7 @@ for:
       - ps: .\install_selenium_drivers.ps1
 
       - ps: .\install_miniconda.ps1
-      - ps: .\install_python.ps1
+      - ps: .\install_python_new.ps1
       - ps: .\install_nodejs_latest.ps1
       - ps: .\install_yarn.ps1
       - ps: .\install_go.ps1
@@ -194,14 +199,13 @@ for:
       - ps: .\install_jdk18.ps1
       - ps: .\install_jdk19.ps1
       - ps: .\install_jdk21.ps1
+      - ps: .\install_jdk22.ps1
       - ps: .\install_android_sdk.ps1
       - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
       - ps: .\install_erlang.ps1
       - ps: .\install_flutter.ps1
 
-      #- ps: .\install_postgres96.ps1
-      #- ps: .\install_postgres10.ps1
-      #- ps: .\install_postgres11.ps1
+      - ps: .\install_postgres11.ps1
       - ps: .\install_postgres12.ps1
       - ps: .\install_postgres13.ps1
       - ps: .\install_postgres14.ps1
@@ -236,7 +240,7 @@ for:
       - ps: .\install_vdproj_vs2019.ps1
       - ps: .\install_service_fabric.ps1
       - ps: .\install_ssis_vs2019.ps1
-      - ps: .\install_wix311.ps1
+      - ps: .\install_wix314.ps1
       - ps: .\install_wix_toolset_vs2019.ps1
       - ps: .\install_doxygen.ps1
       - ps: .\install_graphviz.ps1
@@ -254,18 +258,16 @@ for:
       - ps: .\install_maven.ps1
       - ps: .\install_gitversion.ps1
       - ps: .\install_cygwin.ps1
-      # - ps: .\install_mingw.ps1
       - ps: .\install_mingw-w64.ps1
-      #- ps: .\install_boost_1.77.0_vs2019.ps1
       - ps: .\install_boost_1.83.0_vs2019.ps1
       - ps: .\install_boost_1.84.0_vs2019.ps1
       - ps: .\install_boost_1.85.0_vs2019.ps1
+      - ps: .\install_boost_1.86.0_vs2019.ps1
 
       # - ps: .\install_android_sdk.ps1
       # - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 
       #- ps: .\install_dotnet_core_sdks.ps1
-      #- ps: .\install_dotnet_runtimes.ps1
       - ps: .\install_dotnet_devpacks.ps1
 
       # Restart VM
