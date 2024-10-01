@@ -787,12 +787,16 @@ function install_pip3() {
 }
 
 function install_pythons(){
-    echo "[INFO] Running install_pythons..."
+    echo "[INFO] Installing pyenv..."
 
     curl https://pyenv.run | bash
 
     write_line "${HOME}/.profile" 'export PYENV_ROOT="$HOME/.pyenv"'
     write_line "${HOME}/.profile" 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
+    write_line "${HOME}/.profile" 'eval "$(pyenv init -)"'
+
+    export PYENV_ROOT="$HOME/.pyenv"
+    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)"
 
     echo "[INFO] Running install_pythons..."

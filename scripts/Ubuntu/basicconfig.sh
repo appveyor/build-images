@@ -269,9 +269,13 @@ if [[ $OS_ARCH == "amd64" ]]; then
         _abort $?
 fi
 
-su -l ${USER_NAME} -c "
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
         USER_NAME=${USER_NAME}
         OS_ARCH=${OS_ARCH}
+        $(declare -f log_version)
+        $(declare -f write_line)
+        $(declare -f add_line)
         $(declare -f install_pythons)
         install_pythons" ||
     _abort $?
