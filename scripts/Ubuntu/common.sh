@@ -900,7 +900,7 @@ function install_powershell() {
     # Import the public repository GPG keys
     curl -fsSL "https://packages.microsoft.com/keys/microsoft.asc" | apt-key add - &&
     # Register the Microsoft Ubuntu repository
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/prod.list)" ||
+    add-apt-repository -y "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/prod.list)" ||
         { echo "[ERROR] Cannot add Microsoft's APT source." 1>&2; return 10; }
 
     # Update the list of products and Install PowerShell
@@ -1110,7 +1110,7 @@ function install_flutter() {
 
 function configure_mono_repository () {
     echo "[INFO] Running install_mono..."
-    add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||
+    add-apt-repository -y "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
 }
 
@@ -1510,7 +1510,7 @@ function pull_dockerimages() {
 function configure_docker_repository() {
     echo "[INFO] Running configure_docker_repository..."
 
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
+    add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${OS_CODENAME} stable" ||
         { echo "[ERROR] Cannot add Docker repository to APT sources." 1>&2; return 10; }
 }
 
@@ -1604,8 +1604,8 @@ function install_MSSQLServer() {
 
 function configure_sqlserver_repository() {
     echo "[INFO] Running configure_sqlserver_repository..."
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2019.list)" &&
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/prod.list)" ||
+    add-apt-repository -y "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2019.list)" &&
+    add-apt-repository -y "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/prod.list)" ||
         { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
 }
 
@@ -1696,7 +1696,7 @@ function install_postgresql() {
     echo "[INFO] Running install_postgresql..."
     if [[ -z "${POSTGRES_ROOT_PASSWORD-}" || "${#POSTGRES_ROOT_PASSWORD}" = "0" ]]; then POSTGRES_ROOT_PASSWORD="Password12!"; fi
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
-    add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ ${OS_CODENAME}-pgdg main" ||
+    add-apt-repository -y "deb http://apt.postgresql.org/pub/repos/apt/ ${OS_CODENAME}-pgdg main" ||
         { echo "[ERROR] Cannot add postgresql repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install postgresql ||
@@ -1714,7 +1714,7 @@ function install_postgresql() {
 function configure_mongodb_repo() {
     echo "[INFO] Running configure_mongodb_repo..."
     curl -fsSL https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add - &&
-    add-apt-repository "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/6.0 multiverse" ||
+    add-apt-repository -y "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu ${OS_CODENAME}/mongodb-org/6.0 multiverse" ||
         { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
 }
 
@@ -1796,10 +1796,10 @@ function install_rabbitmq() {
     ## PackageCloud RabbitMQ repository
     apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F6609E60DC62814E"
 
-    add-apt-repository "deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu ${OS_CODENAME} main" ||
+    add-apt-repository -y "deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu ${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add rabbitmq-erlang repository to APT sources." 1>&2; return 10; }
 
-    add-apt-repository "deb https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ ${OS_CODENAME} main" ||
+    add-apt-repository -y "deb https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ ${OS_CODENAME} main" ||
         { echo "[ERROR] Cannot add rabbitmq repository to APT sources." 1>&2; return 10; }
 
     # mkdir -p /etc/rabbitmq
@@ -1883,7 +1883,7 @@ function install_packer() {
 function install_yarn() {
     echo "[INFO] Running install_yarn..."
     curl -fsSL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - &&
-    add-apt-repository "deb https://dl.yarnpkg.com/debian/ stable main" ||
+    add-apt-repository -y "deb https://dl.yarnpkg.com/debian/ stable main" ||
         { echo "[ERROR] Cannot add yarn repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install --no-install-recommends yarn ||
@@ -2085,7 +2085,7 @@ function install_curl() {
 function configure_firefox_repository() {
     echo "[INFO] Running configure_firefox_repository..."
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F
-    add-apt-repository "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu ${OS_CODENAME} main"
+    add-apt-repository -y "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu ${OS_CODENAME} main"
     apt-get -y update
 }
 
@@ -2141,7 +2141,7 @@ function install_virtualbox_core() {
     apt-key add oracle_vbox_2016.asc
     rm oracle_vbox_2016.asc
 
-    add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
+    add-apt-repository -y "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
         { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }
 
     apt-get -y -qq update &&
