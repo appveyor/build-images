@@ -2282,6 +2282,8 @@ function install_doxygen_version() {
 function add_ssh_known_hosts() {
     echo "[INFO] Configuring ~/.ssh/known_hosts..."
     echo "LIB_FOLDER: ${LIB_FOLDER}"
+    echo "PWSH: $(command -v pwsh)"
+    cat "${LIB_FOLDER}/../Windows/add_ssh_known_hosts.ps1"
     if [ -f "${LIB_FOLDER}/../Windows/add_ssh_known_hosts.ps1" ] && command -v pwsh; then
         pwsh -nol -noni "${LIB_FOLDER}/../Windows/add_ssh_known_hosts.ps1"
         echo $HOME
