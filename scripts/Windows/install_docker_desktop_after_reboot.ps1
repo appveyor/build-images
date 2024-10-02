@@ -13,9 +13,15 @@ $finished = $false
 Write-Host "Waiting for Docker to start..."
 
 while ($i -lt (300)) {
+
   $i +=1
   
   $dockerSvc = (Get-Service com.docker.service -ErrorAction SilentlyContinue)
+
+#   if ($dockerSvc -and ($i -lt 3)) {
+# 	Restart-Service -Name com.docker.service
+#   }
+
   if ((Get-Process 'Docker Desktop' -ErrorAction SilentlyContinue) -and $dockerSvc -and $dockerSvc.status -eq 'Running') {
     $finished = $true
     Write-Host "Docker started!"
@@ -67,6 +73,8 @@ function PullRunDockerImages($minOsBuild, $serverCoreTag, $nanoServerTag) {
 		}
 	}
 }
+
+Restart-Service -Name com.docker.service
 
 Write-Host "Setting experimental mode"
 $configPath = "$env:programdata\docker\config\daemon.json"
@@ -126,4 +134,15 @@ if (Test-Path $settingsPath) {
 
 Write-Host "Docker CE installed and configured"
 
-#Switch-DockerLinux
+# forcibly terminate docker as suggested here (https://stackoverflow.com/questions/78053075/setup-configuration-of-docker-desktop-programatically-via-powershell-scripting)
+Stop-Service -Name "com.docker.*" -ErrorAction SilentlyContinue
+
+$processesToStop = @(
+  'Docker Desktop',
+  'com.docker.backend',
+  'com.docker.extensions'
+)
+$processesToStop | ForEach-Object {
+  Get-Process -Name $_ -ErrorAction Ignore |
+    Stop-Process -Force -ErrorAction Ignore
+}

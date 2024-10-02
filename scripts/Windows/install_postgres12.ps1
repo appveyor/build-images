@@ -5,8 +5,8 @@ Write-Host "Installing PostgreSQL 12..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
 # http://www.enterprisedb.com/products-services-training/pgdownload#windows
-$exePath = "$env:TEMP\postgresql-12.14-2-windows-x64.exe"
-(New-Object Net.WebClient).DownloadFile('https://get.enterprisedb.com/postgresql/postgresql-12.14-2-windows-x64.exe', $exePath)
+$exePath = "$env:TEMP\postgresql-12.20-1-windows-x64.exe"
+(New-Object Net.WebClient).DownloadFile('https://get.enterprisedb.com/postgresql/postgresql-12.20-1-windows-x64.exe', $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath --mode unattended --install_runtimes 0 --superpassword Password12!

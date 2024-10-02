@@ -1,4 +1,4 @@
-﻿Write-Host "Installing NUnit 3.17.0..." -ForegroundColor Cyan -NoNewline
+﻿Write-Host "Installing NUnit 3.18.1..." -ForegroundColor Cyan -NoNewline
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -9,12 +9,12 @@ if (Test-Path $nunitPath) {
 }
 
 
-$zipPath = "$env:TEMP\NUnit.Console-3.17.0.zip"
+$zipPath = "$env:TEMP\NUnit.Console-3.18.1.zip"
 $tempPath = "$env:TEMP\NUnit.Console"
-    (New-Object Net.WebClient).DownloadFile('https://github.com/nunit/nunit-console/releases/download/3.17.0/NUnit.Console-3.17.0.zip', $zipPath)
+    (New-Object Net.WebClient).DownloadFile('https://github.com/nunit/nunit-console/releases/download/3.18.1/NUnit.Console-3.18.1.zip', $zipPath)
 7z x $zipPath -y -o"$tempPath" | Out-Null
 New-Item -Path "$nunitPath" -ItemType Directory -Force | Out-Null
-[IO.Directory]::Move("$tempPath\bin\net35", "$nunitPath\bin")
+[IO.Directory]::Move("$tempPath\bin\net462", "$nunitPath\bin")
 Copy-Item -Path "$tempPath\bin\agents" -Destination $nunitPath -Recurse
 Remove-Item $zipPath
 
