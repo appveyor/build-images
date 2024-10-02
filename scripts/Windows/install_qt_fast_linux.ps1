@@ -8,7 +8,7 @@ $component_groups = @(
     @{
         version    = "6.7.2"
         components = @(
-            "gcc_64",
+            "linux_gcc_64",
             "debug_info",
             "debug_info.gcc_64",
             "addons.qt3d",
