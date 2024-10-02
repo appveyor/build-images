@@ -2216,6 +2216,8 @@ function install_vcpkg() {
         return 1
     fi
 
+    export DEBIAN_FRONTEND=noninteractive
+
     sudo apt -y install ninja-build
 
     pushd "${HOME}"
