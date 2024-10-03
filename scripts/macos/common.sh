@@ -400,7 +400,7 @@ function install_pythons(){
     write_line "${HOME}/.profile" 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
     eval "$(pyenv init -)"
 
-    declare PY_VERSIONS=( "2.7.18" "3.8.18" "3.9.18" "3.10.13" "3.11.7" "3.12.1" )
+    declare PY_VERSIONS=( "2.7.18" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.13.0rc2" "3.12.6" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
