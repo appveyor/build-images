@@ -10,13 +10,9 @@ for LIB_FOLDER in "${LIB_FOLDERS[@]}"; do
     fi
 done
 
-echo "Before source common.sh"
-
 # shellcheck source=./common.sh
 . "${LIB_FOLDER}/common.sh" ||
         { echo "[ERROR] Cannot source common.sh script. Aborting." 1>&2; exit 2; }
-
-echo "After source common.sh"
 
 #search for brew
 echo "PATH variable:"
