@@ -38,8 +38,8 @@ function build_vm() {
 
     if [[ "${PACKER_BUILDER}" = "parallels-pvm" ]]; then
         [ -d "${OUT_DIR}" ] && {
-            mv -fv $OUT_DIR/packer-${MACOS_VER}-*.pvm "$HOME/Parallels/" &&
-            prlctl register $HOME/Parallels/packer-${MACOS_VER}-*.pvm ||
+            mv -fv $OUT_DIR/packer-${MACOS_VER}-*.macvm "$HOME/Parallels/" &&
+            prlctl register $HOME/Parallels/packer-${MACOS_VER}-*.macvm ||
                 { echo "failed to copy PVM. Aborting"; exit 1; }
         }
     fi
