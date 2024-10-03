@@ -33,6 +33,7 @@
         "HOMEBREW_BUILD_AGENT_MODE={{ user `build_agent_mode` }}"
       ],
       "inline": [
+        "eval \"$(/opt/homebrew/bin/brew shellenv)\"",
         "brew install appveyor/brew/appveyor-build-agent",
         "brew services restart appveyor/brew/appveyor-build-agent"
       ]

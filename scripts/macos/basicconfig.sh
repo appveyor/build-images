@@ -10,6 +10,8 @@ for LIB_FOLDER in "${LIB_FOLDERS[@]}"; do
     fi
 done
 
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # shellcheck source=./common.sh
 . "${LIB_FOLDER}/common.sh" ||
         { echo "[ERROR] Cannot source common.sh script. Aborting." 1>&2; exit 2; }
