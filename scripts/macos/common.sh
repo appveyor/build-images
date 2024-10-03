@@ -784,7 +784,7 @@ function install_openjdk() {
         # install JDKs
         for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
             su -l ${USER_NAME} -c "
-                $BREW_CMD install --cask temurin${JDK_VERSION}
+                $BREW_CMD install --cask temurin@${JDK_VERSION}
             " || { echo "[ERROR] Cannot install adoptopenjdk ${JDK_VERSION} with Homebrew." 1>&2; return 20; }
         done
 
