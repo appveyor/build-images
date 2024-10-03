@@ -8,7 +8,7 @@ HOST_NAME=appveyor-vm
 OSX_MAJOR_VER=$(sw_vers -productVersion | awk -F "." '{print $1}')
 OSX_MINOR_VER=$(sw_vers -productVersion | awk -F "." '{print $2}')
 PlistBuddy="/usr/libexec/PlistBuddy"
-BREW_CMD=$(command -v /opt/homebrew/bin/brew)
+BREW_CMD=$(command -v brew)
 
 function init_logging() {
     if [[ -z "${LOG_FILE-}" ]]; then

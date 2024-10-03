@@ -22,8 +22,9 @@
         "echo 'export PATH=\"$PATH:/usr/local/bin\"' >> $HOME/.bashrc",
         "echo '{{ user `install_password` }}' | sudo systemsetup -setcomputersleep Never",
         "echo '{{ user `install_password` }}' | CI=1 command -v brew &> /dev/null || /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)\"",
-        "/opt/homebrew/bin/brew install --cask powershell",
-        "/opt/homebrew/bin/brew install coreutils zlib p7zip"
+        "eval \"$(/opt/homebrew/bin/brew shellenv)\"",
+        "brew install --cask powershell",
+        "brew install coreutils zlib p7zip"
       ]
     },
     {
@@ -32,8 +33,8 @@
         "HOMEBREW_BUILD_AGENT_MODE={{ user `build_agent_mode` }}"
       ],
       "inline": [
-        "/opt/homebrew/bin/brew install appveyor/brew/appveyor-build-agent",
-        "/opt/homebrew/bin/brew services restart appveyor/brew/appveyor-build-agent"
+        "brew install appveyor/brew/appveyor-build-agent",
+        "brew services restart appveyor/brew/appveyor-build-agent"
       ]
     },
     {

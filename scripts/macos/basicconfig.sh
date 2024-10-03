@@ -18,7 +18,7 @@ done
 echo "PATH variable:"
 echo "$PATH" | tr ":" '\n'
 if ! command -v brew; then
-    if [ -x /opt/homebrew/bin/brew ]; then
+    if [ -x brew ]; then
         export PATH="$PATH:/usr/local/bin"
     else
         echo "[ERROR] cannot find brew in default path /opt/homebrew/bin/brew or in \$PATH."
