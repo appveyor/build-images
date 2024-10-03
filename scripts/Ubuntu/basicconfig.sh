@@ -215,6 +215,20 @@ if [[ $OS_ARCH == "amd64" ]]; then
     install_clang ||
         _abort $?
 fi
+
+if [[ $OS_ARCH == "amd64" ]]; then
+    su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            OS_ARCH=${OS_ARCH}
+            $(declare -f install_vcpkg)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            $(declare -f log_version)
+            install_vcpkg" ||
+        _abort $?
+fi
+
 # .NET stuff
 if [[ $OS_ARCH == "amd64" ]]; then
     install_dotnets ||
@@ -269,9 +283,13 @@ if [[ $OS_ARCH == "amd64" ]]; then
         _abort $?
 fi
 
-su -l ${USER_NAME} -c "
+su -l "${USER_NAME}" -c "
+        PATH=$PATH
         USER_NAME=${USER_NAME}
         OS_ARCH=${OS_ARCH}
+        $(declare -f log_version)
+        $(declare -f write_line)
+        $(declare -f add_line)
         $(declare -f install_pythons)
         install_pythons" ||
     _abort $?
@@ -481,16 +499,6 @@ install_awscli ||
 install_gcloud ||
     _abort $?
 install_kubectl ||
-    _abort $?
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        OS_ARCH=${OS_ARCH}
-        $(declare -f install_vcpkg)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        $(declare -f log_version)
-        install_vcpkg" ||
     _abort $?
 if [[ $OS_ARCH == "amd64" ]]; then
     install_browsers ||

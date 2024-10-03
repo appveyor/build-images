@@ -787,113 +787,56 @@ function install_pip3() {
 }
 
 function install_pythons(){
+    echo "[INFO] Installing pyenv..."
+
+    curl https://pyenv.run | bash
+
+    write_line "${HOME}/.profile" 'export PYENV_ROOT="$HOME/.pyenv"'
+    write_line "${HOME}/.profile" 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
+    write_line "${HOME}/.profile" 'eval "$(pyenv init -)"'
+
+    export PYENV_ROOT="$HOME/.pyenv"
+    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+
     echo "[INFO] Running install_pythons..."
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.6.15" "3.7.16" "3.8.17" "3.9.18" "3.10.14" "3.11.9" "3.13.0rc1" "3.12.4" )
+        declare PY_VERSIONS=( "2.7.18" "3.6.15" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.13.0rc2" "3.12.6" )
     else
-        declare PY_VERSIONS=( "2.7.18" "3.7.16" "3.8.17" "3.9.17" "3.10.12" "3.11.4" "3.12.6" )
+        declare PY_VERSIONS=( "2.7.18" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.13.0rc2" "3.12.6" )
     fi
 
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
-        if [ -d ${VENV_MINOR_PATH} ]; then
-            echo "Python is already installed at ${VENV_MINOR_PATH}." 
-            continue
-        fi
-        if [ ! -d ${VENV_PATH} ]; then
-        curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
-            { echo "[WARNING] Cannot download Python ${i}."; continue; }
-        tar -zxf "Python-${i}.tgz" &&
-        pushd "Python-${i}" ||
-            { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
-        PY_PATH=${HOME}/.localpython${i}
-        mkdir -p "${PY_PATH}"
-        ./configure --enable-shared --silent "--prefix=${PY_PATH}" "LDFLAGS=-Wl,-rpath=${PY_PATH}/lib" &&
-        make --silent &&
-        make install --silent >/dev/null ||
-            { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
-        if [ ${i:0:1} -eq 3 ]; then
-            PY_BIN=python3
-        else
-            PY_BIN=python
-        fi
-        python3 -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
-            { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
-        popd
-        echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
-        rm -f ${VENV_MINOR_PATH}
-        ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
-        fi
-    done
-    find "${HOME}" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
-    rm ${HOME}/Python-*.tgz
-}
 
-function install_python_312(){
-    echo "[INFO] Running install_python_312..."
+        pyenv install "${i}" ||
+            { echo "[ERROR] Cannot install Python ${i}."; return 10; }
 
-    declare PY_VERSIONS=( "3.12.2" )
-    
-    
-    for i in "${PY_VERSIONS[@]}"; do
-        VENV_PATH=${HOME}/venv${i%%[abrcf]*}
-        VENV_MINOR_PATH=${HOME}/venv${i%.*}
-        rm -rf ${VENV_PATH}
-        rm -rf ${VENV_MINOR_PATH}
-        if [ -d ${VENV_MINOR_PATH} ]; then
-            echo "Python is already installed at ${VENV_MINOR_PATH}." 
-            continue
-        fi
-        if [ ! -d ${VENV_PATH} ]; then
-        curl -fsSL -O "http://www.python.org/ftp/python/${i%%[abrcf]*}/Python-${i}.tgz" ||
-            { echo "[WARNING] Cannot download Python ${i}."; continue; }
-        tar -zxf "Python-${i}.tgz" &&
-        pushd "Python-${i}" ||
-            { echo "[WARNING] Cannot unpack Python ${i}."; continue; }
-        PY_PATH=${HOME}/.localpython${i}
-        mkdir -p "${PY_PATH}"
-        sudo apt-get update -y
-        sudo apt-get install -y libdb-dev libncurses5-dev libffi-dev libsqlite3-dev libreadline-dev libgdbm-dev libssl-dev tk-dev uuid-dev
-
-        ./configure --enable-shared --silent "--prefix=${PY_PATH}" "LDFLAGS=-Wl,-rpath=${PY_PATH}/lib" &&
-        make --silent &&
-        make install --silent >/dev/null ||
-            { echo "[WARNING] Cannot make Python ${i}."; popd; continue; }
-        if [ ${i:0:1} -eq 3 ]; then
-            PY_BIN=python3
-        else
-            PY_BIN=python
-        fi
-        python3 -m virtualenv -p "$PY_PATH/bin/${PY_BIN}" "${VENV_PATH}" ||
-            { echo "[WARNING] Cannot make virtualenv for Python ${i}."; popd; continue; }
-        export PATH="${VENV_PATH}/bin:$PATH"
-        #source ${VENV_PATH}/bin/activate
-        required_minor=12
+        pyenv global "${i}"
         python --version
-        python_version=$(python --version 2>&1)
-        minor_version="${python_version#*.}"
-        minor_version="${minor_version%.*}"
-        echo "Minor version: $minor_version"
-        # Check if the current version is greater than or equal to the required version
-        if [ $minor_version -lt $required_minor ]; then
-        # Exit with an error message
-            echo "Error: Python version ${required_major}.${required_minor} or higher is required. You are using ${python_version}."
-            exit 1
+
+        python -m pip install --upgrade pip ||
+            { echo "[ERROR] Cannot upgrade pip for Python ${i}."; return 10; }
+        
+        if [ ${i:0:1} -eq 3 ]; then
+            python -m venv "${VENV_PATH}" ||
+                { echo "[ERROR] Cannot make virtualenv for Python ${i}."; return 10; }
+        else
+            python -m pip install virtualenv ||
+                { echo "[ERROR] Cannot install virtualenv for Python ${i}."; return 10; }
+
+            python -m virtualenv "${VENV_PATH}" ||
+                { echo "[ERROR] Cannot make virtualenv for Python ${i}."; return 10; }
         fi
-        python -m ensurepip --upgrade
-        python -m pip install --upgrade virtualenv
-        python -m pip install --upgrade setuptools
-        deactivate
-        popd
+
         echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
-        rm -f ${VENV_MINOR_PATH}
         ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
-        fi
     done
-    find "${HOME}" -name "Python-*" -type d -maxdepth 1 | xargs -I {} rm -rf {}
-    rm ${HOME}/Python-*.tgz
+
+    ls -al ~/venv*
 }
+
 function install_powershell() {
     echo "[INFO] Running install_powershell..."
 
@@ -2272,6 +2215,8 @@ function install_vcpkg() {
         echo "This script must be run as '${USER_NAME}' user. Current user is '$(whoami)'" 1>&2
         return 1
     fi
+
+    export DEBIAN_FRONTEND=noninteractive
 
     sudo apt -y install ninja-build
 
