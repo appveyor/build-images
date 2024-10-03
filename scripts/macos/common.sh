@@ -350,7 +350,13 @@ function install_rbenv_and_rubies() {
 }
 
 function install_gcc() {
-    declare GCC_VERSIONS=( "gcc@10" "gcc@11" "gcc@12" )
+    if [ "$OSX_MAJOR_VER" -ge 13 ]; then
+        # ventura and sonoma
+        declare GCC_VERSIONS=( "gcc@10" "gcc@11" "gcc@12" )
+    else
+        # others
+        declare GCC_VERSIONS=( "gcc@11" "gcc@12" )
+    fi
     brew_install "${GCC_VERSIONS[@]}"
 }
 
