@@ -68,7 +68,7 @@
         "FASTLANE_DONT_STORE_PASSWORD=1",
         "INSTALL_PASSWORD={{user `install_password`}}"
       ],
-      "execute_command": "{{.Vars}} sudo -S -E bash -ex '{{.Path}}'",
+      "execute_command": "{{.Vars}} sudo -S -E bash -e '{{.Path}}'",
       "scripts": [
         "scripts/macos/basicconfig.sh"
       ]
