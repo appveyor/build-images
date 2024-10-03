@@ -250,7 +250,7 @@ function install_rubies() {
         return 1
     fi
     local DEFAULT_RUBY
-    DEFAULT_RUBY="ruby-3.3.0"
+    DEFAULT_RUBY="ruby-3.3.5"
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
@@ -286,6 +286,7 @@ function install_rvm_and_rubies() {
         su -l ${USER_NAME} -c "
             PATH=$PATH
             USER_NAME=${USER_NAME}
+            OSX_MAJOR_VER=${OSX_MAJOR_VER}
             VERSIONS_FILE=${VERSIONS_FILE}
             [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
             $(declare -f log_version)
