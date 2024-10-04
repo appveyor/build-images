@@ -45,10 +45,6 @@ install_curl
 install_vcs
 install_gcc
 install_gpg
-install_rvm_and_rubies
-install_openjdk
-install_xcode
-fix_home_permissions
 su -l "${USER_NAME}" -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
@@ -58,6 +54,10 @@ su -l "${USER_NAME}" -c "
         $(declare -f install_pythons)
         install_pythons" ||
     _abort $?
+install_rvm_and_rubies
+install_openjdk
+install_xcode
+fix_home_permissions
 su -l ${USER_NAME} -c "
         PATH=$PATH
         USER_NAME=${USER_NAME}
