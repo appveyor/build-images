@@ -177,7 +177,7 @@ function install_curl() {
 function install_rosetta() {
     echo "[INFO] Running install_rosetta..."
 
-    sudo softwareupdate --install-rosetta
+    sudo softwareupdate --install-rosetta --agree-to-license
 }
 
 function install_vcs() {
