@@ -99,7 +99,7 @@
       "ssh_timeout": "120s",
       "shutdown_command": "sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
-      "skip_compaction": "false"
+      "skip_compaction": "true"
     },
     {
       "type": "vmware-vmx",
