@@ -413,16 +413,13 @@ function install_pythons(){
     write_line "${HOME}/.profile" 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
     eval "$(pyenv init -)"
 
-    pyenv --version
-    pyenv install --list
-
-    declare PY_VERSIONS=( "2.7.18" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.13.0rc2" "3.12.6" )
+    declare PY_VERSIONS=( "2.7.18" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.13.0rc3" "3.12.6" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
 
         pyenv install "${i}" ||
-            { echo "[ERROR] Cannot install Python ${i}."; return 10; }
+            { echo "[ERROR] Cannot install Python ${i}."; pyenv --version; pyenv install --list; return 10; }
 
         pyenv global "${i}"
         python --version
