@@ -174,6 +174,12 @@ function install_curl() {
     fi
 }
 
+function install_rosetta() {
+    echo "[INFO] Running install_rosetta..."
+
+    sudo softwareupdate --install-rosetta
+}
+
 function install_vcs() {
     echo "[INFO] Running install_vcs..."
 

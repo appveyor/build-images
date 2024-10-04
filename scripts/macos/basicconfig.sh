@@ -41,6 +41,9 @@ configure_path
 #configure_updates
 configure_sshd
 configure_autologin
+if [[ $(uname -m) == 'arm64' ]]; then
+  install_rosetta
+fi
 install_curl
 install_vcs
 install_gcc
