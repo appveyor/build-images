@@ -300,6 +300,21 @@ UpdatePip "$env:SystemDrive\Python312-x64"
 Add-Path C:\Python312
 Add-Path C:\Python312\Scripts
 
+# Python 3.13
+$python312 = (GetUninstallString 'Python 3.13.0 (32-bit)')
+if ($python312) {
+    Write-Host 'Python 3.13.0 already installed'
+}
+else {
+    InstallPythonEXE "3.13.0" "x86" "$env:SystemDrive\Python3133"
+}
+
+UpdatePip "$env:SystemDrive\Python313"
+UpdatePip "$env:SystemDrive\Python313-x64"
+
+Add-Path C:\Python313
+Add-Path C:\Python313\Scripts
+
 # restore .py file mapping
 # https://github.com/appveyor/ci/issues/575
 cmd /c ftype Python.File="C:\Windows\py.exe" "`"%1`"" %*
@@ -362,3 +377,5 @@ CheckPython 'C:\Python311'
 CheckPython 'C:\Python311-x64'
 CheckPython 'C:\Python312'
 CheckPython 'C:\Python312-x64'
+CheckPython 'C:\Python313'
+CheckPython 'C:\Python313-x64'
