@@ -306,7 +306,7 @@ if ($python312) {
     Write-Host 'Python 3.13.0 already installed'
 }
 else {
-    InstallPythonEXE "3.13.0" "x86" "$env:SystemDrive\Python3133"
+    InstallPythonEXE "3.13.0" "x86" "$env:SystemDrive\Python313"
 }
 
 UpdatePip "$env:SystemDrive\Python313"
