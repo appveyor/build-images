@@ -4,7 +4,7 @@
 # https://stackoverflow.com/questions/30699782/access-is-denied-while-upgrading-pip-exe-on-windows/35580525#35580525
 #
 
-$pipVersion = "23.2.1"
+$pipVersion = "24.3.1"
 
 function UpdatePythonPath($pythonPath) {
     $env:path = ($env:path -split ';' | Where-Object { -not $_.contains('\Python') }) -join ';'
@@ -301,8 +301,8 @@ Add-Path C:\Python312
 Add-Path C:\Python312\Scripts
 
 # Python 3.13
-$python312 = (GetUninstallString 'Python 3.13.0 (32-bit)')
-if ($python312) {
+$python313 = (GetUninstallString 'Python 3.13.0 (32-bit)')
+if ($python313) {
     Write-Host 'Python 3.13.0 already installed'
 }
 else {
