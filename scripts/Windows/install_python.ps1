@@ -301,12 +301,12 @@ Add-Path C:\Python312
 Add-Path C:\Python312\Scripts
 
 # Python 3.13 x64
-$python313_x64 = (GetUninstallString 'Python 3.13.3 (64-bit)')
+$python313_x64 = (GetUninstallString 'Python 3.13.0 (64-bit)')
 if ($python313_x64) {
-    Write-Host 'Python 3.13.3 x64 already installed'
+    Write-Host 'Python 3.13.0 x64 already installed'
 }
 else {
-    InstallPythonEXE "3.13.3" "x64" "$env:SystemDrive\Python313-x64"
+    InstallPythonEXE "3.13.0" "x64" "$env:SystemDrive\Python313-x64"
 }
 
 # Python 3.13
