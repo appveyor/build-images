@@ -4,7 +4,7 @@
 # https://stackoverflow.com/questions/30699782/access-is-denied-while-upgrading-pip-exe-on-windows/35580525#35580525
 #
 
-$pipVersion = "23.2.1"
+$pipVersion = "24.3.1"
 
 function UpdatePythonPath($pythonPath) {
     $env:path = ($env:path -split ';' | Where-Object { -not $_.contains('\Python') }) -join ';'
@@ -300,6 +300,30 @@ UpdatePip "$env:SystemDrive\Python312-x64"
 Add-Path C:\Python312
 Add-Path C:\Python312\Scripts
 
+# Python 3.13 x64
+$python313_x64 = (GetUninstallString 'Python 3.13.0 (64-bit)')
+if ($python313_x64) {
+    Write-Host 'Python 3.13.0 x64 already installed'
+}
+else {
+    InstallPythonEXE "3.13.0" "x64" "$env:SystemDrive\Python313-x64"
+}
+
+# Python 3.13
+$python313 = (GetUninstallString 'Python 3.13.0 (32-bit)')
+if ($python313) {
+    Write-Host 'Python 3.13.0 already installed'
+}
+else {
+    InstallPythonEXE "3.13.0" "x86" "$env:SystemDrive\Python313"
+}
+
+UpdatePip "$env:SystemDrive\Python313"
+UpdatePip "$env:SystemDrive\Python313-x64"
+
+Add-Path C:\Python313
+Add-Path C:\Python313\Scripts
+
 # restore .py file mapping
 # https://github.com/appveyor/ci/issues/575
 cmd /c ftype Python.File="C:\Windows\py.exe" "`"%1`"" %*
@@ -348,8 +372,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     # CheckPython 'C:\Python35-x64'
     # CheckPython 'C:\Python36'
     # CheckPython 'C:\Python36-x64'
-    CheckPython 'C:\Python37'
-    CheckPython 'C:\Python37-x64'
+    # CheckPython 'C:\Python37'
+    # CheckPython 'C:\Python37-x64'
     CheckPython 'C:\Python38'
     CheckPython 'C:\Python38-x64'
     CheckPython 'C:\Python39'
@@ -362,3 +386,5 @@ CheckPython 'C:\Python311'
 CheckPython 'C:\Python311-x64'
 CheckPython 'C:\Python312'
 CheckPython 'C:\Python312-x64'
+CheckPython 'C:\Python313'
+CheckPython 'C:\Python313-x64'

@@ -2,7 +2,7 @@
 
 Write-Host "Downloading..."
 $exePath = "$($env:TEMP)\otp_win64.exe"
-(New-Object Net.WebClient).DownloadFile('http://erlang.org/download/otp_win64_22.3.exe', $exePath)
+(New-Object Net.WebClient).DownloadFile('https://github.com/erlang/otp/releases/download/OTP-27.1.2/otp_win64_27.1.2.exe', $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath /S
