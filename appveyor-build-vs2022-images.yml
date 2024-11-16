@@ -175,7 +175,6 @@ for:
 
     build_script:
 
-      - ps: .\install_nodejs_latest.ps1
       - ps: choco feature enable -n allowGlobalConfirmation
       - ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_java_7_8.ps1
@@ -198,7 +197,7 @@ for:
       - ps: .\install_selenium_drivers.ps1
 
       - ps: .\install_miniconda.ps1
-      #- ps: .\install_nodejs_latest.ps1
+      - ps: .\install_nodejs_latest.ps1
       - ps: .\install_yarn.ps1
       - ps: .\install_go.ps1
       #- ps: .\install_rust.ps1
