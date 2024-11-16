@@ -1,6 +1,6 @@
 ﻿# https://octopus.com/downloads
 
-Write-Host "Installing octo.exe..." -ForegroundColor Cyan
+Write-Host "Installing octo.exe cli 2.11.0..." -ForegroundColor Cyan
 
 $destPath = 'C:\Tools\Octopus'
 
@@ -9,7 +9,7 @@ if(-not (Test-Path $destPath)) {
 }
 
 $zipPath = "$env:TEMP\OctopusTools.zip"
-(New-Object Net.WebClient).DownloadFile('https://download.octopusdeploy.com/octopus-tools/6.17.0/OctopusTools.6.17.0.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://github.com/OctopusDeploy/cli/releases/download/v2.11.0/octopus_2.11.0_windows_amd64.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 Remove-Item $zipPath
 
