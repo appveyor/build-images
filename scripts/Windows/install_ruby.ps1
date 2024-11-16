@@ -198,36 +198,36 @@ $rubies = $rubies + @(
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.2.5-1"
+        "version"      = "Ruby 3.2.6-1"
         "install_path" = "C:\Ruby32"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.5-1/rubyinstaller-3.2.5-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.6-1/rubyinstaller-3.2.6-1-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.2.5-1 (x64)"
+        "version"      = "Ruby 3.2.6-1 (x64)"
         "install_path" = "C:\Ruby32-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.5-1/rubyinstaller-3.2.5-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.6-1/rubyinstaller-3.2.6-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.3.3-1"
+        "version"      = "Ruby 3.3.6-2"
         "install_path" = "C:\Ruby33"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.3-1/rubyinstaller-3.3.3-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.6-2/rubyinstaller-3.3.6-2-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.3.3-1 (x64)"
+        "version"      = "Ruby 3.3.6-2 (x64)"
         "install_path" = "C:\Ruby33-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.3-1/rubyinstaller-3.3.3-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.6-2/rubyinstaller-3.3.6-2-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
