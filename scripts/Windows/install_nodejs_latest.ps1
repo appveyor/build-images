@@ -254,7 +254,7 @@ function Install-Nodejs {
             }
 
             # download required package
-            if ($v.major ge 23 -and $nodePlatform eq 'x86') {
+            if ($v.major -ge 23 -and $nodePlatform eq 'x86') {
                 continue
             }
             else {
