@@ -224,6 +224,7 @@ function Install-Nodejs {
     for ($i = 0; $i -lt $nodeVersions.Length; $i++) {
         for ($j = 0; $j -lt $nodePlatforms.Length; $j++) {
             $v = Get-Version $version
+            Write-Host "Node major version: ${$v.major}"
             $nodeVersion = $nodeVersions[$i]
             $nodePlatform = $nodePlatforms[$j]
             $nodeName = ProductName $nodeVersion
@@ -255,6 +256,7 @@ function Install-Nodejs {
 
             # download required package
             if ($v.major -ge 23 -and $nodePlatform -eq 'x86') {
+                Write-Host "Skipped!!!"
                 continue
             }
             else {
