@@ -49,6 +49,7 @@ if ($vs2022) {
     Install-SDK "6.0.425"
     #Install-SDK "7.0.410"
     #Install-SDK "8.0.202"
+    Install-SDK "9.0.100"
 }
 
 # VS 2019 Preview
