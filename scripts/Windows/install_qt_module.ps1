@@ -73,7 +73,7 @@ function GetVersionId($version) {
 function GetReleaseRootUrl($version) {
     $versionDigits = $version.Split('.')
     if ($versionDigits[1] -eq "8") {
-        return "$QT_ROOT_URL/$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)"
+        return "$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)/$(GetQtPrefix $version)_$(GetVersionId $version)"
     }
     else {
         return "$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)"
