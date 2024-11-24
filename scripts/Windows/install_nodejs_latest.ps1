@@ -25,8 +25,8 @@ function Install-Nodejs {
     # }
 
     $nodePlatforms = @(
-        "x64",
-        "x86"
+        "x86",
+        "x64"
     )
 
     $fileTemplates = @{
