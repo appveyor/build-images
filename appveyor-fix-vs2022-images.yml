@@ -45,6 +45,9 @@ build_script:
   # - ps: .\install_qt_ifw_windows.ps1
   #- ps: .\install_cmake.ps1
   - ps: .\install_qt_fast_windows.ps1
+  - ps: Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
+  - ps: |
+      [Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\Erlang OTP", "Machine")
   # - dir C:\Qt\6.2
   # - dir C:\Qt\Tools
   # - dir C:\Qt\Tools\QtInstallerFramework
