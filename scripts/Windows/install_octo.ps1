@@ -16,6 +16,7 @@ Remove-Item $zipPath
 Add-Path $destPath
 Add-SessionPath $destPath
 
-cmd /c octo --version
+#cmd /c octo --version
+cmd /c octopus --version
 
 Write-Host "Installed Octopus tools" -ForegroundColor Green
