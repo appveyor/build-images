@@ -388,6 +388,11 @@ function install_tools() {
         tools_array+=( "openssh-server" )
     fi
 
+    # Add release specific tools into tools_array
+    if command -v fix_apt_get_install; then
+        fix_apt_get_install
+    fi
+
     #APT_GET_OPTIONS="-o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true"
     apt-get update
     apt-get -y ${APT_GET_OPTIONS-} install "${tools_array[@]}" --no-install-recommends ||
