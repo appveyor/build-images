@@ -12,6 +12,10 @@ function add_releasespecific_tools() {
     fi    
 }
 
+function fix_apt_get_install() {
+    sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
+}
+
 function configure_mercurial_repository() {
     echo "[INFO] Running configure_mercurial_repository on Ubuntu 22.04...skipped"
 }
