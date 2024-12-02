@@ -44,17 +44,17 @@ build_script:
   #- ps: .\install_dotnet_core_sdks.ps1
   # - ps: .\install_qt_ifw_windows.ps1
   #- ps: .\install_cmake.ps1
-  - ps: .\install_qt_fast_windows.ps1
-  - ps: Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
-  - ps: |
-      [Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\Erlang OTP", "Machine")
+  # - ps: .\install_qt_fast_windows.ps1
+  # - ps: Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
+  # - ps: |
+  #     [Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\Erlang OTP", "Machine")
   # - dir C:\Qt\6.2
   # - dir C:\Qt\Tools
   # - dir C:\Qt\Tools\QtInstallerFramework
   #- ps: .\add_ssh_known_hosts.ps1
   # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
   # - ps: .\install_qt_fast_windows.ps1
-  
+  - ps: ./install_octo.ps1
   #- ps: .\install_go.ps1
   #- ps: ./install_nodejs_latest.ps1
   #- ps: ./install_selenium_drivers.ps1
