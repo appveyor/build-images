@@ -41,6 +41,11 @@ $component_groups = @(
             "addons.qtdatavis3d.win64_msvc2022_64",
             "addons.qtdatavis3d.win64_msvc2022_arm64_cross_compiled",
 
+            "addons.qtgraphs",
+            "addons.qtgraphs.win64_mingw",
+            "addons.qtgraphs.win64_msvc2022_64",
+            "addons.qtgraphs.win64_msvc2022_arm64_cross_compiled",
+
             "addons.qtgrpc",
             "addons.qtgrpc.win64_mingw",
             "addons.qtgrpc.win64_msvc2022_64",
@@ -81,8 +86,8 @@ $component_groups = @(
             "addons.qtnetworkauth.win64_msvc2022_64",
             "addons.qtnetworkauth.win64_msvc2022_arm64_cross_compiled",
 
-            "addons.qtpdf",
-            "addons.qtpdf.win64_msvc2022_64",
+            #"addons.qtpdf",
+            #"addons.qtpdf.win64_msvc2022_64",
 
             "addons.qtpositioning",
             "addons.qtpositioning.win64_mingw",
@@ -138,8 +143,8 @@ $component_groups = @(
             "addons.qtwebchannel.win64_msvc2022_64",
             "addons.qtwebchannel.win64_msvc2022_arm64_cross_compiled",
 
-            "addons.qtwebengine",
-            "addons.qtwebengine.win64_msvc2022_64",
+            #"addons.qtwebengine",
+            #"addons.qtwebengine.win64_msvc2022_64",
 
             "addons.qtwebsockets",
             "addons.qtwebsockets.win64_mingw",
@@ -150,25 +155,25 @@ $component_groups = @(
             "addons.qtwebview.win64_mingw",
             "addons.qtwebview.win64_msvc2022_64",
 
-            "qt5compat",
-            "qt5compat.win64_mingw",
-            "qt5compat.win64_msvc2022_64",
-            "qt5compat.win64_msvc2022_arm64_cross_compiled",
+            "addons.qt5compat",
+            "addons.qt5compat.win64_mingw",
+            "addons.qt5compat.win64_msvc2022_64",
+            "addons.qt5compat.win64_msvc2022_arm64_cross_compiled",
 
-            "qtquick3d",
-            "qtquick3d.win64_mingw",
-            "qtquick3d.win64_msvc2022_64",
-            "qtquick3d.win64_msvc2022_arm64_cross_compiled",
+            "addons.qtquick3d",
+            "addons.qtquick3d.win64_mingw",
+            "addons.qtquick3d.win64_msvc2022_64",
+            "addons.qtquick3d.win64_msvc2022_arm64_cross_compiled",
 
-            "qtquicktimeline",
-            "qtquicktimeline.win64_mingw",
-            "qtquicktimeline.win64_msvc2022_64",
-            "qtquicktimeline.win64_msvc2022_arm64_cross_compiled",
+            "addons.qtquicktimeline",
+            "addons.qtquicktimeline.win64_mingw",
+            "addons.qtquicktimeline.win64_msvc2022_64",
+            "addons.qtquicktimeline.win64_msvc2022_arm64_cross_compiled",
 
-            "qtshadertools",
-            "qtshadertools.win64_mingw",
-            "qtshadertools.win64_msvc2022_64",
-            "qtshadertools.win64_msvc2022_arm64_cross_compiled"
+            "addons.qtshadertools",
+            "addons.qtshadertools.win64_mingw",
+            "addons.qtshadertools.win64_msvc2022_64",
+            "addons.qtshadertools.win64_msvc2022_arm64_cross_compiled"
 
         )
     }
