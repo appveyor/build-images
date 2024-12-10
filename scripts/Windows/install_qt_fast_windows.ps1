@@ -528,49 +528,6 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "qtquicktimeline.win64_msvc2019_64"
             )
         }        
-        # @{
-        #     version    = "5.9.9"
-        #     components = @(
-        #         "win32_mingw53",
-        #         "win32_msvc2015",
-        #         "win64_msvc2017_64",
-        #         "qtcharts",
-        #         "qtcharts.win32_mingw53",
-        #         "qtcharts.win32_msvc2015",
-        #         "qtcharts.win64_msvc2017_64",
-        #         "qtdatavis3d",
-        #         "qtdatavis3d.win32_mingw53",
-        #         "qtdatavis3d.win32_msvc2015",
-        #         "qtdatavis3d.win64_msvc2017_64",
-        #         "qtnetworkauth",
-        #         "qtnetworkauth.win32_mingw53",
-        #         "qtnetworkauth.win32_msvc2015",
-        #         "qtnetworkauth.win64_msvc2017_64",
-        #         "qtpurchasing",
-        #         "qtpurchasing.win32_mingw53",
-        #         "qtpurchasing.win32_msvc2015",
-        #         "qtpurchasing.win64_msvc2017_64",
-        #         "qtremoteobjects",
-        #         "qtremoteobjects.win32_mingw53",
-        #         "qtremoteobjects.win32_msvc2015",
-        #         "qtremoteobjects.win64_msvc2017_64",
-        #         "qtscript",
-        #         "qtscript.win32_mingw53",
-        #         "qtscript.win32_msvc2015",
-        #         "qtscript.win64_msvc2017_64",
-        #         "qtspeech",
-        #         "qtspeech.win32_mingw53",
-        #         "qtspeech.win32_msvc2015",
-        #         "qtspeech.win64_msvc2017_64",
-        #         "qtvirtualkeyboard",
-        #         "qtvirtualkeyboard.win32_mingw53",
-        #         "qtvirtualkeyboard.win32_msvc2015",
-        #         "qtvirtualkeyboard.win64_msvc2017_64",
-        #         "qtwebengine",
-        #         "qtwebengine.win32_msvc2015",
-        #         "qtwebengine.win64_msvc2017_64"   
-        #     )
-        # }
     )
 }
 
@@ -591,6 +548,9 @@ $component_groups += @(
 foreach ($componentGroup in $component_groups) {
     if ($componentGroup.version) {
         foreach ($component in $componentGroup.components) {
+            Write-Host("componentGroup: $componentGroup")
+            Write-Host("component: $component")
+            Write-Host("installDir: $installDir")
             Install-QtComponent -Version $componentGroup.version -Name $component -Path $installDir
         }
         ConfigureQtVersion $installDir $componentGroup.version

@@ -86,6 +86,8 @@ function FetchToolsUpdatePackages($toolsId) {
 }
 
 function FetchReleaseUpdatePackages($version) {
+    Write-host "GetReleaseRootUrl"
+    Write-Host "$(GetReleaseRootUrl $version)"
     FetchUpdatePackages "$(GetReleaseRootUrl $version)"
     # FetchUpdatePackages "$(GetReleaseRootUrl $version)_src_doc_examples"
 }
