@@ -40,11 +40,11 @@ test: off
 # - ps: Get-EventLog AppVeyor -newest 10 | Format-List
 
 build_script:
-  #- ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
+  - ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
   #- ps: .\install_dotnet_core_sdks.ps1
   # - ps: .\install_qt_ifw_windows.ps1
   #- ps: .\install_cmake.ps1
-  # - ps: .\install_qt_fast_windows.ps1
+  - ps: .\install_qt_fast_windows.ps1
   # - ps: Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
   # - ps: |
   #     [Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\Erlang OTP", "Machine")
@@ -52,9 +52,9 @@ build_script:
   # - dir C:\Qt\Tools
   # - dir C:\Qt\Tools\QtInstallerFramework
   #- ps: .\add_ssh_known_hosts.ps1
-  # - ps: if ($env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
+  
   # - ps: .\install_qt_fast_windows.ps1
-  - ps: ./install_octo.ps1
+  # - ps: ./install_octo.ps1
   #- ps: .\install_go.ps1
   #- ps: ./install_nodejs_latest.ps1
   #- ps: ./install_selenium_drivers.ps1
@@ -68,7 +68,7 @@ build_script:
   # - ps: Start-Sleep -s 5; Restart-Computer
   # - ps: Start-Sleep -s 5
   # - ps: .\install_sql_server_2022_after_restart.ps1
-  - ps: choco feature enable -n allowGlobalConfirmation
+  # - ps: choco feature enable -n allowGlobalConfirmation
 
   - appveyor version
   - ps: .\cleanup_windows.ps1
