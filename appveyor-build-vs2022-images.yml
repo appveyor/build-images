@@ -177,6 +177,9 @@ for:
 
       - ps: choco feature enable -n allowGlobalConfirmation
       - ps: .\install_dotnet_core_sdks.ps1
+
+      - ps: .\install_azure_powershell.ps1
+
       - ps: .\install_java_7_8.ps1
       - ps: .\install_jdk15.ps1
       - ps: .\install_jdk16.ps1
@@ -234,7 +237,7 @@ for:
       - ps: .\install_aws_cli.ps1
       - ps: .\install_aws_powershell.ps1
       - ps: .\install_azure_cli.ps1
-      - ps: .\install_azure_powershell.ps1
+      #- ps: .\install_azure_powershell.ps1
       - ps: .\install_azure_cosmosdb_emulator.ps1
       - ps: .\install_gcloud_sdk.ps1
       - ps: .\install_winsdk_81.ps1
