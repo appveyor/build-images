@@ -175,7 +175,7 @@ function InstallComponentById {
     )
 
     Write-Host "Installing $componentId" -ForegroundColor Cyan
-
+    Write-host "Installing to $destPath"
     $comp = $package_updates[$componentId]
 
     # if ($whatIf -eq $true) {
@@ -185,6 +185,7 @@ function InstallComponentById {
     if (-not $destPath) {
         $destPath = $QT_INSTALL_DIR
     }
+
 
     if ($comp.Installed) {
         Write-Host "Already installed" -ForegroundColor Yellow
@@ -210,8 +211,19 @@ function InstallComponentById {
         New-Item $tempDir -ItemType Directory -Force | Out-Null
 
         Write-Host "$($comp.Name)/$fileName - Downloading..." -NoNewline
-        $tempFileName = [IO.Path]::Combine($tempDir, $fileName)
-
+        #$tempFileName = [IO.Path]::Combine($tempDir, $fileName)
+        if ($comp.Name -match "mingw") {
+            Write-Host "installing to mingw"
+            $tempFileName = [IO.Path]::Combine($tempDir, "mingw_64")
+        }
+        elseif ($comp.Name -match "arm") {
+            Write-Host "installing to msvc2022_arm64"
+            $tempFileName = [IO.Path]::Combine($tempDir, "msvc2022_arm64")
+        }
+        else {
+            Write-Host "installing to msvc2022_64"
+            $tempFileName = [IO.Path]::Combine($tempDir, "msvc2022_64")
+        }
         try {
             (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
         } catch {
@@ -228,7 +240,7 @@ function InstallComponentById {
         if ($sha1 -ne $downloadedSha1) {
             throw "SHA1 hashes don't match for $downloadUrl ($sha1) and $tempFileName ($downloadedSha1)"
         }
-
+        
         Write-Host "Extracting..." -NoNewline
         if ($isLinux -or $isMacOS) {
             7za x $tempFileName -aoa -o"$destPath" | Out-Null
