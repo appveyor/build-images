@@ -554,7 +554,7 @@ foreach ($componentGroup in $component_groups) {
         }
         ConfigureQtVersion $installDir $componentGroup.version
     }
-    if ($componentGroup.version) {
+    elseif ($componentGroup.version) {
         foreach ($component in $componentGroup.components) {
             Write-Host("component: $component")
             Write-Host("installDir: $installDir")
