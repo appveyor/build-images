@@ -550,7 +550,7 @@ foreach ($componentGroup in $component_groups) {
         foreach ($component in $componentGroup.components) {
             Write-Host("6.8 and up")
 
-            Install-QtComponent -Version $componentGroup.version -Name $component -Path $installDir/$componentGroup.version
+            Install-QtComponent -Version $componentGroup.version -Name $component -Path "$installDir\6.8.1"
         }
         ConfigureQtVersion $installDir $componentGroup.version
     }
