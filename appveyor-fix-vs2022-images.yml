@@ -40,10 +40,10 @@ test: off
 # - ps: Get-EventLog AppVeyor -newest 10 | Format-List
 
 build_script:
-  - ps: if ($env:cloud_type -eq 'Azure') { .\extend_system_volume.ps1 }
   #- ps: .\install_dotnet_core_sdks.ps1
   # - ps: .\install_qt_ifw_windows.ps1
   #- ps: .\install_cmake.ps1
+  - ps: .\extend_system_volume.ps1 
   - ps: .\install_qt_fast_windows.ps1
   # - ps: Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
   # - ps: |

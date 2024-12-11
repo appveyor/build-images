@@ -214,15 +214,15 @@ function InstallComponentById {
         #$tempFileName = [IO.Path]::Combine($tempDir, $fileName)
         if ($comp.Name -match "mingw") {
             Write-Host "installing to mingw"
-            $tempFileName = [IO.Path]::Combine($tempDir, "mingw_64")
+            $destPath = [IO.Path]::Combine($destPath, "mingw_64")
         }
         elseif ($comp.Name -match "arm") {
             Write-Host "installing to msvc2022_arm64"
-            $tempFileName = [IO.Path]::Combine($tempDir, "msvc2022_arm64")
+            $destPath = [IO.Path]::Combine($destPath, "msvc2022_arm64")
         }
         else {
             Write-Host "installing to msvc2022_64"
-            $tempFileName = [IO.Path]::Combine($tempDir, "msvc2022_64")
+            $destPath = [IO.Path]::Combine($destPath, "msvc2022_64")
         }
         try {
             (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
