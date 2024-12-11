@@ -211,7 +211,7 @@ function InstallComponentById {
         New-Item $tempDir -ItemType Directory -Force | Out-Null
 
         Write-Host "$($comp.Name)/$fileName - Downloading..." -NoNewline
-        #$tempFileName = [IO.Path]::Combine($tempDir, $fileName)
+        $tempFileName = [IO.Path]::Combine($tempDir, $fileName)
         if ($comp.Name -match "mingw") {
             Write-Host "installing to mingw"
             $destPath = [IO.Path]::Combine($destPath, "mingw_64")
