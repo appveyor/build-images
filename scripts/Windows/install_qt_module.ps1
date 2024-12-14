@@ -186,6 +186,7 @@ function InstallComponentById {
         $destPath = $QT_INSTALL_DIR
     }
 
+    $version = $componentId.split(".")[2]
 
     if ($comp.Installed) {
         Write-Host "Already installed" -ForegroundColor Yellow
@@ -212,17 +213,23 @@ function InstallComponentById {
 
         Write-Host "$($comp.Name)/$fileName - Downloading..." -NoNewline
         $tempFileName = [IO.Path]::Combine($tempDir, $fileName)
-        if ($comp.Name -match "mingw") {
+        if ($comp.Name -match "mingw" -and ($version -ge 680)) {
             Write-Host "installing to mingw"
             $destPath = [IO.Path]::Combine($destPath, "mingw_64")
+            Write-Host "at $destPath"
         }
-        elseif ($comp.Name -match "arm") {
+        elseif ($comp.Name -match "arm" -and ($version -ge 680) {
             Write-Host "installing to msvc2022_arm64"
             $destPath = [IO.Path]::Combine($destPath, "msvc2022_arm64")
+            Write-Host "at $destPath"
         }
-        else {
+        elseif ($version -ge 680) {
             Write-Host "installing to msvc2022_64"
             $destPath = [IO.Path]::Combine($destPath, "msvc2022_64")
+            Write-Host "at $destPath"
+        }
+        else {
+            Write-host "installing component for earlier Qt $version, at $destPath"
         }
         try {
             (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
