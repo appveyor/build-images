@@ -218,7 +218,7 @@ function InstallComponentById {
             $destPath = [IO.Path]::Combine($destPath, "mingw_64")
             Write-Host "at $destPath"
         }
-        elseif ($comp.Name -match "arm" -and ($version -ge 680) {
+        elseif ($comp.Name -match "arm" -and ($version -ge 680)) {
             Write-Host "installing to msvc2022_arm64"
             $destPath = [IO.Path]::Combine($destPath, "msvc2022_arm64")
             Write-Host "at $destPath"
