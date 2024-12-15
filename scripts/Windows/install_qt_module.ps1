@@ -213,17 +213,17 @@ function InstallComponentById {
 
         Write-Host "$($comp.Name)/$fileName - Downloading..." -NoNewline
         $tempFileName = [IO.Path]::Combine($tempDir, $fileName)
-        if ($comp.Name -match "mingw" -and ($version -ge 680)) {
+        if ($comp.Name -match "mingw" -and ($version -eq 681)) {
             Write-Host "installing to mingw"
             $destPath = [IO.Path]::Combine($destPath, "mingw_64")
             Write-Host "at $destPath"
         }
-        elseif ($comp.Name -match "arm" -and ($version -ge 680)) {
+        elseif ($comp.Name -match "arm" -and ($version -eq 681)) {
             Write-Host "installing to msvc2022_arm64"
             $destPath = [IO.Path]::Combine($destPath, "msvc2022_arm64")
             Write-Host "at $destPath"
         }
-        elseif ($version -ge 680) {
+        elseif ($version -eq 681) {
             Write-Host "installing to msvc2022_64"
             $destPath = [IO.Path]::Combine($destPath, "msvc2022_64")
             Write-Host "at $destPath"
