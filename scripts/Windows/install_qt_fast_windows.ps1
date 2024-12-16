@@ -531,18 +531,18 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     )
 }
 
-$component_groups += @(
-    @{
-        components = @(
-            "qt.tools.win32_mingw530",
-            "qt.tools.win32_mingw810",
-            "qt.tools.win64_mingw810",
-            "qt.tools.win64_mingw900",
-            "qt.tools.ifw.47",
-            "qt.license.thirdparty"
-        )
-    }
-)
+# $component_groups += @(
+#     @{
+#         components = @(
+#             "qt.tools.win32_mingw530",
+#             "qt.tools.win32_mingw810",
+#             "qt.tools.win64_mingw810",
+#             "qt.tools.win64_mingw900",
+#             "qt.tools.ifw.47",
+#             "qt.license.thirdparty"
+#         )
+#     }
+# )
 
 # install components
 foreach ($componentGroup in $component_groups) {
