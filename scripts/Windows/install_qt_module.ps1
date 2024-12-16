@@ -17,20 +17,20 @@ Write-Host("Qt root url: $QT_ROOT_URL")
 
 $TOOL_IDS = @(
     "cmake"
-    # "generic"
-    # "ifw"
-    # "maintenance"
-    # "maintenance_update_reminder"
-    # "ninja"
-    # "qt3dstudio"
-    # "qt3dstudio_openglruntime_240"
-    # "qt3dstudio_openglruntime_250"
-    # "qt3dstudio_openglruntime_260"    
-    # "qt3dstudio_runtime_220"
-    # "qt3dstudio_runtime_230"
-    # "qt3dstudio_runtime_240"
-    # "qtcreator"
-    # "telemetry"
+    "generic"
+    "ifw"
+    "maintenance"
+    "maintenance_update_reminder"
+    "ninja"
+    "qt3dstudio"
+    "qt3dstudio_openglruntime_240"
+    "qt3dstudio_openglruntime_250"
+    "qt3dstudio_openglruntime_260"    
+    "qt3dstudio_runtime_220"
+    "qt3dstudio_runtime_230"
+    "qt3dstudio_runtime_240"
+    "qtcreator"
+    "telemetry"
 )
 
 if ($isLinux) {
@@ -45,14 +45,14 @@ if ($isLinux) {
     )
 } else {
     $TOOL_IDS += @(
-        #"mingw"
+        "mingw"
         "mingw90"
-        # "mingw1310"
-        # "opensslv3_src"
-        # "opensslv3_x64"
-        # "qt3dstudio_runtime"
-        # "qt3dstudio_runtime_210"
-        # "vcredist"
+        "mingw1310"
+        "opensslv3_src"
+        "opensslv3_x64"
+        "qt3dstudio_runtime"
+        "qt3dstudio_runtime_210"
+        "vcredist"
         )
 }
 
