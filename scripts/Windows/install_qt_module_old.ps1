@@ -295,10 +295,10 @@ Prefix=.."
     }
 }
 
-# fetch tools packages
-# foreach($tool_id in $TOOL_IDS) {
-#     FetchToolsUpdatePackages $tool_id
-# }
+fetch tools packages
+foreach($tool_id in $TOOL_IDS) {
+    FetchToolsUpdatePackages $tool_id
+}
 
 # fetch licenses
 FetchUpdatePackages "$QT_ROOT_URL/licenses"
