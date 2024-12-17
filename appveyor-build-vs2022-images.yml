@@ -93,7 +93,10 @@ for:
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
       - ps: .\install_7zip.ps1
+
       - ps: .\install_qt_fast_windows.ps1
+      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
       - ps: .\install_dotnet_runtimes.ps1
 
       - ps: Start-Sleep -s 5; Restart-Computer
