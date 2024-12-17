@@ -93,6 +93,7 @@ for:
       - ps: .\install_powershell_core.ps1
       - ps: .\install_powershell_get.ps1
       - ps: .\install_7zip.ps1
+      - ps: .\install_qt_fast_windows.ps1
       - ps: .\install_dotnet_runtimes.ps1
 
       - ps: Start-Sleep -s 5; Restart-Computer
@@ -150,7 +151,7 @@ for:
       - ps: .\install_nunit3.ps1
       - ps: .\install_vstest_console_logger.ps1
 
-      - ps: .\install_qt_fast_windows.ps1
+      #- ps: .\install_qt_fast_windows.ps1
       - ps: .\install_ruby.ps1
       - ps: .\patch_qt_files.ps1
 
