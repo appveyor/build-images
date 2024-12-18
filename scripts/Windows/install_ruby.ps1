@@ -337,7 +337,7 @@ function Update-Ruby($ruby) {
     # install bundler v2.5 package
     if ($ruby.bundlerV25) {
         Write-Host "gem install bundler --force" -ForegroundColor Gray
-        cmd /c gem install bundler --force
+        cmd /c gem install bundler -v `"~> 2.5`" --force
     }
 
     # fix "bundler" executable
