@@ -45,6 +45,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x86.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
+            "dontUpdate"   = $true
             "bundlerV23"   = $false
             "bundlerV25"   = $true
         }    
@@ -54,6 +55,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x64.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
+            "dontUpdate"   = $true
             "bundlerV23"   = $false
             "bundlerV25"   = $true
         }
@@ -63,6 +65,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.8-1/rubyinstaller-2.7.8-1-x86.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
+            "dontUpdate"   = $true
             "bundlerV23"   = $false
             "bundlerV25"   = $true
         }    
@@ -72,6 +75,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.8-1/rubyinstaller-2.7.8-1-x64.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
+            "dontUpdate"   = $true
             "bundlerV23"   = $false
             "bundlerV25"   = $true
         }        
