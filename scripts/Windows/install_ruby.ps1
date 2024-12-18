@@ -313,7 +313,7 @@ function Update-Ruby($ruby) {
         } else {
             # Ruby > 2.5
             Write-Host "gem update --system" -ForegroundColor Gray
-            cmd /c gem update --system
+            cmd /c gem update --system 3.5.18
         }
     }
 
