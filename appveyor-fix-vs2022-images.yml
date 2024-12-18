@@ -42,10 +42,10 @@ test: off
 build_script:
   #- ps: .\install_dotnet_core_sdks.ps1
   # - ps: .\install_qt_ifw_windows.ps1
-  #- ps: .\install_cmake.ps1
-  - ps: .\extend_system_volume.ps1 
-  - ps: .\install_qt_fast_windows.ps1
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - ps: .\install_ruby.ps1
+  #- ps: .\extend_system_volume.ps1 
+  #- ps: .\install_qt_fast_windows.ps1
+  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   # - ps: Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
   # - ps: |
   #     [Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\Erlang OTP", "Machine")
