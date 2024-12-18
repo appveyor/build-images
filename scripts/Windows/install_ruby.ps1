@@ -45,9 +45,9 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x86.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
-            "dontUpdate"   = $true
-            "bundlerV23"   = $false
-            "bundlerV25"   = $true
+            #"dontUpdate"   = $true
+            "bundlerV23"   = $true
+            "bundlerV25"   = $false
         }    
         @{
             "version"      = "Ruby 2.6.9-1 (x64)"
@@ -55,9 +55,9 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x64.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
-            "dontUpdate"   = $true
-            "bundlerV23"   = $false
-            "bundlerV25"   = $true
+            #"dontUpdate"   = $true
+            "bundlerV23"   = $true
+            "bundlerV25"   = $false
         }
         @{
             "version"      = "Ruby 2.7.8-1"
@@ -65,9 +65,9 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.8-1/rubyinstaller-2.7.8-1-x86.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
-            "dontUpdate"   = $true
-            "bundlerV23"   = $false
-            "bundlerV25"   = $true
+            #"dontUpdate"   = $true
+            "bundlerV23"   = $true
+            "bundlerV25"   = $false
         }    
         @{
             "version"      = "Ruby 2.7.8-1 (x64)"
@@ -75,9 +75,9 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.8-1/rubyinstaller-2.7.8-1-x64.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
-            "dontUpdate"   = $true
-            "bundlerV23"   = $false
-            "bundlerV25"   = $true
+            #"dontUpdate"   = $true
+            "bundlerV23"   = $true
+            "bundlerV25"   = $false
         }        
     )
 }
@@ -332,7 +332,7 @@ function Update-Ruby($ruby) {
     # install bundler v2.3 package
     if ($ruby.bundlerV23) {
         Write-Host "gem install bundler --force" -ForegroundColor Gray
-        cmd /c gem install bundler -v `"~> 2.3`" --force
+        cmd /c gem install bundler -v `"2.3.24`" --force
     }
     # install bundler v2.5 package
     if ($ruby.bundlerV25) {
