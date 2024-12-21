@@ -200,7 +200,24 @@ function InstallComponentById {
         Write-Host "Skipped examples installation" -ForegroundColor Yellow
         return
     }
-
+    if ($comp.Name -match "mingw" -and ($version -eq 681)) {
+        Write-Host "installing to mingw"
+        $destPath = [IO.Path]::Combine($destPath, "mingw_64")
+        Write-Host "at $destPath"
+    }
+    elseif ($comp.Name -match "arm" -and ($version -eq 681)) {
+        Write-Host "installing to msvc2022_arm64"
+        $destPath = [IO.Path]::Combine($destPath, "msvc2022_arm64")
+        Write-Host "at $destPath"
+    }
+    elseif ($version -eq 681) {
+        Write-Host "installing to msvc2022_64"
+        $destPath = [IO.Path]::Combine($destPath, "msvc2022_64")
+        Write-Host "at $destPath"
+    }
+    else {
+        Write-host "installing component for earlier Qt $version, at $destPath"
+    }
     # download and extract component archives
     foreach($downloadableArchive in $comp.DownloadableArchives) {
         $fileName = "$($comp.Version)$downloadableArchive"
@@ -212,24 +229,7 @@ function InstallComponentById {
 
         Write-Host "$($comp.Name)/$fileName - Downloading..." -NoNewline
         $tempFileName = [IO.Path]::Combine($tempDir, $fileName)
-        if ($comp.Name -match "mingw" -and ($version -eq 681)) {
-            Write-Host "installing to mingw"
-            $destPath = [IO.Path]::Combine($destPath, "mingw_64")
-            Write-Host "at $destPath"
-        }
-        elseif ($comp.Name -match "arm" -and ($version -eq 681)) {
-            Write-Host "installing to msvc2022_arm64"
-            $destPath = [IO.Path]::Combine($destPath, "msvc2022_arm64")
-            Write-Host "at $destPath"
-        }
-        elseif ($version -eq 681) {
-            Write-Host "installing to msvc2022_64"
-            $destPath = [IO.Path]::Combine($destPath, "msvc2022_64")
-            Write-Host "at $destPath"
-        }
-        else {
-            Write-host "installing component for earlier Qt $version, at $destPath"
-        }
+
         try {
             (New-Object Net.WebClient).DownloadFile($downloadUrl, $tempFileName)
         } catch {
