@@ -547,9 +547,9 @@ $component_groups = @(
 # install components
 foreach ($componentGroup in $component_groups) {
     if ($componentGroup.version -and $componentGroup.version -ge "6.8.0") {
+        $newPath = [IO.Path]::Combine($installDir, $componentGroup.version)
         foreach ($component in $componentGroup.components) {
             Write-Host("6.8 and up")
-            $newPath = [IO.Path]::Combine($installDir, $componentGroup.version)
             Install-QtComponent -Version $componentGroup.version -Name $component -Path "$newPath"
         }
         ConfigureQtVersion $installDir $componentGroup.version

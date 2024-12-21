@@ -47,6 +47,7 @@ if ($isLinux) {
     $TOOL_IDS += @(
         "mingw"
         "mingw90"
+        "mingw1310"
         "opensslv3_src"
         "opensslv3_x64"
         #"openssl_x86"
