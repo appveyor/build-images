@@ -148,6 +148,7 @@ for:
       - ps: .\install_vstest_console_logger.ps1
 
       - ps: .\install_qt_fast_windows.ps1
+      - ps: .\install_qt_fast_windows_old.ps1
       - ps: .\install_ruby.ps1
       - ps: .\patch_qt_files.ps1
 
