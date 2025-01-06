@@ -15,6 +15,7 @@ Write-Host "Downloading Flutter SDK..."
 Write-Host "Unpacking Flutter SDK..."
 7z x $zipPath -o"$env:SystemDrive\" | Out-Null
 
+Write-Host "Adding flutter to path..."
 Add-SessionPath "$env:SystemDrive\flutter\bin"
 Add-Path "$env:SystemDrive\flutter\bin"
 
