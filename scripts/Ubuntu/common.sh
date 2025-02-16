@@ -1282,7 +1282,7 @@ function install_rbenv_rubies() {
         { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
-    declare RUBY_VERSIONS=( "2.1.10" "2.2.10" "2.3.8" "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.4" "3.2.3"  )
+    declare RUBY_VERSIONS=( "2.1.10" "2.2.10" "2.3.8" "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.4" "3.2.3" "3.3.7" )
 
     for v in "${RUBY_VERSIONS[@]}"; do
         rbenv install ${v} ||
