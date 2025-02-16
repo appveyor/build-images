@@ -21,7 +21,7 @@ function configure_mercurial_repository() {
 }
 
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=( "6.0" "7.0" "8.0" )
+    SDK_VERSIONS=( "6.0" "7.0" "8.0" "9.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     # RUNTIME_VERSIONS=( "3.1" "6.0" )
@@ -35,6 +35,7 @@ function config_dotnet_repository() {
     dpkg -i packages-microsoft-prod.deb &&
     apt-get -y -q update ||
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
+    add-apt-repository ppa:dotnet/backports
 }
 
 function install_outdated_dotnets() {
