@@ -23,8 +23,9 @@ RubyVersions[2.6]=2.6.10
 RubyVersions[2.7]=2.7.8
 RubyVersions[3.0]=3.0.6
 RubyVersions[3.1]=3.1.5
-RubyVersions[3.2]=3.2.4
-RubyVersions[3.3]=3.3.4
+RubyVersions[3.2]=3.2.7
+RubyVersions[3.3]=3.3.7
+RubyVersions[3.4]=3.4.2
 
 if [[ -v RubyVersions[$VERSION] ]]; then
   echo "Ruby version found: ${RubyVersions[$VERSION]}"

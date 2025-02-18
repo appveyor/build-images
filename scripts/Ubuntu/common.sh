@@ -1267,8 +1267,8 @@ function install_rbenv() {
     export PATH="$PATH:${HOME}/.rbenv/shims:${HOME}/.rbenv/bin"
     # WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-    # sudo cp "${WORK_DIR}"/rvm_wrapper.sh /usr/bin/rvm
-    # sudo chmod +x /usr/bin/rvm
+    #sudo cp "${WORK_DIR}"/rvm_wrapper.sh /usr/bin/rvm
+    #sudo chmod +x /usr/bin/rvm
 
 }
 
