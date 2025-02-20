@@ -99,12 +99,6 @@ function install_jdks_from_repository() {
     # fi
 }
 
-function configure_sqlserver_repository() {
-    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 22.04..."
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2022.list)" ||
-        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
-}
-
 function configure_docker_repository() {
     echo "[INFO] Running configure_docker_repository on Ubuntu 22.04..."
 
@@ -201,12 +195,6 @@ function configure_mono_repository () {
      #   { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
 }
 
-function configure_sqlserver_repository() {
-    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 22.04..."
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)" ||
-        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
-}
-
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
     install_pip3
@@ -233,12 +221,17 @@ function install_pip() {
     # cleanup
     rm get-pip.py
 }
+function configure_sqlserver_repository() {
+    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 22.04..."
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2022.list)" ||
+        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
+}
 
 function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
-    curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
-    #configure_sqlserver_repository
+    #curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
+    configure_sqlserver_repository
 
     apt-get -y -qq update &&
     apt-get -y -q install mssql-server ||
