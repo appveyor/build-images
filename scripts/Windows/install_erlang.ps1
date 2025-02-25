@@ -13,8 +13,10 @@ Remove-Path "${env:ProgramFiles}\erl7.3\bin"
 Remove-Path "${env:ProgramFiles}\erl8.2\bin"
 Remove-Path "${env:ProgramFiles}\erl8.3\bin"
 
-Add-Path "${env:ProgramFiles}\erl10.7\bin"
-[Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\erl10.7", "Machine")
+#Add-Path "${env:ProgramFiles}\erl10.7\bin"
+Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
+#[Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\erl10.7", "Machine")
+[Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\Erlang OTP", "Machine")
 
 # ${env:ProgramFiles}\erl10.7
 

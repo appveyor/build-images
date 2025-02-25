@@ -50,6 +50,7 @@ if ($isLinux) {
         "mingw1310"
         "opensslv3_src"
         "opensslv3_x64"
+        #"openssl_x86"
         "qt3dstudio_runtime"
         "qt3dstudio_runtime_210"
         "vcredist"
@@ -71,13 +72,7 @@ function GetVersionId($version) {
 }
 
 function GetReleaseRootUrl($version) {
-    $versionDigits = $version.Split('.')
-    if ($versionDigits[1] -eq "8") {
-        return "$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)/$(GetQtPrefix $version)_$(GetVersionId $version)"
-    }
-    else {
-        return "$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)"
-    }
+    return "$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)"
 }
 
 function FetchToolsUpdatePackages($toolsId) {
@@ -85,8 +80,6 @@ function FetchToolsUpdatePackages($toolsId) {
 }
 
 function FetchReleaseUpdatePackages($version) {
-    Write-host "GetReleaseRootUrl"
-    Write-Host "$(GetReleaseRootUrl $version)"
     FetchUpdatePackages "$(GetReleaseRootUrl $version)"
     # FetchUpdatePackages "$(GetReleaseRootUrl $version)_src_doc_examples"
 }
@@ -174,7 +167,7 @@ function InstallComponentById {
     )
 
     Write-Host "Installing $componentId" -ForegroundColor Cyan
-    Write-host "Installing to $destPath"
+
     $comp = $package_updates[$componentId]
 
     # if ($whatIf -eq $true) {
@@ -184,8 +177,6 @@ function InstallComponentById {
     if (-not $destPath) {
         $destPath = $QT_INSTALL_DIR
     }
-
-    $version = $componentId.split(".")[2]
 
     if ($comp.Installed) {
         Write-Host "Already installed" -ForegroundColor Yellow
@@ -200,24 +191,7 @@ function InstallComponentById {
         Write-Host "Skipped examples installation" -ForegroundColor Yellow
         return
     }
-    if ($comp.Name -match "mingw" -and ($version -eq 681)) {
-        Write-Host "installing to mingw"
-        $destPath = [IO.Path]::Combine($destPath, "mingw_64")
-        Write-Host "at $destPath"
-    }
-    elseif ($comp.Name -match "arm" -and ($version -eq 681)) {
-        Write-Host "installing to msvc2022_arm64"
-        $destPath = [IO.Path]::Combine($destPath, "msvc2022_arm64")
-        Write-Host "at $destPath"
-    }
-    elseif ($version -eq 681) {
-        Write-Host "installing to msvc2022_64"
-        $destPath = [IO.Path]::Combine($destPath, "msvc2022_64")
-        Write-Host "at $destPath"
-    }
-    else {
-        Write-host "installing component for earlier Qt $version, at $destPath"
-    }
+
     # download and extract component archives
     foreach($downloadableArchive in $comp.DownloadableArchives) {
         $fileName = "$($comp.Version)$downloadableArchive"
@@ -246,7 +220,7 @@ function InstallComponentById {
         if ($sha1 -ne $downloadedSha1) {
             throw "SHA1 hashes don't match for $downloadUrl ($sha1) and $tempFileName ($downloadedSha1)"
         }
-        
+
         Write-Host "Extracting..." -NoNewline
         if ($isLinux -or $isMacOS) {
             7za x $tempFileName -aoa -o"$destPath" | Out-Null
@@ -322,10 +296,10 @@ Prefix=.."
     }
 }
 
-# fetch tools packages
-# foreach($tool_id in $TOOL_IDS) {
-#     FetchToolsUpdatePackages $tool_id
-# }
+fetch tools packages
+foreach($tool_id in $TOOL_IDS) {
+    FetchToolsUpdatePackages $tool_id
+}
 
 # fetch licenses
 FetchUpdatePackages "$QT_ROOT_URL/licenses"
