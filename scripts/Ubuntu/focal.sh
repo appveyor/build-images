@@ -112,7 +112,7 @@ function install_rbenv_rubies() {
         { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
-    declare RUBY_VERSIONS=( "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.4" "3.3.4" )
+    declare RUBY_VERSIONS=( "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.7" "3.3.7" "3.4.2" )
 
     for v in "${RUBY_VERSIONS[@]}"; do
         rbenv install ${v} ||
@@ -137,7 +137,7 @@ function install_nvm_nodejs() {
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
 
-    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" )
+    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" "23" )
 
     
     for v in "${NVM_VERSIONS[@]}"; do
