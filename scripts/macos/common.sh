@@ -419,7 +419,7 @@ function install_pythons(){
     write_line "${HOME}/.profile" 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
     eval "$(pyenv init -)"
 
-    declare PY_VERSIONS=( "2.7.18" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.13.0rc3" "3.12.6" )
+    declare PY_VERSIONS=( "2.7.18" "3.8.20" "3.9.22" "3.10.17" "3.11.12" "3.12.10" "3.13.3" )
     for i in "${PY_VERSIONS[@]}"; do
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
@@ -492,7 +492,7 @@ function install_dotnets() {
     curl -fsSL "$SCRIPT_URL" -O ||
         { echo "[ERROR] Cannot download install script '$SCRIPT_URL'." 1>&2; return 10; }
     chmod a+x ./dotnet-install.sh
-    declare DOTNET_VERSIONS=( "3.1" "6.0" "7.0" "8.0" )
+    declare DOTNET_VERSIONS=( "3.1" "6.0" "7.0" "8.0" "9.0" )
     for v in "${DOTNET_VERSIONS[@]}"; do
         echo "[INFO] Installing .NET Core ${v}..."
         sudo ./dotnet-install.sh -channel "$v" --install-dir "$INSTALL_DIR"
@@ -645,7 +645,7 @@ function install_xcode() {
     
     # ventura and sonoma
     if [ "$OSX_MAJOR_VER" -ge 13 ]; then
-        XCODE_VERSIONS=( "13.4.1" "14.3.1" "15.4" )
+        XCODE_VERSIONS=( "14.3.1" "15.4" "16.2" )
     fi
 
     # xcode-install
@@ -671,7 +671,11 @@ function install_xcode() {
             xcodes select "${XCODE_VERSIONS[$last_index]}"
         fi
 
-        if [ "$OSX_MAJOR_VER" -ge 13 ]; then
+        if [ "$OSX_MAJOR_VER" -ge 14 ]; then
+            xcodes runtimes install 'iOS 18.2'
+            xcodes runtimes install 'watchOS 11.2'
+            xcodes runtimes install 'tvOS 18.2'
+        elif [ "$OSX_MAJOR_VER" -ge 13 ]; then
             xcodes runtimes install 'iOS 17.2'
             xcodes runtimes install 'watchOS 10.2'
             xcodes runtimes install 'tvOS 17.2'
