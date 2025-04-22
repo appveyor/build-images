@@ -10,6 +10,8 @@ for LIB_FOLDER in "${LIB_FOLDERS[@]}"; do
     fi
 done
 
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # shellcheck source=./common.sh
 . "${LIB_FOLDER}/common.sh" ||
         { echo "[ERROR] Cannot source common.sh script. Aborting." 1>&2; exit 2; }
@@ -18,10 +20,10 @@ done
 echo "PATH variable:"
 echo "$PATH" | tr ":" '\n'
 if ! command -v brew; then
-    if [ -x /usr/local/bin/brew ]; then
+    if [ -x brew ]; then
         export PATH="$PATH:/usr/local/bin"
     else
-        echo "[ERROR] cannot find brew in default path /usr/local/bin or in \$PATH."
+        echo "[ERROR] cannot find brew in default path /opt/homebrew/bin/brew or in \$PATH."
     fi
 fi
 
@@ -39,6 +41,9 @@ configure_path
 #configure_updates
 configure_sshd
 configure_autologin
+if [[ $(uname -m) == 'arm64' ]]; then
+  install_rosetta
+fi
 install_curl
 install_vcs
 install_gcc

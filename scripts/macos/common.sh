@@ -174,6 +174,12 @@ function install_curl() {
     fi
 }
 
+function install_rosetta() {
+    echo "[INFO] Running install_rosetta..."
+
+    sudo softwareupdate --install-rosetta --agree-to-license
+}
+
 function install_vcs() {
     echo "[INFO] Running install_vcs..."
 
@@ -250,11 +256,17 @@ function install_rubies() {
         return 1
     fi
     local DEFAULT_RUBY
-    DEFAULT_RUBY="ruby-3.3.0"
+    DEFAULT_RUBY="ruby-3.3.5"
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.6" "ruby-3.1.4" "ruby-3.2.3" "ruby-3.3.0" )
+    if [ "$OSX_MAJOR_VER" -ge 13 ]; then
+        # ventura and sonoma
+        declare RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.3.5" )
+    else
+        # others
+        declare RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.7" "ruby-3.1.6" "ruby-3.2.5" "ruby-3.3.5" )
+    fi
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install "${v}" --with-openssl-dir=/usr/local/opt/openssl@1.1 ||
             { echo "[ERROR] Cannot install Ruby ${v} with RVM." 1>&2; return 10; }
@@ -280,6 +292,7 @@ function install_rvm_and_rubies() {
         su -l ${USER_NAME} -c "
             PATH=$PATH
             USER_NAME=${USER_NAME}
+            OSX_MAJOR_VER=${OSX_MAJOR_VER}
             VERSIONS_FILE=${VERSIONS_FILE}
             [[ -s \"${HOME}/.rvm/scripts/rvm\" ]] && source \"${HOME}/.rvm/scripts/rvm\"
             $(declare -f log_version)
@@ -350,7 +363,13 @@ function install_rbenv_and_rubies() {
 }
 
 function install_gcc() {
-    declare GCC_VERSIONS=( "gcc@10" "gcc@11" "gcc@12" )
+    if [ "$OSX_MAJOR_VER" -ge 13 ]; then
+        # ventura and sonoma
+        declare GCC_VERSIONS=( "gcc@11" "gcc@12" )
+    else
+        # others
+        declare GCC_VERSIONS=( "gcc@10" "gcc@11" "gcc@12" )
+    fi
     brew_install "${GCC_VERSIONS[@]}"
 }
 
@@ -406,7 +425,7 @@ function install_pythons(){
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
 
         pyenv install "${i}" ||
-            { echo "[ERROR] Cannot install Python ${i}."; return 10; }
+            { echo "[ERROR] Cannot install Python ${i}."; pyenv --version; pyenv install --list; return 10; }
 
         pyenv global "${i}"
         python --version
@@ -765,21 +784,17 @@ function install_openjdk() {
     if check_user; then
 
         # all versions
-        declare JDK_VERSIONS=( "11" "17" "18" "19" "20" "21" )
+        declare JDK_VERSIONS=( "11" "17" "19" "20" "21" )
 
         # # big sur, monterey
         # if [ "$OSX_MAJOR_VER" -ge 11 ]; then
         #     JDK_VERSIONS=( "15" "16" "17" "18" "19" )
-        # fi
-
-        su -l ${USER_NAME} -c "
-            $BREW_CMD tap homebrew/cask-versions
-        " || { echo "[ERROR] Cannot add AdoptOpenJDK/openjdk tap." 1>&2; return 20; }        
+        # fi 
 
         # install JDKs
         for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
             su -l ${USER_NAME} -c "
-                $BREW_CMD install --cask temurin${JDK_VERSION}
+                $BREW_CMD install --cask temurin@${JDK_VERSION}
             " || { echo "[ERROR] Cannot install adoptopenjdk ${JDK_VERSION} with Homebrew." 1>&2; return 20; }
         done
 
