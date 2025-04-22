@@ -2,7 +2,7 @@
 
 Write-Host "Downloading..."
 $exePath = "$($env:TEMP)\otp_win64.exe"
-(New-Object Net.WebClient).DownloadFile('http://erlang.org/download/otp_win64_22.3.exe', $exePath)
+(New-Object Net.WebClient).DownloadFile('https://github.com/erlang/otp/releases/download/OTP-27.1.2/otp_win64_27.1.2.exe', $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath /S
@@ -13,8 +13,10 @@ Remove-Path "${env:ProgramFiles}\erl7.3\bin"
 Remove-Path "${env:ProgramFiles}\erl8.2\bin"
 Remove-Path "${env:ProgramFiles}\erl8.3\bin"
 
-Add-Path "${env:ProgramFiles}\erl10.7\bin"
-[Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\erl10.7", "Machine")
+#Add-Path "${env:ProgramFiles}\erl10.7\bin"
+Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
+#[Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\erl10.7", "Machine")
+[Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\Erlang OTP", "Machine")
 
 # ${env:ProgramFiles}\erl10.7
 
