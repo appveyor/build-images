@@ -770,16 +770,12 @@ function install_openjdk() {
         # # big sur, monterey
         # if [ "$OSX_MAJOR_VER" -ge 11 ]; then
         #     JDK_VERSIONS=( "15" "16" "17" "18" "19" )
-        # fi
-
-        su -l ${USER_NAME} -c "
-            $BREW_CMD tap homebrew/cask-versions
-        " || { echo "[ERROR] Cannot add AdoptOpenJDK/openjdk tap." 1>&2; return 20; }        
+        # fi  
 
         # install JDKs
         for JDK_VERSION in "${JDK_VERSIONS[@]}"; do
             su -l ${USER_NAME} -c "
-                $BREW_CMD install --cask temurin${JDK_VERSION}
+                $BREW_CMD install --cask temurin@${JDK_VERSION}
             " || { echo "[ERROR] Cannot install adoptopenjdk ${JDK_VERSION} with Homebrew." 1>&2; return 20; }
         done
 
