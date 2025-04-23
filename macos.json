@@ -92,6 +92,7 @@
       "type": "parallels-pvm",
       "parallels_tools_flavor": "mac",
       "source_path": "{{ user `images_directory` }}/{{ user `macos_version` }}_template.pvm",
+      "ssh_host": "10.0.0.8",
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout": "1200s",
