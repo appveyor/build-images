@@ -95,7 +95,7 @@
       "ssh_host": "10.0.0.8",
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
-      "ssh_timeout": "1200s",
+      "ssh_timeout": "240s",
       "shutdown_command": "sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "skip_compaction": "false"
