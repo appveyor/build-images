@@ -626,7 +626,12 @@ function install_xcode() {
     
     # ventura and sonoma
     if [ "$OSX_MAJOR_VER" -ge 13 ]; then
-        XCODE_VERSIONS=( "14.3.1" "15.4" "16.2" )
+        XCODE_VERSIONS=( "14.3.1" "15.4" )
+    fi
+
+    # sequoia
+    if [ "$OSX_MAJOR_VER" -ge 15 ]; then
+        XCODE_VERSIONS=( "15.4" "16.3" )
     fi
 
     # xcode-install
@@ -652,7 +657,7 @@ function install_xcode() {
             xcodes select "${XCODE_VERSIONS[$last_index]}"
         fi
 
-        if [ "$OSX_MAJOR_VER" -ge 14 ]; then
+        if [ "$OSX_MAJOR_VER" -ge 15 ]; then
             xcodes runtimes install 'iOS 18.2'
             xcodes runtimes install 'watchOS 11.2'
             xcodes runtimes install 'tvOS 18.2'
