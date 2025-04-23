@@ -94,7 +94,7 @@
       "source_path": "{{ user `images_directory` }}/{{ user `macos_version` }}_template.pvm",
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
-      "ssh_timeout": "120s",
+      "ssh_timeout": "240s",
       "shutdown_command": "sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "skip_compaction": "false"
@@ -127,7 +127,7 @@
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
       "ssh_port": 22,
-      "ssh_wait_timeout": "10000s",
+      "ssh_wait_timeout": "30000s",
       "shutdown_command": "sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "prlctl": [
