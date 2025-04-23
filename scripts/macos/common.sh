@@ -765,7 +765,7 @@ function install_openjdk() {
     if check_user; then
 
         # all versions
-        declare JDK_VERSIONS=( "11" "17" "18" "19" "20" "21" )
+        declare JDK_VERSIONS=( "11" "19" "20" "21" )
 
         # # big sur, monterey
         # if [ "$OSX_MAJOR_VER" -ge 11 ]; then
