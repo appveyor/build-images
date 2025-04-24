@@ -258,7 +258,7 @@ function install_rubies() {
     # sequoia
     if [ "$OSX_MAJOR_VER" -ge 15 ]; then
         RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.3.0" )
-    elif
+    else
         RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.6" "ruby-3.1.4" "ruby-3.2.3" "ruby-3.3.0" )
     fi
 
