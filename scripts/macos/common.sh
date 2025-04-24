@@ -254,11 +254,12 @@ function install_rubies() {
     command -v rvm ||
         { echo "Cannot find rvm. Install rvm first!" 1>&2; return 10; }
     local v
-    declare RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.6" "ruby-3.1.4" "ruby-3.2.3" "ruby-3.3.0" )
 
     # sequoia
     if [ "$OSX_MAJOR_VER" -ge 15 ]; then
         RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.3.0" )
+    elif
+        RUBY_VERSIONS=( "ruby-2.7.8" "ruby-3.0.6" "ruby-3.1.4" "ruby-3.2.3" "ruby-3.3.0" )
     fi
 
     for v in "${RUBY_VERSIONS[@]}"; do
