@@ -95,9 +95,7 @@
       "ssh_username": "{{ user `install_user` }}",
       "ssh_password": "{{ user `install_password` }}",
       "ssh_timeout": "240s",
-      "prlctl": [
-        ["set", "{{.Name}}", "--device-set", "net0", "--mac", "auto"]
-      ],
+      "reassign_mac": true,
       "shutdown_command": "sudo -S shutdown -h now",
       "vm_name": "packer-{{user `macos_version`}}-{{user `datemark`}}",
       "skip_compaction": "false"
