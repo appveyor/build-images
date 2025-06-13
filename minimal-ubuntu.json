@@ -65,6 +65,7 @@
         ],
       "machine_type": "n1-standard-1",
       "ssh_username": "{{ user `install_user` }}",
+      "temporary_key_pair_type": "ed2519",
       "instance_name": "packer-ubuntu2004-{{uuid}}",
       "image_name": "packer-ubuntu2004-{{timestamp}}",
       "image_description": "{{ user `image_description` }}",

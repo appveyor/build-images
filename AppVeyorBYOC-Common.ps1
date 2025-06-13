@@ -260,7 +260,7 @@ function ValidateDependencies ($cloudType) {
 }
 
 function GetPackerPath ([switch]$prerelease) {
-    $packerVersion = if ($prerelease) {"1.8.7"} else {"1.4.3"}
+    $packerVersion = if ($prerelease) {"1.13.2"} else {"1.13.1"}
     Write-host "`nChecking if Hashicorp Packer version $packerVersion is installed..."  -ForegroundColor Cyan
     if ((Get-Command packer -ErrorAction Ignore) -and (packer --version) -eq $packerVersion) {
         Write-Host "Packer version $packerVersion found" -ForegroundColor DarkGray
