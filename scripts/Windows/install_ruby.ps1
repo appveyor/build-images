@@ -19,85 +19,6 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "dontUpdateRubygems" = $true
             #"rubygemsUpdate" = $true
         }
-        # @{
-        #     "version"        = "Ruby 2.0.0-p648"
-        #     "install_path"   = "C:\Ruby200"
-        #     "download_url"   = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby200.zip"
-        #     "devkit_paths"   = @()
-        #     "install_psych"  = "true"
-        #     "dontUpdate"     = $true
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version"        = "Ruby 2.0.0-p648 (x64)"
-        #     "install_path"   = "C:\Ruby200-x64"
-        #     "download_url"   = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby200-x64.zip"
-        #     "install_psych"  = "true"
-        #     "dontUpdate"     = $true
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version"        = "Ruby 2.2.6"
-        #     "install_path"   = "C:\Ruby22"
-        #     "download_url"   = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby22.zip"
-        #     "dontUpdate"     = $true
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version"        = "Ruby 2.2.6 (x64)"
-        #     "install_path"   = "C:\Ruby22-x64"
-        #     "download_url"   = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby22-x64.zip"
-        #     "dontUpdate"     = $true
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version"        = "Ruby 2.1.9"
-        #     "install_path"   = "C:\Ruby21"
-        #     "download_url"   = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby21.zip"
-        #     "dontUpdate"     = $true
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version"        = "Ruby 2.1.9 (x64)"
-        #     "install_path"   = "C:\Ruby21-x64"
-        #     "download_url"   = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby21-x64.zip"
-        #     "dontUpdate"     = $true
-        #     "rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version"      = "Ruby 2.3.3"
-        #     "install_path" = "C:\Ruby23"
-        #     "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby23.zip"
-        #     "devkit_paths" = @()
-        #     "dontUpdate"   = $true
-        #     "bundlerV2"    = $true
-        # }
-        # @{
-        #     "version"      = "Ruby 2.3.3 (x64)"
-        #     "install_path" = "C:\Ruby23-x64"
-        #     "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby23-x64.zip"
-        #     "devkit_paths" = @()
-        #     "dontUpdate"   = $true
-        #     "bundlerV2"    = $true
-        # }
-        # @{
-        #     "version"      = "Ruby 2.4.10-1"
-        #     "install_path" = "C:\Ruby24"
-        #     "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby24.zip"
-        #     "devkit_url"   = ""
-        #     "devkit_paths" = @()
-        #     "dontUpdate"   = $true
-        #     "bundlerV2"    = $true
-        # }
-        # @{
-        #     "version"      = "Ruby 2.4.10-1 (x64)"
-        #     "install_path" = "C:\Ruby24-x64"
-        #     "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby24-x64.zip"
-        #     "devkit_url"   = ""
-        #     "devkit_paths" = @()
-        #     "dontUpdate"   = $true
-        #     "bundlerV2"    = $true
-        # }
         @{
             "version"      = "Ruby 2.5.9-1"
             "install_path" = "C:\Ruby25"
@@ -124,6 +45,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x86.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
+            #"dontUpdate"   = $true
             "bundlerV23"   = $true
             "bundlerV25"   = $false
         }    
@@ -133,7 +55,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x64.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
-            "bundlerV32"   = $true
+            #"dontUpdate"   = $true
+            "bundlerV23"   = $true
             "bundlerV25"   = $false
         }
         @{
@@ -142,6 +65,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.8-1/rubyinstaller-2.7.8-1-x86.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
+            #"dontUpdate"   = $true
             "bundlerV23"   = $true
             "bundlerV25"   = $false
         }    
@@ -151,6 +75,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.8-1/rubyinstaller-2.7.8-1-x64.exe"
             "devkit_url"   = ""
             "devkit_paths" = @()
+            #"dontUpdate"   = $true
             "bundlerV23"   = $true
             "bundlerV25"   = $false
         }        
@@ -198,36 +123,36 @@ $rubies = $rubies + @(
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.2.5-1"
+        "version"      = "Ruby 3.2.6-1"
         "install_path" = "C:\Ruby32"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.5-1/rubyinstaller-3.2.5-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.6-1/rubyinstaller-3.2.6-1-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.2.5-1 (x64)"
+        "version"      = "Ruby 3.2.6-1 (x64)"
         "install_path" = "C:\Ruby32-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.5-1/rubyinstaller-3.2.5-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.6-1/rubyinstaller-3.2.6-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.3.3-1"
+        "version"      = "Ruby 3.3.6-2"
         "install_path" = "C:\Ruby33"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.3-1/rubyinstaller-3.3.3-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.6-2/rubyinstaller-3.3.6-2-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.3.3-1 (x64)"
+        "version"      = "Ruby 3.3.6-2 (x64)"
         "install_path" = "C:\Ruby33-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.3-1/rubyinstaller-3.3.3-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.6-2/rubyinstaller-3.3.6-2-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
@@ -388,7 +313,7 @@ function Update-Ruby($ruby) {
         } else {
             # Ruby > 2.5
             Write-Host "gem update --system" -ForegroundColor Gray
-            cmd /c gem update --system
+            cmd /c gem update --system 3.5.18
         }
     }
 
@@ -407,12 +332,12 @@ function Update-Ruby($ruby) {
     # install bundler v2.3 package
     if ($ruby.bundlerV23) {
         Write-Host "gem install bundler --force" -ForegroundColor Gray
-        cmd /c gem install bundler -v `"~> 2.3`" --force
+        cmd /c gem install bundler -v `"2.3.24`" --force
     }
     # install bundler v2.5 package
     if ($ruby.bundlerV25) {
         Write-Host "gem install bundler --force" -ForegroundColor Gray
-        cmd /c gem install bundler --force
+        cmd /c gem install bundler -v `"2.5.18`" --force
     }
 
     # fix "bundler" executable

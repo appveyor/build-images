@@ -14,18 +14,19 @@ function Install-Nodejs {
         "19.9.0",
         "20.17.0",
         "21.7.3",
-        "22.6.0"
+        "22.11.0",
+        "23.2.0"
     )
 
-    if (-not $env:INSTALL_LATEST_ONLY) {
-        $nodeVersions = @(
+    # if (-not $env:INSTALL_LATEST_ONLY) {
+    #     $nodeVersions = @(
 
-        ) + $nodeVersions
-    }
+    #     ) + $nodeVersions
+    # }
 
     $nodePlatforms = @(
-        "x64",
-        "x86"
+        "x86",
+        "x64"
     )
 
     $fileTemplates = @{
@@ -222,6 +223,7 @@ function Install-Nodejs {
 
     for ($i = 0; $i -lt $nodeVersions.Length; $i++) {
         for ($j = 0; $j -lt $nodePlatforms.Length; $j++) {
+            $v = Get-Version $nodeVersions[$i]
             $nodeVersion = $nodeVersions[$i]
             $nodePlatform = $nodePlatforms[$j]
             $nodeName = ProductName $nodeVersion
@@ -252,7 +254,12 @@ function Install-Nodejs {
             }
 
             # download required package
-            Start-NodeJsInstallation $nodeVersion $nodePlatform
+            if ($v.major -ge 23 -and $nodePlatform -eq 'x86') {
+                continue
+            }
+            else {
+                Start-NodeJsInstallation $nodeVersion $nodePlatform
+            }
 
             if (-not $lastOne) {
                 # copy

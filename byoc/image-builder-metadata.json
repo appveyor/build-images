@@ -239,7 +239,7 @@
          ]
       },
       {
-         "name":"Ubuntu 18.04 Minimal",
+         "name":"Ubuntu 22.04 Minimal",
          "cloudTypes":[
             "Azure",
             "GCE",
@@ -250,7 +250,161 @@
             "Linux"
          ],
          "imageOperatingSystem":"Linux",
-         "template":"minimal-ubuntu.json",
+         "template":"minimal-ubuntu-22-04.json",
+         "installedFeatures":[
+            {
+               "id":"git",
+               "title":"Git 2.19.1"
+            },
+            {
+               "id":"hg",
+               "title":"Mercurial"
+            },
+            {
+               "id":"powershell_core",
+               "title":"PowerShell Core 6.2.0"
+            },
+            {
+               "id":"appveyor_build_agent",
+               "title":"AppVeyor Build Agent"
+            }
+         ],
+         "optionalFeatures":[
+            {
+               "id": "install_nvm_and_nodejs",
+               "title": "Node.js with NVM"
+            },
+            {
+               "id": "install_pythons",
+               "title": "Pythons"
+            },
+            {
+               "id": "install_dotnets",
+               "title": ".NET Core SDKs"
+            },
+            {
+               "id": "install_dotnetv3_preview",
+               "title": ".NET Core 3.0 preview"
+            },
+            {
+               "id": "install_mono",
+               "title": "Mono framework (latest)"
+            },
+            {
+               "id": "install_jdks",
+               "title": "JDK 7, 8, 9, 10, 11, 12, 13, 14"
+            },
+            {
+               "id": "install_rvm_and_rubies",
+               "title": "Ruby (all 2.x versions) and RVM"
+            },
+            {
+               "id": "install_gvm_and_golangs",
+               "title": "Golang 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 1.12.x and GVM"
+            },
+            {
+               "id": "install_docker",
+               "title": "Docker CE (latest)"
+            },
+            {
+               "id": "install_MSSQLServer",
+               "title": "Microsoft SQL Server 2017 for Linux (requires VM with 3G RAM)"
+            },
+            {
+               "id": "install_mysql",
+               "title": "MySQL"
+            },
+            {
+               "id": "install_postgresql",
+               "title": "PostgreSQL"
+            },
+            {
+               "id": "install_mongodb",
+               "title": "MongoDB"
+            },
+            {
+               "id": "install_redis",
+               "title": "Redis"
+            },
+            {
+               "id": "install_rabbitmq",
+               "title": "RabbitMQ"
+            },
+            {
+               "id": "install_powershell",
+               "title": "PowerShell Core 6.x"
+            },            
+            {
+               "id": "install_p7zip",
+               "title": "p7zip"
+            },
+            {
+               "id": "install_packer",
+               "title": "Packer by Hashicorp"
+            },
+            {
+               "id": "install_yarn",
+               "title": "Yarn package manager"
+            },
+            {
+               "id": "install_awscli",
+               "title": "AWS CLI"
+            },
+            {
+               "id": "install_localstack",
+               "title": "Localstack"
+            },
+            {
+               "id": "install_gcloud",
+               "title": "gcloud command-line tool"
+            },
+            {
+               "id": "install_azurecli",
+               "title": "Azure CLI"
+            },
+            {
+               "id": "install_cmake",
+               "title": "CMake 3.15.2"
+            },
+            {
+               "id": "install_kubectl",
+               "title": "kubectl"
+            },
+            {
+               "id": "install_gcc",
+               "title": "GCC"
+            },
+            {
+               "id": "install_browsers",
+               "title": "Firefox and Chrome browsers"
+            },
+            {
+               "id": "install_virtualbox",
+               "title": "VirtualBox"
+            },
+            {
+               "id": "install_clang",
+               "title": "CLang"
+            },
+            {
+               "id": "install_octo",
+               "title": "OctopusTools"
+            }
+         ]
+      },
+      {
+         "name":"Ubuntu 20.04 Minimal",
+         "cloudTypes":[
+            "Azure",
+            "GCE",
+            "AmazonEC2",
+            "HyperV"
+         ],
+         "operatingSystems":[
+            "Linux"
+         ],
+         "imageOperatingSystem":"Linux",
+         "template":"minimal-ubuntu-20-04.json",
          "installedFeatures":[
             {
                "id":"git",

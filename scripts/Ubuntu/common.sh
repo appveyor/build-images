@@ -806,9 +806,9 @@ function install_pythons(){
 
     echo "[INFO] Running install_pythons..."
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.6.15" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.13.0rc2" "3.12.6" )
+        declare PY_VERSIONS=( "2.7.18" "3.6.15" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.12.8" "3.13.2" )
     else
-        declare PY_VERSIONS=( "2.7.18" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.13.0rc2" "3.12.6" )
+        declare PY_VERSIONS=( "2.7.18" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.12.8" "3.13.2" )
     fi
 
     for i in "${PY_VERSIONS[@]}"; do
@@ -1035,7 +1035,7 @@ function install_flutter() {
     pushd -- "${TMP_DIR}"
 
     local RELEASE_URL
-    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.22.2-stable.tar.xz"
+    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.29.0-stable.tar.xz"
     curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
         { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
     
@@ -1121,7 +1121,10 @@ function install_jdks() {
     install_jdk 21 https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?        
     install_jdk 22 https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
-        return $?        
+        return $? 
+    install_jdk 23 https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $? 
+
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
         IFS=$'\n'
@@ -1264,8 +1267,8 @@ function install_rbenv() {
     export PATH="$PATH:${HOME}/.rbenv/shims:${HOME}/.rbenv/bin"
     # WORK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-    # sudo cp "${WORK_DIR}"/rvm_wrapper.sh /usr/bin/rvm
-    # sudo chmod +x /usr/bin/rvm
+    #sudo cp "${WORK_DIR}"/rvm_wrapper.sh /usr/bin/rvm
+    #sudo chmod +x /usr/bin/rvm
 
 }
 
@@ -1412,7 +1415,7 @@ function install_golangs() {
     #gvm use go1.4 ||
      #   { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.14.15" "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.13" "go1.20.14" "go1.21.12" "go1.22.5" )
+    declare GO_VERSIONS=( "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.13" "go1.20.14" "go1.21.12" "go1.22.12" "go1.23.6" "go1.24.0" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} -B ||

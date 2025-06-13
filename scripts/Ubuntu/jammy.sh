@@ -21,7 +21,7 @@ function configure_mercurial_repository() {
 }
 
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=( "6.0" "7.0" "8.0" )
+    SDK_VERSIONS=( "6.0" "7.0" "8.0" "9.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     # RUNTIME_VERSIONS=( "3.1" "6.0" )
@@ -35,6 +35,7 @@ function config_dotnet_repository() {
     dpkg -i packages-microsoft-prod.deb &&
     apt-get -y -q update ||
         { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
+    add-apt-repository ppa:dotnet/backports
 }
 
 function install_outdated_dotnets() {
@@ -96,12 +97,6 @@ function install_jdks_from_repository() {
     # if dpkg -l openjdk-11-jre-headless; then
     #     echo "openjdk-11-jre-headless hold" | dpkg --set-selections
     # fi
-}
-
-function configure_sqlserver_repository() {
-    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 22.04..."
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2022.list)" ||
-        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
 }
 
 function configure_docker_repository() {
@@ -200,12 +195,6 @@ function configure_mono_repository () {
      #   { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
 }
 
-function configure_sqlserver_repository() {
-    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 22.04..."
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)" ||
-        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
-}
-
 function install_virtualenv() {
     echo "[INFO] Running install_virtualenv..."
     install_pip3
@@ -232,12 +221,17 @@ function install_pip() {
     # cleanup
     rm get-pip.py
 }
+function configure_sqlserver_repository() {
+    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 22.04..."
+    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2022.list)" ||
+        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
+}
 
 function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
-    curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
-    #configure_sqlserver_repository
+    #curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
+    configure_sqlserver_repository
 
     apt-get -y -qq update &&
     apt-get -y -q install mssql-server ||
@@ -297,7 +291,7 @@ function install_nvm_nodejs() {
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
 
-    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" )
+    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" "23")
 
     
     for v in "${NVM_VERSIONS[@]}"; do
@@ -341,7 +335,7 @@ function install_rbenv_rubies() {
         { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
-    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.4" "3.3.4"  )
+    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.7" "3.3.7" "3.4.2"  )
 
     for v in "${RUBY_VERSIONS[@]}"; do
         rbenv install ${v} ||
