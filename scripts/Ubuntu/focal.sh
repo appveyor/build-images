@@ -169,3 +169,23 @@ function install_gcc() {
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 40 --slave /usr/bin/g++ g++ /usr/bin/g++-11 ||
         { echo "[ERROR] Cannot install gcc-11." 1>&2; return 40; }
 }
+
+function install_postgresql() {
+    echo "[INFO] Running install_postgresql..."
+    if [[ -z "${POSTGRES_ROOT_PASSWORD-}" || "${#POSTGRES_ROOT_PASSWORD}" = "0" ]]; then POSTGRES_ROOT_PASSWORD="Password12!"; fi
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
+    add-apt-repository -y "deb http://apt-archive.postgresql.org/pub/repos/apt/ ${OS_CODENAME}-pgdg main" ||
+        { echo "[ERROR] Cannot add postgresql repository to APT sources." 1>&2; return 10; }
+    apt-get -y -qq update &&
+    apt-get -y -q install postgresql ||
+        { echo "[ERROR] Cannot install postgresql." 1>&2; return 20; }
+    systemctl start postgresql
+    systemctl disable postgresql
+    log_version dpkg -l postgresql
+
+    sudo -u postgres createuser ${USER_NAME}
+    sudo -u postgres psql -c "alter user ${USER_NAME} with createdb" postgres
+    sudo -u postgres psql -c "ALTER USER postgres with password '${POSTGRES_ROOT_PASSWORD}';" postgres
+    replace_line '/etc/postgresql/11/main/pg_hba.conf' 'local   all             postgres                                trust' 'local\s+all\s+postgres\s+peer'
+
+}
