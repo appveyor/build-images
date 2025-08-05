@@ -402,3 +402,57 @@ function pull_dockerimages() {
     log_version docker images
     log_version docker system df
 }
+
+function install_rabbitmq() {
+    echo "[INFO] Running install_rabbitmq..."
+
+    ## Team RabbitMQ's main signing key
+    apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
+    ## Launchpad PPA that provides modern Erlang releases
+    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
+    ## PackageCloud RabbitMQ repository
+    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F6609E60DC62814E"
+
+    apt-get install curl gnupg apt-transport-https -y
+
+    ## Team RabbitMQ's signing key
+    curl -1sLf "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA" | sudo gpg --dearmor | sudo tee /usr/share/keyrings/com.rabbitmq.team.gpg > /dev/null
+
+    tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
+## Modern Erlang/OTP releases
+##
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
+## Provides modern RabbitMQ releases
+##
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
+EOF
+
+
+
+    # mkdir -p /etc/rabbitmq
+    # echo 'NODENAME=rabbitmq@localhost' > /etc/rabbitmq/rabbitmq-env.conf
+
+    apt-get -y -qq update &&
+    apt-get install -y erlang-base \
+                        erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
+                        erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
+                        erlang-runtime-tools erlang-snmp erlang-ssl \
+                        erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl ||
+        { echo "[ERROR] Cannot install erlang." 1>&2; return 20; }
+
+    apt-get install rabbitmq-server -y --fix-missing ||
+        { echo "[ERROR] Cannot install rabbitmq." 1>&2; return 20; }
+
+    sed -ibak -E -e 's/#\s*ulimit/ulimit/' /etc/default/rabbitmq-server &&
+
+    systemctl start rabbitmq-server &&
+    systemctl status rabbitmq-server --no-pager &&
+    systemctl enable rabbitmq-server &&
+    systemctl disable rabbitmq-server ||
+        { echo "[ERROR] Cannot configure rabbitmq." 1>&2; return 30; }
+
+    log_version dpkg -l rabbitmq-server
+    log_version erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), io:fwrite(Version), halt().' -noshell
+}
