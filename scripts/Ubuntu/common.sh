@@ -806,9 +806,9 @@ function install_pythons(){
 
     echo "[INFO] Running install_pythons..."
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.6.15" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.12.8" "3.13.2" )
+        declare PY_VERSIONS=( "2.7.18" "3.6.15" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.13" "3.12.11" "3.13.5" )
     else
-        declare PY_VERSIONS=( "2.7.18" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.12.8" "3.13.2" )
+        declare PY_VERSIONS=( "2.7.18" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.13" "3.12.11" "3.13.5" )
     fi
 
     for i in "${PY_VERSIONS[@]}"; do
@@ -1035,7 +1035,7 @@ function install_flutter() {
     pushd -- "${TMP_DIR}"
 
     local RELEASE_URL
-    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.29.0-stable.tar.xz"
+    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.32.8-stable.tar.xz"
     curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
         { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
     
