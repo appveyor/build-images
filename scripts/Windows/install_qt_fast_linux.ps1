@@ -6,7 +6,7 @@ $installDir = "$env:HOME/Qt"
 
 $component_groups = @(
     @{
-        version    = "6.7.2"
+        version    = "6.9.1"
         components = @(
             "linux_gcc_64",
             "debug_info",
@@ -76,7 +76,7 @@ $component_groups = @(
 if (-not $env:INSTALL_LATEST_ONLY) {
     $component_groups += @(
         @{
-            version    = "6.5.3"
+            version    = "6.8.3"
             components = @(
                 "gcc_64",
                 "debug_info",
@@ -110,7 +110,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             )
         }        
         @{
-            version    = "6.2.4"
+            version    = "6.5.3"
             components = @(
                 "gcc_64",
                 "debug_info",
@@ -181,7 +181,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 $component_groups += @(
     @{
         components = @(
-            "qt.tools.ifw.46",
+            "qt.tools.ifw.47",
             "qt.license.thirdparty"
         )
     }
@@ -204,9 +204,9 @@ foreach ($componentGroup in $component_groups) {
 
 # set aliases
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/latest"
-ln -s "$HOME/Qt/6.7.2" "$HOME/Qt/6.7"
+ln -s "$HOME/Qt/6.9.1" "$HOME/Qt/6.9"
+ln -s "$HOME/Qt/6.8.3" "$HOME/Qt/6.8"
 ln -s "$HOME/Qt/6.5.3" "$HOME/Qt/6.5"
-ln -s "$HOME/Qt/6.2.4" "$HOME/Qt/6.2"
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/5.15"
 
 Write-Host "Qt 5.x installed" -ForegroundColor Green
