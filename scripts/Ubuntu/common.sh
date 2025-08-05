@@ -557,7 +557,8 @@ function install_nvm() {
         return 1
     fi
     #TODO have to figure out latest release version automatically
-    curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    #curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
     #shellcheck disable=SC2016
