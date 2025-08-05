@@ -149,6 +149,8 @@ function install_clang() {
     install_clang_version 16
     install_clang_version 17
     install_clang_version 18
+    install_clang_version 19
+    install_clang_version 20
 
 
     # make clang 13 default
