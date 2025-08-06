@@ -189,3 +189,39 @@ function install_postgresql() {
     replace_line '/etc/postgresql/11/main/pg_hba.conf' 'local   all             postgres                                trust' 'local\s+all\s+postgres\s+peer'
 
 }
+
+function install_clang() {
+    echo "[INFO] Running install_clang..."
+    curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+
+    install_clang_version 10
+    install_clang_version 11
+    install_clang_version 12
+    install_clang_version 13
+    install_clang_version 14
+    install_clang_version 15
+    install_clang_version 16
+    install_clang_version 17
+    install_clang_version 18
+    install_clang_version 19
+
+
+    # make clang 10 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-10 1000
+    update-alternatives --config clang
+    update-alternatives --config clang++
+
+    log_version clang --version
+}
+
+function install_clang_version() {
+    local LLVM_VERSION=$1
+    echo "[INFO] Installing clang ${LLVM_VERSION}..."
+
+    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-${LLVM_VERSION} main" ||
+        { echo "[ERROR] Cannot add llvm ${LLVM_VERSION} repository to APT sources." 1>&2; return 10; }
+    apt-get -y -qq update &&
+    apt-get -y -q install clang-$LLVM_VERSION lldb-$LLVM_VERSION lld-$LLVM_VERSION clangd-$LLVM_VERSION ||
+        { echo "[ERROR] Cannot install clang-${LLVM_VERSION}." 1>&2; return 20; }
+}

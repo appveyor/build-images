@@ -231,7 +231,7 @@ function configure_sqlserver_repository() {
 
 function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o --yes /usr/share/keyrings/microsoft-prod.gpg
     #curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
     configure_sqlserver_repository
 
