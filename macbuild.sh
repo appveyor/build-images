@@ -57,4 +57,4 @@ fi
 
 #build_vm "catalina"
 #build_vm "mojave" "parallels-pvm"
-build_vm "$1"
+build_vm "$1" "$2"
