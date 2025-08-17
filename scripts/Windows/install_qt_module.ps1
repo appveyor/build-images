@@ -72,7 +72,9 @@ function GetVersionId($version) {
 
 function GetReleaseRootUrl($version) {
     $versionDigits = $version.Split('.')
+    Write-Host "Version digits $($versionDigits)"
     if (($versionDigits[1] -eq "8") || ($versionDigits[1] -eq "9")) {
+        Write-Host "EVALUATED TO TRUE"
         return "$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)/$(GetQtPrefix $version)_$(GetVersionId $version)"
     }
     else {
@@ -322,7 +324,7 @@ Prefix=.."
     }
 }
 
-fetch tools packages
+# fetch tools packages
 foreach($tool_id in $TOOL_IDS) {
     FetchToolsUpdatePackages $tool_id
 }
