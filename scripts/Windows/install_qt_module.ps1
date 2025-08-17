@@ -73,7 +73,7 @@ function GetVersionId($version) {
 function GetReleaseRootUrl($version) {
     $versionDigits = $version.Split('.')
     Write-Host "Version digits $($versionDigits)"
-    if (($versionDigits[1] -eq "8") || ($versionDigits[1] -eq "9")) {
+    if ([int]$versionDigits[1] -in 8,9) {
         Write-Host "EVALUATED TO TRUE"
         return "$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)/$(GetQtPrefix $version)_$(GetVersionId $version)"
     }
