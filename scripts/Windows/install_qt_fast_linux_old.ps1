@@ -221,22 +221,11 @@ $component_groups += @(
 
 # install components
 foreach ($componentGroup in $component_groups) {
-if ($componentGroup.version -and $componentGroup.version -ge "6.8.0") {
-        $newPath = [IO.Path]::Combine($installDir, $componentGroup.version)
+    if ($componentGroup.version) {
         foreach ($component in $componentGroup.components) {
-            Write-Host("6.8 and up")
-            Install-QtComponent -Version $componentGroup.version -Name $component -Path "$newPath"
-        }
-        ConfigureQtVersion $installDir $componentGroup.version
-    }
-    elseif ($componentGroup.version) {
-        foreach ($component in $componentGroup.components) {
-            Write-Host("component: $component")
-            Write-Host("installDir: $installDir")
             Install-QtComponent -Version $componentGroup.version -Name $component -Path $installDir
         }
         ConfigureQtVersion $installDir $componentGroup.version
-
     }
     else {
         foreach ($component in $componentGroup.components) {

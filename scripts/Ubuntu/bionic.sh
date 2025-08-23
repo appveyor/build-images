@@ -85,7 +85,7 @@ function install_doxygen() {
 
 function install_google_chrome() {
     echo "[INFO] Running install_google_chrome on Bionic..."
-    local CHROME_VERSION=122.0.6261.128-1
+    local CHROME_VERSION=138.0.7204.183-1
     local DEBNAME=google-chrome-stable_${CHROME_VERSION}_amd64.deb
     curl -fsSL -O https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/${DEBNAME}
     sudo dpkg -i ${DEBNAME}
@@ -190,7 +190,7 @@ function install_rbenv_rubies() {
         { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
-    declare RUBY_VERSIONS=( "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.7" "3.3.7" "3.4.2"  )
+    declare RUBY_VERSIONS=( "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.9" "3.3.9" "3.4.5"  )
 
     for v in "${RUBY_VERSIONS[@]}"; do
         rbenv install ${v} ||

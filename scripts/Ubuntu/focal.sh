@@ -112,7 +112,7 @@ function install_rbenv_rubies() {
         { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
-    declare RUBY_VERSIONS=( "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.7" "3.3.7" "3.4.2" )
+    declare RUBY_VERSIONS=( "2.4.10" "2.5.9" "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.9" "3.3.9" "3.4.5" )
 
     for v in "${RUBY_VERSIONS[@]}"; do
         rbenv install ${v} ||
@@ -137,7 +137,7 @@ function install_nvm_nodejs() {
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
 
-    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" "23" )
+    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" "23" "24")
 
     
     for v in "${NVM_VERSIONS[@]}"; do
@@ -168,4 +168,60 @@ function install_gcc() {
     apt-get -y -q install gcc-11 g++-11 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 40 --slave /usr/bin/g++ g++ /usr/bin/g++-11 ||
         { echo "[ERROR] Cannot install gcc-11." 1>&2; return 40; }
+}
+
+function install_postgresql() {
+    echo "[INFO] Running install_postgresql..."
+    if [[ -z "${POSTGRES_ROOT_PASSWORD-}" || "${#POSTGRES_ROOT_PASSWORD}" = "0" ]]; then POSTGRES_ROOT_PASSWORD="Password12!"; fi
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
+    add-apt-repository -y "deb http://apt-archive.postgresql.org/pub/repos/apt/ ${OS_CODENAME}-pgdg main" ||
+        { echo "[ERROR] Cannot add postgresql repository to APT sources." 1>&2; return 10; }
+    apt-get -y -qq update &&
+    apt-get -y -q install postgresql ||
+        { echo "[ERROR] Cannot install postgresql." 1>&2; return 20; }
+    systemctl start postgresql
+    systemctl disable postgresql
+    log_version dpkg -l postgresql
+
+    sudo -u postgres createuser ${USER_NAME}
+    sudo -u postgres psql -c "alter user ${USER_NAME} with createdb" postgres
+    sudo -u postgres psql -c "ALTER USER postgres with password '${POSTGRES_ROOT_PASSWORD}';" postgres
+    replace_line '/etc/postgresql/11/main/pg_hba.conf' 'local   all             postgres                                trust' 'local\s+all\s+postgres\s+peer'
+
+}
+
+function install_clang() {
+    echo "[INFO] Running install_clang..."
+    curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+
+    install_clang_version 10
+    install_clang_version 11
+    install_clang_version 12
+    install_clang_version 13
+    install_clang_version 14
+    install_clang_version 15
+    install_clang_version 16
+    install_clang_version 17
+    install_clang_version 18
+    install_clang_version 19
+
+
+    # make clang 10 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-10 1000
+    update-alternatives --config clang
+    update-alternatives --config clang++
+
+    log_version clang --version
+}
+
+function install_clang_version() {
+    local LLVM_VERSION=$1
+    echo "[INFO] Installing clang ${LLVM_VERSION}..."
+
+    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-${LLVM_VERSION} main" ||
+        { echo "[ERROR] Cannot add llvm ${LLVM_VERSION} repository to APT sources." 1>&2; return 10; }
+    apt-get -y -qq update &&
+    apt-get -y -q install clang-$LLVM_VERSION lldb-$LLVM_VERSION lld-$LLVM_VERSION clangd-$LLVM_VERSION ||
+        { echo "[ERROR] Cannot install clang-${LLVM_VERSION}." 1>&2; return 20; }
 }

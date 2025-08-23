@@ -149,6 +149,8 @@ function install_clang() {
     install_clang_version 16
     install_clang_version 17
     install_clang_version 18
+    install_clang_version 19
+    install_clang_version 20
 
 
     # make clang 13 default
@@ -229,7 +231,7 @@ function configure_sqlserver_repository() {
 
 function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o --yes /usr/share/keyrings/microsoft-prod.gpg
     #curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
     configure_sqlserver_repository
 
@@ -291,7 +293,7 @@ function install_nvm_nodejs() {
         { echo "Cannot find nvm. Install nvm first!" 1>&2; return 10; }
     local v
 
-    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" "23")
+    declare NVM_VERSIONS=( "14" "15" "16" "17" "18" "19" "20" "21" "22" "23" "24")
 
     
     for v in "${NVM_VERSIONS[@]}"; do
@@ -335,7 +337,7 @@ function install_rbenv_rubies() {
         { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
-    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.7" "3.3.7" "3.4.2"  )
+    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.9" "3.3.9" "3.4.5"  )
 
     for v in "${RUBY_VERSIONS[@]}"; do
         rbenv install ${v} ||
@@ -401,4 +403,58 @@ function pull_dockerimages() {
     done
     log_version docker images
     log_version docker system df
+}
+
+function install_rabbitmq() {
+    echo "[INFO] Running install_rabbitmq..."
+
+    ## Team RabbitMQ's main signing key
+    apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
+    ## Launchpad PPA that provides modern Erlang releases
+    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
+    ## PackageCloud RabbitMQ repository
+    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F6609E60DC62814E"
+
+    apt-get install curl gnupg apt-transport-https -y
+
+    ## Team RabbitMQ's signing key
+    curl -1sLf "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA" | sudo gpg --dearmor | sudo tee /usr/share/keyrings/com.rabbitmq.team.gpg > /dev/null
+
+    tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
+## Modern Erlang/OTP releases
+##
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
+## Provides modern RabbitMQ releases
+##
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
+EOF
+
+
+
+    # mkdir -p /etc/rabbitmq
+    # echo 'NODENAME=rabbitmq@localhost' > /etc/rabbitmq/rabbitmq-env.conf
+
+    apt-get -y -qq update &&
+    apt-get install -y erlang-base \
+                        erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
+                        erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
+                        erlang-runtime-tools erlang-snmp erlang-ssl \
+                        erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl ||
+        { echo "[ERROR] Cannot install erlang." 1>&2; return 20; }
+
+    apt-get install rabbitmq-server -y --fix-missing ||
+        { echo "[ERROR] Cannot install rabbitmq." 1>&2; return 20; }
+
+    sed -ibak -E -e 's/#\s*ulimit/ulimit/' /etc/default/rabbitmq-server &&
+
+    systemctl start rabbitmq-server &&
+    systemctl status rabbitmq-server --no-pager &&
+    systemctl enable rabbitmq-server &&
+    systemctl disable rabbitmq-server ||
+        { echo "[ERROR] Cannot configure rabbitmq." 1>&2; return 30; }
+
+    log_version dpkg -l rabbitmq-server
+    log_version erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), io:fwrite(Version), halt().' -noshell
 }

@@ -557,7 +557,8 @@ function install_nvm() {
         return 1
     fi
     #TODO have to figure out latest release version automatically
-    curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    #curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    curl -fsSLo- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'export NVM_DIR="$HOME/.nvm"'
     #shellcheck disable=SC2016
@@ -806,9 +807,9 @@ function install_pythons(){
 
     echo "[INFO] Running install_pythons..."
     if [[ $OS_ARCH == "amd64" ]]; then
-        declare PY_VERSIONS=( "2.7.18" "3.6.15" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.12.8" "3.13.2" )
+        declare PY_VERSIONS=( "2.7.18" "3.6.15" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.13" "3.12.11" "3.13.5" )
     else
-        declare PY_VERSIONS=( "2.7.18" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.9" "3.12.8" "3.13.2" )
+        declare PY_VERSIONS=( "2.7.18" "3.7.17" "3.8.19" "3.9.20" "3.10.15" "3.11.13" "3.12.11" "3.13.5" )
     fi
 
     for i in "${PY_VERSIONS[@]}"; do
@@ -1035,7 +1036,7 @@ function install_flutter() {
     pushd -- "${TMP_DIR}"
 
     local RELEASE_URL
-    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.29.0-stable.tar.xz"
+    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.32.8-stable.tar.xz"
     curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
         { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
     
@@ -1205,7 +1206,7 @@ function install_jdks_arm64() {
 function install_android_sdk() {
     echo "[INFO] Running install_android_sdk..."
 
-    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip"
 
     write_line "${HOME}/.profile" 'export ANDROID_SDK_ROOT="/usr/lib/android-sdk"'
     export ANDROID_SDK_ROOT="/usr/lib/android-sdk"
@@ -1221,11 +1222,13 @@ function install_android_sdk() {
     write_line "${HOME}/.profile" 'add2path $ANDROID_SDK_ROOT/cmdline-tools/tools/bin'
     sdkmanager --version
     echo "y" | sdkmanager "tools" > /dev/null
-    echo "y" | sdkmanager "build-tools;28.0.3" > /dev/null
-    echo "y" | sdkmanager "build-tools;30.0.3" > /dev/null
     echo "y" | sdkmanager "build-tools;33.0.3" > /dev/null
-    echo "y" | sdkmanager "platforms;android-30" > /dev/null
+    echo "y" | sdkmanager "build-tools;34.0.0" > /dev/null
+    echo "y" | sdkmanager "build-tools;35.0.0" > /dev/null
     echo "y" | sdkmanager "platforms;android-31" > /dev/null
+    echo "y" | sdkmanager "platforms;android-34" > /dev/null
+    echo "y" | sdkmanager "platforms;android-35" > /dev/null
+    echo "y" | sdkmanager "platforms;android-36" > /dev/null
     echo "y" | sdkmanager "platform-tools" > /dev/null
     echo "y" | sdkmanager "cmdline-tools;latest" > /dev/null
     echo "y" | sdkmanager "extras;android;m2repository" > /dev/null
@@ -1415,7 +1418,7 @@ function install_golangs() {
     #gvm use go1.4 ||
      #   { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.13" "go1.20.14" "go1.21.12" "go1.22.12" "go1.23.6" "go1.24.0" )
+    declare GO_VERSIONS=( "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.13" "go1.20.14" "go1.21.12" "go1.22.12" "go1.23.11" "go1.24.5" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} -B ||
