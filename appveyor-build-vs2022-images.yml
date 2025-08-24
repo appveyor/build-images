@@ -271,10 +271,13 @@ for:
       #- ps: .\install_mingw.ps1
       - ps: .\install_mingw-w64.ps1
       #- ps: .\install_boost_1.78.0_vs2022.ps1
-      - ps: .\install_boost_1.83.0_vs2022.ps1
-      - ps: .\install_boost_1.84.0_vs2022.ps1
+      #- ps: .\install_boost_1.83.0_vs2022.ps1
+      #- ps: .\install_boost_1.84.0_vs2022.ps1
       - ps: .\install_boost_1.85.0_vs2022.ps1
       - ps: .\install_boost_1.86.0_vs2022.ps1
+      - ps: .\install_boost_1.87.0_vs2022.ps1
+      - ps: .\install_boost_1.88.0_vs2022.ps1
+      - ps: .\install_boost_1.89.0_vs2022.ps1
       # - ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_dotnet_devpacks.ps1
 
