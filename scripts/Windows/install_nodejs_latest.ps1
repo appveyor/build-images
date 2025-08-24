@@ -14,8 +14,9 @@ function Install-Nodejs {
         "19.9.0",
         "20.17.0",
         "21.7.3",
-        "22.11.0",
-        "23.2.0"
+        "22.18.0",
+        "23.11.1",
+        "24.6.0"
     )
 
     # if (-not $env:INSTALL_LATEST_ONLY) {
