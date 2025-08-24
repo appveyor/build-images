@@ -11,7 +11,7 @@ if (Test-Path $destPath) {
 New-Item $destPath -ItemType directory -Force | Out-Null
 
 $zipPath = "$env:TEMP\doxygen.zip"
-(New-Object Net.WebClient).DownloadFile('https://www.doxygen.nl/files/doxygen-1.12.0.windows.x64.bin.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://www.doxygen.nl/files/doxygen-1.14.0.windows.x64.bin.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 Remove-Item $zipPath
 
