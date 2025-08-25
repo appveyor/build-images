@@ -89,7 +89,7 @@ if (Test-Path $configPath) {
 
 Write-Host "Switching Docker to Linux mode..."
 Switch-DockerLinux
-Start-Sleep -s 20
+Start-Sleep -s 30
 docker version
 
 docker pull busybox
@@ -100,7 +100,7 @@ docker run --rm alpine echo hello_world
 
 Write-Host "Switching Docker to Windows mode..."
 Switch-DockerWindows
-Start-Sleep -s 20
+Start-Sleep -s 30
 docker version
 
 docker pull busybox
