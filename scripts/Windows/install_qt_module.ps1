@@ -4,14 +4,19 @@
 $QT_INSTALL_DIR = "C:\Qt"
 #$QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/windows_x86/desktop'
 $QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/desktop'
+$QT_EXTENSIONS_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/extensions/'
 
 if ($isLinux) {
     #$QT_ROOT_URL = 'https://mirrors.ocf.berkeley.edu/qt/online/qtsdkrepository/linux_x64/desktop/'
     $QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/linux_x64/desktop'
+    $QT_EXTENSIONS_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/linux_x64/extensions/'
     #$QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/'
 } elseif ($isMacOS) {
     $QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/mac_x64/desktop'
+    $QT_EXTENSIONS_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/mac_x64/extensions/'
+
 }
+
 
 Write-Host("Qt root url: $QT_ROOT_URL")
 
@@ -90,6 +95,14 @@ function FetchReleaseUpdatePackages($version) {
     FetchUpdatePackages "$(GetReleaseRootUrl $version)"
     # FetchUpdatePackages "$(GetReleaseRootUrl $version)_src_doc_examples"
 }
+
+function FetchExtensionUpdatePackages($extension, $version) {
+    Write-host "Extension $($extension)"
+    $versionId = GetVersionId $version
+    $feedRootUrl = "$QT_EXTENSIONS_URL/$extension/$versionId"
+    FetchUpdatePackages $feedRootUrl
+}
+
 
 function SplitString($str) {
     $arr = @()
@@ -264,6 +277,28 @@ function InstallComponentById {
         InstallComponentById $dependencyId $destPath -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
     }
 }
+
+function Install-QtExtension {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        $Version,
+        [Parameter(Mandatory=$true)]
+        $Name,
+        [Parameter(Mandatory=$false)]
+        $Path,
+        [switch]$whatIf,
+        [switch]$excludeDocs,
+        [switch]$excludeExamples
+    )
+
+    # fetch package names
+    FetchExtensionUpdatePackages $Name $Version
+    # extensions.qtwebengine.691.win64_msvc2022_64/ 
+    # no need for pre-pending version. Use name directly
+    InstallComponentById $Name $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+}
+
 
 function ConfigureQtVersion($qtRoot, $version) {
     $versionRoot = [IO.Path]::Combine($qtRoot, $version)
