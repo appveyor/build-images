@@ -34,26 +34,26 @@ Remove-Item C:\OpenSSL-v11-Win64 -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item C:\OpenSSL-v111-Win32 -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item C:\OpenSSL-v111-Win64 -Recurse -Force -ErrorAction SilentlyContinue
 
-Write-Host "Installing OpenSSL 1.1.0$110Letter 32-bit ..." -ForegroundColor Cyan
-Write-Host "Downloading..."
-$zipPath = "$env:temp\OpenSSL-v110L-Win32.zip"
-(New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/OpenSSL-v110L-Win32.zip", $zipPath)
-if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
-Write-Host "Installing..."
-7z x $zipPath -o"$env:SYSTEMDRIVE\" | Out-Null
-Remove-Item $zipPath
-Write-Host "Installed" -ForegroundColor Green
+# Write-Host "Installing OpenSSL 1.1.0$110Letter 32-bit ..." -ForegroundColor Cyan
+# Write-Host "Downloading..."
+# $zipPath = "$env:temp\OpenSSL-v110L-Win32.zip"
+# (New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/OpenSSL-v110L-Win32.zip", $zipPath)
+# if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
+# Write-Host "Installing..."
+# 7z x $zipPath -o"$env:SYSTEMDRIVE\" | Out-Null
+# Remove-Item $zipPath
+# Write-Host "Installed" -ForegroundColor Green
 
 
-Write-Host "Installing OpenSSL 1.1.0$110Letter 64-bit ..." -ForegroundColor Cyan
-Write-Host "Downloading..."
-$zipPath = "$env:temp\OpenSSL-v110L-Win64.zip"
-(New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/OpenSSL-v110L-Win64.zip", $zipPath)
-if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
-Write-Host "Installing..."
-7z x $zipPath -o"$env:SYSTEMDRIVE\" | Out-Null
-Remove-Item $zipPath
-Write-Host "Installed" -ForegroundColor Green
+# Write-Host "Installing OpenSSL 1.1.0$110Letter 64-bit ..." -ForegroundColor Cyan
+# Write-Host "Downloading..."
+# $zipPath = "$env:temp\OpenSSL-v110L-Win64.zip"
+# (New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/OpenSSL-v110L-Win64.zip", $zipPath)
+# if (-not (Test-Path $zipPath)) { throw "Unable to find $zipPath" }
+# Write-Host "Installing..."
+# 7z x $zipPath -o"$env:SYSTEMDRIVE\" | Out-Null
+# Remove-Item $zipPath
+# Write-Host "Installed" -ForegroundColor Green
 
 # -----------------------------------------------------------------------------------------------------------------
 
@@ -187,22 +187,22 @@ UninstallOpenSSL "OpenSSL 3.4.0 (32-bit)"
 UninstallOpenSSL "OpenSSL 3.4.0 (64-bit)"
 # -----------------------------------------------------------------------------------------------------------------
 
-Write-Host "Installing OpenSSL 1.0.2$102Letter 32-bit ..." -ForegroundColor Cyan
-Write-Host "Downloading..."
-$exePath = "$env:temp\Win32OpenSSL-1_0_2$102Letter.exe"
-(New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/Win32OpenSSL-1_0_2u.exe", $exePath)
-if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
-Write-Host "Installing..."
-cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes
-Remove-Item $exePath
-Write-Host "Installed" -ForegroundColor Green
+# Write-Host "Installing OpenSSL 1.0.2$102Letter 32-bit ..." -ForegroundColor Cyan
+# Write-Host "Downloading..."
+# $exePath = "$env:temp\Win32OpenSSL-1_0_2$102Letter.exe"
+# (New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/Win32OpenSSL-1_0_2u.exe", $exePath)
+# if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
+# Write-Host "Installing..."
+# cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes
+# Remove-Item $exePath
+# Write-Host "Installed" -ForegroundColor Green
 
-Write-Host "Installing OpenSSL 1.0.2$102Letter 64-bit ..." -ForegroundColor Cyan
-Write-Host "Downloading..."
-$exePath = "$env:temp\Win64OpenSSL-1_0_2$102Letter.exe"
-(New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/Win64OpenSSL-1_0_2u.exe", $exePath)
-if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
-Write-Host "Installing..."
-cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes
-Remove-Item $exePath
-Write-Host "Installed" -ForegroundColor Green
+# Write-Host "Installing OpenSSL 1.0.2$102Letter 64-bit ..." -ForegroundColor Cyan
+# Write-Host "Downloading..."
+# $exePath = "$env:temp\Win64OpenSSL-1_0_2$102Letter.exe"
+# (New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/Win64OpenSSL-1_0_2u.exe", $exePath)
+# if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
+# Write-Host "Installing..."
+# cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes
+# Remove-Item $exePath
+# Write-Host "Installed" -ForegroundColor Green

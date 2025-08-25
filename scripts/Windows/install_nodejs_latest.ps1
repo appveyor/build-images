@@ -4,8 +4,6 @@ function Install-Nodejs {
     $avvmRoot = "$env:SYSTEMDRIVE\avvm\node"
 
     $nodeVersions = @(
-        "12.22.12",
-        "13.14.0",
         "14.21.1",
         "15.14.0",
         "16.20.1",
