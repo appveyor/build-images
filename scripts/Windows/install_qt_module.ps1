@@ -4,7 +4,7 @@
 $QT_INSTALL_DIR = "C:\Qt"
 #$QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/windows_x86/desktop'
 $QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/desktop'
-$QT_EXTENSIONS_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/extensions/'
+$QT_EXTENSIONS_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/extensions'
 
 if ($isLinux) {
     #$QT_ROOT_URL = 'https://mirrors.ocf.berkeley.edu/qt/online/qtsdkrepository/linux_x64/desktop/'
@@ -85,6 +85,11 @@ function GetReleaseRootUrl($version) {
     }
 }
 
+function GetExtensionSections($ext) {
+    $sections = $ext.Split('.')
+    return $sections
+}
+
 function FetchToolsUpdatePackages($toolsId) {
     FetchUpdatePackages "$QT_ROOT_URL/tools_$toolsId"
 }
@@ -99,7 +104,8 @@ function FetchReleaseUpdatePackages($version) {
 function FetchExtensionUpdatePackages($extension, $version) {
     Write-host "Extension $($extension)"
     $versionId = GetVersionId $version
-    $feedRootUrl = "$QT_EXTENSIONS_URL/$extension/$versionId"
+    $sections = GetExtensionSections $extension
+    $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/$($sections[2])"
     FetchUpdatePackages $feedRootUrl
 }
 
