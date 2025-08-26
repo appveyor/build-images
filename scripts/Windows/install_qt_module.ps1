@@ -105,7 +105,7 @@ function FetchExtensionUpdatePackages($extension, $version) {
     Write-host "Extension $($extension)"
     $versionId = GetVersionId $version
     $sections = GetExtensionSections $extension
-    $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/$($sections[2])"
+    $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/msvc2022_64"
     FetchUpdatePackages $feedRootUrl
 }
 
