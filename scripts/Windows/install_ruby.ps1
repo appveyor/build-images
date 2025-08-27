@@ -9,56 +9,56 @@ $env:SSL_CERT_FILE = "$env:temp\cacert.pem"
 
 if (-not $env:INSTALL_LATEST_ONLY) {
     $rubies = @(
-        @{
-            "version"            = "Ruby 1.9.3-p551"
-            "install_path"       = "C:\Ruby193"
-            "download_url"       = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby193.zip"
-            "devkit_paths"       = @()
-            "install_psych"      = "true"
-            "dontUpdate"         = $true
-            "dontUpdateRubygems" = $true
-            #"rubygemsUpdate" = $true
-        }
-        @{
-            "version"      = "Ruby 2.5.9-1"
-            "install_path" = "C:\Ruby25"
-            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby25.zip"
-            "devkit_url"   = ""
-            "devkit_paths" = @()
-            "dontUpdate"   = $true
-            "bundlerV23"   = $true
-            "bundlerV25"   = $false
-        }
-        @{
-            "version"      = "Ruby 2.5.9-1 (x64)"
-            "install_path" = "C:\Ruby25-x64"
-            "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby25-x64.zip"
-            "devkit_url"   = ""
-            "devkit_paths" = @()
-            "dontUpdate"   = $true
-            "bundlerV23"   = $true
-            "bundlerV25"   = $false
-        }
-        @{
-            "version"      = "Ruby 2.6.9-1"
-            "install_path" = "C:\Ruby26"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x86.exe"
-            "devkit_url"   = ""
-            "devkit_paths" = @()
-            #"dontUpdate"   = $true
-            "bundlerV23"   = $true
-            "bundlerV25"   = $false
-        }    
-        @{
-            "version"      = "Ruby 2.6.9-1 (x64)"
-            "install_path" = "C:\Ruby26-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x64.exe"
-            "devkit_url"   = ""
-            "devkit_paths" = @()
-            #"dontUpdate"   = $true
-            "bundlerV23"   = $true
-            "bundlerV25"   = $false
-        }
+        # @{
+        #     "version"            = "Ruby 1.9.3-p551"
+        #     "install_path"       = "C:\Ruby193"
+        #     "download_url"       = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby193.zip"
+        #     "devkit_paths"       = @()
+        #     "install_psych"      = "true"
+        #     "dontUpdate"         = $true
+        #     "dontUpdateRubygems" = $true
+        #     #"rubygemsUpdate" = $true
+        # }
+        # @{
+        #     "version"      = "Ruby 2.5.9-1"
+        #     "install_path" = "C:\Ruby25"
+        #     "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby25.zip"
+        #     "devkit_url"   = ""
+        #     "devkit_paths" = @()
+        #     "dontUpdate"   = $true
+        #     "bundlerV23"   = $true
+        #     "bundlerV25"   = $false
+        # }
+        # @{
+        #     "version"      = "Ruby 2.5.9-1 (x64)"
+        #     "install_path" = "C:\Ruby25-x64"
+        #     "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby25-x64.zip"
+        #     "devkit_url"   = ""
+        #     "devkit_paths" = @()
+        #     "dontUpdate"   = $true
+        #     "bundlerV23"   = $true
+        #     "bundlerV25"   = $false
+        # }
+        # @{
+        #     "version"      = "Ruby 2.6.9-1"
+        #     "install_path" = "C:\Ruby26"
+        #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x86.exe"
+        #     "devkit_url"   = ""
+        #     "devkit_paths" = @()
+        #     #"dontUpdate"   = $true
+        #     "bundlerV23"   = $true
+        #     "bundlerV25"   = $false
+        # }    
+        # @{
+        #     "version"      = "Ruby 2.6.9-1 (x64)"
+        #     "install_path" = "C:\Ruby26-x64"
+        #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x64.exe"
+        #     "devkit_url"   = ""
+        #     "devkit_paths" = @()
+        #     #"dontUpdate"   = $true
+        #     "bundlerV23"   = $true
+        #     "bundlerV25"   = $false
+        # }
         @{
             "version"      = "Ruby 2.7.8-1"
             "install_path" = "C:\Ruby27"

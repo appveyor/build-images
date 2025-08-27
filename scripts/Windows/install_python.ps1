@@ -109,29 +109,29 @@ function InstallPythonEXE($version, $platform, $targetPath) {
     Write-Host "Installed Python $version" -ForegroundColor Green
 }
 
-if (-not $env:INSTALL_LATEST_ONLY) {
-    # Python 2.6.6
-    $python26 = (GetUninstallString 'Python 2.6.6')
-    if ($python26) {
-        Write-Host 'Python 2.6.6 already installed'
-    }
-    else {
+# if (-not $env:INSTALL_LATEST_ONLY) {
+#     # Python 2.6.6
+#     $python26 = (GetUninstallString 'Python 2.6.6')
+#     if ($python26) {
+#         Write-Host 'Python 2.6.6 already installed'
+#     }
+#     else {
 
-        InstallPythonMSI "2.6.6" "x64" "$env:SystemDrive\Python26-x64"
-        InstallPythonMSI "2.6.6" "x86" "$env:SystemDrive\Python26"
+#         InstallPythonMSI "2.6.6" "x64" "$env:SystemDrive\Python26-x64"
+#         InstallPythonMSI "2.6.6" "x86" "$env:SystemDrive\Python26"
 
-        # install pip for python 2.6
-        Write-Host "Installing pip for 2.6..." -ForegroundColor Cyan
+#         # install pip for python 2.6
+#         Write-Host "Installing pip for 2.6..." -ForegroundColor Cyan
 
-        # Python 2.6
-        UpdatePythonPath "$env:SystemDrive\Python26"
-        Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode
+#         # Python 2.6
+#         UpdatePythonPath "$env:SystemDrive\Python26"
+#         Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode
 
-        # Python 2.6 x64
-        UpdatePythonPath "$env:SystemDrive\Python26-x64"
-        Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode        
-    }
-}
+#         # Python 2.6 x64
+#         UpdatePythonPath "$env:SystemDrive\Python26-x64"
+#         Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode        
+#     }
+# }
 
 # Python 2.7.18
 $python27 = (GetUninstallString 'Python 2.7.18')
