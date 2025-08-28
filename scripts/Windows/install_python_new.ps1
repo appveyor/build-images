@@ -49,9 +49,9 @@ function UpdatePip($pythonPath) {
     Start-ProcessWithOutput "pip install virtualenv" -IgnoreExitCode
 }
 
-Write-Host "Downloading get-pip.py v2.6..." -ForegroundColor Cyan
-$pipPath26 = "$env:TEMP\get-pip-26.py"
-(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/pip/2.6/get-pip.py', $pipPath26)
+Write-Host "Downloading get-pip.py v2.7..." -ForegroundColor Cyan
+$pipPath26 = "$env:TEMP\get-pip-27.py"
+(New-Object Net.WebClient).DownloadFile('https://bootstrap.pypa.io/pip/2.7/get-pip.py', $pipPath26)
 
 function InstallPythonMSI($version, $platform, $targetPath) {
     $urlPlatform = ""
@@ -381,8 +381,8 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     # CheckPython 'C:\Python35-x64'
     # CheckPython 'C:\Python36'
     # CheckPython 'C:\Python36-x64'
-    CheckPython 'C:\Python37'
-    CheckPython 'C:\Python37-x64'
+    # CheckPython 'C:\Python37'
+    # CheckPython 'C:\Python37-x64'
     CheckPython 'C:\Python38'
     CheckPython 'C:\Python38-x64'
     CheckPython 'C:\Python39'
