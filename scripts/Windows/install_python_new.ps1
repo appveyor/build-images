@@ -364,10 +364,10 @@ function CheckPython($path) {
     }
 }
 
-if (-not $env:INSTALL_LATEST_ONLY) {
-    CheckPython 'C:\Python26'
-    CheckPython 'C:\Python26-x64'
-}
+# if (-not $env:INSTALL_LATEST_ONLY) {
+#     CheckPython 'C:\Python26'
+#     CheckPython 'C:\Python26-x64'
+# }
 
 CheckPython 'C:\Python27'
 CheckPython 'C:\Python27-x64'
