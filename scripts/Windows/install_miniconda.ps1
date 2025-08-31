@@ -2,6 +2,7 @@
 
 # http://repo.continuum.io/miniconda/
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 $headers = @{
     "User-Agent" = "Mozilla/5.0 (Mobile; rv:18.0) Gecko/18.0 Firefox/18.0"
@@ -59,21 +60,21 @@ Start-Sleep -Seconds 30
 Remove-Item C:\Miniconda3 -Force -Recurse -ErrorAction SilentlyContinue
 Remove-Item C:\Miniconda3-x64 -Force -Recurse -ErrorAction SilentlyContinue
 
-# Write-Host "Installing Miniconda2 4.7.12 (Python 2.7.16 64-bit)..." -ForegroundColor Cyan
-# Write-Host "Downloading..."
-# $exePath = "$env:TEMP\Miniconda2-4.7.12.1-Windows-x86_64.exe"
-# Invoke-WebRequest -Uri 'https://repo.continuum.io/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
-# Write-Host "Installing..."
-# cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda-x64
-# Remove-Item $exePath
+Write-Host "Installing Miniconda2 4.7.12 (Python 2.7.16 64-bit)..." -ForegroundColor Cyan
+Write-Host "Downloading..."
+$exePath = "$env:TEMP\Miniconda2-4.7.12.1-Windows-x86_64.exe"
+Invoke-WebRequest -Uri 'https://repo.continuum.io/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
+Write-Host "Installing..."
+cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda-x64
+Remove-Item $exePath
 
-# Write-Host "Installing Miniconda2 4.7.12 (Python 2.7.16 32-bit)..." -ForegroundColor Cyan
-# Write-Host "Downloading..."
-# $exePath = "$env:TEMP\Miniconda2-4.7.12.1-Windows-x86.exe"
-# Invoke-WebRequest -Uri 'https://repo.continuum.io/miniconda/Miniconda2-4.7.12.1-Windows-x86.exe'  -OutFile $exePath -Headers $headers
-# Write-Host "Installing..."
-# cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda
-# Remove-Item $exePath
+Write-Host "Installing Miniconda2 4.7.12 (Python 2.7.16 32-bit)..." -ForegroundColor Cyan
+Write-Host "Downloading..."
+$exePath = "$env:TEMP\Miniconda2-4.7.12.1-Windows-x86.exe"
+Invoke-WebRequest -Uri 'https://repo.continuum.io/miniconda/Miniconda2-4.7.12.1-Windows-x86.exe'  -OutFile $exePath -Headers $headers
+Write-Host "Installing..."
+cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda
+Remove-Item $exePath
 
 
 
