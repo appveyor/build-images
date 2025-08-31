@@ -3,7 +3,7 @@
 # http://repo.continuum.io/miniconda/
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
+$PSVersionTable
 $headers = @{
     "User-Agent" = "Mozilla/5.0 (Mobile; rv:18.0) Gecko/18.0 Firefox/18.0"
 }
