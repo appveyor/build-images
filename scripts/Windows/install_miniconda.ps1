@@ -63,8 +63,8 @@ Remove-Item C:\Miniconda3-x64 -Force -Recurse -ErrorAction SilentlyContinue
 Write-Host "Installing Miniconda2 4.7.12 (Python 2.7.16 64-bit)..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda2-4.7.12.1-Windows-x86_64.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe' -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe' -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda-x64
 Remove-Item $exePath
@@ -72,8 +72,8 @@ Remove-Item $exePath
 Write-Host "Installing Miniconda2 4.7.12 (Python 2.7.16 32-bit)..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda2-4.7.12.1-Windows-x86.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86.exe'  -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86.exe'  -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda
 Remove-Item $exePath
@@ -83,8 +83,8 @@ Remove-Item $exePath
 Write-Host "Installing Miniconda3 3.16.0 Python 3.4.3 x64..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda3-3.16.0-Windows-x86_64.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-3.16.0-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-3.16.0-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda34-x64
 Remove-Item $exePath
@@ -92,8 +92,8 @@ Remove-Item $exePath
 Write-Host "Installing Miniconda3 3.16.0 Python 3.4.3 x86..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda3-3.16.0-Windows-x86.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-3.16.0-Windows-x86.exe'  -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-3.16.0-Windows-x86.exe'  -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda34
 Remove-Item $exePath
@@ -103,8 +103,8 @@ Remove-Item $exePath
 Write-Host "Installing Miniconda3 4.2.12 Python 3.5.2 x64..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda3-4.2.12-Windows-x86_64.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-4.2.12-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-4.2.12-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda35-x64
 Remove-Item $exePath
@@ -112,8 +112,8 @@ Remove-Item $exePath
 Write-Host "Installing Miniconda3 4.2.12 Python 3.5.2 x86..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda3-4.2.12-Windows-x86.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-4.2.12-Windows-x86.exe'  -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-4.2.12-Windows-x86.exe'  -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda35
 Remove-Item $exePath
@@ -123,8 +123,8 @@ Remove-Item $exePath
 Write-Host "Installing Miniconda3 4.5.4 Python 3.6.5 x64..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda3-4.5.4-Windows-x86_64.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-4.5.4-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-4.5.4-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda36-x64
 Remove-Item $exePath
@@ -132,8 +132,8 @@ Remove-Item $exePath
 Write-Host "Installing Miniconda3 4.5.4 Python 3.6.5 x86..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda3-4.5.4-Windows-x86.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-4.5.4-Windows-x86.exe'  -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-4.5.4-Windows-x86.exe'  -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda36
 Remove-Item $exePath
@@ -143,8 +143,8 @@ Remove-Item $exePath
 Write-Host "Installing Miniconda3 4.8.2 (Python 3.7.6 64-bit)..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda3-py37_4.8.2-Windows-x86_64.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.2-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.2-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda37-x64
 Remove-Item $exePath
@@ -152,8 +152,8 @@ Remove-Item $exePath
 Write-Host "Installing Miniconda3 4.8.2 (Python 3.7.6 32-bit)..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda3-py37_4.8.2-Windows-x86.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.2-Windows-x86.exe'  -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.2-Windows-x86.exe'  -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda37
 Remove-Item $exePath
@@ -163,8 +163,8 @@ Remove-Item $exePath
 Write-Host "Installing Miniconda3 4.8.2 (Python 3.8.1 64-bit)..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Miniconda3-py38_4.8.2-Windows-x86_64.exe"
-curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
-#Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.2-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
+# curl.exe -L -A "Mozilla/5.0" -o $exePath https://repo.anaconda.com/miniconda/Miniconda2-4.7.12.1-Windows-x86_64.exe
+Invoke-WebRequest -Uri 'https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.2-Windows-x86_64.exe'  -OutFile $exePath -Headers $headers
 Write-Host "Installing..."
 cmd /c start /wait $exePath /InstallationType=AllUsers /RegisterPython=0 /AddToPath=0 /S /D=C:\Miniconda38-x64
 Remove-Item $exePath
