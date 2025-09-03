@@ -45,16 +45,18 @@ build_script:
   #- ps: .\install_python.ps1
   #- ps: .\install_flutter.ps1
   #- ps: .\extend_system_volume.ps1 
-  - ps: >-
-        $items = Get-ChildItem -LiteralPath "C:\Qt" -Force -Recurse
+  # - ps: >-
+  #       $items = Get-ChildItem -LiteralPath "C:\Qt" -Force -Recurse
 
-        foreach ($item in $items) {
-            if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
-            cmd /c rmdir "$($item.FullName)" 2>$null
-            cmd /c del "$($item.FullName)" 2>$null
-          }
-        }
-  - ps: Remove-Item -LiteralPath "C:\Qt" -Recurse -Force
+  #       foreach ($item in $items) {
+  #           if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+  #           cmd /c rmdir "$($item.FullName)" 2>$null
+  #           cmd /c del "$($item.FullName)" 2>$null
+  #         }
+  #       }
+  - ps: Remove-Item -LiteralPath "C:\Qt\6.9.2" -Recurse -Force
+  - ps: Remove-Item -LiteralPath "C:\Qt\6.8.3" -Recurse -Force
+  - ps: Remove-Item -LiteralPath "C:\Qt\6.5.3" -Recurse -Force
   - ps: .\install_qt_fast_windows.ps1
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   # - ps: Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
