@@ -10,9 +10,9 @@ environment:
     # GCE
     # =======
 
-    - job_name: VS 2022 on GCE us-central1
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
-      APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
+    # - job_name: VS 2022 on GCE us-central1
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
+    #   APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
 
     # Azure
     # =======
@@ -42,10 +42,11 @@ test: off
 build_script:
   #- ps: .\install_dotnet_core_sdks.ps1
   # - ps: .\install_qt_ifw_windows.ps1
-  - ps: .\install_python.ps1
-  - ps: .\install_flutter.ps1
+  #- ps: .\install_python.ps1
+  #- ps: .\install_flutter.ps1
   #- ps: .\extend_system_volume.ps1 
-  #- ps: .\install_qt_fast_windows.ps1
+  - ps: Remove-Item "C:\Qt" -Recurse -Force
+  - ps: .\install_qt_fast_windows.ps1
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   # - ps: Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
   # - ps: |
