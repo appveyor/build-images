@@ -1,9 +1,0 @@
-# This YAML instruct Appveyor to build and publish Docker container
-image: Visual Studio 2022
-
-
-build_script:
-  - ps: ./scripts/Windows/avvm/pack-node.ps1
-
-artifacts:
-- path: 'c:\avvm\node\**\*.7z'
