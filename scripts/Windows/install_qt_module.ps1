@@ -280,7 +280,7 @@ function InstallComponentById {
 
     # recurse dependencies
     foreach($dependencyId in $comp.Dependencies) {
-        InstallComponentById $dependencyId $destPath -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+        InstallComponentById $dependencyId $QT_INSTALL_DIR -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
     }
 }
 
