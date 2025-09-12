@@ -43,7 +43,7 @@ build_script:
   #- ps: .\install_dotnet_core_sdks.ps1
   # - ps: .\install_qt_ifw_windows.ps1
   #- ps: .\install_python.ps1
-  - ps: .\install_coverity.ps1
+  - ps: .\install_openssl.ps1
   #- ps: .\install_flutter.ps1
   #- ps: .\extend_system_volume.ps1 
   # - ps: >-
