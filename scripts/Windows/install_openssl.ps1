@@ -62,9 +62,13 @@ $exePath = "$env:temp\Win32OpenSSL-1_1_1$111Letter.exe"
 (New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-1_1_1$111Letter.exe", $exePath)
 if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
 Write-Host "Installing..."
-7z x $zipPath -o"$env:SYSTEMDRIVE\" | Out-Null
-Remove-Item $zipPath
+cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes
+Remove-Item $exePath
 Write-Host "Installed" -ForegroundColor Green
+# Move 32-bit OpenSSL directory
+$openssl32 = (Get-ChildItem -Path ${env:ProgramFiles(x86)} -Directory -Filter "OpenSSL*")[0]
+Move-Item -Path $openssl32.FullName -Destination "C:\$($openssl32.Name)" -Force
+Write-Host "Moved 32-bit OpenSSL to C:\$($openssl32.Name)"
 
 Write-Host "Installing OpenSSL 1.1.1$111Letter 64-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
@@ -72,10 +76,13 @@ $exePath = "$env:temp\Win64OpenSSL-1_1_1$111Letter.exe"
 (New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win64OpenSSL-1_1_1$111Letter.exe", $exePath)
 if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
 Write-Host "Installing..."
-7z x $zipPath -o"$env:SYSTEMDRIVE\" | Out-Null
-Remove-Item $zipPath
+cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes
+Remove-Item $exePath
 Write-Host "Installed" -ForegroundColor Green
-
+# Move 64-bit OpenSSL directory
+$openssl64 = (Get-ChildItem -Path ${env:ProgramFiles} -Directory -Filter "OpenSSL*")[0]
+Move-Item -Path $openssl64.FullName -Destination "C:\$($openssl64.Name)" -Force
+Write-Host "Moved 64-bit OpenSSL to C:\$($openssl64.Name)"
 # -----------------------------------------------------------------------------------------------------------------
 
 
