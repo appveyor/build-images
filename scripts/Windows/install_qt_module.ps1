@@ -105,7 +105,18 @@ function FetchExtensionUpdatePackages($extension, $version) {
     Write-host "Extension $($extension)"
     $versionId = GetVersionId $version
     $sections = GetExtensionSections $extension
-    $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/msvc2022_64"
+    if ($IsWindows) {
+        $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/msvc2022_64"
+    }
+    elseif ($IsLinux) {
+        $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/x86_64"
+    }
+    elseif ($IsMacOS) {
+        $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/clang_64"
+    }
+    else{
+        throw "feed root url can not be determined"
+    }
     FetchUpdatePackages $feedRootUrl
 }
 

@@ -539,6 +539,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
         # }        
     )
 }
+
 $extension_groups = @(
     @{
         version = "6.9.2"

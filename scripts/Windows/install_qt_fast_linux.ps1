@@ -6,7 +6,7 @@ $installDir = "$env:HOME/Qt"
 
 $component_groups = @(
     @{
-        version    = "6.9.1"
+        version    = "6.9.2"
         components = @(
             "linux_gcc_64",
             "debug_info",
@@ -210,6 +210,23 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     )
 }
 
+$extension_groups = @(
+    @{
+        version = "6.9.2"
+        extensions = @(
+            "extensions.qtwebengine.linux_gcc_64"
+            "extensions.qtpdf.linux_gcc_64"
+        )
+    }
+    @{
+        version = "6.8.3"
+        extensions = @(
+            "extension.qtwebengine.linux_gcc_64"
+            "extension.qtpdf.linux_gcc_64"
+        )
+    }
+)
+
 $component_groups += @(
     @{
         components = @(
@@ -245,9 +262,27 @@ if ($componentGroup.version -and $componentGroup.version -ge "6.8.0") {
     }
 }
 
+# install extensions
+foreach ($extensionGroup in $extension_groups) {
+if ($extensionGroup.version) {
+        foreach ($extension in $extensionGroup.extensions) {
+            Write-Host("component: $extension")
+            Write-Host("installDir: $installDir")
+            Install-QtExtension -Version $extensionGroup.version -Name $extension -Path $installDir
+        }
+        #ConfigureQtVersion $installDir $extensionGroup.version
+
+    }
+    else {
+        foreach ($extension in $extensionGroup.extensions) {
+            Install-QtExtension -Id $extension -Path $installDir
+        }
+    }
+}
+
 # set aliases
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/latest"
-ln -s "$HOME/Qt/6.9.1" "$HOME/Qt/6.9"
+ln -s "$HOME/Qt/6.9.2" "$HOME/Qt/6.9"
 ln -s "$HOME/Qt/6.8.3" "$HOME/Qt/6.8"
 ln -s "$HOME/Qt/6.5.3" "$HOME/Qt/6.5"
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/5.15"
