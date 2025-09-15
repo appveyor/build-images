@@ -238,7 +238,7 @@ $component_groups += @(
 
 # install components
 foreach ($componentGroup in $component_groups) {
-if ($componentGroup.version -and $componentGroup.version -ge "6.8.0") {
+    if ($componentGroup.version -and $componentGroup.version -ge "6.8.0") {
         $newPath = [IO.Path]::Combine($installDir, $componentGroup.version)
         foreach ($component in $componentGroup.components) {
             Write-Host("6.8 and up")
@@ -264,11 +264,12 @@ if ($componentGroup.version -and $componentGroup.version -ge "6.8.0") {
 
 # install extensions
 foreach ($extensionGroup in $extension_groups) {
-if ($extensionGroup.version) {
+    if ($extensionGroup.version) {
+        $newPath = [IO.Path]::Combine($installDir, $extensionGroup.version)
         foreach ($extension in $extensionGroup.extensions) {
             Write-Host("component: $extension")
             Write-Host("installDir: $installDir")
-            Install-QtExtension -Version $extensionGroup.version -Name $extension -Path $installDir
+            Install-QtExtension -Version $extensionGroup.version -Name $extension -Path $newPath
         }
         #ConfigureQtVersion $installDir $extensionGroup.version
 
