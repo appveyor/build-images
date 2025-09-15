@@ -48,6 +48,11 @@ clone_script:
 
 build_script:
   - cd $BASE_DIR && pwd
+  - sh:  >-
+      if [ -d "$HOME/Qt" ]; then
+        rm -rf "$HOME/Qt"
+        echo "Removed $HOME/Qt"
+      fi
   - sudo -E ./fixconfig.sh
   #- sudo cp /opt/octopus/octo /usr/bin
   - appveyor PushArtifact versions.log
