@@ -59,16 +59,16 @@ $component_groups = @(
             "addons.qtwebsockets.linux_gcc_64",
             "addons.qtwebview",
             "addons.qtwebview.linux_gcc_64",
-            "qt5compat",
-            "qt5compat.linux_gcc_64",
-            "qtquick3d",
-            "qtquick3d.linux_gcc_64",
-            "qtquicktimeline",
-            "qtquicktimeline.linux_gcc_64",
-            "qtshadertools",
-            "qtshadertools.linux_gcc_64",
-            "qtwaylandcompositor",
-            "qtwaylandcompositor.linux_gcc_64"
+            "addons.qt5compat",
+            "addons.qt5compat.linux_gcc_64",
+            "addons.qtquick3d",
+            "addons.qtquick3d.linux_gcc_64",
+            "addons.qtquicktimeline",
+            "addons.qtquicktimeline.linux_gcc_64",
+            "addons.qtshadertools",
+            "addons.qtshadertools.linux_gcc_64",
+            "addons.qtwaylandcompositor",
+            "addons.qtwaylandcompositor.linux_gcc_64"
         )
     }
 )
@@ -129,16 +129,16 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "addons.qtwebsockets.linux_gcc_64",
                 "addons.qtwebview",
                 "addons.qtwebview.linux_gcc_64",
-                "qt5compat",
-                "qt5compat.linux_gcc_64",
-                "qtquick3d",
-                "qtquick3d.linux_gcc_64",
-                "qtquicktimeline",
-                "qtquicktimeline.linux_gcc_64",
-                "qtshadertools",
-                "qtshadertools.linux_gcc_64",
-                "qtwaylandcompositor",
-                "qtwaylandcompositor.linux_gcc_64"
+                "addons.qt5compat",
+                "addons.qt5compat.linux_gcc_64",
+                "addons.qtquick3d",
+                "addons.qtquick3d.linux_gcc_64",
+                "addons.qtquicktimeline",
+                "addons.qtquicktimeline.linux_gcc_64",
+                "addons.qtshadertools",
+                "addons.qtshadertools.linux_gcc_64",
+                "addons.qtwaylandcompositor",
+                "addons.qtwaylandcompositor.linux_gcc_64"
             )
         }
         @{
@@ -163,16 +163,16 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "addons.qtscxml.gcc_64",
                 "addons.qtvirtualkeyboard",
                 "addons.qtvirtualkeyboard.gcc_64",
-                "qt5compat",
-                "qt5compat.gcc_64",
-                "qtquick3d",
-                "qtquick3d.gcc_64",
-                "qtquicktimeline",
-                "qtquicktimeline.gcc_64",
-                "qtshadertools",
-                "qtshadertools.gcc_64",
-                "qtwaylandcompositor",
-                "qtwaylandcompositor.gcc_64"
+                "addons.qt5compat",
+                "addons.qt5compat.gcc_64",
+                "addons.qtquick3d",
+                "addons.qtquick3d.gcc_64",
+                "addons.qtquicktimeline",
+                "addons.qtquicktimeline.gcc_64",
+                "addons.qtshadertools",
+                "addons.qtshadertools.gcc_64",
+                "addons.qtwaylandcompositor",
+                "addons.qtwaylandcompositor.gcc_64"
             )
         }
         @{
