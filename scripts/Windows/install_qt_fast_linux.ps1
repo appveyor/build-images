@@ -214,15 +214,15 @@ $extension_groups = @(
     @{
         version = "6.9.2"
         extensions = @(
-            "extensions.qtwebengine.linux_gcc_64"
-            "extensions.qtpdf.linux_gcc_64"
+            "extensions.qtwebengine.692.linux_gcc_64"
+            "extensions.qtpdf.692.linux_gcc_64"
         )
     }
     @{
         version = "6.8.3"
         extensions = @(
-            "extension.qtwebengine.linux_gcc_64"
-            "extension.qtpdf.linux_gcc_64"
+            "extensions.qtwebengine.683.linux_gcc_64"
+            "extensions.qtpdf.683.linux_gcc_64"
         )
     }
 )
