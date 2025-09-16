@@ -1,8 +1,8 @@
 environment:
   matrix:
-    - job_name: Ubuntu 22.04 on Hyper-V
-      APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2204-master
-      APPVEYOR_BAKE_IMAGE: ubuntu2204-master
+    # - job_name: Ubuntu 22.04 on Hyper-V
+    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2204-master
+    #   APPVEYOR_BAKE_IMAGE: ubuntu2204-master
 
     # - job_name: Ubuntu 20.04 on Hyper-V
     #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2004-master
@@ -16,9 +16,9 @@ environment:
     #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1604-master
     #   APPVEYOR_BAKE_IMAGE: ubuntu1604-master
 
-    # - job_name: Ubuntu 22.04 on GCE us-central1
-    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2204-master-gce-us-central1
-    #   APPVEYOR_BAKE_IMAGE: ubuntu2204-master-gce-us-central1
+    - job_name: Ubuntu 22.04 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2204-master-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: ubuntu2204-master-gce-us-central1
 
     # - job_name: Ubuntu 20.04 on GCE us-central1
     #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2004-master-gce-us-central1
