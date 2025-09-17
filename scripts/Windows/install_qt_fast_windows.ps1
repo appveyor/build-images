@@ -544,15 +544,19 @@ $extension_groups = @(
     @{
         version = "6.9.2"
         extensions = @(
-            "extension.qtwebengine.win64_msvc2022_64"
-            "extension.qtpdf.win64_msvc2022_64"
+            "extension.qtwebengine.692.win64_msvc2022_64"
+            "extensions.qtwebengine.692.win64_msvc2022_arm64_cross_compiled"
+            "extension.qtpdf.692.win64_msvc2022_64"
+            "extension.qtpdf.692.win64_msvc2022_arm64_cross_compiled"
         )
     }
     @{
         version = "6.8.3"
         extensions = @(
-            "extension.qtwebengine.win64_msvc2022_64"
-            "extension.qtpdf.win64_msvc2022_64"
+            "extension.qtwebengine.683.win64_msvc2022_64"
+            "extensions.qtwebengine.683.win64_msvc2022_arm64_cross_compiled"
+            "extension.qtpdf.683.win64_msvc2022_64"
+            "extension.qtpdf.683.win64_msvc2022_arm64_cross_compiled"
         )
     }
 )
