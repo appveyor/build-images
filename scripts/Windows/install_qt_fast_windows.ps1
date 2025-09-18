@@ -603,6 +603,7 @@ foreach ($componentGroup in $component_groups) {
 # install extensions
 foreach ($extensionGroup in $extension_groups) {
 if ($extensionGroup.version) {
+    $newPath = [IO.Path]::Combine($installDir, $extensionGroup.version)
         foreach ($extension in $extensionGroup.extensions) {
             Write-Host("component: $extension")
             Write-Host("installDir: $installDir")
