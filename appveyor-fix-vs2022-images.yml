@@ -3,16 +3,16 @@ environment:
     # Hyper-V
     # =======
 
-    - job_name: VS 2022 on Hyper-V
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
-      APPVEYOR_BAKE_IMAGE: vs2022-master
+    # - job_name: VS 2022 on Hyper-V
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
+    #   APPVEYOR_BAKE_IMAGE: vs2022-master
 
     # GCE
     # =======
 
-    # - job_name: VS 2022 on GCE us-central1
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
-    #   APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
+    - job_name: VS 2022 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
 
     # Azure
     # =======
