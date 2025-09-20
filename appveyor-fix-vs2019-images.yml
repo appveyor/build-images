@@ -3,9 +3,9 @@ environment:
     # Hyper-V
     # =======
 
-    # - job_name: VS 2019 on Hyper-V
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master
-    #   APPVEYOR_BAKE_IMAGE: vs2019-master
+    - job_name: VS 2019 on Hyper-V
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2019-master
+      APPVEYOR_BAKE_IMAGE: vs2019-master
 
     # GCE
     # =======
@@ -51,6 +51,10 @@ build_script:
 
  # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   #- ps: .\fix_ruby.ps1
+  - ps: Remove-Item -LiteralPath "C:\Qt\6.9.2" -Recurse -Force
+  - ps: Remove-Item -LiteralPath "C:\Qt\6.8.3" -Recurse -Force
+  - ps: Remove-Item -LiteralPath "C:\Qt\6.5.3" -Recurse -Force
+  - ps: .\install_qt_fast_windows.ps1
   #- ps: .\install_dotnet_core_sdks.ps1
   #- ps: .\install_qt_fast_windows.ps1
   #- dir C:\Qt\6.2.2
@@ -62,7 +66,8 @@ build_script:
   #- ps: .\install_mingw.ps1
   #- ps: .\install_python.ps1
   #- ps: .\install_flutter.ps1
-  - ps: .\install_openssl.ps1
+  - ps: .\install_winsdk_1809.ps1
+  #- ps: .\install_openssl.ps1
   #- ps: Remove-Path "${env:ProgramFiles}\Eclipse Foundation\jdk-8.0.302.8-hotspot\bin" -ErrorAction Stop
   # Restart VM
   # - ps: Start-Sleep -s 5; Restart-Computer -Force
