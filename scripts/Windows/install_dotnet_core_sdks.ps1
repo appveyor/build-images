@@ -12,7 +12,7 @@ function Install-SDK($sdkVersion) {
         Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
         & $env:temp\dotnet-install.ps1 -Architecture x64 -Version $sdkVersion -InstallDir "$env:ProgramFiles\dotnet"
     }
-    #install location for 1.1.14 is "https://dotnetcli.azureedge.net/dotnet/Sdk/1.1.14/dotnet-dev-win-x64.1.1.14.zip"
+    #install location for 1.1.14 is "https://builds.dotnet.microsoft.com/dotnet/Sdk/1.1.14/dotnet-dev-win-x64.1.1.14.zip"
     Write-Host "Warming up .NET Core SDK $sdkVersion..."
     $projectPath = "$env:temp\TestApp"
     New-Item -Path $projectPath -Force -ItemType Directory | Out-Null
