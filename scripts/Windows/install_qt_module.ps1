@@ -4,14 +4,19 @@
 $QT_INSTALL_DIR = "C:\Qt"
 #$QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/windows_x86/desktop'
 $QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/desktop'
+$QT_EXTENSIONS_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/extensions'
 
 if ($isLinux) {
     #$QT_ROOT_URL = 'https://mirrors.ocf.berkeley.edu/qt/online/qtsdkrepository/linux_x64/desktop/'
     $QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/linux_x64/desktop'
+    $QT_EXTENSIONS_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/linux_x64/extensions/'
     #$QT_ROOT_URL = 'https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/'
 } elseif ($isMacOS) {
     $QT_ROOT_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/mac_x64/desktop'
+    $QT_EXTENSIONS_URL = 'http://qt.mirror.constant.com/online/qtsdkrepository/mac_x64/extensions/'
+
 }
+
 
 Write-Host("Qt root url: $QT_ROOT_URL")
 
@@ -80,6 +85,11 @@ function GetReleaseRootUrl($version) {
     }
 }
 
+function GetExtensionSections($ext) {
+    $sections = $ext.Split('.')
+    return $sections
+}
+
 function FetchToolsUpdatePackages($toolsId) {
     FetchUpdatePackages "$QT_ROOT_URL/tools_$toolsId"
 }
@@ -90,6 +100,26 @@ function FetchReleaseUpdatePackages($version) {
     FetchUpdatePackages "$(GetReleaseRootUrl $version)"
     # FetchUpdatePackages "$(GetReleaseRootUrl $version)_src_doc_examples"
 }
+
+function FetchExtensionUpdatePackages($extension, $version) {
+    Write-host "Extension $($extension)"
+    $versionId = GetVersionId $version
+    $sections = GetExtensionSections $extension
+    if ($IsWindows) {
+        $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/msvc2022_64"
+    }
+    elseif ($IsLinux) {
+        $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/x86_64"
+    }
+    elseif ($IsMacOS) {
+        $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/clang_64"
+    }
+    else{
+        throw "feed root url can not be determined"
+    }
+    FetchUpdatePackages $feedRootUrl
+}
+
 
 function SplitString($str) {
     $arr = @()
@@ -200,17 +230,17 @@ function InstallComponentById {
         Write-Host "Skipped examples installation" -ForegroundColor Yellow
         return
     }
-    if ($comp.Name -match "mingw" -and ($version -eq 681)) {
+    if ($comp.Name -match "mingw" -and ($version -ge 681)) {
         Write-Host "installing to mingw"
         $destPath = [IO.Path]::Combine($destPath, "mingw_64")
         Write-Host "at $destPath"
     }
-    elseif ($comp.Name -match "arm" -and ($version -eq 681)) {
+    elseif ($comp.Name -match "arm" -and ($version -ge 681)) {
         Write-Host "installing to msvc2022_arm64"
         $destPath = [IO.Path]::Combine($destPath, "msvc2022_arm64")
         Write-Host "at $destPath"
     }
-    elseif ($version -eq 681) {
+    elseif ($comp.Name -match "msvc2022_64" -and ($version -ge 681)) {
         Write-Host "installing to msvc2022_64"
         $destPath = [IO.Path]::Combine($destPath, "msvc2022_64")
         Write-Host "at $destPath"
@@ -261,9 +291,31 @@ function InstallComponentById {
 
     # recurse dependencies
     foreach($dependencyId in $comp.Dependencies) {
-        InstallComponentById $dependencyId $destPath -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+        InstallComponentById $dependencyId $QT_INSTALL_DIR -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
     }
 }
+
+function Install-QtExtension {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        $Version,
+        [Parameter(Mandatory=$true)]
+        $Name,
+        [Parameter(Mandatory=$false)]
+        $Path,
+        [switch]$whatIf,
+        [switch]$excludeDocs,
+        [switch]$excludeExamples
+    )
+
+    # fetch package names
+    FetchExtensionUpdatePackages $Name $Version
+    # extensions.qtwebengine.691.win64_msvc2022_64/ 
+    # no need for pre-pending version. Use name directly
+    InstallComponentById $Name $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+}
+
 
 function ConfigureQtVersion($qtRoot, $version) {
     $versionRoot = [IO.Path]::Combine($qtRoot, $version)

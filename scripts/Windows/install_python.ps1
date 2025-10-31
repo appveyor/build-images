@@ -4,7 +4,7 @@
 # https://stackoverflow.com/questions/30699782/access-is-denied-while-upgrading-pip-exe-on-windows/35580525#35580525
 #
 
-$pipVersion = "24.3.1"
+$pipVersion = "25.2"
 
 function UpdatePythonPath($pythonPath) {
     $env:path = ($env:path -split ';' | Where-Object { -not $_.contains('\Python') }) -join ';'
@@ -109,29 +109,29 @@ function InstallPythonEXE($version, $platform, $targetPath) {
     Write-Host "Installed Python $version" -ForegroundColor Green
 }
 
-if (-not $env:INSTALL_LATEST_ONLY) {
-    # Python 2.6.6
-    $python26 = (GetUninstallString 'Python 2.6.6')
-    if ($python26) {
-        Write-Host 'Python 2.6.6 already installed'
-    }
-    else {
+# if (-not $env:INSTALL_LATEST_ONLY) {
+#     # Python 2.6.6
+#     $python26 = (GetUninstallString 'Python 2.6.6')
+#     if ($python26) {
+#         Write-Host 'Python 2.6.6 already installed'
+#     }
+#     else {
 
-        InstallPythonMSI "2.6.6" "x64" "$env:SystemDrive\Python26-x64"
-        InstallPythonMSI "2.6.6" "x86" "$env:SystemDrive\Python26"
+#         InstallPythonMSI "2.6.6" "x64" "$env:SystemDrive\Python26-x64"
+#         InstallPythonMSI "2.6.6" "x86" "$env:SystemDrive\Python26"
 
-        # install pip for python 2.6
-        Write-Host "Installing pip for 2.6..." -ForegroundColor Cyan
+#         # install pip for python 2.6
+#         Write-Host "Installing pip for 2.6..." -ForegroundColor Cyan
 
-        # Python 2.6
-        UpdatePythonPath "$env:SystemDrive\Python26"
-        Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode
+#         # Python 2.6
+#         UpdatePythonPath "$env:SystemDrive\Python26"
+#         Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode
 
-        # Python 2.6 x64
-        UpdatePythonPath "$env:SystemDrive\Python26-x64"
-        Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode        
-    }
-}
+#         # Python 2.6 x64
+#         UpdatePythonPath "$env:SystemDrive\Python26-x64"
+#         Start-ProcessWithOutput "python $pipPath26" -IgnoreExitCode        
+#     }
+# }
 
 # Python 2.7.18
 $python27 = (GetUninstallString 'Python 2.7.18')
@@ -277,21 +277,21 @@ UpdatePip "$env:SystemDrive\Python311"
 UpdatePip "$env:SystemDrive\Python311-x64"
 
 # Python 3.12 x64
-$python312_x64 = (GetUninstallString 'Python 3.12.8 (64-bit)')
+$python312_x64 = (GetUninstallString 'Python 3.12.10 (64-bit)')
 if ($python312_x64) {
-    Write-Host 'Python 3.12.8 x64 already installed'
+    Write-Host 'Python 3.12.10 x64 already installed'
 }
 else {
-    InstallPythonEXE "3.12.8" "x64" "$env:SystemDrive\Python312-x64"
+    InstallPythonEXE "3.12.10" "x64" "$env:SystemDrive\Python312-x64"
 }
 
 # Python 3.12
-$python312 = (GetUninstallString 'Python 3.12.8 (32-bit)')
+$python312 = (GetUninstallString 'Python 3.12.10 (32-bit)')
 if ($python312) {
-    Write-Host 'Python 3.12.8 already installed'
+    Write-Host 'Python 3.12.10 already installed'
 }
 else {
-    InstallPythonEXE "3.12.8" "x86" "$env:SystemDrive\Python312"
+    InstallPythonEXE "3.12.10" "x86" "$env:SystemDrive\Python312"
 }
 
 UpdatePip "$env:SystemDrive\Python312"
@@ -301,21 +301,21 @@ Add-Path C:\Python312
 Add-Path C:\Python312\Scripts
 
 # Python 3.13 x64
-$python313_x64 = (GetUninstallString 'Python 3.13.1 (64-bit)')
+$python313_x64 = (GetUninstallString 'Python 3.13.6 (64-bit)')
 if ($python313_x64) {
-    Write-Host 'Python 3.13.1 x64 already installed'
+    Write-Host 'Python 3.13.6 x64 already installed'
 }
 else {
-    InstallPythonEXE "3.13.1" "x64" "$env:SystemDrive\Python313-x64"
+    InstallPythonEXE "3.13.6" "x64" "$env:SystemDrive\Python313-x64"
 }
 
 # Python 3.13
-$python313 = (GetUninstallString 'Python 3.13.1 (32-bit)')
+$python313 = (GetUninstallString 'Python 3.13.6 (32-bit)')
 if ($python313) {
-    Write-Host 'Python 3.13.1 already installed'
+    Write-Host 'Python 3.13.6 already installed'
 }
 else {
-    InstallPythonEXE "3.13.1" "x86" "$env:SystemDrive\Python313"
+    InstallPythonEXE "3.13.6" "x86" "$env:SystemDrive\Python313"
 }
 
 UpdatePip "$env:SystemDrive\Python313"

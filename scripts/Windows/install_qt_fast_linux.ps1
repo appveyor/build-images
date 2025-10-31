@@ -6,7 +6,7 @@ $installDir = "$env:HOME/Qt"
 
 $component_groups = @(
     @{
-        version    = "6.9.1"
+        version    = "6.9.2"
         components = @(
             "linux_gcc_64",
             "debug_info",
@@ -59,16 +59,16 @@ $component_groups = @(
             "addons.qtwebsockets.linux_gcc_64",
             "addons.qtwebview",
             "addons.qtwebview.linux_gcc_64",
-            "qt5compat",
-            "qt5compat.linux_gcc_64",
-            "qtquick3d",
-            "qtquick3d.linux_gcc_64",
-            "qtquicktimeline",
-            "qtquicktimeline.linux_gcc_64",
-            "qtshadertools",
-            "qtshadertools.linux_gcc_64",
-            "qtwaylandcompositor",
-            "qtwaylandcompositor.linux_gcc_64"
+            "addons.qt5compat",
+            "addons.qt5compat.linux_gcc_64",
+            "addons.qtquick3d",
+            "addons.qtquick3d.linux_gcc_64",
+            "addons.qtquicktimeline",
+            "addons.qtquicktimeline.linux_gcc_64",
+            "addons.qtshadertools",
+            "addons.qtshadertools.linux_gcc_64",
+            "addons.qtwaylandcompositor",
+            "addons.qtwaylandcompositor.linux_gcc_64"
         )
     }
 )
@@ -129,16 +129,16 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "addons.qtwebsockets.linux_gcc_64",
                 "addons.qtwebview",
                 "addons.qtwebview.linux_gcc_64",
-                "qt5compat",
-                "qt5compat.linux_gcc_64",
-                "qtquick3d",
-                "qtquick3d.linux_gcc_64",
-                "qtquicktimeline",
-                "qtquicktimeline.linux_gcc_64",
-                "qtshadertools",
-                "qtshadertools.linux_gcc_64",
-                "qtwaylandcompositor",
-                "qtwaylandcompositor.linux_gcc_64"
+                "addons.qt5compat",
+                "addons.qt5compat.linux_gcc_64",
+                "addons.qtquick3d",
+                "addons.qtquick3d.linux_gcc_64",
+                "addons.qtquicktimeline",
+                "addons.qtquicktimeline.linux_gcc_64",
+                "addons.qtshadertools",
+                "addons.qtshadertools.linux_gcc_64",
+                "addons.qtwaylandcompositor",
+                "addons.qtwaylandcompositor.linux_gcc_64"
             )
         }
         @{
@@ -163,16 +163,16 @@ if (-not $env:INSTALL_LATEST_ONLY) {
                 "addons.qtscxml.gcc_64",
                 "addons.qtvirtualkeyboard",
                 "addons.qtvirtualkeyboard.gcc_64",
-                "qt5compat",
-                "qt5compat.gcc_64",
-                "qtquick3d",
-                "qtquick3d.gcc_64",
-                "qtquicktimeline",
-                "qtquicktimeline.gcc_64",
-                "qtshadertools",
-                "qtshadertools.gcc_64",
-                "qtwaylandcompositor",
-                "qtwaylandcompositor.gcc_64"
+                "addons.qt5compat",
+                "addons.qt5compat.gcc_64",
+                "addons.qtquick3d",
+                "addons.qtquick3d.gcc_64",
+                "addons.qtquicktimeline",
+                "addons.qtquicktimeline.gcc_64",
+                "addons.qtshadertools",
+                "addons.qtshadertools.gcc_64",
+                "addons.qtwaylandcompositor",
+                "addons.qtwaylandcompositor.gcc_64"
             )
         }
         @{
@@ -210,6 +210,23 @@ if (-not $env:INSTALL_LATEST_ONLY) {
     )
 }
 
+$extension_groups = @(
+    @{
+        version = "6.9.2"
+        extensions = @(
+            "extensions.qtwebengine.692.linux_gcc_64"
+            "extensions.qtpdf.692.linux_gcc_64"
+        )
+    }
+    @{
+        version = "6.8.3"
+        extensions = @(
+            "extensions.qtwebengine.683.linux_gcc_64"
+            "extensions.qtpdf.683.linux_gcc_64"
+        )
+    }
+)
+
 $component_groups += @(
     @{
         components = @(
@@ -221,7 +238,7 @@ $component_groups += @(
 
 # install components
 foreach ($componentGroup in $component_groups) {
-if ($componentGroup.version -and $componentGroup.version -ge "6.8.0") {
+    if ($componentGroup.version -and $componentGroup.version -ge "6.8.0") {
         $newPath = [IO.Path]::Combine($installDir, $componentGroup.version)
         foreach ($component in $componentGroup.components) {
             Write-Host("6.8 and up")
@@ -245,9 +262,28 @@ if ($componentGroup.version -and $componentGroup.version -ge "6.8.0") {
     }
 }
 
+# install extensions
+foreach ($extensionGroup in $extension_groups) {
+    if ($extensionGroup.version) {
+        $newPath = [IO.Path]::Combine($installDir, $extensionGroup.version)
+        foreach ($extension in $extensionGroup.extensions) {
+            Write-Host("component: $extension")
+            Write-Host("installDir: $installDir")
+            Install-QtExtension -Version $extensionGroup.version -Name $extension -Path $newPath
+        }
+        #ConfigureQtVersion $installDir $extensionGroup.version
+
+    }
+    else {
+        foreach ($extension in $extensionGroup.extensions) {
+            Install-QtExtension -Id $extension -Path $installDir
+        }
+    }
+}
+
 # set aliases
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/latest"
-ln -s "$HOME/Qt/6.9.1" "$HOME/Qt/6.9"
+ln -s "$HOME/Qt/6.9.2" "$HOME/Qt/6.9"
 ln -s "$HOME/Qt/6.8.3" "$HOME/Qt/6.8"
 ln -s "$HOME/Qt/6.5.3" "$HOME/Qt/6.5"
 ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/5.15"

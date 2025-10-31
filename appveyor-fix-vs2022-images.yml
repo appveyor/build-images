@@ -3,9 +3,9 @@ environment:
     # Hyper-V
     # =======
 
-    - job_name: VS 2022 on Hyper-V
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
-      APPVEYOR_BAKE_IMAGE: vs2022-master
+    # - job_name: VS 2022 on Hyper-V
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master
+    #   APPVEYOR_BAKE_IMAGE: vs2022-master
 
     # GCE
     # =======
@@ -42,10 +42,23 @@ test: off
 build_script:
   #- ps: .\install_dotnet_core_sdks.ps1
   # - ps: .\install_qt_ifw_windows.ps1
-  - ps: .\install_python.ps1
-  - ps: .\install_flutter.ps1
+  #- ps: .\install_python.ps1
+  #- ps: .\install_openssl.ps1
+  #- ps: .\install_flutter.ps1
   #- ps: .\extend_system_volume.ps1 
-  #- ps: .\install_qt_fast_windows.ps1
+  # - ps: >-
+  #       $items = Get-ChildItem -LiteralPath "C:\Qt" -Force -Recurse
+
+  #       foreach ($item in $items) {
+  #           if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+  #           cmd /c rmdir "$($item.FullName)" 2>$null
+  #           cmd /c del "$($item.FullName)" 2>$null
+  #         }
+  #       }
+  - ps: Remove-Item -LiteralPath "C:\Qt\6.9.2" -Recurse -Force
+  - ps: Remove-Item -LiteralPath "C:\Qt\6.8.3" -Recurse -Force
+  - ps: Remove-Item -LiteralPath "C:\Qt\6.5.3" -Recurse -Force
+  - ps: .\install_qt_fast_windows.ps1
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   # - ps: Add-Path "${env:ProgramFiles}\Erlang OTP\bin"
   # - ps: |
@@ -76,4 +89,4 @@ build_script:
   - ps: .\cleanup_windows.ps1
 
 # on_finish:
-#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#    - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

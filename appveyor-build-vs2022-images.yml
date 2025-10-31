@@ -152,7 +152,7 @@ for:
       - ps: .\install_vstest_console_logger.ps1
 
       - ps: .\install_qt_fast_windows.ps1
-      - ps: .\install_qt_fast_windows_old.ps1
+      #- ps: .\install_qt_fast_windows_old.ps1
       - ps: .\install_ruby.ps1
       - ps: .\patch_qt_files.ps1
 
@@ -199,7 +199,7 @@ for:
       - ps: .\install_edge_browser.ps1
       - ps: .\install_selenium_drivers.ps1
 
-      - ps: .\install_miniconda.ps1
+      - pwsh: .\install_miniconda.ps1
       - ps: .\install_nodejs_latest.ps1
       - ps: .\install_yarn.ps1
       - ps: .\install_go.ps1
@@ -244,7 +244,8 @@ for:
       - ps: .\install_wdk_1809.ps1
       - ps: .\install_wdk_1903.ps1
       - ps: .\install_wdk_2004.ps1
-      - ps: .\install_winsdk_22621.ps1
+      #- ps: .\install_winsdk_22621.ps1
+      - ps: .\install_winsdk_26100.ps1
       - ps: .\install_wdk_22000.ps1
       - ps: .\install_dxsdk.ps1
       - ps: .\install_vdproj_vs2022.ps1
@@ -271,10 +272,13 @@ for:
       #- ps: .\install_mingw.ps1
       - ps: .\install_mingw-w64.ps1
       #- ps: .\install_boost_1.78.0_vs2022.ps1
-      - ps: .\install_boost_1.83.0_vs2022.ps1
-      - ps: .\install_boost_1.84.0_vs2022.ps1
+      #- ps: .\install_boost_1.83.0_vs2022.ps1
+      #- ps: .\install_boost_1.84.0_vs2022.ps1
       - ps: .\install_boost_1.85.0_vs2022.ps1
       - ps: .\install_boost_1.86.0_vs2022.ps1
+      - ps: .\install_boost_1.87.0_vs2022.ps1
+      - ps: .\install_boost_1.88.0_vs2022.ps1
+      - ps: .\install_boost_1.89.0_vs2022.ps1
       # - ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_dotnet_devpacks.ps1
 

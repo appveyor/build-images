@@ -9,7 +9,7 @@ del "${env:ProgramFiles}\Git\mingw64\bin\git-lfs.exe" -ErrorAction SilentlyConti
 $exePath = "$env:TEMP\git-lfs-windows.exe"
 
 Write-Host "Downloading..."
-(New-Object Net.WebClient).DownloadFile('https://github.com/git-lfs/git-lfs/releases/download/v3.5.1/git-lfs-windows-v3.5.1.exe', $exePath)
+(New-Object Net.WebClient).DownloadFile('https://github.com/git-lfs/git-lfs/releases/download/v3.7.0/git-lfs-windows-v3.7.0.exe', $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
