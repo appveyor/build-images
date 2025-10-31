@@ -188,10 +188,10 @@ Copy-Item C:\OpenSSL-v34-Win64-temp -Destination C:\OpenSSL-v34-Win64 -Recurse
 UninstallOpenSSL "OpenSSL 3.4.2 (32-bit)"
 UninstallOpenSSL "OpenSSL 3.4.2 (64-bit)"
 
-Write-Host "Installing OpenSSL 3.5.2 32-bit ..." -ForegroundColor Cyan
+Write-Host "Installing OpenSSL 3.5.4 32-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$exePath = "$env:temp\Win32OpenSSL-3_5_2.exe"
-(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-3_5_2.exe", $exePath)
+$exePath = "$env:temp\Win32OpenSSL-3_5_4.exe"
+(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-3_5_4.exe", $exePath)
 if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
 Write-Host "Installing..."
 cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v35-Win32-temp
@@ -199,10 +199,10 @@ Remove-Item $exePath
 Write-Host "Installed" -ForegroundColor Green
 Copy-Item C:\OpenSSL-v35-Win32-temp -Destination C:\OpenSSL-v35-Win32 -Recurse
 
-Write-Host "Installing OpenSSL 3.5.2 64-bit ..." -ForegroundColor Cyan
+Write-Host "Installing OpenSSL 3.5.4 64-bit ..." -ForegroundColor Cyan
 Write-Host "Downloading..."
-$exePath = "$env:temp\Win64OpenSSL-3_5_2.exe"
-(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win64OpenSSL-3_5_2.exe", $exePath)
+$exePath = "$env:temp\Win64OpenSSL-3_5_4.exe"
+(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win64OpenSSL-3_5_4.exe", $exePath)
 if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
 Write-Host "Installing..."
 cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v35-Win64-temp
@@ -210,27 +210,31 @@ Remove-Item $exePath
 Write-Host "Installed" -ForegroundColor Green
 Copy-Item C:\OpenSSL-v35-Win64-temp -Destination C:\OpenSSL-v35-Win64 -Recurse
 
-UninstallOpenSSL "OpenSSL 3.5.2 (32-bit)"
-UninstallOpenSSL "OpenSSL 3.5.2 (64-bit)"
-# -----------------------------------------------------------------------------------------------------------------
+UninstallOpenSSL "OpenSSL 3.5.4 (32-bit)"
+UninstallOpenSSL "OpenSSL 3.5.4 (64-bit)"
 
 
-# Write-Host "Installing OpenSSL 1.0.2$102Letter 32-bit ..." -ForegroundColor Cyan
-# Write-Host "Downloading..."
-# $exePath = "$env:temp\Win32OpenSSL-1_0_2$102Letter.exe"
-# (New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/Win32OpenSSL-1_0_2u.exe", $exePath)
-# if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
-# Write-Host "Installing..."
-# cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes
-# Remove-Item $exePath
-# Write-Host "Installed" -ForegroundColor Green
+Write-Host "Installing OpenSSL 3.6.0 32-bit ..." -ForegroundColor Cyan
+Write-Host "Downloading..."
+$exePath = "$env:temp\Win32OpenSSL-3_6_0.exe"
+(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win32OpenSSL-3_6_0.exe", $exePath)
+if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
+Write-Host "Installing..."
+cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v36-Win32-temp
+Remove-Item $exePath
+Write-Host "Installed" -ForegroundColor Green
+Copy-Item C:\OpenSSL-v36-Win32-temp -Destination C:\OpenSSL-v36-Win32 -Recurse
 
-# Write-Host "Installing OpenSSL 1.0.2$102Letter 64-bit ..." -ForegroundColor Cyan
-# Write-Host "Downloading..."
-# $exePath = "$env:temp\Win64OpenSSL-1_0_2$102Letter.exe"
-# (New-Object Net.WebClient).DownloadFile("https://appveyordownloads.blob.core.windows.net/misc/Win64OpenSSL-1_0_2u.exe", $exePath)
-# if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
-# Write-Host "Installing..."
-# cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes
-# Remove-Item $exePath
-# Write-Host "Installed" -ForegroundColor Green
+Write-Host "Installing OpenSSL 3.6.0 64-bit ..." -ForegroundColor Cyan
+Write-Host "Downloading..."
+$exePath = "$env:temp\Win64OpenSSL-3_6_0.exe"
+(New-Object Net.WebClient).DownloadFile("https://slproweb.com/download/Win64OpenSSL-3_6_0.exe", $exePath)
+if (-not (Test-Path $exePath)) { throw "Unable to find $exePath" }
+Write-Host "Installing..."
+cmd /c start /wait $exePath /silent /verysilent /sp- /suppressmsgboxes /DIR=C:\OpenSSL-v36-Win64-temp
+Remove-Item $exePath
+Write-Host "Installed" -ForegroundColor Green
+Copy-Item C:\OpenSSL-v36-Win64-temp -Destination C:\OpenSSL-v36-Win64 -Recurse
+
+UninstallOpenSSL "OpenSSL 3.6.0 (32-bit)"
+UninstallOpenSSL "OpenSSL 3.6.0 (64-bit)"
