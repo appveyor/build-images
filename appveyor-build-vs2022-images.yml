@@ -244,7 +244,7 @@ for:
       - ps: .\install_wdk_1809.ps1
       - ps: .\install_wdk_1903.ps1
       - ps: .\install_wdk_2004.ps1
-      #- ps: .\install_winsdk_22621.ps1
+      - ps: .\install_winsdk_22621.ps1
       - ps: .\install_winsdk_26100.ps1
       - ps: .\install_wdk_22000.ps1
       - ps: .\install_dxsdk.ps1
