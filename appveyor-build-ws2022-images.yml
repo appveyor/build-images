@@ -142,6 +142,8 @@ for:
       - ps: .\install_jdk18.ps1
       - ps: .\install_jdk19.ps1
       - ps: .\install_jdk21.ps1
+      - ps: .\install_jdk22.ps1
+      - ps: .\install_jdk25.ps1
       - ps: .\install_android_sdk.ps1
       - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 
