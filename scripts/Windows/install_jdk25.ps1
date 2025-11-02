@@ -11,7 +11,7 @@ if (Test-Path $jdkPath) {
 Write-Host "Downloading..."
 $zipPath = "$env:TEMP\openjdk-25_windows-x64_bin.zip"
 (New-Object Net.WebClient).DownloadFile('https://download.java.net/java/GA/jdk25.0.1/2fbf10d8c78e40bd87641c434705079d/8/GPL/openjdk-25.0.1_windows-x64_bin.zip', $zipPath)
-                                         https://download.java.net/java/GA/jdk25.0.1/2fbf10d8c78e40bd87641c434705079d/8/GPL/openjdk-25.0.1_windows-x64_bin.zip
+                                         
 Write-Host "Unpacking..."
 $tempPath = "$env:TEMP\jdk25_temp"
 7z x $zipPath -o"$tempPath" | Out-Null
