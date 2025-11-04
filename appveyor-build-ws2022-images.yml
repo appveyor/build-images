@@ -4,14 +4,14 @@ environment:
     # Azure
     # =======
 
-    - job_name: WS 2022 on Azure West US - Part I
-      bake_phase: 1
-      APPVEYOR_BUILD_WORKER_IMAGE: Windows Server 2022
-      APPVEYOR_BAKE_IMAGE: ws2022-temp-p1-azure-westus
+    # - job_name: WS 2022 on Azure West US - Part I
+    #   bake_phase: 1
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Windows Server 2022
+    #   APPVEYOR_BAKE_IMAGE: ws2022-temp-p1-azure-westus
 
-    - job_name: WS 2022 on Azure West US - Wait for Part I image to be ready
-      bake_phase: wait-15-min
-      job_depends_on: WS 2022 on Azure West US - Part I
+    # - job_name: WS 2022 on Azure West US - Wait for Part I image to be ready
+    #   bake_phase: wait-15-min
+    #   job_depends_on: WS 2022 on Azure West US - Part I
 
     - job_name: WS 2022 on Azure West US - Part II
       bake_phase: 3
@@ -228,8 +228,9 @@ for:
       - ps: .\install_mingw-w64.ps1
       #- ps: .\install_boost_1.78.0_vs2022.ps1
       #- ps: .\install_boost_1.83.0_vs2022.ps1
-      - ps: .\install_boost_1.84.0_vs2022.ps1
-      - ps: .\install_boost_1.85.0_vs2022.ps1
+      - ps: .\install_boost_1.87.0_vs2022.ps1
+      - ps: .\install_boost_1.88.0_vs2022.ps1
+      - ps: .\install_boost_1.89.0_vs2022.ps1
 
       #- ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_dotnet_runtimes.ps1
