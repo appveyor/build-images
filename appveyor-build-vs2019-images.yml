@@ -236,6 +236,7 @@ for:
       - ps: .\install_wdk_2004.ps1
       - ps: .\install_winsdk_22621.ps1
       - ps: .\install_winsdk_22000.ps1
+      - ps: .\install_winsdk_26100.ps1
       - ps: .\install_wdk_22000.ps1
       - ps: .\install_dxsdk.ps1
       - ps: .\install_vdproj_vs2019.ps1
