@@ -1,4 +1,4 @@
-﻿Write-Host "Installing Coverity 2023.12.2..." -ForegroundColor Cyan
+﻿Write-Host "Installing Coverity 2024.12.1..." -ForegroundColor Cyan
 $destPath = "$env:SYSTEMDRIVE\Tools\Coverity"
 if (Test-Path $destPath ) {
   echo "Deleting $($destPath)..."
@@ -14,6 +14,7 @@ Write-Host "Unpacking..."
 $tempPath = "$env:TEMP\Coverity"
 7z x $zipPath -o"$tempPath" | Out-Null
 
+Write-Host "Moving..."
 [IO.Directory]::Move("$tempPath\cov-analysis-win64-2024.12.1", $destPath)
 del $tempPath -Recurse -Force
 del $zipPath
