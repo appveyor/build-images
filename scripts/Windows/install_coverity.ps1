@@ -12,7 +12,7 @@ $zipPath = "$env:TEMP\cov-analysis-win64-2024.12.1.zip"
 
 Write-Host "Unpacking..."
 $tempPath = "$env:TEMP\Coverity"
-7z x $zipPath -o"$tempPath" | Out-Null
+7z x $zipPath -o"$tempPath" -y | Out-Null
 
 Write-Host "Moving..."
 [IO.Directory]::Move("$tempPath\cov-analysis-win64-2024.12.1", $destPath)
