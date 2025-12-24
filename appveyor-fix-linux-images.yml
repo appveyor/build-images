@@ -4,13 +4,13 @@ environment:
     #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2204-master
     #   APPVEYOR_BAKE_IMAGE: ubuntu2204-master
 
-    - job_name: Ubuntu 20.04 on Hyper-V
-      APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2004-master
-      APPVEYOR_BAKE_IMAGE: ubuntu2004-master
+    # - job_name: Ubuntu 20.04 on Hyper-V
+    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2004-master
+    #   APPVEYOR_BAKE_IMAGE: ubuntu2004-master
 
-    # - job_name: Ubuntu 18.04 on Hyper-V
-    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1804-master
-    #   APPVEYOR_BAKE_IMAGE: ubuntu1804-master
+    - job_name: Ubuntu 18.04 on Hyper-V
+      APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1804-master
+      APPVEYOR_BAKE_IMAGE: ubuntu1804-master
 
     # - job_name: Ubuntu 16.04 on Hyper-V
     #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1604-master
@@ -20,9 +20,9 @@ environment:
     #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2204-master-gce-us-central1
     #   APPVEYOR_BAKE_IMAGE: ubuntu2204-master-gce-us-central1
 
-    - job_name: Ubuntu 20.04 on GCE us-central1
-      APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2004-master-gce-us-central1
-      APPVEYOR_BAKE_IMAGE: ubuntu2004-master-gce-us-central1
+    # - job_name: Ubuntu 20.04 on GCE us-central1
+    #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu2004-master-gce-us-central1
+    #   APPVEYOR_BAKE_IMAGE: ubuntu2004-master-gce-us-central1
 
     # - job_name: Ubuntu 18.04 on GCE us-central1
     #   APPVEYOR_BUILD_WORKER_IMAGE: ubuntu1804-master-gce-us-central1
@@ -48,11 +48,11 @@ clone_script:
 
 build_script:
   - cd $BASE_DIR && pwd
-  - sh:  >-
-      if [ -d "$HOME/Qt" ]; then
-        rm -rf "$HOME/Qt"
-        echo "Removed $HOME/Qt"
-      fi
+  # - sh:  >-
+  #     if [ -d "$HOME/Qt" ]; then
+  #       rm -rf "$HOME/Qt"
+  #       echo "Removed $HOME/Qt"
+  #     fi
   - sudo -E ./fixconfig.sh
   #- sudo cp /opt/octopus/octo /usr/bin
   - appveyor PushArtifact versions.log

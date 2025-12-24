@@ -106,7 +106,14 @@ configure_path
 
 # install_docker_compose ||
 #     _abort $?
-install_qt ||
-    _abort $?
+
+
+# install_qt ||
+#     _abort $?
+
+sudo apt-get update
+sudo apt-get install -y ca-certificates
+sudo update-ca-certificates
+
 
 cleanup
