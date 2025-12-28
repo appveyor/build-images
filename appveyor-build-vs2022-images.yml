@@ -188,6 +188,7 @@ for:
       - ps: .\install_jdk19.ps1
       - ps: .\install_jdk21.ps1
       - ps: .\install_jdk22.ps1
+      - ps: .\install_jdk25.ps1
       - ps: .\install_android_sdk.ps1
       - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 
@@ -244,7 +245,7 @@ for:
       - ps: .\install_wdk_1809.ps1
       - ps: .\install_wdk_1903.ps1
       - ps: .\install_wdk_2004.ps1
-      #- ps: .\install_winsdk_22621.ps1
+      - ps: .\install_winsdk_22621.ps1
       - ps: .\install_winsdk_26100.ps1
       - ps: .\install_wdk_22000.ps1
       - ps: .\install_dxsdk.ps1
