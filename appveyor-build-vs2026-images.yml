@@ -1,0 +1,275 @@
+environment:
+  matrix:
+    # GCE
+    # =======
+
+    - job_name: VS 2026 on GCE us-central1 - Part I
+      bake_phase: 1
+      APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2022-dc-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2026-temp-p1-gce-us-central1
+
+    - job_name: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
+      bake_phase: wait-15-min
+      job_depends_on: VS 2026 on GCE us-central1 - Part I
+
+    - job_name: VS 2026 on GCE us-central1 - Part II
+      bake_phase: 3
+      job_depends_on: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2026-temp-p1-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2026-master-gce-us-central1
+
+    # Azure
+    # =======
+
+    # - job_name: VS 2026 on Azure West US - Part I
+    #   bake_phase: 1
+    #   APPVEYOR_BUILD_WORKER_IMAGE: 
+    #   APPVEYOR_BAKE_IMAGE: vs2026-temp-p1-azure-westus
+
+    # - job_name: VS 2026 on Azure West US - Wait for Part I image to be ready
+    #   bake_phase: wait-15-min
+    #   job_depends_on: VS 2026 on Azure West US - Part I
+
+    # - job_name: VS 2026 on Azure West US - Part II
+    #   bake_phase: 3
+    #   job_depends_on: VS 2022 on Azure West US - Wait for Part I image to be ready
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2026-temp-p1-azure-westus
+    #   APPVEYOR_BAKE_IMAGE: vs2026-master-azure-westus
+
+init:
+  - appveyor version
+  - ps: $ErrorActionPreference = 'Stop'
+  - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
+  - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
+
+clone_folder: '%USERPROFILE%\image-bake-scripts'
+
+clone_script:
+  - ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_COMMIT).zip" -OutFile "$env:temp\scripts.zip"
+  - ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
+  - ps: Copy-Item -Path "$env:temp\scripts\build-images-$($env:APPVEYOR_REPO_COMMIT)\scripts\Windows\*" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
+
+test: off
+
+#on_failure:
+#- ps: Get-EventLog AppVeyor -newest 10 | Format-List
+#- ps: Start-sleep -s 3600
+
+for:
+  # Part 1
+  - matrix:
+      only:
+        - bake_phase: 1
+
+    build_script:
+      - ps: Start-Sleep -s 10
+      - ps: .\init_server.ps1
+      - ps: if ($env:cloud_type -eq 'Azure' -or $env:cloud_type -eq 'HyperV') { .\extend_system_volume.ps1 }
+
+      # Restart VM
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+
+      - appveyor version
+      - ps: .\install_path_utils.ps1
+      - ps: .\install_powershell_core.ps1
+      - ps: .\install_powershell_get.ps1
+      - ps: .\install_7zip.ps1
+
+      - ps: .\install_dotnet_runtimes.ps1
+
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+
+      - ps: .\install_chocolatey.ps1
+      - ps: .\install_webpi.ps1
+      - ps: .\install_nuget.ps1
+      - ps: .\install_pstools.ps1
+
+      - ps: .\install_git.ps1
+      - ps: .\install_git_lfs.ps1
+      - ps: .\install_mercurial.ps1
+      - ps: .\install_subversion.ps1
+      - ps: .\add_ssh_known_hosts.ps1
+
+      - ps: .\install_docker_hyperv_wsl_features.ps1
+
+      # Restart VM
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+
+      # WSL
+      - ps: .\install_wsl.ps1
+
+      # Restart VM
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+
+      - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 } else { .\install_docker_desktop.ps1 }
+
+      # Restart VM
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+
+      # Finalize Docker installation
+      - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
+      - ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
+
+      # Restart VM
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+
+      - ps: .\install_vs2022.ps1
+
+      # Restart VM
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+
+      - ps: .\install_vs2022_config.ps1
+      - ps: .\update_msbuild_path.ps1
+      - ps: .\install_xunit_192.ps1
+      - ps: .\install_xunit_20.ps1
+      - ps: .\install_nunit.ps1
+      - ps: .\install_nunit3.ps1
+      - ps: .\install_vstest_console_logger.ps1
+
+      - ps: .\install_qt_fast_windows.ps1
+      #- ps: .\install_qt_fast_windows_old.ps1
+      - ps: .\install_ruby.ps1
+      - ps: .\patch_qt_files.ps1
+
+  - matrix:
+      only:
+        - bake_phase: wait-90-min
+
+    build_script:
+      - ps: Start-Sleep -s 5400
+
+  - matrix:
+      only:
+        - bake_phase: wait-15-min
+
+    build_script:
+      - ps: Start-Sleep -s 1200
+
+  # Part 2
+  - matrix:
+      only:
+        - bake_phase: 3
+
+    build_script:
+
+      - ps: choco feature enable -n allowGlobalConfirmation
+      - ps: .\install_dotnet_core_sdks.ps1
+
+      - ps: .\install_java_7_8.ps1
+      - ps: .\install_jdk15.ps1
+      - ps: .\install_jdk16.ps1
+      - ps: .\install_jdk17.ps1
+      - ps: .\install_jdk18.ps1
+      - ps: .\install_jdk19.ps1
+      - ps: .\install_jdk21.ps1
+      - ps: .\install_jdk22.ps1
+      - ps: .\install_android_sdk.ps1
+      - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
+
+      - ps: .\install_python_new.ps1
+      - ps: .\install_openssl.ps1
+      - ps: .\install_msys64.ps1
+      - ps: .\install_chrome_browser.ps1
+      - ps: .\install_firefox_browser.ps1
+      - ps: .\install_edge_browser.ps1
+      - ps: .\install_selenium_drivers.ps1
+
+      - pwsh: .\install_miniconda.ps1
+      - ps: .\install_nodejs_latest.ps1
+      - ps: .\install_yarn.ps1
+      - ps: .\install_go.ps1
+      #- ps: .\install_rust.ps1
+      - ps: .\install_erlang.ps1
+      - ps: .\install_flutter.ps1
+
+      #- ps: .\install_postgres96.ps1
+      #- ps: .\install_postgres10.ps1
+      - ps: .\install_postgres11.ps1
+      - ps: .\install_postgres12.ps1
+      - ps: .\install_postgres13.ps1
+      - ps: .\install_postgres14.ps1
+      - ps: .\install_postgres15.ps1
+      - ps: .\install_postgres16.ps1
+      - ps: .\install_mysql.ps1
+      - ps: .\install_mongo.ps1
+
+      - ps: .\install_sql_server_2017.ps1
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+      - ps: .\install_sql_server_2017_after_restart.ps1
+
+      - ps: .\install_sql_server_2019.ps1
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+      - ps: .\install_sql_server_2019_after_restart.ps1
+
+      - ps: .\install_sql_server_2022.ps1
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+      - ps: .\install_sql_server_2022_after_restart.ps1
+
+    
+      - ps: .\install_aws_cli.ps1
+      - ps: .\install_aws_powershell.ps1
+      - ps: .\install_azure_cli.ps1
+      - ps: .\install_azure_powershell.ps1
+      - ps: .\install_azure_cosmosdb_emulator.ps1
+      - ps: .\install_gcloud_sdk.ps1
+      - ps: .\install_winsdk_81.ps1
+      - ps: .\install_wdk_1809.ps1
+      - ps: .\install_wdk_1903.ps1
+      - ps: .\install_wdk_2004.ps1
+      #- ps: .\install_winsdk_22621.ps1
+      - ps: .\install_winsdk_26100.ps1
+      - ps: .\install_wdk_22000.ps1
+      - ps: .\install_dxsdk.ps1
+      - ps: .\install_vdproj_vs2022.ps1
+      - ps: .\install_service_fabric.ps1
+      #- ps: .\install_ssis_vs2019.ps1
+      - ps: .\install_wix314.ps1
+      - ps: .\install_wix_toolset_vs2022.ps1
+      - ps: .\install_doxygen.ps1
+      - ps: .\install_graphviz.ps1
+      - ps: .\install_cmake.ps1
+      - ps: .\install_perl.ps1
+      - ps: .\install_llvm.ps1
+      #- ps: .\install_llvm_extension_vs2019.ps1
+      - ps: .\install_vcpkg.ps1
+      - ps: .\install_innosetup.ps1
+      - ps: .\install_coverity.ps1
+      - ps: .\install_iis_win2019.ps1
+      - ps: .\install_nsis.ps1
+      - ps: .\install_octo.ps1
+      - ps: .\install_meson_and_ninja.ps1
+      - ps: .\install_maven.ps1
+      - ps: .\install_gitversion.ps1
+      - ps: .\install_cygwin.ps1
+      #- ps: .\install_mingw.ps1
+      - ps: .\install_mingw-w64.ps1
+      #- ps: .\install_boost_1.78.0_vs2022.ps1
+      #- ps: .\install_boost_1.83.0_vs2022.ps1
+      #- ps: .\install_boost_1.84.0_vs2022.ps1
+      - ps: .\install_boost_1.85.0_vs2022.ps1
+      - ps: .\install_boost_1.86.0_vs2022.ps1
+      - ps: .\install_boost_1.87.0_vs2022.ps1
+      - ps: .\install_boost_1.88.0_vs2022.ps1
+      - ps: .\install_boost_1.89.0_vs2022.ps1
+      # - ps: .\install_dotnet_core_sdks.ps1
+      - ps: .\install_dotnet_devpacks.ps1
+
+      # Restart VM
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+
+      - appveyor version
+      - ps: .\optimize_dotnet_runtime.ps1
+      - ps: .\disable_windows_background_services.ps1
+      - ps: .\enforce_windows_firewall.ps1
+      - ps: .\cleanup_windows.ps1
