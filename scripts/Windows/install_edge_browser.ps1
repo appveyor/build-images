@@ -1,10 +1,10 @@
 ﻿. "$PSScriptRoot\common.ps1"
-# 139.0.3405.119
+# 143.0.3650.139
 Write-Host "Installing Microsoft Edge..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
 $msiPath = "$env:TEMP\MicrosoftEdgeEnterpriseX64.msi"
-(New-Object Net.WebClient).DownloadFile('https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/eabab707-708e-4df2-9443-b340617829de/MicrosoftEdgeEnterpriseX64.msi', $msiPath)
+(New-Object Net.WebClient).DownloadFile('https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/bb161c65-c060-4e98-a125-5e412c0b3364/MicrosoftEdgeEnterpriseX64.msi', $msiPath)
 
 Write-Host "Installing..."
 cmd /c start /wait msiexec /i "$msiPath" /qn /norestart

@@ -1,6 +1,6 @@
 ﻿. "$PSScriptRoot\common.ps1"
 
-$firefoxVersion = "142.0"
+$firefoxVersion = "147.0"
 
 Write-Host "Installing FireFox $firefoxVersion..." -ForegroundColor Cyan
 
@@ -10,7 +10,6 @@ if (test-path "${env:ProgramFiles(x86)}\Mozilla Firefox") {
     Write-Host "Upgrading to the latest version of 32-bit..." -ForegroundColor Yellow
     $arch = 'win'
 }
-
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\firefox-installer.exe"
 (New-Object Net.WebClient).DownloadFile("https://download.mozilla.org/?product=firefox-$firefoxVersion-ssl&os=$arch&lang=en-US", $exePath)

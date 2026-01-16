@@ -1,4 +1,4 @@
-﻿$nugetVersion = '6.12.1'
+﻿$nugetVersion = '7.0.1'
 $nugetUrl = "https://dist.nuget.org/win-x86-commandline/v$nugetVersion/nuget.exe"
 
 $nugetDir = "$env:SystemDrive\Tools\NuGet3"

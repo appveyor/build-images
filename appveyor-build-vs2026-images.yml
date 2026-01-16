@@ -82,61 +82,58 @@ for:
       - ps: Start-Sleep -s 5
 
       - ps: .\install_chocolatey.ps1
-      - ps: .\install_webpi.ps1
       - ps: .\install_nuget.ps1
-      - ps: .\install_pstools.ps1
+      #- ps: .\install_pstools.ps1
 
       - ps: .\install_git.ps1
       - ps: .\install_git_lfs.ps1
       - ps: .\install_mercurial.ps1
+      # update subversion?
       - ps: .\install_subversion.ps1
       - ps: .\add_ssh_known_hosts.ps1
 
-      - ps: .\install_docker_hyperv_wsl_features.ps1
+            - ps: .\install_docker_hyperv_wsl2_features.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
       # WSL
-      - ps: .\install_wsl.ps1
+      - ps: .\setup_wsl2.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
-      - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 } else { .\install_docker_desktop.ps1 }
+      - ps: .\install_current_docker_desktop.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
       # Finalize Docker installation
-      - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
-      - ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
+      #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+      - ps: .\install_current_docker_desktop_after_reboot.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
-      - ps: .\install_vs2022.ps1
+
+      - ps: .\install_vs2026.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
-      - ps: .\install_vs2022_config.ps1
+      - ps: .\install_vs2026_config.ps1
       - ps: .\update_msbuild_path.ps1
-      - ps: .\install_xunit_192.ps1
       - ps: .\install_xunit_20.ps1
-      - ps: .\install_nunit.ps1
       - ps: .\install_nunit3.ps1
       - ps: .\install_vstest_console_logger.ps1
-
+      # include Qt? Latest version only?
       - ps: .\install_qt_fast_windows.ps1
-      #- ps: .\install_qt_fast_windows_old.ps1
       - ps: .\install_ruby.ps1
-      - ps: .\patch_qt_files.ps1
 
   - matrix:
       only:
@@ -163,105 +160,88 @@ for:
       - ps: .\install_dotnet_core_sdks.ps1
 
       - ps: .\install_java_7_8.ps1
-      - ps: .\install_jdk15.ps1
-      - ps: .\install_jdk16.ps1
+      - ps: .\install_java11.ps1
       - ps: .\install_jdk17.ps1
-      - ps: .\install_jdk18.ps1
-      - ps: .\install_jdk19.ps1
       - ps: .\install_jdk21.ps1
-      - ps: .\install_jdk22.ps1
+      - ps: .\install_jdk25.ps1
       - ps: .\install_android_sdk.ps1
-      - appveyor PushArtifact %TEMP%\android-sdkmanager.log.zip
 
+      ## skip all but python 3.9 and up
       - ps: .\install_python_new.ps1
-      - ps: .\install_openssl.ps1
+      - ps: .\install_openssl_new.ps1
       - ps: .\install_msys64.ps1
       - ps: .\install_chrome_browser.ps1
       - ps: .\install_firefox_browser.ps1
       - ps: .\install_edge_browser.ps1
       - ps: .\install_selenium_drivers.ps1
 
-      - pwsh: .\install_miniconda.ps1
+      - pwsh: .\install_miniconda_new.ps1
       - ps: .\install_nodejs_latest.ps1
       - ps: .\install_yarn.ps1
       - ps: .\install_go.ps1
       #- ps: .\install_rust.ps1
-      - ps: .\install_erlang.ps1
+      #- ps: .\install_erlang.ps1
       - ps: .\install_flutter.ps1
 
       #- ps: .\install_postgres96.ps1
       #- ps: .\install_postgres10.ps1
-      - ps: .\install_postgres11.ps1
-      - ps: .\install_postgres12.ps1
-      - ps: .\install_postgres13.ps1
-      - ps: .\install_postgres14.ps1
+      # - ps: .\install_postgres11.ps1
+      # - ps: .\install_postgres12.ps1
+      # - ps: .\install_postgres13.ps1
+      # - ps: .\install_postgres14.ps1
       - ps: .\install_postgres15.ps1
       - ps: .\install_postgres16.ps1
       - ps: .\install_mysql.ps1
-      - ps: .\install_mongo.ps1
-
-      - ps: .\install_sql_server_2017.ps1
-      - ps: Start-Sleep -s 5; Restart-Computer
-      - ps: Start-Sleep -s 5
-      - ps: .\install_sql_server_2017_after_restart.ps1
-
-      - ps: .\install_sql_server_2019.ps1
-      - ps: Start-Sleep -s 5; Restart-Computer
-      - ps: Start-Sleep -s 5
-      - ps: .\install_sql_server_2019_after_restart.ps1
+      - ps: .\install_mongo_new.ps1
 
       - ps: .\install_sql_server_2022.ps1
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
       - ps: .\install_sql_server_2022_after_restart.ps1
 
-    
-      - ps: .\install_aws_cli.ps1
+      - ps: .\install_aws_cli_v2.ps1
       - ps: .\install_aws_powershell.ps1
+      # aws SAM CLI?
       - ps: .\install_azure_cli.ps1
       - ps: .\install_azure_powershell.ps1
-      - ps: .\install_azure_cosmosdb_emulator.ps1
-      - ps: .\install_gcloud_sdk.ps1
-      - ps: .\install_winsdk_81.ps1
-      - ps: .\install_wdk_1809.ps1
-      - ps: .\install_wdk_1903.ps1
-      - ps: .\install_wdk_2004.ps1
+      # azure DevOps CLI?
+      #- ps: .\install_azure_cosmosdb_emulator.ps1
+      #- ps: .\install_gcloud_sdk.ps1
+
+      # rely on visual studio workloads
+      #- ps: .\install_winsdk_81.ps1
+      #- ps: .\install_wdk_1809.ps1
+      #- ps: .\install_wdk_1903.ps1
+      #- ps: .\install_wdk_2004.ps1
       #- ps: .\install_winsdk_22621.ps1
-      - ps: .\install_winsdk_26100.ps1
-      - ps: .\install_wdk_22000.ps1
-      - ps: .\install_dxsdk.ps1
-      - ps: .\install_vdproj_vs2022.ps1
-      - ps: .\install_service_fabric.ps1
-      #- ps: .\install_ssis_vs2019.ps1
+      #- ps: .\install_winsdk_26100.ps1
+      #- ps: .\install_wdk_22000.ps1
+      #- ps: .\install_dxsdk.ps1
+
+      #- ps: .\install_vdproj_vs2022.ps1
+      - ps: .\install_service_fabric_new.ps1
       - ps: .\install_wix314.ps1
-      - ps: .\install_wix_toolset_vs2022.ps1
+      #- ps: .\install_wix_toolset_vs2022.ps1
       - ps: .\install_doxygen.ps1
-      - ps: .\install_graphviz.ps1
+      #- ps: .\install_graphviz.ps1
       - ps: .\install_cmake.ps1
       - ps: .\install_perl.ps1
       - ps: .\install_llvm.ps1
-      #- ps: .\install_llvm_extension_vs2019.ps1
       - ps: .\install_vcpkg.ps1
       - ps: .\install_innosetup.ps1
-      - ps: .\install_coverity.ps1
-      - ps: .\install_iis_win2019.ps1
+      #- ps: .\install_coverity.ps1
+      #- ps: .\install_iis_win2019.ps1
       - ps: .\install_nsis.ps1
       - ps: .\install_octo.ps1
       - ps: .\install_meson_and_ninja.ps1
       - ps: .\install_maven.ps1
-      - ps: .\install_gitversion.ps1
-      - ps: .\install_cygwin.ps1
-      #- ps: .\install_mingw.ps1
+      #- ps: .\install_gitversion.ps1
+
+      # cygwin AND MSYS2?
+      #- ps: .\install_cygwin.ps1
       - ps: .\install_mingw-w64.ps1
-      #- ps: .\install_boost_1.78.0_vs2022.ps1
-      #- ps: .\install_boost_1.83.0_vs2022.ps1
-      #- ps: .\install_boost_1.84.0_vs2022.ps1
-      - ps: .\install_boost_1.85.0_vs2022.ps1
-      - ps: .\install_boost_1.86.0_vs2022.ps1
-      - ps: .\install_boost_1.87.0_vs2022.ps1
       - ps: .\install_boost_1.88.0_vs2022.ps1
       - ps: .\install_boost_1.89.0_vs2022.ps1
-      # - ps: .\install_dotnet_core_sdks.ps1
       - ps: .\install_dotnet_devpacks.ps1
 
       # Restart VM
