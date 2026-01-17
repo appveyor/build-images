@@ -85,13 +85,13 @@ for:
       - ps: .\install_nuget.ps1
       #- ps: .\install_pstools.ps1
 
-      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+      #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
       - ps: .\install_git.ps1
       - ps: .\install_git_lfs.ps1
       - ps: .\install_mercurial.ps1
       # update subversion?
       - ps: .\install_subversion.ps1
-      - ps: .\add_ssh_known_hosts.ps1
+      - pwsh: .\add_ssh_known_hosts.ps1
 
       - ps: .\install_docker_hyperv_wsl2_features.ps1
 
