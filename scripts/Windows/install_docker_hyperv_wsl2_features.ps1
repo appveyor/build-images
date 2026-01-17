@@ -1,5 +1,23 @@
 $ErrorActionPreference = "Continue"
 
+# Enable the two features WSL2 needs
+$features = @(
+  "Microsoft-Windows-Subsystem-Linux",
+  "VirtualMachinePlatform"
+)
+
+
+foreach ($f in $features) {
+  $state = (Get-WindowsOptionalFeature -Online -FeatureName $f).State
+  if ($state -ne "Enabled") {
+    Write-Host "Enabling $f"
+    $r = Enable-WindowsOptionalFeature -Online -FeatureName $f -All -NoRestart
+    if ($r.RestartNeeded) { $needsReboot = $true }
+  } else {
+    Write-Host "$f already enabled"
+  }
+}
+
 # Containers feature
 
 $containersFeature = (Get-WindowsOptionalFeature -FeatureName Containers -Online)
