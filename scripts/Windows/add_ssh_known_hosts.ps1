@@ -1,3 +1,5 @@
+
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
 function Get-IPs {
 
     Param(
