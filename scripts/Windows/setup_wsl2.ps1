@@ -24,7 +24,21 @@ wsl -d Ubuntu-20.04 -- sudo apt-get update
 # Ubuntu 22.04
 # ============
 
-Write-warning "Skipping Ubuntu 22.04 for WSL"
+Write-warning "Installing Ubuntu 22.04 for WSL"
+
+wsl --install -d Ubuntu-22.04 --no-launch
+ubuntu2004 install --root
+Start-Sleep -s 10
+wsl -l -v
+
+wsl -d Ubuntu-22.04 -u root adduser --gecos GECOS --disabled-password appveyor
+wsl -d Ubuntu-22.04 -- echo 'appveyor:Password12!' `| sudo chpasswd
+wsl -d Ubuntu-22.04 -- usermod -aG sudo appveyor
+wsl -d Ubuntu-22.04 -- echo -e `"appveyor\tALL=`(ALL`)\tNOPASSWD: ALL`" `| sudo tee -a /etc/sudoers.d/appveyor
+wsl -d Ubuntu-22.04 -- chmod 0755 /etc/sudoers.d/appveyor
+wsl -d Ubuntu-22.04 -- sudo echo “[user]” `| sudo tee -a /etc/wsl.conf
+wsl -d Ubuntu-22.04 -- sudo echo “default=appveyor” `| sudo tee -a /etc/wsl.conf
+wsl -d Ubuntu-22.04 -- sudo apt-get update
 
 
 
