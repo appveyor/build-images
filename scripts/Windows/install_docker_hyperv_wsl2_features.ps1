@@ -33,7 +33,10 @@ if ((Get-WmiObject Win32_Processor).VirtualizationFirmwareEnabled[0] -and (Get-W
 	Install-WindowsFeature -Name Hyper-V -IncludeManagementTools
 } else {
 	Write-Host "Skipping Hyper-V installation - virtualization is not enabled"
+  $hypervReq = (systeminfo | Select-String "Hyper-V Requirements").Line
+  Write-Host $hypervReq
 }
+
 
 
 # WSL feature
