@@ -1,26 +1,4 @@
-# WSL 2 and distributions
 
-# Write-Host "=== systeminfo Hyper-V section ==="
-# systeminfo | findstr /i "Hyper-V Requirements"
-# systeminfo | findstr /i "Virtualization"
-# systeminfo | findstr /i "A hypervisor has been detected"
-
-# Write-Host "=== hypervisorlaunchtype ==="
-# bcdedit /enum | findstr /i hypervisorlaunchtype
-# WSL feature
-
-wsl --install --no-distribution
-
-wsl --list --online
-
-wsl --status 2>&1 | Write-Host
-
-# make sure wsl kernel is present
-wsl --update 2>&1 | Write-Host
-
-wsl --shutdown 2>&1 | Write-Host
-
-wsl --status 2>&1 | Write-Host
 
 # Ubuntu 20.04
 # ============

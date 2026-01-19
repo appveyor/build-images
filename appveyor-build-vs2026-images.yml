@@ -93,28 +93,28 @@ for:
       - ps: .\install_subversion.ps1
       - pwsh: .\add_ssh_known_hosts.ps1
 
-      - ps: .\install_docker_hyperv_wsl2_features.ps1
+      - ps: .\install_docker_hyperv_wsl_features.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
       # WSL
-      - ps: .\setup_wsl2.ps1
+      - ps: .\install_wsl.ps1
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
-      - ps: .\install_current_docker_desktop.ps1
+      - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker.ps1 } else { .\install_docker_desktop.ps1 }
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
 
       # Finalize Docker installation
-      #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-      - ps: .\install_current_docker_desktop_after_reboot.ps1
+      - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { .\install_docker_after_reboot.ps1 }
+      - ps: if ($env:cloud_type -ne 'GCE' -and $env:cloud_type -ne 'AmazonEC2') { .\install_docker_desktop_after_reboot.ps1 }
 
       # Restart VM
       - ps: Start-Sleep -s 5; Restart-Computer
