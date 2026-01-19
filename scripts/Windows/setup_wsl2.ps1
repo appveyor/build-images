@@ -1,6 +1,9 @@
 # WSL 2 and distributions
 
-
+(Get-ComputerInfo).HyperVRequirementVirtualizationFirmwareEnabled
+(Get-ComputerInfo).HyperVRequirementSecondLevelAddressTranslation
+(Get-ComputerInfo).HyperVRequirementDataExecutionPreventionAvailable
+(Get-ComputerInfo).HyperVRequirementVMMonitorModeExtensions
 # Ubuntu 20.04
 # ============
 
@@ -27,7 +30,7 @@ wsl -d Ubuntu-20.04 -- sudo apt-get update
 Write-warning "Installing Ubuntu 22.04 for WSL"
 
 wsl --install -d Ubuntu-22.04 --no-launch
-ubuntu2004 install --root
+ubuntu2204 install --root
 Start-Sleep -s 10
 wsl -l -v
 
