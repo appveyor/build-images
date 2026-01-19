@@ -41,5 +41,15 @@ if ((Get-WmiObject Win32_Processor).VirtualizationFirmwareEnabled[0] -and (Get-W
 
 # WSL feature
 
-wsl --list --online
 #wsl --install --no-distribution
+
+wsl --list --online
+
+wsl --status 2>&1 | Write-Host
+
+# make srue wsl kernel is present
+wsl --update 2>&1 | Write-Host
+
+wsl --shutdown 2>&1 | Write-Host
+
+wsl --status 2>&1 | Write-Host
