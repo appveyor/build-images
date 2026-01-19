@@ -38,4 +38,5 @@ if ((Get-WmiObject Win32_Processor).VirtualizationFirmwareEnabled[0] -and (Get-W
 
 # WSL feature
 
+wsl --list --online
 wsl --install --no-distribution
