@@ -221,7 +221,7 @@ $WorkLoads = '--add Component.Android.NDK.R23C ' + `
 $Sku = 'Community'
 
 $ChannelUri = $null
-$VSBootstrapperURL = 'https://aka.ms/vs/18/release/vs_community.exe'
+$VSBootstrapperURL = 'https://aka.ms/vs/stable/vs_community.exe'
 
 $ErrorActionPreference = 'Stop'
 
