@@ -16,7 +16,7 @@ Write-Host "Installing Chrome Selenium driver..." -ForegroundColor Cyan
 
 $zipPath = "$env:TEMP\chromedriver_win64.zip"
 (New-Object Net.WebClient).DownloadFile('https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.192/win64/chrome-win64.zip', $zipPath)
-7z e $zipPath -spe -o"$destPath"
+7z e $zipPath -y -spe -o"$destPath"
 Remove-Item $zipPath
 
 Write-Host "Installed Chrome Selenium driver" -ForegroundColor Green
