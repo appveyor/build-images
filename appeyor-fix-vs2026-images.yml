@@ -34,8 +34,8 @@ test: off
 # - ps: Get-EventLog AppVeyor -newest 10 | Format-List
 
 build_script:
-  - ps: .\update_msbuild_path.ps1
 
+  - ps: .\update_msbuild_path.ps1
   - appveyor version
   - ps: .\cleanup_windows.ps1
 
