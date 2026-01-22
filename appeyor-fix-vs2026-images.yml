@@ -4,16 +4,16 @@ environment:
     # GCE
     # =======
 
-    - job_name: VS 2022 on GCE us-central1
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-gce-us-central1
-      APPVEYOR_BAKE_IMAGE: vs2022-master-gce-us-central1
+    - job_name: VS 2026 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2026-master-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2026-master-gce-us-central1
 
     # Azure
     # =======
 
-    # - job_name: VS 2022 on Azure West US
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2022-master-azure-westus
-    #   APPVEYOR_BAKE_IMAGE: vs2022-master-azure-westus
+    # - job_name: VS 2026 on Azure West US
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2026-master-azure-westus
+    #   APPVEYOR_BAKE_IMAGE: vs2026-master-azure-westus
 
 init:
   - appveyor version
