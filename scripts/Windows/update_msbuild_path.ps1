@@ -5,7 +5,7 @@ $msbuild_15_preview_path = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Pre
 $msbuild_vs2019_path = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
 $msbuild_vs2019_preview_path = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin"
 $msbuild_vs2022_path = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin"
-$msbuild_vs2026_path = "${env:ProgramFiles}\Microsoft Visual Studio\2026\Community\MSBuild\Current\Bin"
+$msbuild_vs2026_path = "${env:ProgramFiles}\Microsoft Visual Studio\18\2026\Community\MSBuild\Current\Bin"
 
 Remove-Path $msbuild_12_path
 Remove-Path $msbuild_14_path
