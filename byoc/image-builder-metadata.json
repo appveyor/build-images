@@ -66,7 +66,11 @@
             },
             {
                "id":"dotnet_core_sdks",
-               "title":"NET Core SDKs"
+               "title":".NET Core SDKs"
+            },
+            {
+               "id":"dotnet_runtimes",
+               "title":".NET runtimes"
             },
             {
                "id":"sql_server_2017",
