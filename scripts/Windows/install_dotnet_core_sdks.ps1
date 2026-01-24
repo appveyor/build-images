@@ -33,7 +33,7 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
 $vs2019 = (Test-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019")
 $vs2022 = (Test-Path "${env:ProgramFiles}\Microsoft Visual Studio\2022")
-$vs2026 = (Test-Path "${env:ProgramFiles}\Microsoft Visual Studio\2026")
+$vs2026 = (Test-Path "${env:ProgramFiles}\Microsoft Visual Studio\18")
 
 # VS 2019 and 2022 images only
 if ($vs2019 -or $vs2022) {
