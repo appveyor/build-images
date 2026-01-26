@@ -299,21 +299,21 @@ Add-Path C:\Python312
 Add-Path C:\Python312\Scripts
 
 # Python 3.13 x64
-$python313_x64 = (GetUninstallString 'Python 3.13.6 (64-bit)')
+$python313_x64 = (GetUninstallString 'Python 3.13.9 (64-bit)')
 if ($python313_x64) {
-    Write-Host 'Python 3.13.6 x64 already installed'
+    Write-Host 'Python 3.13.9 x64 already installed'
 }
 else {
-    InstallPythonEXE "3.13.6" "x64" "$env:SystemDrive\Python313-x64"
+    InstallPythonEXE "3.13.9" "x64" "$env:SystemDrive\Python313-x64"
 }
 
 # Python 3.13
-$python313 = (GetUninstallString 'Python 3.13.6 (32-bit)')
+$python313 = (GetUninstallString 'Python 3.13.9 (32-bit)')
 if ($python313) {
-    Write-Host 'Python 3.13.6 already installed'
+    Write-Host 'Python 3.13.9 already installed'
 }
 else {
-    InstallPythonEXE "3.13.6" "x86" "$env:SystemDrive\Python313"
+    InstallPythonEXE "3.13.9" "x86" "$env:SystemDrive\Python313"
 }
 
 UpdatePip "$env:SystemDrive\Python313"
@@ -321,6 +321,30 @@ UpdatePip "$env:SystemDrive\Python313-x64"
 
 Add-Path C:\Python313
 Add-Path C:\Python313\Scripts
+
+# Python 3.14 x64
+$python314_x64 = (GetUninstallString 'Python 3.14.0 (64-bit)')
+if ($python314_x64) {
+    Write-Host 'Python 3.14.0 x64 already installed'
+}
+else {
+    InstallPythonEXE "3.14.0" "x64" "$env:SystemDrive\Python314-x64"
+}
+
+# Python 3.14
+$python314 = (GetUninstallString 'Python 3.14.0 (32-bit)')
+if ($python314) {
+    Write-Host 'Python 3.14.0 already installed'
+}
+else {
+    InstallPythonEXE "3.14.0" "x86" "$env:SystemDrive\Python314"
+}
+
+UpdatePip "$env:SystemDrive\Python314"
+UpdatePip "$env:SystemDrive\Python314-x64"
+
+Add-Path C:\Python314
+Add-Path C:\Python314\Scripts
 # Ensure python named here is the default
 # Add-Path C:\Python312
 # Add-Path C:\Python312\Scripts

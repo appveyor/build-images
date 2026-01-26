@@ -40,14 +40,15 @@ if ($vs2019 -or $vs2022) {
     #Install-SDK "3.1.202"
     #Install-SDK "3.1.426"
     #Install-SDK "5.0.408"
+    Install-SDK "6.0.425"
     Install-SDK "7.0.410"
-    Install-SDK "8.0.413"
-    Install-SDK "9.0.304"
+    Install-SDK "8.0.415"
+    Install-SDK "9.0.306"
 }
 
 # VS 2022 image only
 if ($vs2022) {
-    Install-SDK "6.0.425"
+    #Install-SDK "6.0.425"
     #Install-SDK "7.0.410"
     #Install-SDK "8.0.202"
 }
