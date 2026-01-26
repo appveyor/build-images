@@ -1,4 +1,4 @@
-﻿Write-Host "Installing Apache Maven 3.9.11 ..." -ForegroundColor Cyan
+﻿Write-Host "Installing Apache Maven 3.9.12 ..." -ForegroundColor Cyan
 
 $apachePath = "${env:ProgramFiles(x86)}\Apache"
 $mavenPath = "$apachePath\Maven"
@@ -12,12 +12,12 @@ if (-not (Test-Path $apachePath)) {
 }
 
 Write-Host "Downloading..."
-$zipPath = "$env:TEMP\apache-maven-3.9.11-bin.zip"
-(New-Object Net.WebClient).DownloadFile('https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.zip', $zipPath)
+$zipPath = "$env:TEMP\apache-maven-3.9.12-bin.zip"
+(New-Object Net.WebClient).DownloadFile('https://dlcdn.apache.org/maven/maven-3/3.9.12/binaries/apache-maven-3.9.12-bin.zip', $zipPath)
 
 Write-Host "Unpacking..."
 7z x $zipPath -oC:\apache-maven | Out-Null
-[IO.Directory]::Move('C:\apache-maven\apache-maven-3.9.11', $mavenPath)
+[IO.Directory]::Move('C:\apache-maven\apache-maven-3.9.12', $mavenPath)
 Remove-Item 'C:\apache-maven' -Recurse -Force
 Remove-Item $zipPath
 
@@ -29,4 +29,4 @@ Add-SessionPath "$mavenPath\bin"
 
 mvn --version
 
-Write-Host "Apache Maven 3.9.11 installed" -ForegroundColor Green
+Write-Host "Apache Maven 3.9.12 installed" -ForegroundColor Green
