@@ -21,6 +21,10 @@ function install-runtime ($version, $location, $release) {
 }
 
 #release from https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
-#install-runtime -version "4.8" -location "https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/c9b8749dd99fc0d4453b2a3e4c37ba16/ndp48-web.exe" -release 528049
-install-runtime -version "4.8.1" -location "https://download.microsoft.com/download/4/b/2/cd00d4ed-ebdd-49ee-8a33-eabc3d1030e3/NDP481-Web.exe" -release 533320
+#any AppVeyor-supported Windows build prior to 19042 can only handle .net-4.8.
+if ((Get-CimInstance win32_OperatingSystem).BuildNumber -lt 19042) {
+  install-runtime -version "4.8" -location "https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/c9b8749dd99fc0d4453b2a3e4c37ba16/ndp48-web.exe" -release 528049
+} else {
+  install-runtime -version "4.8.1" -location "https://download.microsoft.com/download/4/b/2/cd00d4ed-ebdd-49ee-8a33-eabc3d1030e3/NDP481-Web.exe" -release 533320
+}
 
