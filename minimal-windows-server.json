@@ -205,6 +205,18 @@
       "elevated_user": "{{user `install_user`}}",
       "scripts": [
         "{{ template_dir }}/scripts/Windows/install_path_utils.ps1",
+        "{{ template_dir }}/scripts/Windows/install_dotnet_runtimes.ps1"
+      ],
+      "type": "powershell"
+    },
+    {
+      "restart_timeout": "10m",
+      "type": "windows-restart"
+    },
+    {
+      "elevated_password": "{{user `install_password`}}",
+      "elevated_user": "{{user `install_user`}}",
+      "scripts": [
         "{{ template_dir }}/scripts/Windows/install_powershell_core.ps1",
         "{{ template_dir }}/scripts/Windows/install_powershell_get.ps1",
         "{{ template_dir }}/scripts/Windows/install_7zip.ps1",
