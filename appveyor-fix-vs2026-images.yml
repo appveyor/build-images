@@ -38,7 +38,9 @@ build_script:
   #- ps: .\update_msbuild_path.ps1
   #- ps: .\install_dotnet_core_sdks.ps1
   #- ps: .\install_pstools.ps1
-  - ps: .\install_maven.ps1
+  #- ps: .\install_maven.ps1
+  - ps: .\install_vstest_console_logger.ps1
+  - ps: dotnet tool install -g microsoft.sqlpackage --allow-roll-forward
   - appveyor version
   - ps: .\cleanup_windows.ps1
 

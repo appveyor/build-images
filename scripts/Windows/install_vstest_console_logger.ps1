@@ -15,11 +15,17 @@ if (-not (Test-Path $vs2022RootPath)) {
     $vs2022RootPath = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Preview"
 }
 
+$vs2026RootPath = "${env:ProgramFiles}\Microsoft Visual Studio\18\Community"
+
+
 $vs2019TestWindowPath1 = "$vs2019RootPath\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
 $vs2019TestWindowPath2 = "$vs2019RootPath\Common7\IDE\Extensions\TestPlatform"
 
 $vs2022TestWindowPath1 = "$vs2022RootPath\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
 $vs2022TestWindowPath2 = "$vs2022RootPath\Common7\IDE\Extensions\TestPlatform"
+
+$vs2026TestWindowPath1 = "$vs2026RootPath\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
+$vs2026TestWindowPath2 = "$vs2026RootPath\Common7\IDE\Extensions\TestPlatform"
 
 $vs2013Path = "$vs2013TestWindowPath\Extensions"
 $vs2015Path = "$vs2015TestWindowPath\Extensions"
@@ -29,6 +35,8 @@ $vs2019Path1 = "$vs2019TestWindowPath1\Extensions"
 $vs2019Path2 = "$vs2019TestWindowPath2\Extensions"
 $vs2022Path1 = "$vs2022TestWindowPath1\Extensions"
 $vs2022Path2 = "$vs2022TestWindowPath2\Extensions"
+$vs2026Path1 = "$vs2026TestWindowPath1\Extensions"
+$vs2026Path2 = "$vs2026TestWindowPath2\Extensions"
 
 Remove-Path $vs2013TestWindowPath
 Remove-Path $vs2015TestWindowPath
@@ -38,6 +46,8 @@ Remove-Path $vs2019TestWindowPath1
 Remove-Path $vs2019TestWindowPath2
 Remove-Path $vs2022TestWindowPath1
 Remove-Path $vs2022TestWindowPath2
+Remove-Path $vs2026TestWindowPath1
+Remove-Path $vs2026TestWindowPath2
 
 $zipPath = "$env:TEMP\Appveyor.MSTestLogger.zip"
 (New-Object Net.WebClient).DownloadFile('http://www.appveyor.com/downloads/Appveyor.MSTestLogger.zip', $zipPath)
@@ -82,22 +92,36 @@ if(Test-Path $vs2019Path2) {
 }
 
 if(Test-Path $vs2022Path1) {
-    # VS 2019
+    # VS 2022
     Remove-Item "$vs2022Path1\appveyor.*" -Force
     7z x $zipPath2 -y -o"$vs2022Path1" | Out-Null
 }
 
 if(Test-Path $vs2022Path2) {
-    # VS 2019
+    # VS 2022
     Remove-Item "$vs2022Path2\appveyor.*" -Force
     7z x $zipPath2 -y -o"$vs2022Path2" | Out-Null
+}
+
+if(Test-Path $vs2026Path1) {
+    # VS 2026
+    Remove-Item "$vs2026Path1\appveyor.*" -Force
+    7z x $zipPath2 -y -o"$vs2026Path1" | Out-Null
+}
+
+if(Test-Path $vs2026Path2) {
+    # VS 2026
+    Remove-Item "$vs2026Path2\appveyor.*" -Force
+    7z x $zipPath2 -y -o"$vs2026Path2" | Out-Null
 }
 
 del $zipPath
 del $zipPath2
 
 # modify PATH
-if (Test-Path $vs2022Path2) {
+if (Test-Path $vs2026Path2) {
+    Add-Path $vs2026TestWindowPath2
+} elseif(Test-Path $vs2022Path2) {
     Add-Path $vs2022TestWindowPath2
 } elseif(Test-Path $vs2019Path2) {
     Add-Path $vs2019TestWindowPath2
