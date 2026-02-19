@@ -5,6 +5,7 @@ $msbuild_15_preview_path = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Pre
 $msbuild_vs2019_path = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
 $msbuild_vs2019_preview_path = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin"
 $msbuild_vs2022_path = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin"
+$msbuild_vs2026_path = "${env:ProgramFiles}\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin"
 
 Remove-Path $msbuild_12_path
 Remove-Path $msbuild_14_path
@@ -12,8 +13,20 @@ Remove-Path $msbuild_15_path
 Remove-Path $msbuild_15_preview_path
 Remove-Path $msbuild_vs2019_path
 Remove-Path $msbuild_vs2022_path
+Remove-Path $msbuild_vs2026_path
 
-if (Test-Path $msbuild_vs2022_path) {
+if (Test-Path $msbuild_vs2026_path) {
+
+    Write-Host "Adding Visual Studio 2026 current MSBuild to PATH..." -ForegroundColor Cyan
+    Add-Path $msbuild_vs2026_path
+
+    $dac_150_path = "${env:ProgramFiles}\Microsoft Visual Studio\2026\Community\Common7\IDE\Extensions\Microsoft\SQLDB\DAC";
+    if (Test-Path $dac_150_path) {
+        Add-Path $dac_150_path
+    } else {
+        Write-Host "Path $dac_150_path does not exist"
+    }
+} elseif (Test-Path $msbuild_vs2022_path) {
 
     Write-Host "Adding Visual Studio 2022 current MSBuild to PATH..." -ForegroundColor Cyan
     Add-Path $msbuild_vs2022_path

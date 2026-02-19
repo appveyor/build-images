@@ -1,0 +1,48 @@
+environment:
+  matrix:
+
+    # GCE
+    # =======
+
+    - job_name: VS 2026 on GCE us-central1
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2026-master-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2026-master-gce-us-central1
+
+    # Azure
+    # =======
+
+    # - job_name: VS 2026 on Azure West US
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2026-master-azure-westus
+    #   APPVEYOR_BAKE_IMAGE: vs2026-master-azure-westus
+
+init:
+  - appveyor version
+  #- ps: $ErrorActionPreference = 'Stop'
+  - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
+  - ps: 'Write-Host "OS Build: $((Get-CimInstance Win32_OperatingSystem).BuildNumber)"'
+
+clone_folder: '%USERPROFILE%\image-bake-scripts'
+
+clone_script:
+  - ps: Invoke-WebRequest "https://github.com/appveyor/build-images/archive/$($env:APPVEYOR_REPO_COMMIT).zip" -OutFile "$env:temp\scripts.zip"
+  - ps: Expand-Archive -Path "$env:temp\scripts.zip" -DestinationPath "$env:temp\scripts" -Force
+  - ps: Copy-Item -Path "$env:temp\scripts\build-images-$($env:APPVEYOR_REPO_COMMIT)\scripts\Windows\*" -Destination $env:APPVEYOR_BUILD_FOLDER -Recurse
+
+test: off
+
+# on_failure:
+# - ps: Get-EventLog AppVeyor -newest 10 | Format-List
+
+build_script:
+
+  #- ps: .\update_msbuild_path.ps1
+  #- ps: .\install_dotnet_core_sdks.ps1
+  #- ps: .\install_pstools.ps1
+  #- ps: .\install_maven.ps1
+  - ps: .\install_vstest_console_logger.ps1
+  - ps: dotnet tool install -g microsoft.sqlpackage --allow-roll-forward
+  - appveyor version
+  - ps: .\cleanup_windows.ps1
+
+# on_finish:
+#    - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
