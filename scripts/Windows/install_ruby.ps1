@@ -123,36 +123,36 @@ $rubies = $rubies + @(
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.3.9-1"
+        "version"      = "Ruby 3.3.10-1"
         "install_path" = "C:\Ruby33"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.9-1/rubyinstaller-3.3.9-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.10-1/rubyinstaller-3.3.10-1-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.3.9-1 (x64)"
+        "version"      = "Ruby 3.3.10-1 (x64)"
         "install_path" = "C:\Ruby33-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.9-1/rubyinstaller-3.3.9-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.10-1/rubyinstaller-3.3.10-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
         @{
-        "version"      = "Ruby 3.4.5-1"
-        "install_path" = "C:\Ruby33"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.5-1/rubyinstaller-3.4.5-1-x86.exe"
+        "version"      = "Ruby 3.4.7-1"
+        "install_path" = "C:\Ruby34"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.7-1/rubyinstaller-3.4.7-1-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.4.5-1 (x64)"
-        "install_path" = "C:\Ruby33-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.5-1/rubyinstaller-3.4.5-1-x64.exe"
+        "version"      = "Ruby 3.4.7-1 (x64)"
+        "install_path" = "C:\Ruby34-x64"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.7-1/rubyinstaller-3.4.7-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
