@@ -16,6 +16,7 @@ environment:
     #   APPVEYOR_BAKE_IMAGE: vs2026-master-azure-westus
 
 init:
+  - ps: (Get-Content 'C:\Program files\AppVeyor\BuildAgent\update-appveyor-agent.ps1') -replace '^\$latestVersionUrl = .+', '$latestVersionUrl = ''https://raw.githubusercontent.com/appveyor/build-images/refs/heads/master/appveyor-build-agent-windows-test-version.txt''' | Set-Content 'C:\Program files\AppVeyor\BuildAgent\update-appveyor-agent.ps1'
   - appveyor version
   #- ps: $ErrorActionPreference = 'Stop'
   - ps: $env:cloud_type = (Get-ItemProperty "HKLM:\Software\AppVeyor\Build Agent").Mode
@@ -34,6 +35,7 @@ test: off
 # - ps: Get-EventLog AppVeyor -newest 10 | Format-List
 
 build_script:
+
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   #- ps: .\update_msbuild_path.ps1
   #- ps: .\install_dotnet_core_sdks.ps1
