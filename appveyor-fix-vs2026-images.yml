@@ -34,13 +34,13 @@ test: off
 # - ps: Get-EventLog AppVeyor -newest 10 | Format-List
 
 build_script:
-
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   #- ps: .\update_msbuild_path.ps1
   #- ps: .\install_dotnet_core_sdks.ps1
   #- ps: .\install_pstools.ps1
   #- ps: .\install_maven.ps1
-  - ps: .\install_vstest_console_logger.ps1
-  - ps: dotnet tool install -g microsoft.sqlpackage --allow-roll-forward
+  #- ps: .\install_vstest_console_logger.ps1
+  #- ps: dotnet tool install -g microsoft.sqlpackage --allow-roll-forward
   - appveyor version
   - ps: .\cleanup_windows.ps1
 
