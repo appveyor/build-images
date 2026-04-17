@@ -16,8 +16,8 @@ environment:
     #   APPVEYOR_BAKE_IMAGE: vs2026-master-azure-westus
 
 init:
-  - ps: (Get-Content 'C:\Program files\AppVeyor\BuildAgent\update-appveyor-agent.ps1') -replace '^\$latestVersionUrl = .+', '$latestVersionUrl = ''https://raw.githubusercontent.com/appveyor/build-images/refs/heads/master/appveyor-build-agent-windows-test-version.txt''' | Set-Content 'C:\Program files\AppVeyor\BuildAgent\update-appveyor-agent.ps1'
-  - ps: Get-Content 'C:\Program files\AppVeyor\BuildAgent\update-appveyor-agent.ps1' | Select-String '^\$latestVersionUrl'
+  #- ps: (Get-Content 'C:\Program files\AppVeyor\BuildAgent\update-appveyor-agent.ps1') -replace '^\$latestVersionUrl = .+', '$latestVersionUrl = ''https://raw.githubusercontent.com/appveyor/build-images/refs/heads/master/appveyor-build-agent-windows-test-version.txt''' | Set-Content 'C:\Program files\AppVeyor\BuildAgent\update-appveyor-agent.ps1'
+  #- ps: Get-Content 'C:\Program files\AppVeyor\BuildAgent\update-appveyor-agent.ps1' | Select-String '^\$latestVersionUrl'
 
   - appveyor version
   #- ps: $ErrorActionPreference = 'Stop'
@@ -38,7 +38,7 @@ test: off
 
 build_script:
 
-  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   #- ps: .\update_msbuild_path.ps1
   #- ps: .\install_dotnet_core_sdks.ps1
   #- ps: .\install_pstools.ps1
