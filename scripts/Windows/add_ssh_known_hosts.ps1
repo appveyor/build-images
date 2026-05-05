@@ -1,4 +1,3 @@
-
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
 function Get-IPs {
 
@@ -95,13 +94,19 @@ function Get-IPs {
 Write-Host "Adding SSH known hosts..." -ForegroundColor Cyan
 $sshPath = Join-Path $Home ".ssh"
 if (-not (Test-Path $sshPath)) {
-    New-Item $sshPath -ItemType directory -Force
+    New-Item $sshPath -ItemType directory -Force | Out-Null
 }
+
+$dataPath = Join-Path $PSScriptRoot "ssh_known_hosts_data.json"
+if (-not (Test-Path $dataPath)) {
+    throw "Known hosts data file '$dataPath' does not exist."
+}
+
+$knownHostsData = Get-Content -Path $dataPath -Raw | ConvertFrom-Json
 
 $contents = @()
 # GitHub IP addresses
-$gitHubMetaJson = (Invoke-WebRequest 'https://api.github.com/meta' -UseBasicParsing).Content
-$GithubIPs = (ConvertFrom-Json $gitHubMetaJson).git | Where-Object { $_.indexOf(':') -eq -1 }
+$GithubIPs = $knownHostsData.github.git | Where-Object { $_.indexOf(':') -eq -1 }
 
 Get-IPs -subnets $GithubIPs | ForEach-Object {
     $contents += "github.com,$_ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk="
@@ -110,8 +115,7 @@ Get-IPs -subnets $GithubIPs | ForEach-Object {
 }
 
 # BitBucket
-$bitbucketHubMetaJson = (Invoke-WebRequest 'https://ip-ranges.atlassian.com/').Content
-$bitbucketIPs = (ConvertFrom-Json $bitbucketHubMetaJson).items.cidr | Where-Object { $_.indexOf(':') -eq -1 }
+$bitbucketIPs = $knownHostsData.bitbucket.items.cidr | Where-Object { $_.indexOf(':') -eq -1 }
 Get-IPs -subnets $BitBucketIPs | ForEach-Object {
     $contents += "bitbucket.org,$_ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw=="
     $contents += "bitbucket.org,$_ ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPIQmuzMBuKdWeF4+a2sjSSpBK0iqitSQ+5BM9KhpexuGt20JpTVM7u5BDZngncgrqDMbWdxMWWOGtZ9UgbqgZE="
