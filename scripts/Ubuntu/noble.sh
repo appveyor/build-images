@@ -10,6 +10,68 @@ function add_releasespecific_tools() {
     fi    
 }
 
+function install_tools() {
+    echo "[INFO] Running install_tools..."
+    declare tools_array
+    # utilities
+    tools_array=( "zip" "unzip" "wget" "curl" "time" "telnet" "net-tools" "file" "ftp" "lftp" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools" "dkms" "dos2unix" "tree" "dnsutils" )
+    fi
+
+    # build tools
+    tools_array+=( "make" "binutils" "bison" "gcc" "pkg-config" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "ant" "ant-optional" "maven" "gradle" "graphviz" "tcl" "ninja-build" )
+    fi
+
+    # python packages
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "python-is-python3" "python-dev-is-python3" "python3-dev" )
+    fi
+    tools_array+=( "python3" "python3-setuptools" )
+    tools_array+=( "apt-transport-https" )
+    tools_array+=( "libffi-dev" "libssl-dev" "libsqlite3-dev" "liblzma-dev" "libbz2-dev" "libgdbm-dev" "libyaml-dev" "libgmp-dev" "libreadline-dev" "libncurses-dev" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "build-essential" "libexpat1-dev" "gettext" "gfortran" "python3-tk" )
+        tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" )
+    fi
+
+    # dev tools
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "libgtk-3-dev" )
+    fi
+
+    # 32bit support
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "libc6:i386" "libncurses6:i386" "libstdc++6:i386" )
+    fi
+
+    if command -v add_releasespecific_tools; then
+        add_releasespecific_tools
+    fi
+
+    if [ "${BUILD_AGENT_MODE}" = "HyperV" ]; then
+        tools_array+=( "linux-tools-generic" "linux-cloud-tools-generic" )
+        tools_array+=( "openssh-server" )
+    fi
+
+    if command -v fix_apt_get_install; then
+        fix_apt_get_install
+    fi
+
+    apt-get update
+    apt-get -y ${APT_GET_OPTIONS-} install "${tools_array[@]}" --no-install-recommends ||
+        {
+            echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2;
+            apt-cache policy gcc
+            apt-cache policy zip
+            apt-cache policy make
+            return 10;
+        }
+    log_version dpkg -l "${tools_array[@]}"
+}
+
 function fix_apt_get_install() {
     sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
 }
@@ -194,6 +256,10 @@ function configure_mono_repository () {
 
 function install_mono() {
     echo "[INFO] Running install_mono on Ubuntu 24.04...skipped"
+}
+
+function update_nuget() {
+    echo "[INFO] Running update_nuget on Ubuntu 24.04...skipped"
 }
 
 function install_virtualenv() {
