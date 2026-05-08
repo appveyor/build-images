@@ -273,6 +273,27 @@ function install_virtualenv() {
     log_version virtualenv --version
 }
 
+function install_powershell() {
+    echo "[INFO] Running install_powershell on Ubuntu 24.04..."
+
+    install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
+    curl -fsSL "https://packages.microsoft.com/keys/microsoft.asc" | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg ||
+        { echo "[ERROR] Cannot install Microsoft's signing key." 1>&2; return 10; }
+    chmod a+r /usr/share/keyrings/microsoft-prod.gpg
+
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" \
+        > /etc/apt/sources.list.d/microsoft-prod.list ||
+        { echo "[ERROR] Cannot add Microsoft's APT source." 1>&2; return 10; }
+
+    apt-get -y -qq update &&
+    apt-get -y -q --allow-downgrades install powershell ||
+        { echo "[ERROR] PowerShell install failed." 1>&2; return 10; }
+
+    configure_powershell
+
+    log_version pwsh --version
+}
+
 function install_pip() {
     echo "[INFO] Running install_pip..."
     
