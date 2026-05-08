@@ -299,10 +299,12 @@ function install_pip() {
     
     curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    python3 get-pip.py ||
+    # justification for CI breaking system packages:
+    # https://brennan.io/2025/01/11/break-my-system/
+    python3 get-pip.py --break-system-packages ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
 
-    python3 -m pip install --upgrade pip setuptools wheel virtualenv
+    python3 -m pip install --break-system-packages --upgrade pip setuptools wheel virtualenv
 
     log_version pip --version
 
