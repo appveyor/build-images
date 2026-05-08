@@ -4,11 +4,9 @@
 function add_releasespecific_tools() {
     if [[ $OS_ARCH == "amd64" ]]; then
         # doxygen support
-        tools_array+=( "libclang1-14" )
+        tools_array+=( "libclang1-18" )
         # 32bit support
         tools_array+=( "libcurl4:i386" "libcurl4-gnutls-dev" )
-        # HWE kernel
-        tools_array+=( "linux-generic-hwe-22.04" )
     fi    
 }
 
@@ -17,11 +15,11 @@ function fix_apt_get_install() {
 }
 
 function configure_mercurial_repository() {
-    echo "[INFO] Running configure_mercurial_repository on Ubuntu 22.04...skipped"
+    echo "[INFO] Running configure_mercurial_repository on Ubuntu 24.04...skipped"
 }
 
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=( "6.0" "7.0" "8.0" "9.0" )
+    SDK_VERSIONS=( "8.0" "9.0" "10.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     # RUNTIME_VERSIONS=( "3.1" "6.0" )
@@ -29,17 +27,13 @@ function prepare_dotnet_packages() {
 }
 
 function config_dotnet_repository() {
-    touch /etc/apt/preferences
-    echo -e 'Package: *\nPin: origin "packages.microsoft.com"\nPin-Priority: 1001' | sudo tee /etc/apt/preferences
-    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/packages-microsoft-prod.deb &&
-    dpkg -i packages-microsoft-prod.deb &&
+    add-apt-repository -y ppa:dotnet/backports &&
     apt-get -y -q update ||
-        { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
-    add-apt-repository ppa:dotnet/backports
+        { echo "[ERROR] Cannot configure Canonical's .NET APT sources." 1>&2; return 10; }
 }
 
 function install_outdated_dotnets() {
-    echo "[INFO] Running install_outdated_dotnets on Ubuntu 22.04...skipped"
+    echo "[INFO] Running install_outdated_dotnets on Ubuntu 24.04...skipped"
 }
 
 function install_dotnets() {
@@ -78,9 +72,9 @@ function install_dotnets() {
 }
 
 function configure_firefox_repository() {
-    echo "[INFO] Running configure_firefox_repository on Ubuntu 22.04..."
+    echo "[INFO] Running configure_firefox_repository on Ubuntu 24.04..."
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F
-    add-apt-repository "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu jammy main"
+    add-apt-repository -y "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu ${OS_CODENAME} main"
     apt-get -y update
 }
 
@@ -100,7 +94,7 @@ function install_jdks_from_repository() {
 }
 
 function configure_docker_repository() {
-    echo "[INFO] Running configure_docker_repository on Ubuntu 22.04..."
+    echo "[INFO] Running configure_docker_repository on Ubuntu 24.04..."
 
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -137,25 +131,26 @@ function install_gcc() {
     apt-get -y -q install gcc-13 g++-13 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 60 --slave /usr/bin/g++ g++ /usr/bin/g++-13 ||
         { echo "[ERROR] Cannot install gcc-13." 1>&2; return 60; }
+    apt-get -y -q install gcc-14 g++-14 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 70 --slave /usr/bin/g++ g++ /usr/bin/g++-14 ||
+        { echo "[ERROR] Cannot install gcc-14." 1>&2; return 70; }
 }
 
 function install_clang() {
     echo "[INFO] Running install_clang..."
     curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-    install_clang_version 13
-    install_clang_version 14
-    install_clang_version 15
-    install_clang_version 16
     install_clang_version 17
     install_clang_version 18
     install_clang_version 19
     install_clang_version 20
+    install_clang_version 21
+    install_clang_version 22
 
 
-    # make clang 13 default
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-13 1000
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-13 1000
+    # make clang 17 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-17 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-17 1000
     update-alternatives --config clang
     update-alternatives --config clang++
 
@@ -165,9 +160,9 @@ function install_clang() {
 function fix_clang() {
     echo "[INFO] Running fix_clang..."
 
-    # make clang 10 default
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-13 1000
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-13 1000
+    # make clang 17 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-17 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-17 1000
     update-alternatives --config clang
     update-alternatives --config clang++
 
@@ -178,7 +173,7 @@ function install_clang_version() {
     local LLVM_VERSION=$1
     echo "[INFO] Installing clang ${LLVM_VERSION}..."
 
-    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-${LLVM_VERSION} main" ||
+    apt-add-repository -y "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-${LLVM_VERSION} main" ||
         { echo "[ERROR] Cannot add llvm ${LLVM_VERSION} repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install clang-$LLVM_VERSION lldb-$LLVM_VERSION lld-$LLVM_VERSION clangd-$LLVM_VERSION ||
@@ -186,15 +181,19 @@ function install_clang_version() {
 }
 
 function configure_mono_repository () {
-    echo "[INFO] Running configure_mono_repository on Ubuntu 22.04..."
+    echo "[INFO] Running configure_mono_repository on Ubuntu 24.04..."
     
     sudo apt-get install ca-certificates gnupg
     sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-    echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+    echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
     sudo apt-get update
 
-    #add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-focal main" ||
+    #add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||
      #   { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
+}
+
+function install_mono() {
+    echo "[INFO] Running install_mono on Ubuntu 24.04...skipped"
 }
 
 function install_virtualenv() {
@@ -204,14 +203,14 @@ function install_virtualenv() {
     #     { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
     # log_version python3 -m virtualenv --version
     install_pip
-    log_version python -m virtualenv --version
+    log_version python3 -m virtualenv --version
     log_version virtualenv --version
 }
 
 function install_pip() {
     echo "[INFO] Running install_pip..."
     
-    curl "https://bootstrap.pypa.io/pip/3.6/get-pip.py" -o "get-pip.py" ||
+    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
     python3 get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
@@ -224,15 +223,15 @@ function install_pip() {
     rm get-pip.py
 }
 function configure_sqlserver_repository() {
-    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 22.04..."
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2022.list)" ||
+    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 24.04..."
+    add-apt-repository -y "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/24.04/mssql-server-2025.list)" ||
         { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
 }
 
 function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o --yes /usr/share/keyrings/microsoft-prod.gpg
-    #curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
+    #curl -fsSL https://packages.microsoft.com/config/ubuntu/24.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
     configure_sqlserver_repository
 
     apt-get -y -qq update &&
@@ -243,7 +242,7 @@ function install_sqlserver() {
         /opt/mssql/bin/mssql-conf -n setup accept-eula ||
         { echo "[ERROR] Cannot configure mssql-server." 1>&2; return 30; }
 
-    ACCEPT_EULA=Y apt-get -y -q install mssql-tools unixodbc-dev
+    ACCEPT_EULA=Y apt-get -y -q install mssql-tools18 unixodbc-dev
 
     if type -t fix_sqlserver; then
         fix_sqlserver
@@ -396,7 +395,7 @@ function install_jdks() {
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
-    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:7.0" "mcr.microsoft.com/dotnet/aspnet:7.0" "mcr.microsoft.com/mssql/server:2022-latest" "debian" "ubuntu" "centos" "alpine" "busybox" "quay.io/pypa/manylinux2014_x86_64")
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:8.0" "mcr.microsoft.com/dotnet/aspnet:8.0" "mcr.microsoft.com/mssql/server:2025-latest" "debian" "ubuntu" "centos" "alpine" "busybox" "quay.io/pypa/manylinux2014_x86_64")
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
         docker pull "$IMAGE" ||
             { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
@@ -408,13 +407,6 @@ function pull_dockerimages() {
 function install_rabbitmq() {
     echo "[INFO] Running install_rabbitmq..."
 
-    ## Team RabbitMQ's main signing key
-    apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
-    ## Launchpad PPA that provides modern Erlang releases
-    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
-    ## PackageCloud RabbitMQ repository
-    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F6609E60DC62814E"
-
     apt-get install curl gnupg apt-transport-https -y
 
     ## Team RabbitMQ's signing key
@@ -423,12 +415,12 @@ function install_rabbitmq() {
     tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
 ## Modern Erlang/OTP releases
 ##
-deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
-deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-erlang/ubuntu/noble noble main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-erlang/ubuntu/noble noble main
 ## Provides modern RabbitMQ releases
 ##
-deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
-deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-server/ubuntu/noble noble main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-server/ubuntu/noble noble main
 EOF
 
 
