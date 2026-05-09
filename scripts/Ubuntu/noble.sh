@@ -317,6 +317,18 @@ function configure_sqlserver_repository() {
         { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
 }
 
+function configure_mongodb_repo() {
+    echo "[INFO] Running configure_mongodb_repo on Ubuntu 24.04..."
+    install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
+    curl -fsSL https://pgp.mongodb.com/server-8.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-8.0.gpg ||
+        { echo "[ERROR] Cannot install MongoDB signing key." 1>&2; return 10; }
+    chmod a+r /usr/share/keyrings/mongodb-server-8.0.gpg
+
+    echo "deb [ arch=amd64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" \
+        > /etc/apt/sources.list.d/mongodb-org-8.0.list ||
+        { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
+}
+
 function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o --yes /usr/share/keyrings/microsoft-prod.gpg
