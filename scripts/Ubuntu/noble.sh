@@ -273,6 +273,13 @@ function install_virtualenv() {
     log_version virtualenv --version
 }
 
+function install_awscli() {
+    echo "[INFO] Running install_awscli on Ubuntu 24.04..."
+    python3 -m pip install --break-system-packages awscli ||
+        { echo "[ERROR] Cannot install awscli." 1>&2; return 10; }
+    log_version aws --version
+}
+
 function install_powershell() {
     echo "[INFO] Running install_powershell on Ubuntu 24.04..."
 
