@@ -314,7 +314,7 @@ function install_pip() {
 function configure_sqlserver_repository() {
     echo "[INFO] Running configure_sqlserver_repository on Ubuntu 24.04..."
     install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o --yes /usr/share/keyrings/microsoft-prod.gpg ||
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --yes --dearmor -o /usr/share/keyrings/microsoft-prod.gpg ||
         { echo "[ERROR] Cannot install Microsoft's signing key." 1>&2; return 10; }
     chmod a+r /usr/share/keyrings/microsoft-prod.gpg
 
@@ -337,8 +337,6 @@ function configure_mongodb_repo() {
 
 function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o --yes /usr/share/keyrings/microsoft-prod.gpg
-    #curl -fsSL https://packages.microsoft.com/config/ubuntu/24.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
     configure_sqlserver_repository
 
     apt-get -y -qq update &&
@@ -443,7 +441,7 @@ function install_rbenv_rubies() {
         { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
-    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.9" "3.3.9" "3.4.5"  )
+    declare RUBY_VERSIONS=( "3.1.5" "3.2.9" "3.3.9" "3.4.5" )
 
     for v in "${RUBY_VERSIONS[@]}"; do
         rbenv install ${v} ||
