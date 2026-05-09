@@ -313,7 +313,13 @@ function install_pip() {
 }
 function configure_sqlserver_repository() {
     echo "[INFO] Running configure_sqlserver_repository on Ubuntu 24.04..."
-    add-apt-repository -y "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/24.04/mssql-server-2025.list)" ||
+    install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o --yes /usr/share/keyrings/microsoft-prod.gpg ||
+        { echo "[ERROR] Cannot install Microsoft's signing key." 1>&2; return 10; }
+    chmod a+r /usr/share/keyrings/microsoft-prod.gpg
+
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/24.04/mssql-server-2025 noble main" \
+        > /etc/apt/sources.list.d/mssql-server-2025.list ||
         { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
 }
 
