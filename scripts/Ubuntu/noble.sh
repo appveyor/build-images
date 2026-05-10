@@ -134,10 +134,21 @@ function install_dotnets() {
 }
 
 function configure_firefox_repository() {
-    echo "[INFO] Running configure_firefox_repository on Ubuntu 24.04..."
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F
-    add-apt-repository -y "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu ${OS_CODENAME} main"
-    apt-get -y update
+    echo "[INFO] Running configure_firefox_repository on Ubuntu 24.04...skipped"
+}
+
+function install_browsers() {
+    echo "[INFO] Running install_browsers on Ubuntu 24.04..."
+
+    apt-get -y -q install libayatana-appindicator3-1 fonts-liberation xvfb ||
+        { echo "[ERROR] Cannot install browser prerequisites." 1>&2; return 10; }
+
+    install_google_chrome
+
+    apt-get -y --fix-broken install
+    apt-get -y -q install firefox ||
+        { echo "[ERROR] Cannot install firefox." 1>&2; return 20; }
+    log_version dpkg -l firefox google-chrome-stable
 }
 
 function install_jdks_from_repository() {
