@@ -77,13 +77,14 @@ function GetVersionId($version) {
 
 function GetReleaseRootUrl($version) {
     $versionDigits = $version.Split('.')
-    if ([int]$versionDigits[1] -in 8,9) {
+    if ([int]$versionDigits[0] -eq 6 -and [int]$versionDigits[1] -ge 8) {
         return "$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)/$(GetQtPrefix $version)_$(GetVersionId $version)"
     }
     else {
         return "$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)"
     }
 }
+
 
 function GetExtensionSections($ext) {
     $sections = $ext.Split('.')

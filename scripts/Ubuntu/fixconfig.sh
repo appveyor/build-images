@@ -108,8 +108,8 @@ configure_path
 #     _abort $?
 
 
-# install_qt ||
-#     _abort $?
+install_qt ||
+    _abort $?
 
 sudo apt-get update
 sudo apt-get install -y ca-certificates
