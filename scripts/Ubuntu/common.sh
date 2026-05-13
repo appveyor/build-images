@@ -2090,6 +2090,7 @@ function install_virtualbox_core() {
 
     local VB_VERSION=7.1
     install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
+    rm -f "/etc/apt/sources.list.d/archive_uri-http_download_virtualbox_org_virtualbox_debian-${OS_CODENAME}.list"
     retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | gpg --dearmor -o /usr/share/keyrings/oracle-virtualbox.gpg ||
         { echo "[ERROR] Cannot download and install oracle_vbox_2016.asc." 1>&2; return 10; }
     chmod a+r /usr/share/keyrings/oracle-virtualbox.gpg
@@ -2120,6 +2121,9 @@ function install_virtualbox() {
         usermod -aG vboxusers "${USER_NAME}"
     fi
 
+    /sbin/vboxconfig ||
+        { echo "[ERROR] Cannot configure Virtualbox." 1>&2; return 50; }
+
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
     pushd -- "${TMP_DIR}"
@@ -2127,8 +2131,6 @@ function install_virtualbox() {
         { echo "[ERROR] Cannot download Virtualbox Extention pack." 1>&2; popd; return 30; }
     yes | VBoxManage extpack install --replace "${VBE_URL##*/}" ||
         { echo "[ERROR] Cannot install Virtualbox Extention pack." 1>&2; popd; return 40; }
-    /sbin/vboxconfig ||
-        { echo "[ERROR] Cannot configure Virtualbox." 1>&2; popd; return 50; }
 
     #cleanup
     rm -f "${VBE_URL##*/}"
