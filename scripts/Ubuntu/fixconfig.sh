@@ -108,7 +108,9 @@ configure_path
 #     _abort $?
 
 
-install_qt ||
+# install_qt ||
+#     _abort $?
+install_virtualbox ||
     _abort $?
 
 sudo apt-get update

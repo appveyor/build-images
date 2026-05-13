@@ -2088,14 +2088,14 @@ function install_browsers_arm64() {
 function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
 
-    local VB_VERSION=7.0
-    retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc -o oracle_vbox_2016.asc ||
-        { echo "[ERROR] Cannot download oracle_vbox_2016.asc." 1>&2; return 10; }
+    local VB_VERSION=7.1
+    install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
+    retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | gpg --dearmor -o /usr/share/keyrings/oracle-virtualbox.gpg ||
+        { echo "[ERROR] Cannot download and install oracle_vbox_2016.asc." 1>&2; return 10; }
+    chmod a+r /usr/share/keyrings/oracle-virtualbox.gpg
 
-    apt-key add oracle_vbox_2016.asc
-    rm oracle_vbox_2016.asc
-
-    add-apt-repository -y "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/oracle-virtualbox.gpg] http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" \
+        > /etc/apt/sources.list.d/oracle-virtualbox.list ||
         { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }
 
     apt-get -y -qq update &&
@@ -2109,11 +2109,12 @@ function install_virtualbox_core() {
 function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
 
-    local VERSION=7.0.18
-    #https://download.virtualbox.org/virtualbox/7.0.20/Oracle_VM_VirtualBox_Extension_Pack-7.0.20.vbox-extpack
-    local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
-
     install_virtualbox_core || return $?
+
+    local VERSION
+    VERSION=$(VBoxManage --version | sed 's/r.*//') ||
+        { echo "[ERROR] Cannot detect installed VirtualBox version." 1>&2; return 7; }
+    local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         usermod -aG vboxusers "${USER_NAME}"

@@ -312,6 +312,45 @@ function install_powershell() {
     log_version pwsh --version
 }
 
+function install_pythons(){
+    echo "[INFO] Installing pyenv..."
+
+    curl https://pyenv.run | bash
+
+    write_line "${HOME}/.profile" 'export PYENV_ROOT="$HOME/.pyenv"'
+    write_line "${HOME}/.profile" 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
+    write_line "${HOME}/.profile" 'eval "$(pyenv init -)"'
+
+    export PYENV_ROOT="$HOME/.pyenv"
+    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+
+    echo "[INFO] Running install_pythons..."
+    declare PY_VERSIONS=( "3.10.20" "3.11.15" "3.12.13" "3.13.13" "3.14.5" )
+
+    for i in "${PY_VERSIONS[@]}"; do
+        VENV_PATH=${HOME}/venv${i%%[abrcf]*}
+        VENV_MINOR_PATH=${HOME}/venv${i%.*}
+
+        pyenv install "${i}" ||
+            { echo "[ERROR] Cannot install Python ${i}."; return 10; }
+
+        pyenv global "${i}"
+        python --version
+
+        python -m pip install --upgrade pip ||
+            { echo "[ERROR] Cannot upgrade pip for Python ${i}."; return 10; }
+
+        python -m venv "${VENV_PATH}" ||
+            { echo "[ERROR] Cannot make virtualenv for Python ${i}."; return 10; }
+
+        echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
+        ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
+    done
+
+    ls -al ~/venv*
+}
+
 function install_pip() {
     echo "[INFO] Running install_pip..."
     
