@@ -37,6 +37,7 @@ function prepare_dotnet_packages() {
 }
 
 function config_dotnet_repository() {
+    find /etc/apt/sources.list.d -maxdepth 1 -type f -name '*.list' -exec grep -l 'packages.microsoft.com/ubuntu/22.04/prod' {} + | xargs -r rm -f
     add-apt-repository -y ppa:dotnet/backports &&
     apt-get -y -q update ||
         { echo "[ERROR] Cannot configure Canonical's .NET APT sources." 1>&2; return 10; }
