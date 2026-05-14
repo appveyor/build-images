@@ -21,7 +21,7 @@ function configure_mercurial_repository() {
 }
 
 function prepare_dotnet_packages() {
-    SDK_VERSIONS=( "6.0" "7.0" "8.0" "9.0" )
+    SDK_VERSIONS=( "8.0" "9.0" "10.0" )
     dotnet_packages "dotnet-sdk-" SDK_VERSIONS[@]
 
     # RUNTIME_VERSIONS=( "3.1" "6.0" )
@@ -29,13 +29,9 @@ function prepare_dotnet_packages() {
 }
 
 function config_dotnet_repository() {
-    touch /etc/apt/preferences
-    echo -e 'Package: *\nPin: origin "packages.microsoft.com"\nPin-Priority: 1001' | sudo tee /etc/apt/preferences
-    curl -fsSL -O https://packages.microsoft.com/config/ubuntu/${OS_RELEASE}/packages-microsoft-prod.deb &&
-    dpkg -i packages-microsoft-prod.deb &&
+    add-apt-repository -y ppa:dotnet/backports &&
     apt-get -y -q update ||
-        { echo "[ERROR] Cannot download and install Microsoft's APT source." 1>&2; return 10; }
-    add-apt-repository ppa:dotnet/backports
+        { echo "[ERROR] Cannot configure Canonical's .NET APT sources." 1>&2; return 10; }
 }
 
 function install_outdated_dotnets() {
@@ -70,9 +66,6 @@ function install_dotnets() {
     else
         echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
     fi
-
-    #cleanup
-    if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
 
     install_outdated_dotnets
 }
@@ -137,6 +130,9 @@ function install_gcc() {
     apt-get -y -q install gcc-13 g++-13 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 60 --slave /usr/bin/g++ g++ /usr/bin/g++-13 ||
         { echo "[ERROR] Cannot install gcc-13." 1>&2; return 60; }
+    apt-get -y -q install gcc-14 g++-14 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 70 --slave /usr/bin/g++ g++ /usr/bin/g++-14 ||
+        { echo "[ERROR] Cannot install gcc-14." 1>&2; return 70; }
 }
 
 function install_clang() {
@@ -151,11 +147,13 @@ function install_clang() {
     install_clang_version 18
     install_clang_version 19
     install_clang_version 20
+    install_clang_version 21
+    install_clang_version 22
 
 
-    # make clang 13 default
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-13 1000
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-13 1000
+    # make clang 17 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-17 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-17 1000
     update-alternatives --config clang
     update-alternatives --config clang++
 
@@ -165,9 +163,9 @@ function install_clang() {
 function fix_clang() {
     echo "[INFO] Running fix_clang..."
 
-    # make clang 10 default
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-13 1000
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-13 1000
+    # make clang 17 default
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-17 1000
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-17 1000
     update-alternatives --config clang
     update-alternatives --config clang++
 
@@ -178,7 +176,7 @@ function install_clang_version() {
     local LLVM_VERSION=$1
     echo "[INFO] Installing clang ${LLVM_VERSION}..."
 
-    apt-add-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-${LLVM_VERSION} main" ||
+    apt-add-repository -y "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME}-${LLVM_VERSION} main" ||
         { echo "[ERROR] Cannot add llvm ${LLVM_VERSION} repository to APT sources." 1>&2; return 10; }
     apt-get -y -qq update &&
     apt-get -y -q install clang-$LLVM_VERSION lldb-$LLVM_VERSION lld-$LLVM_VERSION clangd-$LLVM_VERSION ||
@@ -211,7 +209,7 @@ function install_virtualenv() {
 function install_pip() {
     echo "[INFO] Running install_pip..."
     
-    curl "https://bootstrap.pypa.io/pip/3.6/get-pip.py" -o "get-pip.py" ||
+    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
     python3 get-pip.py ||
         { echo "[WARNING] Cannot install pip." ; return 10; }
@@ -225,14 +223,18 @@ function install_pip() {
 }
 function configure_sqlserver_repository() {
     echo "[INFO] Running configure_sqlserver_repository on Ubuntu 22.04..."
-    add-apt-repository "$(curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2022.list)" ||
+    install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --yes --dearmor -o /usr/share/keyrings/microsoft-prod.gpg ||
+        { echo "[ERROR] Cannot install Microsoft's signing key." 1>&2; return 10; }
+    chmod a+r /usr/share/keyrings/microsoft-prod.gpg
+
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2025 jammy main" \
+        > /etc/apt/sources.list.d/mssql-server-2025.list ||
         { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
 }
 
 function install_sqlserver() {
     echo "[INFO] Running install_sqlserver..."
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o --yes /usr/share/keyrings/microsoft-prod.gpg
-    #curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-preview.list | sudo tee /etc/apt/sources.list.d/mssql-server-preview.list
     configure_sqlserver_repository
 
     apt-get -y -qq update &&
@@ -243,7 +245,7 @@ function install_sqlserver() {
         /opt/mssql/bin/mssql-conf -n setup accept-eula ||
         { echo "[ERROR] Cannot configure mssql-server." 1>&2; return 30; }
 
-    ACCEPT_EULA=Y apt-get -y -q install mssql-tools unixodbc-dev
+    ACCEPT_EULA=Y apt-get -y -q install mssql-tools18 unixodbc-dev
 
     if type -t fix_sqlserver; then
         fix_sqlserver
@@ -253,6 +255,45 @@ function install_sqlserver() {
     systemctl is-active mssql-server ||
         { echo "[ERROR] mssql-server service failed to start." 1>&2; return 40; }
     log_version dpkg -l mssql-server
+}
+
+function install_pythons(){
+    echo "[INFO] Installing pyenv..."
+
+    curl https://pyenv.run | bash
+
+    write_line "${HOME}/.profile" 'export PYENV_ROOT="$HOME/.pyenv"'
+    write_line "${HOME}/.profile" 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
+    write_line "${HOME}/.profile" 'eval "$(pyenv init -)"'
+
+    export PYENV_ROOT="$HOME/.pyenv"
+    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+
+    echo "[INFO] Running install_pythons..."
+    declare PY_VERSIONS=( "3.10.20" "3.11.15" "3.12.13" "3.13.13" "3.14.5" )
+
+    for i in "${PY_VERSIONS[@]}"; do
+        VENV_PATH=${HOME}/venv${i%%[abrcf]*}
+        VENV_MINOR_PATH=${HOME}/venv${i%.*}
+
+        pyenv install "${i}" ||
+            { echo "[ERROR] Cannot install Python ${i}."; return 10; }
+
+        pyenv global "${i}"
+        python --version
+
+        python -m pip install --upgrade pip ||
+            { echo "[ERROR] Cannot upgrade pip for Python ${i}."; return 10; }
+
+        python -m venv "${VENV_PATH}" ||
+            { echo "[ERROR] Cannot make virtualenv for Python ${i}."; return 10; }
+
+        echo "Linking ${VENV_MINOR_PATH} to ${VENV_PATH}"
+        ln -s ${VENV_PATH} ${VENV_MINOR_PATH}
+    done
+
+    ls -al ~/venv*
 }
 
 
@@ -337,7 +378,7 @@ function install_rbenv_rubies() {
         { echo "Cannot find rbenv. Install rbenv first!" 1>&2; return 10; }
     local v
 
-    declare RUBY_VERSIONS=( "2.6.10" "2.7.8" "3.0.6" "3.1.5" "3.2.9" "3.3.9" "3.4.5"  )
+    declare RUBY_VERSIONS=( "3.1.5" "3.2.9" "3.3.9" "3.4.5" )
 
     for v in "${RUBY_VERSIONS[@]}"; do
         rbenv install ${v} ||
@@ -353,27 +394,17 @@ function install_jdks() {
         TAR_ARCH="x64"
         install_jdk 11 https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz ||
             return $?
-        install_jdk 12 https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz ||
-            return $?
-        install_jdk 13 https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz ||
-            return $?
-        install_jdk 14 https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_linux-x64_bin.tar.gz ||
-            return $?
     else
         TAR_ARCH="aarch64"
     fi
-    install_jdk 15 https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
-        return $?
-    install_jdk 16 https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-16.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
-        return $?  
     install_jdk 17 https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?                     
-    install_jdk 18 https://download.java.net/java/GA/jdk18.0.2/f6ad4b4450fd4d298113270ec84f30ee/9/GPL/openjdk-18.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
-        return $?   
     install_jdk 21 https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
         return $? 
-    install_jdk 22 https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
-        return $?       
+    install_jdk 25 https://download.java.net/java/GA/jdk25.0.2/b1e0dfa218384cb9959bdcb897162d4e/10/GPL/openjdk-25.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?
+    install_jdk 26 https://download.java.net/java/GA/jdk26/c3cc523845074aa0af4f5e1e1ed4151d/35/GPL/openjdk-26_linux-${TAR_ARCH}_bin.tar.gz ||
+        return $?
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
         IFS=$'\n'
@@ -396,7 +427,7 @@ function install_jdks() {
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
-    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:7.0" "mcr.microsoft.com/dotnet/aspnet:7.0" "mcr.microsoft.com/mssql/server:2022-latest" "debian" "ubuntu" "centos" "alpine" "busybox" "quay.io/pypa/manylinux2014_x86_64")
+    declare DOCKER_IMAGES=( "mcr.microsoft.com/dotnet/sdk:8.0" "mcr.microsoft.com/dotnet/aspnet:8.0" "mcr.microsoft.com/mssql/server:2025-latest" "debian" "ubuntu" "centos" "alpine" "busybox" "quay.io/pypa/manylinux2014_x86_64")
     for IMAGE in "${DOCKER_IMAGES[@]}"; do
         docker pull "$IMAGE" ||
             { echo "[WARNING] Cannot pull docker image ${IMAGE}." 1>&2; }
