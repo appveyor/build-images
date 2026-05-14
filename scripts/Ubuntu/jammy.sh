@@ -47,6 +47,43 @@ function install_outdated_dotnets() {
     echo "[INFO] Running install_outdated_dotnets on Ubuntu 22.04...skipped"
 }
 
+function install_flutter() {
+    echo "[INFO] Running install_flutter..."
+
+    local BIN_DIR="${HOME}/flutter/bin"
+
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+
+    sudo chown "$(id -u "${USER_NAME}"):$(id -g "${USER_NAME}")" -R "${HOME}"
+
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d)
+    pushd -- "${TMP_DIR}"
+
+    local RELEASE_URL
+    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.41.5-stable.tar.xz"
+    curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
+        { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
+
+    tar -xf "flutter_linux_stable.tar.xz" -C "${HOME}"
+
+    write_line "${HOME}/.profile" "add2path_suffix $BIN_DIR"
+    export PATH="$PATH:$BIN_DIR"
+
+    flutter channel stable
+    flutter upgrade
+    yes "y" | flutter doctor --android-licenses > /dev/null
+    flutter doctor -v
+
+    popd &&
+    rm -rf "${TMP_DIR}"
+
+    log_version flutter --version
+}
+
 function install_dotnets() {
     echo "[INFO] Running install_dotnets..."
     prepare_dotnet_packages
@@ -431,6 +468,28 @@ function install_jdks() {
         echo "[WARNING] User '${USER_NAME-}' not found. Skipping configure_jdk"
     fi
     echo "skipping configure_jdk"
+}
+
+function install_golangs() {
+    echo "[INFO] Running install_golangs..."
+    if [ "$(whoami)" != "${USER_NAME}" ]; then
+        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
+        return 1
+    fi
+    command -v gvm && gvm version ||
+        { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
+
+    declare GO_VERSIONS=( "go1.21.13" "go1.22.12" "go1.23.12" "go1.24.13" "go1.25.10" )
+
+    for v in "${GO_VERSIONS[@]}"; do
+        gvm install ${v} -B ||
+            { echo "[WARNING] Cannot install ${v}." 1>&2; }
+    done
+    local index
+    index=$(( ${#GO_VERSIONS[*]} - 1 ))
+    gvm use "${GO_VERSIONS[$index]}" --default
+    log_version gvm version
+    log_version go version
 }
 
 function pull_dockerimages() {

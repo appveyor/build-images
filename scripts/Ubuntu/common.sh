@@ -1206,25 +1206,24 @@ function install_jdks_arm64() {
 function install_android_sdk() {
     echo "[INFO] Running install_android_sdk..."
 
-    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip"
+    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-14742923_latest.zip"
 
     write_line "${HOME}/.profile" 'export ANDROID_SDK_ROOT="/usr/lib/android-sdk"'
     export ANDROID_SDK_ROOT="/usr/lib/android-sdk"
 
-    sudo mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
-    sudo chown -R $(id -u):$(id -g) "${ANDROID_SDK_ROOT}"
+    sudo mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools/latest"
+    sudo chown -R "$(id -u):$(id -g)" "${ANDROID_SDK_ROOT}"
     ANDROID_SDK_ARCHIVE="${ANDROID_SDK_ROOT}/archive"
     wget --progress=dot:giga "${ANDROID_SDK_URL}" -O "${ANDROID_SDK_ARCHIVE}"
     unzip -q -d "${ANDROID_SDK_ROOT}/cmdline-tools" "${ANDROID_SDK_ARCHIVE}"
-    mv "${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools" "${ANDROID_SDK_ROOT}/cmdline-tools/tools"
-    export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
+    mv "${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools/"* "${ANDROID_SDK_ROOT}/cmdline-tools/latest/"
+    rmdir "${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools"
+    export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
     write_line "${HOME}/.profile" 'add2path $ANDROID_SDK_ROOT/cmdline-tools/latest/bin'
-    write_line "${HOME}/.profile" 'add2path $ANDROID_SDK_ROOT/cmdline-tools/tools/bin'
     sdkmanager --version
-    echo "y" | sdkmanager "tools" > /dev/null
-    echo "y" | sdkmanager "build-tools;33.0.3" > /dev/null
     echo "y" | sdkmanager "build-tools;34.0.0" > /dev/null
     echo "y" | sdkmanager "build-tools;35.0.0" > /dev/null
+    echo "y" | sdkmanager "build-tools;36.0.0" > /dev/null
     echo "y" | sdkmanager "platforms;android-31" > /dev/null
     echo "y" | sdkmanager "platforms;android-34" > /dev/null
     echo "y" | sdkmanager "platforms;android-35" > /dev/null
@@ -1233,7 +1232,6 @@ function install_android_sdk() {
     echo "y" | sdkmanager "cmdline-tools;latest" > /dev/null
     echo "y" | sdkmanager "extras;android;m2repository" > /dev/null
     echo "y" | sdkmanager "extras;google;m2repository" > /dev/null
-    echo "y" | sdkmanager "patcher;v4" > /dev/null
     rm "${ANDROID_SDK_ARCHIVE}"
 
     log_version sdkmanager --version
@@ -1648,6 +1646,7 @@ function install_mysql() {
 
 function install_postgresql() {
     echo "[INFO] Running install_postgresql..."
+    local PG_HBA_CONF
     if [[ -z "${POSTGRES_ROOT_PASSWORD-}" || "${#POSTGRES_ROOT_PASSWORD}" = "0" ]]; then POSTGRES_ROOT_PASSWORD="Password12!"; fi
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
     add-apt-repository -y "deb http://apt.postgresql.org/pub/repos/apt/ ${OS_CODENAME}-pgdg main" ||
@@ -1662,7 +1661,12 @@ function install_postgresql() {
     sudo -u postgres createuser ${USER_NAME}
     sudo -u postgres psql -c "alter user ${USER_NAME} with createdb" postgres
     sudo -u postgres psql -c "ALTER USER postgres with password '${POSTGRES_ROOT_PASSWORD}';" postgres
-    replace_line '/etc/postgresql/11/main/pg_hba.conf' 'local   all             postgres                                trust' 'local\s+all\s+postgres\s+peer'
+    PG_HBA_CONF=$(find /etc/postgresql -path '*/main/pg_hba.conf')
+    if [[ -n "${PG_HBA_CONF}" ]]; then
+        replace_line "${PG_HBA_CONF}" 'local   all             postgres                                trust' 'local\s+all\s+postgres\s+peer'
+    else
+        echo "[WARNING] Cannot find pg_hba.conf under /etc/postgresql. Skipping peer-to-trust change."
+    fi
 }
 
 function configure_mongodb_repo() {
