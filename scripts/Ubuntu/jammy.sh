@@ -16,11 +16,11 @@ function fix_apt_get_install() {
     sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
 
     cat >/etc/needrestart/conf.d/appveyor-build-agent.conf <<'EOF'
-    $nrconf{override_rc} = {
-        %{ $nrconf{override_rc} || {} },
-        qr(^appveyor-build-agent\.service$) => 0,
-    };
-    EOF
+$nrconf{override_rc} = {
+    %{ $nrconf{override_rc} || {} },
+    qr(^appveyor-build-agent\.service$) => 0,
+};
+EOF
 
 }
 
