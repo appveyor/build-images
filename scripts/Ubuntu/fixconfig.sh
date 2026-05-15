@@ -110,23 +110,31 @@ configure_path
 
 # install_qt ||
 #     _abort $?
-configure_sqlserver_repository ||
-    _abort $?
+if [[ -x /opt/mssql-tools18/bin/sqlcmd ]]; then
+    ln -s -f /opt/mssql-tools18/bin/sqlcmd /usr/local/bin/sqlcmd ||
+        _abort $?
+elif [[ -x /opt/mssql-tools/bin/sqlcmd ]]; then
+    ln -s -f /opt/mssql-tools/bin/sqlcmd /usr/local/bin/sqlcmd ||
+        _abort $?
+fi
 
-apt-get -y -qq update &&
-ACCEPT_EULA=Y apt-get -y -q install mssql-tools18 unixodbc-dev ||
-    # _abort $?
+DEFAULT_JAVA_HOME=$(find /usr/lib/jvm -maxdepth 1 -type d -name 'java-*-openjdk-amd64' | sort -V | tail -n1)
+if [[ -n "${DEFAULT_JAVA_HOME-}" ]]; then
+    ln -s -f "${DEFAULT_JAVA_HOME}/bin/java" /usr/local/bin/java ||
+        _abort $?
+    ln -s -f "${DEFAULT_JAVA_HOME}/bin/javac" /usr/local/bin/javac ||
+        _abort $?
 
-su -l ${USER_NAME} -c "
-        USER_NAME=${USER_NAME}
-        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
-        $(declare -f configure_sqlserver)
-        $(declare -f write_line)
-        $(declare -f add_line)
-        $(declare -f replace_line)
-        $(declare -f add2path_suffix)
-        configure_sqlserver" ||
-    _abort $?
+    su -l ${USER_NAME} -c "
+            USER_NAME=${USER_NAME}
+            $(declare -f configure_jdk)
+            $(declare -f write_line)
+            $(declare -f add_line)
+            $(declare -f replace_line)
+            $(declare -f log_version)
+            configure_jdk" ||
+        _abort $?
+fi
 
 sudo apt-get update
 sudo apt-get install -y ca-certificates
