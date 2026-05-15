@@ -1170,6 +1170,10 @@ function install_jdk() {
         { echo "[ERROR] Cannot symlink JDK ${JDK_VERSION} to ${JDK_LINK}." 1>&2; popd; return 20; }
 
     PROFILE_LINES+=( "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}" )
+    ln -s -f "${JDK_PATH}/bin/java" /usr/local/bin/java ||
+        { echo "[ERROR] Cannot symlink java from ${JDK_PATH}." 1>&2; popd; return 20; }
+    ln -s -f "${JDK_PATH}/bin/javac" /usr/local/bin/javac ||
+        { echo "[ERROR] Cannot symlink javac from ${JDK_PATH}." 1>&2; popd; return 20; }
 
     # cleanup
     rm -rf "${DIR_NAME}"
@@ -1185,12 +1189,16 @@ function configure_jdk() {
         return 1
     fi
     local file
+    local DEFAULT_JAVA_HOME
 
     write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64=/usr/lib/jvm/java-8-openjdk-amd64'
     while read -r line; do
         write_line "${HOME}/.profile" "${line}"
     done
-    write_line "${HOME}/.profile" 'export JAVA_HOME=$JAVA_HOME_18_X64'
+    DEFAULT_JAVA_HOME=$(find /usr/lib/jvm -maxdepth 1 -type d -name 'java-*-openjdk-amd64' | sort -V | tail -n1)
+    if [[ -n "${DEFAULT_JAVA_HOME}" ]]; then
+        write_line "${HOME}/.profile" "export JAVA_HOME=${DEFAULT_JAVA_HOME}"
+    fi
     write_line "${HOME}/.profile" 'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8'
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'

@@ -409,6 +409,9 @@ function install_sqlserver() {
         { echo "[ERROR] Cannot configure mssql-server." 1>&2; return 30; }
 
     ACCEPT_EULA=Y apt-get -y -q install mssql-tools18 unixodbc-dev
+    if [[ -x /opt/mssql-tools18/bin/sqlcmd ]]; then
+        ln -s -f /opt/mssql-tools18/bin/sqlcmd /usr/local/bin/sqlcmd
+    fi
 
     if type -t fix_sqlserver; then
         fix_sqlserver
