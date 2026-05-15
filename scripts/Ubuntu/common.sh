@@ -1598,8 +1598,9 @@ function configure_sqlserver() {
         return 2
     fi
     # Add SQL Server tools to the path by default:
+    write_line "${HOME}/.profile" 'add2path_suffix /opt/mssql-tools18/bin'
     write_line "${HOME}/.profile" 'add2path_suffix /opt/mssql-tools/bin'
-    export PATH="$PATH:/opt/mssql-tools/bin"
+    export PATH="$PATH:/opt/mssql-tools18/bin:/opt/mssql-tools/bin"
 
     local counter=1
     local errstatus=1

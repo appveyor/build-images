@@ -110,7 +110,22 @@ configure_path
 
 # install_qt ||
 #     _abort $?
-install_virtualbox ||
+configure_sqlserver_repository ||
+    _abort $?
+
+apt-get -y -qq update &&
+ACCEPT_EULA=Y apt-get -y -q install mssql-tools18 unixodbc-dev ||
+    # _abort $?
+
+su -l ${USER_NAME} -c "
+        USER_NAME=${USER_NAME}
+        MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+        $(declare -f configure_sqlserver)
+        $(declare -f write_line)
+        $(declare -f add_line)
+        $(declare -f replace_line)
+        $(declare -f add2path_suffix)
+        configure_sqlserver" ||
     _abort $?
 
 sudo apt-get update

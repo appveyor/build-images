@@ -375,6 +375,10 @@ function configure_sqlserver_repository() {
         { echo "[ERROR] Cannot install Microsoft's signing key." 1>&2; return 10; }
     chmod a+r /usr/share/keyrings/microsoft-prod.gpg
 
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" \
+        > /etc/apt/sources.list.d/microsoft-prod.list ||
+        { echo "[ERROR] Cannot add Microsoft's APT source." 1>&2; return 10; }
+
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/24.04/mssql-server-2025 noble main" \
         > /etc/apt/sources.list.d/mssql-server-2025.list ||
         { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
