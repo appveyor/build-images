@@ -65,7 +65,7 @@ build_script:
   - cd $BASE_DIR && pwd
   - lsblk
   - df -h
-  #- sudo bash ./expand_filesystem_volume.sh
+  - sudo bash ./expand_filesystem_volume.sh
   - sudo cp ./rvm_wrapper.sh /usr/bin/rvm
   - sudo chmod +x /usr/bin/rvm
   - sudo -E ./basicconfig.sh
