@@ -1612,10 +1612,16 @@ function configure_sqlserver() {
 
     local counter=1
     local errstatus=1
+    local SQLCMD_BIN=sqlcmd
+    if [[ -x /opt/mssql-tools18/bin/sqlcmd ]]; then
+        SQLCMD_BIN=/opt/mssql-tools18/bin/sqlcmd
+    elif [[ -x /opt/mssql-tools/bin/sqlcmd ]]; then
+        SQLCMD_BIN=/opt/mssql-tools/bin/sqlcmd
+    fi
     while [ $counter -le 5 ] && [ $errstatus = 1 ]; do
         echo Waiting for SQL Server to start...
         sleep 10s
-        sqlcmd -S localhost -U SA -P ${MSSQL_SA_PASSWORD} -Q "SELECT @@VERSION"
+        "${SQLCMD_BIN}" -S localhost -U SA -P ${MSSQL_SA_PASSWORD} -C -Q "SELECT @@VERSION"
         errstatus=$?
         echo "errstatus=${errstatus}"
         ((counter++))
