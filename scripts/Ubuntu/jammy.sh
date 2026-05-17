@@ -477,28 +477,6 @@ function install_jdks() {
     echo "skipping configure_jdk"
 }
 
-function install_golangs() {
-    echo "[INFO] Running install_golangs..."
-    if [ "$(whoami)" != "${USER_NAME}" ]; then
-        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
-        return 1
-    fi
-    command -v gvm && gvm version ||
-        { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-
-    declare GO_VERSIONS=( "go1.21.13" "go1.22.12" "go1.23.12" "go1.24.13" "go1.25.10" )
-
-    for v in "${GO_VERSIONS[@]}"; do
-        gvm install ${v} -B ||
-            { echo "[WARNING] Cannot install ${v}." 1>&2; }
-    done
-    local index
-    index=$(( ${#GO_VERSIONS[*]} - 1 ))
-    gvm use "${GO_VERSIONS[$index]}" --default
-    log_version gvm version
-    log_version go version
-}
-
 function pull_dockerimages() {
     local DOCKER_IMAGES
     local IMAGE
