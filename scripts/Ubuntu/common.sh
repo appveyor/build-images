@@ -931,6 +931,53 @@ function preheat_dotnet_sdks() {
     done
 }
 
+function configure_dotnet_environment() {
+    export DOTNET_ROOT=/usr/share/dotnet
+
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME} >/dev/null; then
+        write_line "$USER_HOME/.profile" "export DOTNET_ROOT=/usr/share/dotnet" 'DOTNET_ROOT='
+        write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
+        write_line "$USER_HOME/.profile" "export DOTNET_NOLOGO=1" 'DOTNET_NOLOGO='
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
+    fi
+}
+
+function install_manual_dotnet_sdks() {
+    local INSTALL_DIR=/usr/share/dotnet
+    local SCRIPT_PATH=/tmp/dotnet-install.sh
+    local CHANNEL
+    local INSTALL_ARGS=()
+
+    echo "[INFO] Running install_manual_dotnet_sdks..."
+
+    rm -rf "${INSTALL_DIR}" &&
+    mkdir -p "${INSTALL_DIR}" ||
+        { echo "[ERROR] Cannot prepare .NET install directory." 1>&2; return 10; }
+
+    curl -fsSL https://dot.net/v1/dotnet-install.sh -o "${SCRIPT_PATH}" &&
+    chmod +x "${SCRIPT_PATH}" ||
+        { echo "[ERROR] Cannot download dotnet-install.sh." 1>&2; return 11; }
+
+    for CHANNEL in 10.0 9.0 8.0 6.0; do
+        INSTALL_ARGS=( --channel "${CHANNEL}" --quality GA --install-dir "${INSTALL_DIR}" --no-path )
+        if [ "${CHANNEL}" != "10.0" ]; then
+            INSTALL_ARGS+=( --skip-non-versioned-files )
+        fi
+
+        bash "${SCRIPT_PATH}" "${INSTALL_ARGS[@]}" ||
+            { echo "[ERROR] Cannot install .NET SDK channel ${CHANNEL}." 1>&2; return 20; }
+    done
+
+    ln -snf "${INSTALL_DIR}/dotnet" /usr/bin/dotnet ||
+        { echo "[ERROR] Cannot create dotnet symlink." 1>&2; return 30; }
+
+    configure_dotnet_environment || return $?
+
+    log_version dotnet --version
+    log_version dotnet --list-sdks
+}
+
 function prepare_dotnet_packages() {
 
     SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" "7.0" )

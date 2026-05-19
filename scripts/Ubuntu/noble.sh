@@ -100,37 +100,7 @@ function install_outdated_dotnets() {
 
 function install_dotnets() {
     echo "[INFO] Running install_dotnets..."
-    prepare_dotnet_packages
-    config_dotnet_repository
-
-    #TODO REPO_LIST might be empty
-    #REPO_LIST=$(apt-cache search dotnet-)
-    # for i in "${!PACKAGES[@]}"; do
-    #     if [[ ! ${REPO_LIST} =~ ${PACKAGES[i]} ]]; then
-    #         echo "[WARNING] ${PACKAGES[i]} package not found in apt repositories. Skipping it."
-    #         unset 'PACKAGES[i]'
-    #     fi
-    # done
-    #TODO PACKAGES might be empty
-
-    # it seems like there is dependency for mysql somethere in dotnet-* packages
-    configure_apt_mysql
-
-    apt-get -y -q install --no-install-recommends "${PACKAGES[@]}" ||
-        { echo "[ERROR] Cannot install dotnet packages ${PACKAGES[*]}." 1>&2; return 20; }
-
-    #set env
-    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
-        write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
-        write_line "$USER_HOME/.profile" "export DOTNET_NOLOGO=1" 'DOTNET_NOLOGO='
-    else
-        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
-    fi
-
-    #cleanup
-    if [ -f packages-microsoft-prod.deb ]; then rm packages-microsoft-prod.deb; fi
-
-    install_outdated_dotnets
+    install_manual_dotnet_sdks
 }
 
 function configure_firefox_repository() {
