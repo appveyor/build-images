@@ -933,11 +933,19 @@ function preheat_dotnet_sdks() {
 
 function configure_dotnet_environment() {
     export DOTNET_ROOT=/usr/share/dotnet
+    if [ -n "${USER_HOME-}" ] && [ "${#USER_HOME}" -gt "0" ]; then
+        export PATH="${PATH}:${USER_HOME}/.dotnet/tools"
+    fi
 
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME} >/dev/null; then
         write_line "$USER_HOME/.profile" "export DOTNET_ROOT=/usr/share/dotnet" 'DOTNET_ROOT='
+        write_line "$USER_HOME/.profile" 'export PATH="$PATH:$HOME/.dotnet/tools"' '\.dotnet/tools'
+        write_line "$USER_HOME/.bash_profile" 'export PATH="$PATH:$HOME/.dotnet/tools"' '\.dotnet/tools'
         write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
         write_line "$USER_HOME/.profile" "export DOTNET_NOLOGO=1" 'DOTNET_NOLOGO='
+
+        mkdir -p "$USER_HOME/.config/powershell"
+        write_line "$USER_HOME/.config/powershell/Microsoft.PowerShell_profile.ps1" '$env:PATH += ":$HOME/.dotnet/tools"' '\.dotnet/tools'
     else
         echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
     fi

@@ -110,13 +110,9 @@ configure_path
 
 # install_qt ||
 #     _abort $?
-su -l ${USER_NAME} -c '
-    source "/home/appveyor/.gvm/scripts/gvm"
-    USER_NAME=appveyor
-    '"$(declare -f log_version)"'
-    '"$(declare -f install_golangs)"'
-    install_golangs
-'
+
+configure_dotnet_environment ||
+    _abort $?
 
 
 sudo apt-get update
