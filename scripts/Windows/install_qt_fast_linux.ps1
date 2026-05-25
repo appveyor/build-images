@@ -6,7 +6,7 @@ $installDir = "$env:HOME/Qt"
 
 $component_groups = @(
     @{
-        version    = "6.9.2"
+        version    = "6.11.0"
         components = @(
             "linux_gcc_64",
             "debug_info",
@@ -76,7 +76,7 @@ $component_groups = @(
 if (-not $env:INSTALL_LATEST_ONLY) {
     $component_groups += @(
         @{
-            version    = "6.8.3"
+            version    = "6.10.3"
             components = @(
                 "linux_gcc_64",
                 "debug_info",
@@ -142,69 +142,69 @@ if (-not $env:INSTALL_LATEST_ONLY) {
             )
         }
         @{
-            version    = "6.5.3"
+            version    = "6.8.3"
             components = @(
-                "gcc_64",
+                "linux_gcc_64",
                 "debug_info",
-                "debug_info.gcc_64",
+                "debug_info.linux_gcc_64",
                 "addons.qt3d",
-                "addons.qt3d.gcc_64",
+                "addons.qt3d.linux_gcc_64",
                 "addons.qtcharts",
-                "addons.qtcharts.gcc_64",
+                "addons.qtcharts.linux_gcc_64",
+                "addons.qtconnectivity",
+                "addons.qtconnectivity.linux_gcc_64",
                 "addons.qtdatavis3d",
-                "addons.qtdatavis3d.gcc_64",
+                "addons.qtdatavis3d.linux_gcc_64",
+                "addons.qthttpserver",
+                "addons.qthttpserver.linux_gcc_64",
                 "addons.qtimageformats",
-                "addons.qtimageformats.gcc_64",
+                "addons.qtimageformats.linux_gcc_64",
+                "addons.qtlanguageserver",
+                "addons.qtlanguageserver.linux_gcc_64",
                 "addons.qtlottie",
-                "addons.qtlottie.gcc_64",
+                "addons.qtlottie.linux_gcc_64",
+                "addons.qtmultimedia",
+                "addons.qtmultimedia.linux_gcc_64",
                 "addons.qtnetworkauth",
-                "addons.qtnetworkauth.gcc_64",
+                "addons.qtnetworkauth.linux_gcc_64",
+                "addons.qtpdf",
+                "addons.qtpdf.linux_gcc_64",
+                "addons.qtpositioning",
+                "addons.qtpositioning.linux_gcc_64",
+                "addons.qtquick3dphysics",
+                "addons.qtquick3dphysics.linux_gcc_64",
+                "addons.qtremoteobjects",
+                "addons.qtremoteobjects.linux_gcc_64",
                 "addons.qtscxml",
-                "addons.qtscxml.gcc_64",
+                "addons.qtscxml.linux_gcc_64",
+                "addons.qtsensors",
+                "addons.qtsensors.linux_gcc_64",
+                "addons.qtserialbus",
+                "addons.qtserialbus.linux_gcc_64",
+                "addons.qtserialport",
+                "addons.qtserialport.linux_gcc_64",
+                "addons.qtspeech",
+                "addons.qtspeech.linux_gcc_64",
                 "addons.qtvirtualkeyboard",
-                "addons.qtvirtualkeyboard.gcc_64",
+                "addons.qtvirtualkeyboard.linux_gcc_64",
+                "addons.qtwebchannel",
+                "addons.qtwebchannel.linux_gcc_64",
+                "addons.qtwebengine",
+                "addons.qtwebengine.linux_gcc_64",
+                "addons.qtwebsockets",
+                "addons.qtwebsockets.linux_gcc_64",
+                "addons.qtwebview",
+                "addons.qtwebview.linux_gcc_64",
                 "addons.qt5compat",
-                "addons.qt5compat.gcc_64",
+                "addons.qt5compat.linux_gcc_64",
                 "addons.qtquick3d",
-                "addons.qtquick3d.gcc_64",
+                "addons.qtquick3d.linux_gcc_64",
                 "addons.qtquicktimeline",
-                "addons.qtquicktimeline.gcc_64",
+                "addons.qtquicktimeline.linux_gcc_64",
                 "addons.qtshadertools",
-                "addons.qtshadertools.gcc_64",
+                "addons.qtshadertools.linux_gcc_64",
                 "addons.qtwaylandcompositor",
-                "addons.qtwaylandcompositor.gcc_64"
-            )
-        }
-        @{
-            version    = "5.15.2"
-            components = @(
-                "gcc_64",
-                "debug_info",
-                "debug_info.gcc_64",
-                "qtcharts",
-                "qtcharts.gcc_64",
-                "qtdatavis3d",
-                "qtdatavis3d.gcc_64",
-                "qtlottie",
-                "qtlottie.gcc_64"
-                "qtnetworkauth",
-                "qtnetworkauth.gcc_64",
-                "qtpurchasing",
-                "qtpurchasing.gcc_64",
-                "qtquick3d",
-                "qtquick3d.gcc_64",
-                "qtquicktimeline",
-                "qtquicktimeline.gcc_64",
-                "qtscript",
-                "qtscript.gcc_64",
-                "qtvirtualkeyboard",
-                "qtvirtualkeyboard.gcc_64",
-                "qtwaylandcompositor",
-                "qtwaylandcompositor.gcc_64",
-                "qtwebengine",
-                "qtwebengine.gcc_64",
-                "qtwebglplugin",
-                "qtwebglplugin.gcc_64"
+                "addons.qtwaylandcompositor.linux_gcc_64"
             )
         }
     )
@@ -212,10 +212,17 @@ if (-not $env:INSTALL_LATEST_ONLY) {
 
 $extension_groups = @(
     @{
-        version = "6.9.2"
+        version = "6.11.0"
         extensions = @(
-            "extensions.qtwebengine.692.linux_gcc_64"
-            "extensions.qtpdf.692.linux_gcc_64"
+            "extensions.qtwebengine.6110.linux_gcc_64"
+            "extensions.qtpdf.6110.linux_gcc_64"
+        )
+    }
+    @{
+        version = "6.10.3"
+        extensions = @(
+            "extensions.qtwebengine.6103.linux_gcc_64"
+            "extensions.qtpdf.6103.linux_gcc_64"
         )
     }
     @{
@@ -238,7 +245,7 @@ $component_groups += @(
 
 # install components
 foreach ($componentGroup in $component_groups) {
-    if ($componentGroup.version -and $componentGroup.version -ge "6.8.0") {
+    if ($componentGroup.version -and ([version]$componentGroup.version -ge [version]"6.8.0")) {
         $newPath = [IO.Path]::Combine($installDir, $componentGroup.version)
         foreach ($component in $componentGroup.components) {
             Write-Host("6.8 and up")
@@ -282,10 +289,9 @@ foreach ($extensionGroup in $extension_groups) {
 }
 
 # set aliases
-ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/latest"
-ln -s "$HOME/Qt/6.9.2" "$HOME/Qt/6.9"
+ln -s "$HOME/Qt/6.11.0" "$HOME/Qt/latest"
+ln -s "$HOME/Qt/6.11.0" "$HOME/Qt/6.11"
+ln -s "$HOME/Qt/6.10.3" "$HOME/Qt/6.10"
 ln -s "$HOME/Qt/6.8.3" "$HOME/Qt/6.8"
-ln -s "$HOME/Qt/6.5.3" "$HOME/Qt/6.5"
-ln -s "$HOME/Qt/5.15.2" "$HOME/Qt/5.15"
 
 Write-Host "Qt 5.x installed" -ForegroundColor Green
