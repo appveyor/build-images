@@ -228,7 +228,7 @@ $ErrorActionPreference = 'Stop'
 # Install VS
 $exitCode = InstallVS -WorkLoads $WorkLoads -Sku $Sku -VSBootstrapperURL $VSBootstrapperURL -ChannelUri $ChannelUri
 
-$vsPath = "${env:ProgramFiles}\Microsoft Visual Studio\2026\Community"
+$vsPath = "${env:ProgramFiles}\Microsoft Visual Studio\18\Community"
 
 Write-Host "Disabling VS-related services"
 if (get-Service SQLWriterw -ErrorAction Ignore) {
