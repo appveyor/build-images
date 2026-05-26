@@ -100,8 +100,8 @@ function Install-WslDistro {
     Start-ProcessWithOutput "`"$launcherPath`" run `"echo -e 'appveyor\tALL=(ALL)\tNOPASSWD: ALL' > /etc/sudoers.d/appveyor`""
     Start-ProcessWithOutput "`"$launcherPath`" run chmod 0755 /etc/sudoers.d/appveyor"
     Start-ProcessWithOutput "`"$launcherPath`" config --default-user appveyor"
-    Start-ProcessWithOutput "`"$launcherPath`" run sh -lc `"if command -v apt-get >/dev/null 2>&1; then sudo apt-get update; fi`""
-    Start-ProcessWithOutput "`"$launcherPath`" run sh -lc `"if command -v zypper >/dev/null 2>&1; then sudo zypper --non-interactive refresh; fi`""
+    Start-ProcessWithOutput "`"$launcherPath`" run `"sh -lc 'if command -v apt-get >/dev/null 2>&1; then sudo apt-get update; fi'`""
+    Start-ProcessWithOutput "`"$launcherPath`" run `"sh -lc 'if command -v zypper >/dev/null 2>&1; then sudo zypper --non-interactive refresh; fi'`""
 }
 
 $distros = @(
@@ -115,7 +115,7 @@ $distros = @(
         DisplayName = "Ubuntu 22.04"
         DownloadUrl = "https://aka.ms/wslubuntu2204"
         PackagePath = "$env:TEMP\wsl-ubuntu-2204.appx"
-        InstallPath = "C:\WSL\Ubuntu2204"
+        InstallPath = "C:\WSL\Ubuntu204"
     }
     @{
         DisplayName = "Ubuntu 24.04"
