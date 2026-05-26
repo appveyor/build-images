@@ -2,124 +2,141 @@ Write-warning "Checking if WSL feature is installed..."
 $i = 0
 $installed = $false
 while ($i -lt 30) {
-  $i +=1  
+  $i += 1
   $installed = (Get-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online).State -eq 'Enabled'
   if ($installed) {
-    Write-host "WSL feature is installed"
+    Write-Host "WSL feature is installed"
     break
   }
   Write-warning "Retrying in 10 seconds..."
-  sleep 10;
+  Start-Sleep -s 10
 }
 
 if (-not $installed) {
-    Write-error "WSL feature is not installed"
+    Write-Error "WSL feature is not installed"
 }
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-# Ubuntu 16.04
-# ============
+function Install-WslDistro {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$DisplayName,
 
-Write-warning "Installing Ubuntu 16.04 for WSL"
+        [Parameter(Mandatory = $true)]
+        [string]$DownloadUrl,
 
-(New-Object Net.WebClient).DownloadFile('https://aka.ms/wsl-ubuntu-1604', "$env:TEMP\wsl-ubuntu-1604.zip")
-Expand-Archive -Path "$env:TEMP\wsl-ubuntu-1604.zip" -DestinationPath "C:\WSL\Ubuntu1604" -Force
-Remove-Item "$env:TEMP\wsl-ubuntu-1604.zip"
+        [Parameter(Mandatory = $true)]
+        [string]$PackagePath,
 
+        [Parameter(Mandatory = $true)]
+        [string]$InstallPath
+    )
 
-$ubuntuExe = "C:\WSL\Ubuntu1604\ubuntu1604.exe"
-$bsdtar = "C:\WSL\Ubuntu1604\rootfs\bsdtar"
+    Write-Warning "Installing $DisplayName for WSL"
 
-Start-Process $ubuntuExe
-while($true) {
-	Start-Sleep -s 10
-	if (-not (Test-Path $bsdtar)) {
-		Get-Process "ubuntu1604" | Stop-Process
-		break
-	}
+    if (Test-Path $PackagePath) {
+        Remove-Item $PackagePath -Force
+    }
+
+    if (Test-Path $InstallPath) {
+        Remove-Item $InstallPath -Recurse -Force
+    }
+
+    New-Item -ItemType Directory -Path $InstallPath -Force | Out-Null
+
+    (New-Object Net.WebClient).DownloadFile($DownloadUrl, $PackagePath)
+
+    $bundleExtractPath = "$InstallPath-bundle"
+    if (Test-Path $bundleExtractPath) {
+        Remove-Item $bundleExtractPath -Recurse -Force
+    }
+
+    $extension = [IO.Path]::GetExtension($PackagePath)
+    if ($extension -eq ".appxbundle") {
+        New-Item -ItemType Directory -Path $bundleExtractPath -Force | Out-Null
+        tar -xf $PackagePath -C $bundleExtractPath
+        $x64Appx = Get-ChildItem $bundleExtractPath -Filter "*_x64.appx" | Select-Object -First 1
+        if (-not $x64Appx) {
+            throw "Could not find x64 appx inside $PackagePath"
+        }
+        tar -xf $x64Appx.FullName -C $InstallPath
+    }
+    else {
+        tar -xf $PackagePath -C $InstallPath
+    }
+
+    Remove-Item $PackagePath -Force
+    if (Test-Path $bundleExtractPath) {
+        Remove-Item $bundleExtractPath -Recurse -Force
+    }
+
+    $launcher = Get-ChildItem $InstallPath -Filter *.exe | Select-Object -First 1
+    if (-not $launcher) {
+        throw "Could not find distro launcher in $InstallPath"
+    }
+
+    $launcherPath = $launcher.FullName
+    & $launcherPath install --root
+    & $launcherPath run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
+    & $launcherPath run "echo 'appveyor:Password12!' | sudo chpasswd"
+    & $launcherPath run usermod -aG sudo appveyor
+    & $launcherPath run "echo -e `"`"appveyor\tALL=(ALL)\tNOPASSWD: ALL`"`" > /etc/sudoers.d/appveyor"
+    & $launcherPath run chmod 0755 /etc/sudoers.d/appveyor
+    & $launcherPath config --default-user appveyor
+    & $launcherPath run sudo apt-get update 2>$null
+    & $launcherPath run sudo zypper --non-interactive refresh 2>$null
 }
 
-. $ubuntuExe run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
-. $ubuntuExe run "echo 'appveyor:Password12!' | sudo chpasswd"
-. $ubuntuExe run usermod -aG sudo appveyor
-. $ubuntuExe run "echo -e `"`"appveyor\tALL=(ALL)\tNOPASSWD: ALL`"`" > /etc/sudoers.d/appveyor"
-. $ubuntuExe run chmod 0755 /etc/sudoers.d/appveyor
-. $ubuntuExe config --default-user appveyor
-. $ubuntuExe run sudo apt-get update
+$distros = @(
+    @{
+        DisplayName = "Ubuntu 20.04"
+        DownloadUrl = "https://aka.ms/wslubuntu2004"
+        PackagePath = "$env:TEMP\wsl-ubuntu-2004.appx"
+        InstallPath = "C:\WSL\Ubuntu2004"
+    }
+    @{
+        DisplayName = "Ubuntu 22.04"
+        DownloadUrl = "https://aka.ms/wslubuntu2204"
+        PackagePath = "$env:TEMP\wsl-ubuntu-2204.appx"
+        InstallPath = "C:\WSL\Ubuntu2204"
+    }
+    @{
+        DisplayName = "Ubuntu 24.04"
+        DownloadUrl = "https://wslstorestorage.blob.core.windows.net/wslblob/Ubuntu2404-240425.AppxBundle"
+        PackagePath = "$env:TEMP\wsl-ubuntu-2404.appxbundle"
+        InstallPath = "C:\WSL\Ubuntu2404"
+    }
+    @{
+        DisplayName = "openSUSE Leap 15.6"
+        DownloadUrl = "https://publicwsldistros.blob.core.windows.net/wsldistrostorage/SUSELeap15p6-240801_x64.Appx"
+        PackagePath = "$env:TEMP\wsl-opensuse-leap-156.appx"
+        InstallPath = "C:\WSL\OpenSUSE-Leap-15.6"
+    }
+)
 
-# Ubuntu 18.04
-# ============
-
-Write-warning "Installing Ubuntu 18.04 for WSL"
-
-(New-Object Net.WebClient).DownloadFile('https://aka.ms/wsl-ubuntu-1804', "$env:TEMP\wsl-ubuntu-1804.zip")
-Expand-Archive -Path "$env:TEMP\wsl-ubuntu-1804.zip" -DestinationPath "C:\WSL\Ubuntu1804" -Force
-Remove-Item "$env:TEMP\wsl-ubuntu-1804.zip"
-
-$ubuntuExe = "C:\WSL\Ubuntu1804\ubuntu1804.exe"
-. $ubuntuExe install --root
-. $ubuntuExe run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
-. $ubuntuExe run "echo 'appveyor:Password12!' | sudo chpasswd"
-. $ubuntuExe run usermod -aG sudo appveyor
-. $ubuntuExe run "echo -e `"`"appveyor\tALL=(ALL)\tNOPASSWD: ALL`"`" > /etc/sudoers.d/appveyor"
-. $ubuntuExe run chmod 0755 /etc/sudoers.d/appveyor
-. $ubuntuExe config --default-user appveyor
-. $ubuntuExe run sudo apt-get update
-
-# Ubuntu 20.04
-# ============
-
-Write-warning "Installing Ubuntu 20.04 for WSL"
-
-(New-Object Net.WebClient).DownloadFile('https://appveyordownloads.blob.core.windows.net/misc/Ubuntu_2004.2021.825.0_x64.zip', "$env:TEMP\wsl-ubuntu-2004.zip")
-Expand-Archive -Path "$env:TEMP\wsl-ubuntu-2004.zip" -DestinationPath "C:\WSL\Ubuntu2004" -Force
-Remove-Item "$env:TEMP\wsl-ubuntu-2004.zip"
-
-$ubuntuExe = "C:\WSL\Ubuntu2004\ubuntu.exe"
-. $ubuntuExe install --root
-. $ubuntuExe run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
-. $ubuntuExe run "echo 'appveyor:Password12!' | sudo chpasswd"
-. $ubuntuExe run usermod -aG sudo appveyor
-. $ubuntuExe run "echo -e `"`"appveyor\tALL=(ALL)\tNOPASSWD: ALL`"`" > /etc/sudoers.d/appveyor"
-. $ubuntuExe run chmod 0755 /etc/sudoers.d/appveyor
-. $ubuntuExe config --default-user appveyor
-. $ubuntuExe run sudo apt-get update
-
-
-# OpenSUSE
-# ========
-
-Write-warning "Installing OpenSUSE for WSL"
-
-(New-Object Net.WebClient).DownloadFile('https://aka.ms/wsl-opensuse-42', "$env:TEMP\wsl-opensuse.zip")
-Expand-Archive -Path "$env:TEMP\wsl-opensuse.zip" -DestinationPath "C:\WSL\OpenSUSE" -Force
-Remove-Item "$env:TEMP\wsl-opensuse.zip"
-
-$suseExe = "C:\WSL\OpenSUSE\openSUSE-42.exe"
-$bsdtar = "C:\WSL\OpenSUSE\rootfs\bsdtar"
-
-Start-Process $suseExe
-while($true) {
-	Start-Sleep -s 10
-	if (-not (Test-Path $bsdtar)) {
-		Get-Process "openSUSE-42" | Stop-Process
-		break
-	}
+foreach ($distro in $distros) {
+    Install-WslDistro `
+        -DisplayName $distro.DisplayName `
+        -DownloadUrl $distro.DownloadUrl `
+        -PackagePath $distro.PackagePath `
+        -InstallPath $distro.InstallPath
 }
-
 
 # Testing WSL
 # ===========
 
-wslconfig /setdefault ubuntu-16.04
+wslconfig /setdefault Ubuntu-20.04
 wsl lsb_release -a
 
-wslconfig /setdefault ubuntu-18.04
+wslconfig /setdefault Ubuntu-22.04
 wsl lsb_release -a
 
-wslconfig /setdefault ubuntu
+wslconfig /setdefault Ubuntu-24.04
 wsl lsb_release -a
+
+wslconfig /setdefault openSUSE-Leap-15.6
+wsl cat /etc/os-release
 
 # Rename C:\Windows\System32\bash.exe to avoid conflicts with default Git's bash
 # ===========

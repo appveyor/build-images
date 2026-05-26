@@ -1,5 +1,5 @@
-# Write-Host "Installing Docker Desktop 2.2.0.5"
-Write-Host "Installing Docker Desktop 4.56.0"
+Write-Host "Installing Docker Desktop 2.2.0.5"
+#Write-Host "Installing Docker Desktop 4.56.0"
 
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Docker-Desktop-Installer.exe"
