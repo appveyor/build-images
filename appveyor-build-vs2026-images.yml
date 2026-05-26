@@ -185,7 +185,7 @@ for:
       - ps: .\install_jdk25.ps1
       - ps: .\install_android_sdk.ps1
 
-      ## skip all but python 3.9 and up
+      ## skip all but maintained Python 3.x versions
       - ps: .\install_python_new.ps1
       - ps: .\install_openssl_new.ps1
       - ps: .\install_msys64.ps1
@@ -210,6 +210,7 @@ for:
       # - ps: .\install_postgres14.ps1
       - ps: .\install_postgres15.ps1
       - ps: .\install_postgres16.ps1
+      - ps: .\install_postgres18.ps1
       - ps: .\install_mysql.ps1
       - ps: .\install_mongo_new.ps1
 
@@ -217,6 +218,10 @@ for:
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
       - ps: .\install_sql_server_2022_after_restart.ps1
+      - ps: .\install_sql_server_2025.ps1
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+      - ps: .\install_sql_server_2025_after_restart.ps1
 
       - ps: .\install_aws_cli_v2.ps1
       - ps: .\install_aws_powershell.ps1
