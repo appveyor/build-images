@@ -47,31 +47,45 @@ function Install-WslDistro {
 
     (New-Object Net.WebClient).DownloadFile($DownloadUrl, $PackagePath)
 
-    $bundleExtractPath = "$InstallPath-bundle"
-    if (Test-Path $bundleExtractPath) {
-        Remove-Item $bundleExtractPath -Recurse -Force
+    $extractPath = "$InstallPath-extract"
+    if (Test-Path $extractPath) {
+        Remove-Item $extractPath -Recurse -Force
     }
+    New-Item -ItemType Directory -Path $extractPath -Force | Out-Null
 
-    $extension = [IO.Path]::GetExtension($PackagePath)
-    if ($extension -eq ".appxbundle") {
-        New-Item -ItemType Directory -Path $bundleExtractPath -Force | Out-Null
-        tar -xf $PackagePath -C $bundleExtractPath
-        $x64Appx = Get-ChildItem $bundleExtractPath -Filter "*_x64.appx" | Select-Object -First 1
+    tar -xf $PackagePath -C $extractPath
+
+    $bundleManifest = Get-ChildItem $extractPath -Filter AppxBundleManifest.xml -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($bundleManifest) {
+        $x64Appx = Get-ChildItem $extractPath -Filter "*_x64.appx" -Recurse | Select-Object -First 1
         if (-not $x64Appx) {
-            throw "Could not find x64 appx inside $PackagePath"
+            throw "Could not find x64 appx inside bundle for $DisplayName"
         }
-        tar -xf $x64Appx.FullName -C $InstallPath
-    }
-    else {
-        tar -xf $PackagePath -C $InstallPath
+
+        $innerAppxPath = $x64Appx.FullName
+        $innerExtractPath = "$InstallPath-inner"
+        if (Test-Path $innerExtractPath) {
+            Remove-Item $innerExtractPath -Recurse -Force
+        }
+        New-Item -ItemType Directory -Path $innerExtractPath -Force | Out-Null
+        tar -xf $innerAppxPath -C $innerExtractPath
+
+        Remove-Item $extractPath -Recurse -Force
+        Move-Item $innerExtractPath -Destination $extractPath
     }
 
-    Remove-Item $PackagePath -Force
-    if (Test-Path $bundleExtractPath) {
-        Remove-Item $bundleExtractPath -Recurse -Force
+    Get-ChildItem $extractPath -Force | ForEach-Object {
+        Move-Item $_.FullName -Destination $InstallPath -Force
     }
 
-    $launcher = Get-ChildItem $InstallPath -Filter *.exe | Select-Object -First 1
+    Remove-Item $PackagePath -Force -ErrorAction SilentlyContinue
+    if (Test-Path $extractPath) {
+        Remove-Item $extractPath -Recurse -Force
+    }
+
+    $launcher = Get-ChildItem $InstallPath -Filter *.exe -Recurse | `
+        Where-Object { $_.Name -notmatch 'vc_redist|setup|installer' } | `
+        Select-Object -First 1
     if (-not $launcher) {
         throw "Could not find distro launcher in $InstallPath"
     }
