@@ -91,7 +91,7 @@ function Install-WslDistro {
 $distros = @(
     @{
         DisplayName = "Ubuntu 20.04"
-        DownloadUrl = "https://aka.ms/wslubuntu2004"
+        DownloadUrl = "https://appveyordownloads.blob.core.windows.net/misc/Ubuntu_2004.2021.825.0_x64.zip"
         PackagePath = "$env:TEMP\wsl-ubuntu-2004.appx"
         InstallPath = "C:\WSL\Ubuntu2004"
     }
