@@ -1,3 +1,5 @@
+. "$PSScriptRoot\common.ps1"
+
 Write-warning "Checking if WSL feature is installed..."
 $i = 0
 $installed = $false
@@ -91,15 +93,15 @@ function Install-WslDistro {
     }
 
     $launcherPath = $launcher.FullName
-    & $launcherPath install --root
-    & $launcherPath run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password
-    & $launcherPath run "echo 'appveyor:Password12!' | sudo chpasswd"
-    & $launcherPath run usermod -aG sudo appveyor
-    & $launcherPath run "echo -e `"`"appveyor\tALL=(ALL)\tNOPASSWD: ALL`"`" > /etc/sudoers.d/appveyor"
-    & $launcherPath run chmod 0755 /etc/sudoers.d/appveyor
-    & $launcherPath config --default-user appveyor
-    & $launcherPath run sudo apt-get update 2>$null
-    & $launcherPath run sudo zypper --non-interactive refresh 2>$null
+    Start-ProcessWithOutput "`"$launcherPath`" install --root"
+    Start-ProcessWithOutput "`"$launcherPath`" run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password"
+    Start-ProcessWithOutput "`"$launcherPath`" run `"echo 'appveyor:Password12!' | sudo chpasswd`""
+    Start-ProcessWithOutput "`"$launcherPath`" run usermod -aG sudo appveyor"
+    Start-ProcessWithOutput "`"$launcherPath`" run `"echo -e 'appveyor\tALL=(ALL)\tNOPASSWD: ALL' > /etc/sudoers.d/appveyor`""
+    Start-ProcessWithOutput "`"$launcherPath`" run chmod 0755 /etc/sudoers.d/appveyor"
+    Start-ProcessWithOutput "`"$launcherPath`" config --default-user appveyor"
+    Start-ProcessWithOutput "`"$launcherPath`" run sudo apt-get update" -ignoreExitCode
+    Start-ProcessWithOutput "`"$launcherPath`" run sudo zypper --non-interactive refresh" -ignoreExitCode
 }
 
 $distros = @(
