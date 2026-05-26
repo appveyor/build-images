@@ -100,8 +100,8 @@ function Install-WslDistro {
     Start-ProcessWithOutput "`"$launcherPath`" run `"echo -e 'appveyor\tALL=(ALL)\tNOPASSWD: ALL' > /etc/sudoers.d/appveyor`""
     Start-ProcessWithOutput "`"$launcherPath`" run chmod 0755 /etc/sudoers.d/appveyor"
     Start-ProcessWithOutput "`"$launcherPath`" config --default-user appveyor"
-    Start-ProcessWithOutput "`"$launcherPath`" run sudo apt-get update" -ignoreExitCode
-    Start-ProcessWithOutput "`"$launcherPath`" run sudo zypper --non-interactive refresh" -ignoreExitCode
+    Start-ProcessWithOutput "`"$launcherPath`" run sh -lc `"if command -v apt-get >/dev/null 2>&1; then sudo apt-get update; fi`""
+    Start-ProcessWithOutput "`"$launcherPath`" run sh -lc `"if command -v zypper >/dev/null 2>&1; then sudo zypper --non-interactive refresh; fi`""
 }
 
 $distros = @(
