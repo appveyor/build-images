@@ -150,8 +150,7 @@ for:
       - ps: .\install_xunit_20.ps1
       - ps: .\install_nunit3.ps1
       - ps: .\install_vstest_console_logger.ps1
-      # include Qt? Latest version only?
-      - ps: .\install_qt_fast_windows.ps1
+      - ps: .\install_qt_minimal_windows.ps1
       - ps: .\install_ruby.ps1
 
   - matrix:
