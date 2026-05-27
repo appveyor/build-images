@@ -34,6 +34,9 @@ function Install-WslDistro {
         [Parameter(Mandatory = $true)]
         [string]$InstallPath,
 
+        [Parameter(Mandatory = $true)]
+        [string]$LauncherName,
+
         [Parameter(Mandatory = $false)]
         [ValidateSet("apt", "zypper", "none")]
         [string]$PackageManager = "none"
@@ -89,14 +92,18 @@ function Install-WslDistro {
         Remove-Item $extractPath -Recurse -Force
     }
 
-    $launcher = Get-ChildItem $InstallPath -Filter *.exe -Recurse | `
-        Where-Object { $_.Name -notmatch 'vc_redist|setup|installer' } | `
-        Select-Object -First 1
+    $launcher = Get-ChildItem $InstallPath -Filter $LauncherName -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+    if (-not $launcher) {
+        $launcher = Get-ChildItem $InstallPath -Filter *.exe -Recurse | `
+            Where-Object { $_.Name -notmatch 'vc_redist|setup|installer' } | `
+            Select-Object -First 1
+    }
     if (-not $launcher) {
         throw "Could not find distro launcher in $InstallPath"
     }
 
     $launcherPath = $launcher.FullName
+    Write-Host "Using launcher $launcherPath"
     Start-ProcessWithOutput "`"$launcherPath`" install --root"
     Start-ProcessWithOutput "`"$launcherPath`" run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password"
     Start-ProcessWithOutput "`"$launcherPath`" run `"echo 'appveyor:Password12!' | sudo chpasswd`""
@@ -119,6 +126,7 @@ $distros = @(
         DownloadUrl = "https://appveyordownloads.blob.core.windows.net/misc/Ubuntu_2004.2021.825.0_x64.zip"
         PackagePath = "$env:TEMP\wsl-ubuntu-2004.appx"
         InstallPath = "C:\WSL\Ubuntu2004"
+        LauncherName = "ubuntu.exe"
         PackageManager = "apt"
     }
     @{
@@ -126,6 +134,7 @@ $distros = @(
         DownloadUrl = "https://aka.ms/wslubuntu2204"
         PackagePath = "$env:TEMP\wsl-ubuntu-2204.appx"
         InstallPath = "C:\WSL\Ubuntu2204"
+        LauncherName = "ubuntu2204.exe"
         PackageManager = "apt"
     }
     @{
@@ -133,6 +142,7 @@ $distros = @(
         DownloadUrl = "https://wslstorestorage.blob.core.windows.net/wslblob/Ubuntu2404-240425.AppxBundle"
         PackagePath = "$env:TEMP\wsl-ubuntu-2404.appxbundle"
         InstallPath = "C:\WSL\Ubuntu2404"
+        LauncherName = "ubuntu2404.exe"
         PackageManager = "apt"
     }
     @{
@@ -140,6 +150,7 @@ $distros = @(
         DownloadUrl = "https://publicwsldistros.blob.core.windows.net/wsldistrostorage/SUSELeap15p6-240801_x64.Appx"
         PackagePath = "$env:TEMP\wsl-opensuse-leap-156.appx"
         InstallPath = "C:\WSL\OpenSUSE-Leap-15.6"
+        LauncherName = "openSUSE-Leap-15.6.exe"
         PackageManager = "zypper"
     }
 )
@@ -150,6 +161,7 @@ foreach ($distro in $distros) {
         -DownloadUrl $distro.DownloadUrl `
         -PackagePath $distro.PackagePath `
         -InstallPath $distro.InstallPath `
+        -LauncherName $distro.LauncherName `
         -PackageManager $distro.PackageManager
 }
 
