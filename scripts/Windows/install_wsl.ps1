@@ -104,7 +104,22 @@ function Install-WslDistro {
 
     $launcherPath = $launcher.FullName
     Write-Host "Using launcher $launcherPath"
-    Start-ProcessWithOutput "`"$launcherPath`" install --root"
+
+    if ($PackageManager -eq "zypper") {
+        $bootstrapMarker = Join-Path $InstallPath "rootfs\bsdtar"
+        Start-Process $launcherPath | Out-Null
+        while ($true) {
+            Start-Sleep -s 10
+            if (-not (Test-Path $bootstrapMarker)) {
+                Get-Process $launcher.BaseName -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+                break
+            }
+        }
+    }
+    else {
+        Start-ProcessWithOutput "`"$launcherPath`" install --root"
+    }
+
     Start-ProcessWithOutput "`"$launcherPath`" run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password"
     Start-ProcessWithOutput "`"$launcherPath`" run `"echo 'appveyor:Password12!' | sudo chpasswd`""
     Start-ProcessWithOutput "`"$launcherPath`" run usermod -aG sudo appveyor"
