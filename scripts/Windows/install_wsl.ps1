@@ -120,17 +120,22 @@ function Install-WslDistro {
         Start-ProcessWithOutput "`"$launcherPath`" install --root"
     }
 
-    Start-ProcessWithOutput "`"$launcherPath`" run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password"
-    Start-ProcessWithOutput "`"$launcherPath`" run `"echo 'appveyor:Password12!' | sudo chpasswd`""
-    Start-ProcessWithOutput "`"$launcherPath`" run usermod -aG sudo appveyor"
-    Start-ProcessWithOutput "`"$launcherPath`" run `"echo -e 'appveyor\tALL=(ALL)\tNOPASSWD: ALL' > /etc/sudoers.d/appveyor`""
-    Start-ProcessWithOutput "`"$launcherPath`" run chmod 0755 /etc/sudoers.d/appveyor"
-    Start-ProcessWithOutput "`"$launcherPath`" config --default-user appveyor"
-
     if ($PackageManager -eq "apt") {
+        Start-ProcessWithOutput "`"$launcherPath`" run adduser appveyor --gecos `"First,Last,RoomNumber,WorkPhone,HomePhone`" --disabled-password"
+        Start-ProcessWithOutput "`"$launcherPath`" run `"echo 'appveyor:Password12!' | sudo chpasswd`""
+        Start-ProcessWithOutput "`"$launcherPath`" run usermod -aG sudo appveyor"
+        Start-ProcessWithOutput "`"$launcherPath`" run `"echo -e 'appveyor\tALL=(ALL)\tNOPASSWD: ALL' > /etc/sudoers.d/appveyor`""
+        Start-ProcessWithOutput "`"$launcherPath`" run chmod 0755 /etc/sudoers.d/appveyor"
+        Start-ProcessWithOutput "`"$launcherPath`" config --default-user appveyor"
         Start-ProcessWithOutput "`"$launcherPath`" run sudo apt-get update"
     }
     elseif ($PackageManager -eq "zypper") {
+        Start-ProcessWithOutput "`"$launcherPath`" run useradd -m appveyor"
+        Start-ProcessWithOutput "`"$launcherPath`" run `"echo 'appveyor:Password12!' | chpasswd`""
+        Start-ProcessWithOutput "`"$launcherPath`" run usermod -aG wheel appveyor"
+        Start-ProcessWithOutput "`"$launcherPath`" run `"echo 'appveyor ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/appveyor`""
+        Start-ProcessWithOutput "`"$launcherPath`" run chmod 0440 /etc/sudoers.d/appveyor"
+        Start-ProcessWithOutput "`"$launcherPath`" config --default-user appveyor"
         Start-ProcessWithOutput "`"$launcherPath`" run sudo zypper --non-interactive refresh"
     }
 }
