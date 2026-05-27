@@ -131,7 +131,7 @@ $distros = @(
     }
     @{
         DisplayName = "Ubuntu 22.04"
-        DownloadUrl = "https://aka.ms/wslubuntu2204"
+        DownloadUrl = "https://publicwsldistros.blob.core.windows.net/wsldistrostorage/Ubuntu2204LTS-230518_x64.appx"
         PackagePath = "$env:TEMP\wsl-ubuntu-2204.appx"
         InstallPath = "C:\WSL\Ubuntu2204"
         LauncherName = "ubuntu2204.exe"
