@@ -32,7 +32,11 @@ function Install-WslDistro {
         [string]$PackagePath,
 
         [Parameter(Mandatory = $true)]
-        [string]$InstallPath
+        [string]$InstallPath,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("apt", "zypper", "none")]
+        [string]$PackageManager = "none"
     )
 
     Write-Warning "Installing $DisplayName for WSL"
@@ -100,8 +104,13 @@ function Install-WslDistro {
     Start-ProcessWithOutput "`"$launcherPath`" run `"echo -e 'appveyor\tALL=(ALL)\tNOPASSWD: ALL' > /etc/sudoers.d/appveyor`""
     Start-ProcessWithOutput "`"$launcherPath`" run chmod 0755 /etc/sudoers.d/appveyor"
     Start-ProcessWithOutput "`"$launcherPath`" config --default-user appveyor"
-    Start-ProcessWithOutput "`"$launcherPath`" run `"sh -lc 'if command -v apt-get >/dev/null 2>&1; then sudo apt-get update; fi'`""
-    Start-ProcessWithOutput "`"$launcherPath`" run `"sh -lc 'if command -v zypper >/dev/null 2>&1; then sudo zypper --non-interactive refresh; fi'`""
+
+    if ($PackageManager -eq "apt") {
+        Start-ProcessWithOutput "`"$launcherPath`" run sudo apt-get update"
+    }
+    elseif ($PackageManager -eq "zypper") {
+        Start-ProcessWithOutput "`"$launcherPath`" run sudo zypper --non-interactive refresh"
+    }
 }
 
 $distros = @(
@@ -110,24 +119,28 @@ $distros = @(
         DownloadUrl = "https://appveyordownloads.blob.core.windows.net/misc/Ubuntu_2004.2021.825.0_x64.zip"
         PackagePath = "$env:TEMP\wsl-ubuntu-2004.appx"
         InstallPath = "C:\WSL\Ubuntu2004"
+        PackageManager = "apt"
     }
     @{
         DisplayName = "Ubuntu 22.04"
         DownloadUrl = "https://aka.ms/wslubuntu2204"
         PackagePath = "$env:TEMP\wsl-ubuntu-2204.appx"
-        InstallPath = "C:\WSL\Ubuntu204"
+        InstallPath = "C:\WSL\Ubuntu2204"
+        PackageManager = "apt"
     }
     @{
         DisplayName = "Ubuntu 24.04"
         DownloadUrl = "https://wslstorestorage.blob.core.windows.net/wslblob/Ubuntu2404-240425.AppxBundle"
         PackagePath = "$env:TEMP\wsl-ubuntu-2404.appxbundle"
         InstallPath = "C:\WSL\Ubuntu2404"
+        PackageManager = "apt"
     }
     @{
         DisplayName = "openSUSE Leap 15.6"
         DownloadUrl = "https://publicwsldistros.blob.core.windows.net/wsldistrostorage/SUSELeap15p6-240801_x64.Appx"
         PackagePath = "$env:TEMP\wsl-opensuse-leap-156.appx"
         InstallPath = "C:\WSL\OpenSUSE-Leap-15.6"
+        PackageManager = "zypper"
     }
 )
 
@@ -136,7 +149,8 @@ foreach ($distro in $distros) {
         -DisplayName $distro.DisplayName `
         -DownloadUrl $distro.DownloadUrl `
         -PackagePath $distro.PackagePath `
-        -InstallPath $distro.InstallPath
+        -InstallPath $distro.InstallPath `
+        -PackageManager $distro.PackageManager
 }
 
 # Testing WSL
