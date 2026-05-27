@@ -132,7 +132,6 @@ function Install-WslDistro {
     elseif ($PackageManager -eq "zypper") {
         Start-ProcessWithOutput "`"$launcherPath`" run useradd -m appveyor"
         Start-ProcessWithOutput "`"$launcherPath`" run `"echo 'appveyor:Password12!' | chpasswd`""
-        Start-ProcessWithOutput "`"$launcherPath`" run usermod -aG wheel appveyor"
         Start-ProcessWithOutput "`"$launcherPath`" run `"echo 'appveyor ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/appveyor`""
         Start-ProcessWithOutput "`"$launcherPath`" run chmod 0440 /etc/sudoers.d/appveyor"
         Start-ProcessWithOutput "`"$launcherPath`" config --default-user appveyor"
