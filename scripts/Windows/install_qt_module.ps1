@@ -231,6 +231,15 @@ function InstallComponentById {
 
     Write-Host "Installing $componentId" -ForegroundColor Cyan
     Write-host "Installing to $destPath"
+    if ($excludeDocs -eq $true -and $componentId.EndsWith('.doc')) {
+        Write-Host "Skipped documentation installation" -ForegroundColor Yellow
+        return
+    }
+    if ($excludeExamples -eq $true  -and $componentId.EndsWith('.examples')) {
+        Write-Host "Skipped examples installation" -ForegroundColor Yellow
+        return
+    }
+
     $comp = $package_updates[$componentId]
 
     if (-not $comp) {
@@ -251,15 +260,6 @@ function InstallComponentById {
         Write-Host "Already installed" -ForegroundColor Yellow
         return
     }    
-
-    if ($excludeDocs -eq $true -and $componentId.EndsWith('.doc')) {
-        Write-Host "Skipped documentation installation" -ForegroundColor Yellow
-        return
-    }
-    if ($excludeExamples -eq $true  -and $componentId.EndsWith('.examples')) {
-        Write-Host "Skipped examples installation" -ForegroundColor Yellow
-        return
-    }
     if ($comp.Name -match "mingw" -and ($version -ge 681)) {
         Write-Host "installing to mingw"
         $destPath = [IO.Path]::Combine($destPath, "mingw_64")
