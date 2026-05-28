@@ -213,7 +213,7 @@ foreach ($componentGroup in $component_groups) {
     if ($componentGroup.version) {
         $newPath = [IO.Path]::Combine($installDir, $componentGroup.version)
         foreach ($component in $componentGroup.components) {
-            Install-QtComponent -Version $componentGroup.version -Name $component -Path $newPath
+            Install-QtComponent -Version $componentGroup.version -Name $component -Path $newPath -excludeDocs -excludeExamples
         }
         ConfigureQtVersion $installDir $componentGroup.version
     }
@@ -227,7 +227,7 @@ foreach ($componentGroup in $component_groups) {
 foreach ($extensionGroup in $extension_groups) {
     $newPath = [IO.Path]::Combine($installDir, $extensionGroup.version)
     foreach ($extension in $extensionGroup.extensions) {
-        Install-QtExtension -Version $extensionGroup.version -Name $extension -Path $newPath
+        Install-QtExtension -Version $extensionGroup.version -Name $extension -Path $newPath -excludeDocs -excludeExamples
     }
 }
 
