@@ -85,6 +85,25 @@ function GetReleaseRootUrl($version) {
     }
 }
 
+function GetReleaseFeedRootUrls($version) {
+    $versionId = GetVersionId $version
+    $versionDigits = $version.Split('.')
+    $minorVersion = [int]$versionDigits[1]
+
+    if ($IsWindows -and $minorVersion -ge 11) {
+        $basePath = "$QT_ROOT_URL/$(GetQtPrefix $version)_$versionId"
+        return @(
+            "$basePath/$(GetQtPrefix $version)_${versionId}_mingw",
+            "$basePath/$(GetQtPrefix $version)_${versionId}_msvc2022_64",
+            "$basePath/$(GetQtPrefix $version)_${versionId}_msvc2022_arm64_cross_compiled"
+        )
+    }
+
+    return @(
+        (GetReleaseRootUrl $version)
+    )
+}
+
 function GetExtensionSections($ext) {
     $sections = $ext.Split('.')
     return $sections
@@ -95,9 +114,11 @@ function FetchToolsUpdatePackages($toolsId) {
 }
 
 function FetchReleaseUpdatePackages($version) {
-    Write-host "GetReleaseRootUrl"
-    Write-Host "$(GetReleaseRootUrl $version)"
-    FetchUpdatePackages "$(GetReleaseRootUrl $version)"
+    Write-Host "GetReleaseRootUrl"
+    foreach ($feedRootUrl in (GetReleaseFeedRootUrls $version)) {
+        Write-Host $feedRootUrl
+        FetchUpdatePackages $feedRootUrl
+    }
     # FetchUpdatePackages "$(GetReleaseRootUrl $version)_src_doc_examples"
 }
 
@@ -144,7 +165,12 @@ function FetchUpdatePackages($feedRootUrl) {
     if (-not $feeds_cache.ContainsKey($feedUrl)) {
         # load xml
         Write-Host "Fetching $feedUrl..." -NoNewline -ForegroundColor Gray
-        $feedXml = [xml](New-Object Net.WebClient).DownloadString($feedUrl)
+        try {
+            $feedXml = [xml](New-Object Net.WebClient).DownloadString($feedUrl)
+        }
+        catch {
+            throw "Failed to fetch Qt feed '$feedUrl': $($_.Exception.Message)"
+        }
         $feeds_cache[$feedUrl] = $feedXml
 
         # index 'PackageUpdate' nodes
@@ -206,6 +232,10 @@ function InstallComponentById {
     Write-Host "Installing $componentId" -ForegroundColor Cyan
     Write-host "Installing to $destPath"
     $comp = $package_updates[$componentId]
+
+    if (-not $comp) {
+        throw "Qt component '$componentId' was not found in fetched feeds."
+    }
 
     # if ($whatIf -eq $true) {
     #     $comp
@@ -319,6 +349,9 @@ function Install-QtExtension {
 
 function ConfigureQtVersion($qtRoot, $version) {
     $versionRoot = [IO.Path]::Combine($qtRoot, $version)
+    if (-not (Test-Path $versionRoot)) {
+        throw "Qt version root '$versionRoot' was not created."
+    }
     foreach($componentDir in (Get-ChildItem $versionRoot)) {
         $componentPath = $componentDir.FullName
         $componentBin = [IO.Path]::Combine($componentPath, 'bin')
