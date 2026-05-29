@@ -231,15 +231,15 @@ function InstallComponentById {
 
     Write-Host "Installing $componentId" -ForegroundColor Cyan
     Write-host "Installing to $destPath"
-    if ($excludeDocs -eq $true -and $componentId.EndsWith('.doc')) {
+    if ($excludeDocs -eq $true -and $componentId -match '\.doc(\.|$)') {
         Write-Host "Skipped documentation installation" -ForegroundColor Yellow
         return
     }
-    if ($excludeExamples -eq $true  -and $componentId.EndsWith('.examples')) {
+    if ($excludeExamples -eq $true  -and $componentId -match '\.examples(\.|$)') {
         Write-Host "Skipped examples installation" -ForegroundColor Yellow
         return
     }
-    if ($excludeExamples -eq $true -and $componentId.EndsWith('.patcher')) {
+    if ($excludeExamples -eq $true -and $componentId -match '\.patcher(\.|$)') {
         Write-Host "Skipped patcher installation" -ForegroundColor Yellow
         return
     }
