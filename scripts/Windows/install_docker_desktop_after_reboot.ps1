@@ -103,8 +103,8 @@ Switch-DockerWindows
 Start-Sleep -s 30
 docker version
 
-docker pull busybox
-docker run --rm -v "$env:USERPROFILE`:/user-profile" busybox ls /user-profile
+#docker pull busybox
+#docker run --rm -v "$env:USERPROFILE`:/user-profile" busybox ls /user-profile
 
 if (-not $env:INSTALL_LATEST_ONLY) {
 	PullRunDockerImages 14393 'ltsc2016' 'sac2016'
