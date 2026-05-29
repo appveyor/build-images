@@ -239,6 +239,10 @@ function InstallComponentById {
         Write-Host "Skipped examples installation" -ForegroundColor Yellow
         return
     }
+    if ($excludeExamples -eq $true -and $componentId.EndsWith('.patcher')) {
+        Write-Host "Skipped patcher installation" -ForegroundColor Yellow
+        return
+    }
 
     $comp = $package_updates[$componentId]
 
