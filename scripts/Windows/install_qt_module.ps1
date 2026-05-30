@@ -127,7 +127,14 @@ function FetchExtensionUpdatePackages($extension, $version) {
     $versionId = GetVersionId $version
     $sections = GetExtensionSections $extension
     if ($IsWindows) {
-        $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/msvc2022_64"
+        $platformFeed = "msvc2022_64"
+        if ($extension -match '\.win64_msvc2022_arm64_cross_compiled$') {
+            $platformFeed = "msvc2022_arm64_cross_compiled"
+        }
+        elseif ($extension -match '\.win64_mingw$') {
+            $platformFeed = "mingw"
+        }
+        $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/$platformFeed"
     }
     elseif ($IsLinux) {
         $feedRootUrl = "$QT_EXTENSIONS_URL/$($sections[1])/$versionId/x86_64"

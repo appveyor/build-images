@@ -193,18 +193,14 @@ $extension_groups = @(
         version = "6.11.1"
         extensions = @(
             "extensions.qtwebengine.6111.win64_msvc2022_64"
-            "extensions.qtwebengine.6111.win64_msvc2022_arm64_cross_compiled"
             "extensions.qtpdf.6111.win64_msvc2022_64"
-            "extensions.qtpdf.6111.win64_msvc2022_arm64_cross_compiled"
         )
     }
     @{
         version = "6.10.3"
         extensions = @(
             "extensions.qtwebengine.6103.win64_msvc2022_64"
-            "extensions.qtwebengine.6103.win64_msvc2022_arm64_cross_compiled"
             "extensions.qtpdf.6103.win64_msvc2022_64"
-            "extensions.qtpdf.6103.win64_msvc2022_arm64_cross_compiled"
         )
     }
 )
