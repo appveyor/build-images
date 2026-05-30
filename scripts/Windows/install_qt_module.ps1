@@ -246,6 +246,11 @@ function InstallComponentById {
 
     $comp = $package_updates[$componentId]
 
+    if (-not $comp -and $componentId -match '^extensions\.[^.]+\.\d+$') {
+        Write-Host "Skipped missing extension meta-package $componentId" -ForegroundColor Yellow
+        return
+    }
+
     if (-not $comp) {
         throw "Qt component '$componentId' was not found in fetched feeds."
     }
