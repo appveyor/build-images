@@ -263,8 +263,7 @@ for:
       # cygwin AND MSYS2?
       #- ps: .\install_cygwin.ps1
       - ps: .\install_mingw-w64.ps1
-      - ps: .\install_boost_1.88.0_vs2022.ps1
-      - ps: .\install_boost_1.89.0_vs2022.ps1
+      - ps: .\install_boost_1.91.0_vs2026.ps1
       - ps: .\install_dotnet_devpacks.ps1
 
       # Restart VM
