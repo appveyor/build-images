@@ -1,7 +1,5 @@
-# Write-Host "Installing Docker Desktop 2.2.0.5"
-Write-Host "Installing Docker Desktop 4.56.0"
-
-https://desktop.docker.com/win/main/amd64/213807/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=docs-driven-download-windows
+Write-Host "Installing Docker Desktop 2.2.0.5"
+#Write-Host "Installing Docker Desktop 4.56.0"
 
 Write-Host "Downloading..."
 $exePath = "$env:TEMP\Docker-Desktop-Installer.exe"

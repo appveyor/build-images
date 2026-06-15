@@ -1,11 +1,47 @@
 environment:
   matrix:
-    # GCE
+    # Hyper-V
     # =======
+
+    # - job_name: VS 2026 on Hyper-V - Part I
+    #   bake_phase: 1
+    #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
+    #   APPVEYOR_BAKE_IMAGE: vs2026-temp-p1
+
+    # - job_name: VS 2026 on Hyper-V - Wait for Part I image to be ready
+    #   bake_phase: wait-90-min
+    #   job_depends_on: VS 2026 on Hyper-V - Part I
+
+    # - job_name: VS 2026 on Hyper-V - Part II
+    #   bake_phase: 3
+    #   job_depends_on: VS 2026 on Hyper-V - Wait for Part I image to be ready
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2026-temp-p1
+    #   APPVEYOR_BAKE_IMAGE: vs2026-master
+
+    # # GCE (WS2022)
+    # # =======
 
     # - job_name: VS 2026 on GCE us-central1 - Part I
     #   bake_phase: 1
     #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2022-dc-gce-us-central1
+    #   APPVEYOR_BAKE_IMAGE: vs2026-temp-p1-gce-us-central1
+
+    # - job_name: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
+    #   bake_phase: wait-15-min
+    #   job_depends_on: VS 2026 on GCE us-central1 - Part I
+
+    # - job_name: VS 2026 on GCE us-central1 - Part II
+    #   bake_phase: 3
+    #   job_depends_on: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2026-temp-p1-gce-us-central1
+    #   APPVEYOR_BAKE_IMAGE: vs2026-master-gce-us-central1
+
+    # GCE (WS2019)
+    # =======
+
+    # - job_name: VS 2026 on GCE us-central1 - Part I
+    #   bake_phase: 1
+    #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-gce-us-central1
     #   APPVEYOR_BAKE_IMAGE: vs2026-temp-p1-gce-us-central1
 
     # - job_name: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
@@ -132,8 +168,7 @@ for:
       - ps: .\install_xunit_20.ps1
       - ps: .\install_nunit3.ps1
       - ps: .\install_vstest_console_logger.ps1
-      # include Qt? Latest version only?
-      - ps: .\install_qt_fast_windows.ps1
+      - ps: .\install_qt_minimal_windows.ps1
       - ps: .\install_ruby.ps1
 
   - matrix:
@@ -167,7 +202,7 @@ for:
       - ps: .\install_jdk25.ps1
       - ps: .\install_android_sdk.ps1
 
-      ## skip all but python 3.9 and up
+      ## skip all but maintained Python 3.x versions
       - ps: .\install_python_new.ps1
       - ps: .\install_openssl_new.ps1
       - ps: .\install_msys64.ps1
@@ -192,6 +227,7 @@ for:
       # - ps: .\install_postgres14.ps1
       - ps: .\install_postgres15.ps1
       - ps: .\install_postgres16.ps1
+      - ps: .\install_postgres18.ps1
       - ps: .\install_mysql.ps1
       - ps: .\install_mongo_new.ps1
 
@@ -199,6 +235,10 @@ for:
       - ps: Start-Sleep -s 5; Restart-Computer
       - ps: Start-Sleep -s 5
       - ps: .\install_sql_server_2022_after_restart.ps1
+      - ps: .\install_sql_server_2025.ps1
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
+      - ps: .\install_sql_server_2025_after_restart.ps1
 
       - ps: .\install_aws_cli_v2.ps1
       - ps: .\install_aws_powershell.ps1
@@ -241,8 +281,7 @@ for:
       # cygwin AND MSYS2?
       #- ps: .\install_cygwin.ps1
       - ps: .\install_mingw-w64.ps1
-      - ps: .\install_boost_1.88.0_vs2022.ps1
-      - ps: .\install_boost_1.89.0_vs2022.ps1
+      - ps: .\install_boost_1.91.0_vs2026.ps1
       - ps: .\install_dotnet_devpacks.ps1
 
       # Restart VM

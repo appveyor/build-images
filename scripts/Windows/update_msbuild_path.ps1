@@ -20,7 +20,7 @@ if (Test-Path $msbuild_vs2026_path) {
     Write-Host "Adding Visual Studio 2026 current MSBuild to PATH..." -ForegroundColor Cyan
     Add-Path $msbuild_vs2026_path
 
-    $dac_150_path = "${env:ProgramFiles}\Microsoft Visual Studio\2026\Community\Common7\IDE\Extensions\Microsoft\SQLDB\DAC";
+    $dac_150_path = "${env:ProgramFiles}\Microsoft Visual Studio\18\Community\Common7\IDE\Extensions\Microsoft\SQLDB\DAC";
     if (Test-Path $dac_150_path) {
         Add-Path $dac_150_path
     } else {

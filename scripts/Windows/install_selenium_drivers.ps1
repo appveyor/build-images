@@ -15,7 +15,7 @@ Add-Path $destPath
 Write-Host "Installing Chrome Selenium driver..." -ForegroundColor Cyan
 
 $zipPath = "$env:TEMP\chromedriver_win64.zip"
-(New-Object Net.WebClient).DownloadFile('https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.192/win64/chrome-win64.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://storage.googleapis.com/chrome-for-testing-public/149.0.7827.22/win64/chromedriver-win64.zip', $zipPath)
 7z e $zipPath -y -spe -o"$destPath"
 Remove-Item $zipPath
 
@@ -29,7 +29,7 @@ Write-Host "Installed Chrome Selenium driver" -ForegroundColor Green
 Write-Host "Installing Edge Selenium driver..." -ForegroundColor Cyan
 
 $zipPath = "$env:TEMP\edgedriver_win64.zip"
-(New-Object Net.WebClient).DownloadFile('https://msedgedriver.microsoft.com/143.0.3650.139/edgedriver_win64.zip', $zipPath)
+(New-Object Net.WebClient).DownloadFile('https://msedgedriver.microsoft.com/148.0.3967.83/edgedriver_win64.zip', $zipPath)
 7z x $zipPath -aoa -o"$destPath"
 Remove-Item $zipPath
 

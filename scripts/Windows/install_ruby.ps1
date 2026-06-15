@@ -8,78 +8,7 @@ $started = Get-Date
 $env:SSL_CERT_FILE = "$env:temp\cacert.pem"
 
 if (-not $env:INSTALL_LATEST_ONLY) {
-    $rubies = @(
-        # @{
-        #     "version"            = "Ruby 1.9.3-p551"
-        #     "install_path"       = "C:\Ruby193"
-        #     "download_url"       = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby193.zip"
-        #     "devkit_paths"       = @()
-        #     "install_psych"      = "true"
-        #     "dontUpdate"         = $true
-        #     "dontUpdateRubygems" = $true
-        #     #"rubygemsUpdate" = $true
-        # }
-        # @{
-        #     "version"      = "Ruby 2.5.9-1"
-        #     "install_path" = "C:\Ruby25"
-        #     "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby25.zip"
-        #     "devkit_url"   = ""
-        #     "devkit_paths" = @()
-        #     "dontUpdate"   = $true
-        #     "bundlerV23"   = $true
-        #     "bundlerV25"   = $false
-        # }
-        # @{
-        #     "version"      = "Ruby 2.5.9-1 (x64)"
-        #     "install_path" = "C:\Ruby25-x64"
-        #     "download_url" = "https://appveyordownloads.blob.core.windows.net/misc/ruby/Ruby25-x64.zip"
-        #     "devkit_url"   = ""
-        #     "devkit_paths" = @()
-        #     "dontUpdate"   = $true
-        #     "bundlerV23"   = $true
-        #     "bundlerV25"   = $false
-        # }
-        # @{
-        #     "version"      = "Ruby 2.6.9-1"
-        #     "install_path" = "C:\Ruby26"
-        #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x86.exe"
-        #     "devkit_url"   = ""
-        #     "devkit_paths" = @()
-        #     #"dontUpdate"   = $true
-        #     "bundlerV23"   = $true
-        #     "bundlerV25"   = $false
-        # }    
-        # @{
-        #     "version"      = "Ruby 2.6.9-1 (x64)"
-        #     "install_path" = "C:\Ruby26-x64"
-        #     "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.9-1/rubyinstaller-2.6.9-1-x64.exe"
-        #     "devkit_url"   = ""
-        #     "devkit_paths" = @()
-        #     #"dontUpdate"   = $true
-        #     "bundlerV23"   = $true
-        #     "bundlerV25"   = $false
-        # }
-        @{
-            "version"      = "Ruby 2.7.8-1"
-            "install_path" = "C:\Ruby27"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.8-1/rubyinstaller-2.7.8-1-x86.exe"
-            "devkit_url"   = ""
-            "devkit_paths" = @()
-            #"dontUpdate"   = $true
-            "bundlerV23"   = $true
-            "bundlerV25"   = $false
-        }    
-        @{
-            "version"      = "Ruby 2.7.8-1 (x64)"
-            "install_path" = "C:\Ruby27-x64"
-            "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.7.8-1/rubyinstaller-2.7.8-1-x64.exe"
-            "devkit_url"   = ""
-            "devkit_paths" = @()
-            #"dontUpdate"   = $true
-            "bundlerV23"   = $true
-            "bundlerV25"   = $false
-        }        
-    )
+    $rubies = @()
 }
 else {
     $rubies = @()
@@ -87,72 +16,45 @@ else {
 
 $rubies = $rubies + @(
     @{
-        "version"      = "Ruby 3.1.6-1"
-        "install_path" = "C:\Ruby31"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.1.6-1/rubyinstaller-3.1.6-1-x86.exe"
-        "devkit_url"   = ""
-        "devkit_paths" = @()
-        "bundlerV23"   = $false
-        "bundlerV25"   = $true
-    }
-    @{
-        "version"      = "Ruby 3.1.6-1 (x64)"
-        "install_path" = "C:\Ruby31-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.1.6-1/rubyinstaller-3.1.6-1-x64.exe"
-        "devkit_url"   = ""
-        "devkit_paths" = @()
-        "bundlerV23"   = $false
-        "bundlerV25"   = $true
-    }
-    @{
-        "version"      = "Ruby 3.2.9-1"
-        "install_path" = "C:\Ruby32"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.9-1/rubyinstaller-3.2.9-1-x86.exe"
-        "devkit_url"   = ""
-        "devkit_paths" = @()
-        "bundlerV23"   = $false
-        "bundlerV25"   = $true
-    }
-    @{
-        "version"      = "Ruby 3.2.9-1 (x64)"
-        "install_path" = "C:\Ruby32-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.2.9-1/rubyinstaller-3.2.9-1-x64.exe"
-        "devkit_url"   = ""
-        "devkit_paths" = @()
-        "bundlerV23"   = $false
-        "bundlerV25"   = $true
-    }
-    @{
-        "version"      = "Ruby 3.3.10-1"
+        "version"      = "Ruby 3.3.11-1"
         "install_path" = "C:\Ruby33"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.10-1/rubyinstaller-3.3.10-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.11-1/rubyinstaller-3.3.11-1-x86.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.3.10-1 (x64)"
+        "version"      = "Ruby 3.3.11-1 (x64)"
         "install_path" = "C:\Ruby33-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.10-1/rubyinstaller-3.3.10-1-x64.exe"
-        "devkit_url"   = ""
-        "devkit_paths" = @()
-        "bundlerV23"   = $false
-        "bundlerV25"   = $true
-    }
-        @{
-        "version"      = "Ruby 3.4.7-1"
-        "install_path" = "C:\Ruby34"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.7-1/rubyinstaller-3.4.7-1-x86.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.11-1/rubyinstaller-3.3.11-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
         "bundlerV25"   = $true
     }
     @{
-        "version"      = "Ruby 3.4.7-1 (x64)"
+        "version"      = "Ruby 3.4.9-1"
+        "install_path" = "C:\Ruby34"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.9-1/rubyinstaller-3.4.9-1-x86.exe"
+        "devkit_url"   = ""
+        "devkit_paths" = @()
+        "bundlerV23"   = $false
+        "bundlerV25"   = $true
+    }
+    @{
+        "version"      = "Ruby 3.4.9-1 (x64)"
         "install_path" = "C:\Ruby34-x64"
-        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.7-1/rubyinstaller-3.4.7-1-x64.exe"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.9-1/rubyinstaller-3.4.9-1-x64.exe"
+        "devkit_url"   = ""
+        "devkit_paths" = @()
+        "bundlerV23"   = $false
+        "bundlerV25"   = $true
+    }
+    @{
+        "version"      = "Ruby 4.0.5-1 (x64)"
+        "install_path" = "C:\Ruby40-x64"
+        "download_url" = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-4.0.5-1/rubyinstaller-4.0.5-1-x64.exe"
         "devkit_url"   = ""
         "devkit_paths" = @()
         "bundlerV23"   = $false
@@ -372,6 +274,6 @@ for ($i = 0; $i -lt $rubies.Count; $i++) {
     Write-Host "  bundler --version: $(cmd /c bundler --version)"
 }
 
-Add-Path 'C:\Ruby32\bin'
+Add-Path 'C:\Ruby40-x64\bin'
 
 ((Get-Date) - $started)
