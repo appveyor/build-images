@@ -77,7 +77,7 @@ function GetVersionId($version) {
 
 function GetReleaseRootUrl($version) {
     $versionDigits = $version.Split('.')
-    if ([int]$versionDigits[1] -ge 8) {
+    if ([int]$versionDigits[0] -eq 6 -and [int]$versionDigits[1] -ge 8) {
         return "$QT_ROOT_URL/$(GetQtPrefix $version)_$(GetVersionId $version)/$(GetQtPrefix $version)_$(GetVersionId $version)"
     }
     else {
@@ -337,7 +337,7 @@ function InstallComponentById {
 
     # recurse dependencies
     foreach($dependencyId in $comp.Dependencies) {
-        InstallComponentById $dependencyId $QT_INSTALL_DIR -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+        InstallComponentById $dependencyId $destPath -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
     }
 }
 

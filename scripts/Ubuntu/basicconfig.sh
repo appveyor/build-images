@@ -17,6 +17,10 @@ VERSIONS_FILE=$WORK_DIR/versions.log
 LOGGING=true
 SCRIPT_PID=$$
 
+echo "=== Disk size ==="
+lsblk
+df -h /
+
 # Make sure only root can run our script
 if [ "$(id -u)" != "0" ]; then
     echo "This script must be run as root. Aborting." 1>&2

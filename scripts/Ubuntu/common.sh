@@ -931,6 +931,58 @@ function preheat_dotnet_sdks() {
     done
 }
 
+function configure_dotnet_environment() {
+    export DOTNET_ROOT=/usr/share/dotnet
+
+    if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME} >/dev/null; then
+        write_line "$USER_HOME/.profile" "export DOTNET_ROOT=/usr/share/dotnet" 'DOTNET_ROOT='
+        write_line "$USER_HOME/.profile" 'export PATH="$PATH:$HOME/.dotnet/tools"' '\.dotnet/tools'
+        write_line "$USER_HOME/.bash_profile" '[ -f "$HOME/.profile" ] && . "$HOME/.profile"' '(\.dotnet/tools|\.profile)'
+        write_line "$USER_HOME/.profile" "export DOTNET_CLI_TELEMETRY_OPTOUT=1" 'DOTNET_CLI_TELEMETRY_OPTOUT='
+        write_line "$USER_HOME/.profile" "export DOTNET_NOLOGO=1" 'DOTNET_NOLOGO='
+
+        mkdir -p "$USER_HOME/.config/powershell"
+        write_line "$USER_HOME/.config/powershell/Microsoft.PowerShell_profile.ps1" '$env:PATH += ":$HOME/.dotnet/tools"' '\.dotnet/tools'
+    else
+        echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
+    fi
+}
+
+function install_manual_dotnet_sdks() {
+    local INSTALL_DIR=/usr/share/dotnet
+    local SCRIPT_PATH=/tmp/dotnet-install.sh
+    local CHANNEL
+    local INSTALL_ARGS=()
+
+    echo "[INFO] Running install_manual_dotnet_sdks..."
+
+    rm -rf "${INSTALL_DIR}" &&
+    mkdir -p "${INSTALL_DIR}" ||
+        { echo "[ERROR] Cannot prepare .NET install directory." 1>&2; return 10; }
+
+    curl -fsSL https://dot.net/v1/dotnet-install.sh -o "${SCRIPT_PATH}" &&
+    chmod +x "${SCRIPT_PATH}" ||
+        { echo "[ERROR] Cannot download dotnet-install.sh." 1>&2; return 11; }
+
+    for CHANNEL in 10.0 9.0 8.0 6.0; do
+        INSTALL_ARGS=( --channel "${CHANNEL}" --quality GA --install-dir "${INSTALL_DIR}" --no-path )
+        if [ "${CHANNEL}" != "10.0" ]; then
+            INSTALL_ARGS+=( --skip-non-versioned-files )
+        fi
+
+        bash "${SCRIPT_PATH}" "${INSTALL_ARGS[@]}" ||
+            { echo "[ERROR] Cannot install .NET SDK channel ${CHANNEL}." 1>&2; return 20; }
+    done
+
+    ln -snf "${INSTALL_DIR}/dotnet" /usr/bin/dotnet ||
+        { echo "[ERROR] Cannot create dotnet symlink." 1>&2; return 30; }
+
+    configure_dotnet_environment || return $?
+
+    log_version dotnet --version
+    log_version dotnet --list-sdks
+}
+
 function prepare_dotnet_packages() {
 
     SDK_VERSIONS=( "2.1" "2.2" "3.0" "3.1" "5.0" "6.0" "7.0" )
@@ -1170,6 +1222,10 @@ function install_jdk() {
         { echo "[ERROR] Cannot symlink JDK ${JDK_VERSION} to ${JDK_LINK}." 1>&2; popd; return 20; }
 
     PROFILE_LINES+=( "export JAVA_HOME_${JDK_VERSION}_X64=${JDK_PATH}" )
+    ln -s -f "${JDK_PATH}/bin/java" /usr/local/bin/java ||
+        { echo "[ERROR] Cannot symlink java from ${JDK_PATH}." 1>&2; popd; return 20; }
+    ln -s -f "${JDK_PATH}/bin/javac" /usr/local/bin/javac ||
+        { echo "[ERROR] Cannot symlink javac from ${JDK_PATH}." 1>&2; popd; return 20; }
 
     # cleanup
     rm -rf "${DIR_NAME}"
@@ -1185,12 +1241,16 @@ function configure_jdk() {
         return 1
     fi
     local file
+    local DEFAULT_JAVA_HOME
 
     write_line "${HOME}/.profile" 'export JAVA_HOME_8_X64=/usr/lib/jvm/java-8-openjdk-amd64'
     while read -r line; do
         write_line "${HOME}/.profile" "${line}"
     done
-    write_line "${HOME}/.profile" 'export JAVA_HOME=$JAVA_HOME_18_X64'
+    DEFAULT_JAVA_HOME=$(find /usr/lib/jvm -maxdepth 1 -type d -name 'java-*-openjdk-amd64' | sort -V | tail -n1)
+    if [[ -n "${DEFAULT_JAVA_HOME}" ]]; then
+        write_line "${HOME}/.profile" "export JAVA_HOME=${DEFAULT_JAVA_HOME}"
+    fi
     write_line "${HOME}/.profile" 'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8'
     #shellcheck disable=SC2016
     write_line "${HOME}/.profile" 'add2path $JAVA_HOME/bin'
@@ -1206,25 +1266,24 @@ function install_jdks_arm64() {
 function install_android_sdk() {
     echo "[INFO] Running install_android_sdk..."
 
-    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip"
+    ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-14742923_latest.zip"
 
     write_line "${HOME}/.profile" 'export ANDROID_SDK_ROOT="/usr/lib/android-sdk"'
     export ANDROID_SDK_ROOT="/usr/lib/android-sdk"
 
-    sudo mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
-    sudo chown -R $(id -u):$(id -g) "${ANDROID_SDK_ROOT}"
+    sudo mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools/latest"
+    sudo chown -R "$(id -u):$(id -g)" "${ANDROID_SDK_ROOT}"
     ANDROID_SDK_ARCHIVE="${ANDROID_SDK_ROOT}/archive"
     wget --progress=dot:giga "${ANDROID_SDK_URL}" -O "${ANDROID_SDK_ARCHIVE}"
     unzip -q -d "${ANDROID_SDK_ROOT}/cmdline-tools" "${ANDROID_SDK_ARCHIVE}"
-    mv "${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools" "${ANDROID_SDK_ROOT}/cmdline-tools/tools"
-    export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
+    mv "${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools/"* "${ANDROID_SDK_ROOT}/cmdline-tools/latest/"
+    rmdir "${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools"
+    export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
     write_line "${HOME}/.profile" 'add2path $ANDROID_SDK_ROOT/cmdline-tools/latest/bin'
-    write_line "${HOME}/.profile" 'add2path $ANDROID_SDK_ROOT/cmdline-tools/tools/bin'
     sdkmanager --version
-    echo "y" | sdkmanager "tools" > /dev/null
-    echo "y" | sdkmanager "build-tools;33.0.3" > /dev/null
     echo "y" | sdkmanager "build-tools;34.0.0" > /dev/null
     echo "y" | sdkmanager "build-tools;35.0.0" > /dev/null
+    echo "y" | sdkmanager "build-tools;36.0.0" > /dev/null
     echo "y" | sdkmanager "platforms;android-31" > /dev/null
     echo "y" | sdkmanager "platforms;android-34" > /dev/null
     echo "y" | sdkmanager "platforms;android-35" > /dev/null
@@ -1233,7 +1292,6 @@ function install_android_sdk() {
     echo "y" | sdkmanager "cmdline-tools;latest" > /dev/null
     echo "y" | sdkmanager "extras;android;m2repository" > /dev/null
     echo "y" | sdkmanager "extras;google;m2repository" > /dev/null
-    echo "y" | sdkmanager "patcher;v4" > /dev/null
     rm "${ANDROID_SDK_ARCHIVE}"
 
     log_version sdkmanager --version
@@ -1418,7 +1476,7 @@ function install_golangs() {
     #gvm use go1.4 ||
      #   { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
-    declare GO_VERSIONS=( "go1.16.15" "go1.17.13" "go1.18.10" "go1.19.13" "go1.20.14" "go1.21.12" "go1.22.12" "go1.23.11" "go1.24.5" )
+    declare GO_VERSIONS=( "go1.21.13" "go1.22.12" "go1.23.12" "go1.24.13" "go1.25.10" )
     
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} -B ||
@@ -1600,15 +1658,22 @@ function configure_sqlserver() {
         return 2
     fi
     # Add SQL Server tools to the path by default:
+    write_line "${HOME}/.profile" 'add2path_suffix /opt/mssql-tools18/bin'
     write_line "${HOME}/.profile" 'add2path_suffix /opt/mssql-tools/bin'
-    export PATH="$PATH:/opt/mssql-tools/bin"
+    export PATH="$PATH:/opt/mssql-tools18/bin:/opt/mssql-tools/bin"
 
     local counter=1
     local errstatus=1
+    local SQLCMD_BIN=sqlcmd
+    if [[ -x /opt/mssql-tools18/bin/sqlcmd ]]; then
+        SQLCMD_BIN=/opt/mssql-tools18/bin/sqlcmd
+    elif [[ -x /opt/mssql-tools/bin/sqlcmd ]]; then
+        SQLCMD_BIN=/opt/mssql-tools/bin/sqlcmd
+    fi
     while [ $counter -le 5 ] && [ $errstatus = 1 ]; do
         echo Waiting for SQL Server to start...
         sleep 10s
-        sqlcmd -S localhost -U SA -P ${MSSQL_SA_PASSWORD} -Q "SELECT @@VERSION"
+        "${SQLCMD_BIN}" -S localhost -U SA -P ${MSSQL_SA_PASSWORD} -C -Q "SELECT @@VERSION"
         errstatus=$?
         echo "errstatus=${errstatus}"
         ((counter++))
@@ -1648,6 +1713,7 @@ function install_mysql() {
 
 function install_postgresql() {
     echo "[INFO] Running install_postgresql..."
+    local PG_HBA_CONF
     if [[ -z "${POSTGRES_ROOT_PASSWORD-}" || "${#POSTGRES_ROOT_PASSWORD}" = "0" ]]; then POSTGRES_ROOT_PASSWORD="Password12!"; fi
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
     add-apt-repository -y "deb http://apt.postgresql.org/pub/repos/apt/ ${OS_CODENAME}-pgdg main" ||
@@ -1662,7 +1728,12 @@ function install_postgresql() {
     sudo -u postgres createuser ${USER_NAME}
     sudo -u postgres psql -c "alter user ${USER_NAME} with createdb" postgres
     sudo -u postgres psql -c "ALTER USER postgres with password '${POSTGRES_ROOT_PASSWORD}';" postgres
-    replace_line '/etc/postgresql/11/main/pg_hba.conf' 'local   all             postgres                                trust' 'local\s+all\s+postgres\s+peer'
+    PG_HBA_CONF=$(find /etc/postgresql -path '*/main/pg_hba.conf')
+    if [[ -n "${PG_HBA_CONF}" ]]; then
+        replace_line "${PG_HBA_CONF}" 'local   all             postgres                                trust' 'local\s+all\s+postgres\s+peer'
+    else
+        echo "[WARNING] Cannot find pg_hba.conf under /etc/postgresql. Skipping peer-to-trust change."
+    fi
 }
 
 function configure_mongodb_repo() {
@@ -2088,14 +2159,15 @@ function install_browsers_arm64() {
 function install_virtualbox_core() {
     echo "[INFO] Running install_virtualbox_core..."
 
-    local VB_VERSION=7.0
-    retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc -o oracle_vbox_2016.asc ||
-        { echo "[ERROR] Cannot download oracle_vbox_2016.asc." 1>&2; return 10; }
+    local VB_VERSION=7.1
+    install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
+    rm -f "/etc/apt/sources.list.d/archive_uri-http_download_virtualbox_org_virtualbox_debian-${OS_CODENAME}.list"
+    retry curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | gpg --dearmor -o /usr/share/keyrings/oracle-virtualbox.gpg ||
+        { echo "[ERROR] Cannot download and install oracle_vbox_2016.asc." 1>&2; return 10; }
+    chmod a+r /usr/share/keyrings/oracle-virtualbox.gpg
 
-    apt-key add oracle_vbox_2016.asc
-    rm oracle_vbox_2016.asc
-
-    add-apt-repository -y "deb http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" ||
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/oracle-virtualbox.gpg] http://download.virtualbox.org/virtualbox/debian ${OS_CODENAME} contrib" \
+        > /etc/apt/sources.list.d/oracle-virtualbox.list ||
         { echo "[ERROR] Cannot add virtualbox.org repository to APT sources." 1>&2; return 10; }
 
     apt-get -y -qq update &&
@@ -2109,15 +2181,19 @@ function install_virtualbox_core() {
 function install_virtualbox() {
     echo "[INFO] Running install_virtualbox..."
 
-    local VERSION=7.0.18
-    #https://download.virtualbox.org/virtualbox/7.0.20/Oracle_VM_VirtualBox_Extension_Pack-7.0.20.vbox-extpack
-    local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VM_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
-
     install_virtualbox_core || return $?
+
+    local VERSION
+    VERSION=$(VBoxManage --version | sed 's/r.*//') ||
+        { echo "[ERROR] Cannot detect installed VirtualBox version." 1>&2; return 7; }
+    local VBE_URL=https://download.virtualbox.org/virtualbox/${VERSION}/Oracle_VirtualBox_Extension_Pack-${VERSION}.vbox-extpack
 
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         usermod -aG vboxusers "${USER_NAME}"
     fi
+
+    /sbin/vboxconfig ||
+        { echo "[ERROR] Cannot configure Virtualbox." 1>&2; return 50; }
 
     local TMP_DIR
     TMP_DIR=$(mktemp -d)
@@ -2126,8 +2202,6 @@ function install_virtualbox() {
         { echo "[ERROR] Cannot download Virtualbox Extention pack." 1>&2; popd; return 30; }
     yes | VBoxManage extpack install --replace "${VBE_URL##*/}" ||
         { echo "[ERROR] Cannot install Virtualbox Extention pack." 1>&2; popd; return 40; }
-    /sbin/vboxconfig ||
-        { echo "[ERROR] Cannot configure Virtualbox." 1>&2; popd; return 50; }
 
     #cleanup
     rm -f "${VBE_URL##*/}"

@@ -111,6 +111,10 @@ configure_path
 # install_qt ||
 #     _abort $?
 
+configure_dotnet_environment ||
+    _abort $?
+
+
 sudo apt-get update
 sudo apt-get install -y ca-certificates
 sudo update-ca-certificates

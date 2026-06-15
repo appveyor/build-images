@@ -4,28 +4,80 @@
 function add_releasespecific_tools() {
     if [[ $OS_ARCH == "amd64" ]]; then
         # doxygen support
-        tools_array+=( "libclang1-14" )
+        tools_array+=( "libclang1-18" )
         # 32bit support
         tools_array+=( "libcurl4:i386" "libcurl4-gnutls-dev" )
-        # HWE kernel
-        tools_array+=( "linux-generic-hwe-22.04" )
     fi    
+}
+
+function install_tools() {
+    echo "[INFO] Running install_tools..."
+    declare tools_array
+    # utilities
+    tools_array=( "zip" "unzip" "wget" "curl" "time" "telnet" "net-tools" "file" "ftp" "lftp" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "p7zip-rar" "p7zip-full" "debconf-utils" "stress" "rng-tools" "dkms" "dos2unix" "tree" "dnsutils" )
+    fi
+
+    # build tools
+    tools_array+=( "make" "binutils" "bison" "gcc" "pkg-config" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "ant" "ant-optional" "maven" "gradle" "graphviz" "tcl" "ninja-build" )
+    fi
+
+    # python packages
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "python-is-python3" "python-dev-is-python3" "python3-dev" )
+    fi
+    tools_array+=( "python3" "python3-setuptools" )
+    tools_array+=( "apt-transport-https" )
+    tools_array+=( "libffi-dev" "libssl-dev" "libsqlite3-dev" "liblzma-dev" "libbz2-dev" "libgdbm-dev" "libyaml-dev" "libgmp-dev" "libreadline-dev" "libncurses-dev" )
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "build-essential" "libexpat1-dev" "gettext" "gfortran" "python3-tk" )
+        tools_array+=( "tk-dev" "inotify-tools" "libcurl4-gnutls-dev" )
+    fi
+
+    # dev tools
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "libgtk-3-dev" )
+    fi
+
+    # 32bit support
+    if [[ $OS_ARCH == "amd64" ]]; then
+        tools_array+=( "libc6:i386" "libncurses6:i386" "libstdc++6:i386" )
+    fi
+
+    if command -v add_releasespecific_tools; then
+        add_releasespecific_tools
+    fi
+
+    if [ "${BUILD_AGENT_MODE}" = "HyperV" ]; then
+        tools_array+=( "linux-tools-generic" "linux-cloud-tools-generic" )
+        tools_array+=( "openssh-server" )
+    fi
+
+    if command -v fix_apt_get_install; then
+        fix_apt_get_install
+    fi
+
+    apt-get update
+    apt-get -y ${APT_GET_OPTIONS-} install "${tools_array[@]}" --no-install-recommends ||
+        {
+            echo "[ERROR] Cannot install various packages. ERROR $?." 1>&2;
+            apt-cache policy gcc
+            apt-cache policy zip
+            apt-cache policy make
+            return 10;
+        }
+    log_version dpkg -l "${tools_array[@]}"
 }
 
 function fix_apt_get_install() {
     sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
-
-    cat >/etc/needrestart/conf.d/appveyor-build-agent.conf <<'EOF'
-$nrconf{override_rc} = {
-    %{ $nrconf{override_rc} || {} },
-    qr(^appveyor-build-agent\.service$) => 0,
-};
-EOF
-
 }
 
 function configure_mercurial_repository() {
-    echo "[INFO] Running configure_mercurial_repository on Ubuntu 22.04...skipped"
+    echo "[INFO] Running configure_mercurial_repository on Ubuntu 24.04...skipped"
 }
 
 function prepare_dotnet_packages() {
@@ -37,51 +89,13 @@ function prepare_dotnet_packages() {
 }
 
 function config_dotnet_repository() {
-    find /etc/apt/sources.list.d -maxdepth 1 -type f -name '*.list' -exec grep -l 'packages.microsoft.com/ubuntu/22.04/prod' {} + | xargs -r rm -f
     add-apt-repository -y ppa:dotnet/backports &&
     apt-get -y -q update ||
         { echo "[ERROR] Cannot configure Canonical's .NET APT sources." 1>&2; return 10; }
 }
 
 function install_outdated_dotnets() {
-    echo "[INFO] Running install_outdated_dotnets on Ubuntu 22.04...skipped"
-}
-
-function install_flutter() {
-    echo "[INFO] Running install_flutter..."
-
-    local BIN_DIR="${HOME}/flutter/bin"
-
-    if [ "$(whoami)" != "${USER_NAME}" ]; then
-        echo "This script must be run as '${USER_NAME}'. Current user is '$(whoami)'" 1>&2
-        return 1
-    fi
-
-    sudo chown "$(id -u "${USER_NAME}"):$(id -g "${USER_NAME}")" -R "${HOME}"
-
-    local TMP_DIR
-    TMP_DIR=$(mktemp -d)
-    pushd -- "${TMP_DIR}"
-
-    local RELEASE_URL
-    RELEASE_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.41.5-stable.tar.xz"
-    curl -fsSL "$RELEASE_URL" -o "flutter_linux_stable.tar.xz" ||
-        { echo "[ERROR] Cannot download Flutter distro '$RELEASE_URL'." 1>&2; return 10; }
-
-    tar -xf "flutter_linux_stable.tar.xz" -C "${HOME}"
-
-    write_line "${HOME}/.profile" "add2path_suffix $BIN_DIR"
-    export PATH="$PATH:$BIN_DIR"
-
-    flutter channel stable
-    flutter upgrade
-    yes "y" | flutter doctor --android-licenses > /dev/null
-    flutter doctor -v
-
-    popd &&
-    rm -rf "${TMP_DIR}"
-
-    log_version flutter --version
+    echo "[INFO] Running install_outdated_dotnets on Ubuntu 24.04...skipped"
 }
 
 function install_dotnets() {
@@ -90,10 +104,21 @@ function install_dotnets() {
 }
 
 function configure_firefox_repository() {
-    echo "[INFO] Running configure_firefox_repository on Ubuntu 22.04..."
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F
-    add-apt-repository "deb [ arch=amd64 ] http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu jammy main"
-    apt-get -y update
+    echo "[INFO] Running configure_firefox_repository on Ubuntu 24.04...skipped"
+}
+
+function install_browsers() {
+    echo "[INFO] Running install_browsers on Ubuntu 24.04..."
+
+    apt-get -y -q install libayatana-appindicator3-1 fonts-liberation xvfb ||
+        { echo "[ERROR] Cannot install browser prerequisites." 1>&2; return 10; }
+
+    install_google_chrome
+
+    apt-get -y --fix-broken install
+    apt-get -y -q install firefox ||
+        { echo "[ERROR] Cannot install firefox." 1>&2; return 20; }
+    log_version dpkg -l firefox google-chrome-stable
 }
 
 function install_jdks_from_repository() {
@@ -112,7 +137,7 @@ function install_jdks_from_repository() {
 }
 
 function configure_docker_repository() {
-    echo "[INFO] Running configure_docker_repository on Ubuntu 22.04..."
+    echo "[INFO] Running configure_docker_repository on Ubuntu 24.04..."
 
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -158,10 +183,6 @@ function install_clang() {
     echo "[INFO] Running install_clang..."
     curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-    install_clang_version 13
-    install_clang_version 14
-    install_clang_version 15
-    install_clang_version 16
     install_clang_version 17
     install_clang_version 18
     install_clang_version 19
@@ -203,15 +224,23 @@ function install_clang_version() {
 }
 
 function configure_mono_repository () {
-    echo "[INFO] Running configure_mono_repository on Ubuntu 22.04..."
+    echo "[INFO] Running configure_mono_repository on Ubuntu 24.04..."
     
     sudo apt-get install ca-certificates gnupg
     sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-    echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+    echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
     sudo apt-get update
 
-    #add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-focal main" ||
+    #add-apt-repository "deb http://download.mono-project.com/repo/ubuntu stable-${OS_CODENAME} main" ||
      #   { echo "[ERROR] Cannot add Mono repository to APT sources." 1>&2; return 10; }
+}
+
+function install_mono() {
+    echo "[INFO] Running install_mono on Ubuntu 24.04...skipped"
+}
+
+function update_nuget() {
+    echo "[INFO] Running update_nuget on Ubuntu 24.04...skipped"
 }
 
 function install_virtualenv() {
@@ -221,66 +250,36 @@ function install_virtualenv() {
     #     { echo "[WARNING] Cannot install virtualenv with pip." ; return 10; }
     # log_version python3 -m virtualenv --version
     install_pip
-    log_version python -m virtualenv --version
+    log_version python3 -m virtualenv --version
     log_version virtualenv --version
 }
 
-function install_pip() {
-    echo "[INFO] Running install_pip..."
-    
-    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
-        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
-    python3 get-pip.py ||
-        { echo "[WARNING] Cannot install pip." ; return 10; }
-
-    python3 -m pip install --upgrade pip setuptools wheel virtualenv
-
-    log_version pip --version
-
-    # cleanup
-    rm get-pip.py
+function install_awscli() {
+    echo "[INFO] Running install_awscli on Ubuntu 24.04..."
+    python3 -m pip install --break-system-packages awscli ||
+        { echo "[ERROR] Cannot install awscli." 1>&2; return 10; }
+    log_version aws --version
 }
-function configure_sqlserver_repository() {
-    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 22.04..."
+
+function install_powershell() {
+    echo "[INFO] Running install_powershell on Ubuntu 24.04..."
+
     install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --yes --dearmor -o /usr/share/keyrings/microsoft-prod.gpg ||
+    curl -fsSL "https://packages.microsoft.com/keys/microsoft.asc" | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg ||
         { echo "[ERROR] Cannot install Microsoft's signing key." 1>&2; return 10; }
     chmod a+r /usr/share/keyrings/microsoft-prod.gpg
 
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/22.04/prod jammy main" \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" \
         > /etc/apt/sources.list.d/microsoft-prod.list ||
         { echo "[ERROR] Cannot add Microsoft's APT source." 1>&2; return 10; }
 
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2025 jammy main" \
-        > /etc/apt/sources.list.d/mssql-server-2025.list ||
-        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
-}
-
-function install_sqlserver() {
-    echo "[INFO] Running install_sqlserver..."
-    configure_sqlserver_repository
-
     apt-get -y -qq update &&
-    apt-get -y -q install mssql-server ||
-        { echo "[ERROR] Cannot install mssql-server." 1>&2; return 20; }
-    MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD \
-        MSSQL_PID=developer \
-        /opt/mssql/bin/mssql-conf -n setup accept-eula ||
-        { echo "[ERROR] Cannot configure mssql-server." 1>&2; return 30; }
+    apt-get -y -q --allow-downgrades install powershell ||
+        { echo "[ERROR] PowerShell install failed." 1>&2; return 10; }
 
-    ACCEPT_EULA=Y apt-get -y -q install mssql-tools18 unixodbc-dev
-    if [[ -x /opt/mssql-tools18/bin/sqlcmd ]]; then
-        ln -s -f /opt/mssql-tools18/bin/sqlcmd /usr/local/bin/sqlcmd
-    fi
+    configure_powershell
 
-    if type -t fix_sqlserver; then
-        fix_sqlserver
-    fi
-
-    systemctl restart mssql-server
-    systemctl is-active mssql-server ||
-        { echo "[ERROR] mssql-server service failed to start." 1>&2; return 40; }
-    log_version dpkg -l mssql-server
+    log_version pwsh --version
 }
 
 function install_pythons(){
@@ -320,6 +319,78 @@ function install_pythons(){
     done
 
     ls -al ~/venv*
+}
+
+function install_pip() {
+    echo "[INFO] Running install_pip..."
+    
+    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" ||
+        { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
+    # justification for CI breaking system packages:
+    # https://brennan.io/2025/01/11/break-my-system/
+    python3 get-pip.py --break-system-packages ||
+        { echo "[WARNING] Cannot install pip." ; return 10; }
+
+    python3 -m pip install --break-system-packages --upgrade pip setuptools wheel virtualenv
+
+    log_version pip --version
+
+    # cleanup
+    rm get-pip.py
+}
+function configure_sqlserver_repository() {
+    echo "[INFO] Running configure_sqlserver_repository on Ubuntu 24.04..."
+    install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --yes --dearmor -o /usr/share/keyrings/microsoft-prod.gpg ||
+        { echo "[ERROR] Cannot install Microsoft's signing key." 1>&2; return 10; }
+    chmod a+r /usr/share/keyrings/microsoft-prod.gpg
+
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" \
+        > /etc/apt/sources.list.d/microsoft-prod.list ||
+        { echo "[ERROR] Cannot add Microsoft's APT source." 1>&2; return 10; }
+
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/24.04/mssql-server-2025 noble main" \
+        > /etc/apt/sources.list.d/mssql-server-2025.list ||
+        { echo "[ERROR] Cannot add mssql-server repository to APT sources." 1>&2; return 10; }
+}
+
+function configure_mongodb_repo() {
+    echo "[INFO] Running configure_mongodb_repo on Ubuntu 24.04..."
+    install -m 0755 -d /usr/share/keyrings /etc/apt/sources.list.d
+    curl -fsSL https://pgp.mongodb.com/server-8.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-8.0.gpg ||
+        { echo "[ERROR] Cannot install MongoDB signing key." 1>&2; return 10; }
+    chmod a+r /usr/share/keyrings/mongodb-server-8.0.gpg
+
+    echo "deb [ arch=amd64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" \
+        > /etc/apt/sources.list.d/mongodb-org-8.0.list ||
+        { echo "[ERROR] Cannot add mongodb repository to APT sources." 1>&2; return 10; }
+}
+
+function install_sqlserver() {
+    echo "[INFO] Running install_sqlserver..."
+    configure_sqlserver_repository
+
+    apt-get -y -qq update &&
+    apt-get -y -q install mssql-server ||
+        { echo "[ERROR] Cannot install mssql-server." 1>&2; return 20; }
+    MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD \
+        MSSQL_PID=developer \
+        /opt/mssql/bin/mssql-conf -n setup accept-eula ||
+        { echo "[ERROR] Cannot configure mssql-server." 1>&2; return 30; }
+
+    ACCEPT_EULA=Y apt-get -y -q install mssql-tools18 unixodbc-dev
+    if [[ -x /opt/mssql-tools18/bin/sqlcmd ]]; then
+        ln -s -f /opt/mssql-tools18/bin/sqlcmd /usr/local/bin/sqlcmd
+    fi
+
+    if type -t fix_sqlserver; then
+        fix_sqlserver
+    fi
+
+    systemctl restart mssql-server
+    systemctl is-active mssql-server ||
+        { echo "[ERROR] mssql-server service failed to start." 1>&2; return 40; }
+    log_version dpkg -l mssql-server
 }
 
 
@@ -465,13 +536,6 @@ function pull_dockerimages() {
 function install_rabbitmq() {
     echo "[INFO] Running install_rabbitmq..."
 
-    ## Team RabbitMQ's main signing key
-    apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
-    ## Launchpad PPA that provides modern Erlang releases
-    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
-    ## PackageCloud RabbitMQ repository
-    apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F6609E60DC62814E"
-
     apt-get install curl gnupg apt-transport-https -y
 
     ## Team RabbitMQ's signing key
@@ -480,12 +544,12 @@ function install_rabbitmq() {
     tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
 ## Modern Erlang/OTP releases
 ##
-deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
-deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-erlang/ubuntu/noble noble main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-erlang/ubuntu/noble noble main
 ## Provides modern RabbitMQ releases
 ##
-deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
-deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-server/ubuntu/noble noble main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-server/ubuntu/noble noble main
 EOF
 
 
