@@ -85,13 +85,23 @@ function GetReleaseRootUrl($version) {
     }
 }
 
-function GetReleaseFeedRootUrls($version) {
+function GetReleaseFeedRootUrls($version, $componentName) {
     $versionId = GetVersionId $version
     $versionDigits = $version.Split('.')
     $minorVersion = [int]$versionDigits[1]
 
     if ($IsWindows -and $minorVersion -ge 11) {
         $basePath = "$QT_ROOT_URL/$(GetQtPrefix $version)_$versionId"
+        if ($componentName -match '(^|\.)(win64_mingw)$') {
+            return @("$basePath/$(GetQtPrefix $version)_${versionId}_mingw")
+        }
+        elseif ($componentName -match '(^|\.)(win64_msvc2022_64)$') {
+            return @("$basePath/$(GetQtPrefix $version)_${versionId}_msvc2022_64")
+        }
+        elseif ($componentName -match '(^|\.)(win64_msvc2022_arm64_cross_compiled)$') {
+            return @("$basePath/$(GetQtPrefix $version)_${versionId}_msvc2022_arm64_cross_compiled")
+        }
+
         return @(
             "$basePath/$(GetQtPrefix $version)_${versionId}_mingw",
             "$basePath/$(GetQtPrefix $version)_${versionId}_msvc2022_64",
@@ -113,9 +123,9 @@ function FetchToolsUpdatePackages($toolsId) {
     FetchUpdatePackages "$QT_ROOT_URL/tools_$toolsId"
 }
 
-function FetchReleaseUpdatePackages($version) {
+function FetchReleaseUpdatePackages($version, $componentName) {
     Write-Host "GetReleaseRootUrl"
-    foreach ($feedRootUrl in (GetReleaseFeedRootUrls $version)) {
+    foreach ($feedRootUrl in (GetReleaseFeedRootUrls $version $componentName)) {
         Write-Host $feedRootUrl
         FetchUpdatePackages $feedRootUrl
     }
@@ -218,7 +228,7 @@ function Install-QtComponent {
     )
 
     if ($Version -and $Name) {
-        FetchReleaseUpdatePackages $version
+        FetchReleaseUpdatePackages $version $Name
         InstallComponentById "qt.$(GetQtPrefix $version).$(GetVersionId $version).$Name" $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
     } elseif ($Id) {
         InstallComponentById $Id $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
