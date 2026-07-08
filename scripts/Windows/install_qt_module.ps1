@@ -64,6 +64,33 @@ if ($isLinux) {
 $package_updates = @{}
 $feeds_cache = @{}
 
+function GetQtToolchainSubdir($componentName, $version, $toolchainName) {
+    $versionDigits = $version.Split('.')
+    if ([int]$versionDigits[0] -lt 6 -or [int]$versionDigits[1] -lt 8) {
+        return $null
+    }
+
+    $toolchainKey = $toolchainName
+    if (-not $toolchainKey) {
+        if ($componentName -match '(^|\.)(win64_mingw)$') {
+            $toolchainKey = 'win64_mingw'
+        }
+        elseif ($componentName -match '(^|\.)(win64_msvc2022_64)$') {
+            $toolchainKey = 'win64_msvc2022_64'
+        }
+        elseif ($componentName -match '(^|\.)(win64_msvc2022_arm64_cross_compiled)$') {
+            $toolchainKey = 'win64_msvc2022_arm64_cross_compiled'
+        }
+    }
+
+    switch ($toolchainKey) {
+        'win64_mingw' { return 'mingw_64' }
+        'win64_msvc2022_64' { return 'msvc2022_64' }
+        'win64_msvc2022_arm64_cross_compiled' { return 'msvc2022_arm64' }
+        default { return $null }
+    }
+}
+
 function GetQtPrefix($version) {
     if ($version.startsWith('6')) {
         return 'qt6'
@@ -201,7 +228,7 @@ function FetchUpdatePackages($feedRootUrl) {
                 Version = $packageNode.Version
                 Dependencies = SplitString $packageNode.Dependencies
                 DownloadableArchives = SplitString $packageNode.DownloadableArchives
-                Installed = $false
+                InstalledPaths = @{}
             }
 
             $package_updates[$package.Name] = $package
@@ -224,14 +251,19 @@ function Install-QtComponent {
         $Path,
         [switch]$whatIf,
         [switch]$excludeDocs,
-        [switch]$excludeExamples
+        [switch]$excludeExamples,
+        [Parameter(Mandatory=$false)]
+        $ToolchainName
     )
 
     if ($Version -and $Name) {
         FetchReleaseUpdatePackages $version $Name
-        InstallComponentById "qt.$(GetQtPrefix $version).$(GetVersionId $version).$Name" $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+        if (-not $ToolchainName) {
+            $ToolchainName = $Name
+        }
+        InstallComponentById "qt.$(GetQtPrefix $version).$(GetVersionId $version).$Name" $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples -ToolchainName $ToolchainName
     } elseif ($Id) {
-        InstallComponentById $Id $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+        InstallComponentById $Id $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples -ToolchainName $ToolchainName
     } else {
         throw "Either -Version and -Name should be specified or -Id."
     }
@@ -243,7 +275,8 @@ function InstallComponentById {
         $destPath,
         [switch]$whatIf,
         [switch]$excludeDocs,
-        [switch]$excludeExamples
+        [switch]$excludeExamples,
+        $ToolchainName
     )
 
     Write-Host "Installing $componentId" -ForegroundColor Cyan
@@ -281,28 +314,18 @@ function InstallComponentById {
     }
 
     $version = $componentId.split(".")[2]
+    $toolchainSubdir = GetQtToolchainSubdir $comp.Name $version $ToolchainName
+    if ($toolchainSubdir) {
+        $destPath = [IO.Path]::Combine($destPath, $toolchainSubdir)
+        Write-Host "installing to $toolchainSubdir"
+        Write-Host "at $destPath"
+    } else {
+        Write-host "installing component for earlier Qt $version, at $destPath"
+    }
 
-    if ($comp.Installed) {
+    if ($comp.InstalledPaths.ContainsKey($destPath)) {
         Write-Host "Already installed" -ForegroundColor Yellow
         return
-    }    
-    if ($comp.Name -match "mingw" -and ($version -ge 681)) {
-        Write-Host "installing to mingw"
-        $destPath = [IO.Path]::Combine($destPath, "mingw_64")
-        Write-Host "at $destPath"
-    }
-    elseif ($comp.Name -match "arm" -and ($version -ge 681)) {
-        Write-Host "installing to msvc2022_arm64"
-        $destPath = [IO.Path]::Combine($destPath, "msvc2022_arm64")
-        Write-Host "at $destPath"
-    }
-    elseif ($comp.Name -match "msvc2022_64" -and ($version -ge 681)) {
-        Write-Host "installing to msvc2022_64"
-        $destPath = [IO.Path]::Combine($destPath, "msvc2022_64")
-        Write-Host "at $destPath"
-    }
-    else {
-        Write-host "installing component for earlier Qt $version, at $destPath"
     }
     # download and extract component archives
     foreach($downloadableArchive in $comp.DownloadableArchives) {
@@ -341,13 +364,17 @@ function InstallComponentById {
         }
 
         Write-Host "OK" -ForegroundColor Green
-        $comp.Installed = $true
+        $comp.InstalledPaths[$destPath] = $true
         Remove-Item $tempFileName
+    }
+
+    if ($comp.DownloadableArchives.Count -eq 0) {
+        $comp.InstalledPaths[$destPath] = $true
     }
 
     # recurse dependencies
     foreach($dependencyId in $comp.Dependencies) {
-        InstallComponentById $dependencyId $destPath -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+        InstallComponentById $dependencyId $destPath -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples -ToolchainName $ToolchainName
     }
 }
 
@@ -362,14 +389,19 @@ function Install-QtExtension {
         $Path,
         [switch]$whatIf,
         [switch]$excludeDocs,
-        [switch]$excludeExamples
+        [switch]$excludeExamples,
+        [Parameter(Mandatory=$false)]
+        $ToolchainName
     )
 
     # fetch package names
     FetchExtensionUpdatePackages $Name $Version
     # extensions.qtwebengine.691.win64_msvc2022_64/ 
     # no need for pre-pending version. Use name directly
-    InstallComponentById $Name $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples
+    if (-not $ToolchainName) {
+        $ToolchainName = $Name
+    }
+    InstallComponentById $Name $Path -whatif:$whatIf -excludeDocs:$excludeDocs -excludeExamples:$excludeExamples -ToolchainName $ToolchainName
 }
 
 
