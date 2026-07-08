@@ -66,7 +66,17 @@ $feeds_cache = @{}
 
 function GetQtToolchainSubdir($componentName, $version, $toolchainName) {
     $versionDigits = $version.Split('.')
-    if ([int]$versionDigits[0] -lt 6 -or [int]$versionDigits[1] -lt 8) {
+    if ($versionDigits.Count -lt 2) {
+        return $null
+    }
+
+    $majorVersion = 0
+    $minorVersion = 0
+    if (-not [int]::TryParse($versionDigits[0], [ref]$majorVersion) -or -not [int]::TryParse($versionDigits[1], [ref]$minorVersion)) {
+        return $null
+    }
+
+    if ($majorVersion -lt 6 -or $minorVersion -lt 8) {
         return $null
     }
 
