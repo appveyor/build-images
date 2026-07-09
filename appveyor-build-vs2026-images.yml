@@ -176,8 +176,8 @@ for:
       - dir C:\Qt\6.11.1\msvc2022_64
       - dir C:\Qt\6.11.1\msvc2022_64\bin
       - dir C:\Qt\6.11.1\msvc2022_arm64
-      - ps: & C:\Qt\6.11.1\msvc2022_64\bin\moc.exe -h
-      - ps: & C:\Qt\6.11.1\mingw_64\bin\moc.exe -h
+      - ps: C:\Qt\6.11.1\msvc2022_64\bin\moc.exe -h
+      - ps: C:\Qt\6.11.1\mingw_64\bin\moc.exe -h
       - ps: .\install_ruby.ps1
 
   - matrix:
