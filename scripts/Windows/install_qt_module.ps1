@@ -65,14 +65,20 @@ $package_updates = @{}
 $feeds_cache = @{}
 
 function GetQtToolchainSubdir($componentName, $version, $toolchainName) {
-    $versionDigits = $version.Split('.')
-    if ($versionDigits.Count -lt 2) {
-        return $null
-    }
-
     $majorVersion = 0
     $minorVersion = 0
-    if (-not [int]::TryParse($versionDigits[0], [ref]$majorVersion) -or -not [int]::TryParse($versionDigits[1], [ref]$minorVersion)) {
+
+    $versionDigits = $version.Split('.')
+    if ($versionDigits.Count -ge 2) {
+        if (-not [int]::TryParse($versionDigits[0], [ref]$majorVersion) -or -not [int]::TryParse($versionDigits[1], [ref]$minorVersion)) {
+            return $null
+        }
+    }
+    elseif ($version -match '^(?<major>\d)(?<minor>\d{2})\d$') {
+        $majorVersion = [int]$Matches['major']
+        $minorVersion = [int]$Matches['minor']
+    }
+    else {
         return $null
     }
 
@@ -98,6 +104,28 @@ function GetQtToolchainSubdir($componentName, $version, $toolchainName) {
         'win64_msvc2022_64' { return 'msvc2022_64' }
         'win64_msvc2022_arm64_cross_compiled' { return 'msvc2022_arm64' }
         default { return $null }
+    }
+}
+
+function ResolveQtInstallPath($destPath, $componentName, $version, $toolchainName) {
+    $toolchainSubdir = GetQtToolchainSubdir $componentName $version $toolchainName
+    if (-not $toolchainSubdir) {
+        return @{
+            Path = $destPath
+            ToolchainSubdir = $null
+        }
+    }
+
+    if ([IO.Path]::GetFileName($destPath) -eq $toolchainSubdir) {
+        return @{
+            Path = $destPath
+            ToolchainSubdir = $toolchainSubdir
+        }
+    }
+
+    return @{
+        Path = [IO.Path]::Combine($destPath, $toolchainSubdir)
+        ToolchainSubdir = $toolchainSubdir
     }
 }
 
@@ -324,9 +352,10 @@ function InstallComponentById {
     }
 
     $version = $componentId.split(".")[2]
-    $toolchainSubdir = GetQtToolchainSubdir $comp.Name $version $ToolchainName
-    if ($toolchainSubdir) {
-        $destPath = [IO.Path]::Combine($destPath, $toolchainSubdir)
+    $resolvedInstallPath = ResolveQtInstallPath $destPath $comp.Name $version $ToolchainName
+    $destPath = $resolvedInstallPath.Path
+    if ($resolvedInstallPath.ToolchainSubdir) {
+        $toolchainSubdir = $resolvedInstallPath.ToolchainSubdir
         Write-Host "installing to $toolchainSubdir"
         Write-Host "at $destPath"
     } else {
