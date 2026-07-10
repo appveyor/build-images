@@ -468,6 +468,7 @@ Prefix=.."
                 Write-Host "Creating $qtEnvPath"
     
                 $mingwDir = $null
+                $mingwBin = $null
                 if ($componentDir.Name -eq 'mingw73_32') {
                     $mingwDir = 'mingw730_32'
                 } elseif ($componentDir.Name -eq 'mingw73_64') {
@@ -476,20 +477,39 @@ Prefix=.."
                     $mingwDir = 'mingw530_32'
                 } elseif ($componentDir.Name -eq 'mingw53_64') {
                     $mingwDir = 'mingw530_64'
+                } elseif ($componentDir.Name -eq 'mingw_64') {
+                    $modernMingwToolDir = Get-ChildItem -Path ([IO.Path]::Combine($componentPath, 'Tools')) -Directory -ErrorAction SilentlyContinue |
+                        Where-Object { $_.Name -like 'mingw*' } |
+                        Sort-Object Name -Descending |
+                        Select-Object -First 1
+                    if ($modernMingwToolDir) {
+                        $mingwBin = [IO.Path]::Combine($modernMingwToolDir.FullName, 'bin')
+                    }
                 }
     
                 if ($mingwDir) {
                     $mingwBin = [IO.Path]::Combine($qtRoot, 'Tools', $mingwDir, 'bin')
+                }
+
+                if ($mingwBin -and (Test-Path $mingwBin)) {
+                    foreach ($dllName in @('libstdc++-6.dll', 'libgcc_s_seh-1.dll', 'libwinpthread-1.dll')) {
+                        $sourceDll = [IO.Path]::Combine($mingwBin, $dllName)
+                        $targetDll = [IO.Path]::Combine($componentBin, $dllName)
+                        if ((Test-Path $sourceDll) -and -not (Test-Path $targetDll)) {
+                            Copy-Item $sourceDll $targetDll
+                        }
+                    }
+
                     Set-Content -Path $qtEnvPath -Value "@echo off
-    echo Setting up environment for Qt usage...
-    set PATH=$componentBin;$mingwBin;%PATH%
-    cd /D $componentPath"
+echo Setting up environment for Qt usage...
+set PATH=$componentBin;$mingwBin;%PATH%
+cd /D $componentPath"
                 } else {
                     Set-Content -Path $qtEnvPath -Value "@echo off
-    echo Setting up environment for Qt usage...
-    set PATH=$componentBin;%PATH%
-    cd /D $componentPath
-    echo Remember to call vcvarsall.bat to complete environment setup!"
+echo Setting up environment for Qt usage...
+set PATH=$componentBin;%PATH%
+cd /D $componentPath
+echo Remember to call vcvarsall.bat to complete environment setup!"
                 }
             }
         }
