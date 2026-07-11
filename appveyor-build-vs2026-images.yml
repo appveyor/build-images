@@ -136,6 +136,7 @@ for:
       - ps: Start-Sleep -s 5
 
       # WSL
+      - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { wsl.exe --update }
       - ps: .\install_wsl.ps1
 
       # Restart VM
