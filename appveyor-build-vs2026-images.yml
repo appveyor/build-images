@@ -3,38 +3,38 @@ environment:
     # Hyper-V
     # =======
 
-    # - job_name: VS 2026 on Hyper-V - Part I
-    #   bake_phase: 1
-    #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
-    #   APPVEYOR_BAKE_IMAGE: vs2026-temp-p1
+    - job_name: VS 2026 on Hyper-V - Part I
+      bake_phase: 1
+      APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2019-dc-hyperv
+      APPVEYOR_BAKE_IMAGE: vs2026-temp-p1
 
-    # - job_name: VS 2026 on Hyper-V - Wait for Part I image to be ready
-    #   bake_phase: wait-90-min
-    #   job_depends_on: VS 2026 on Hyper-V - Part I
+    - job_name: VS 2026 on Hyper-V - Wait for Part I image to be ready
+      bake_phase: wait-90-min
+      job_depends_on: VS 2026 on Hyper-V - Part I
 
-    # - job_name: VS 2026 on Hyper-V - Part II
-    #   bake_phase: 3
-    #   job_depends_on: VS 2026 on Hyper-V - Wait for Part I image to be ready
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2026-temp-p1
-    #   APPVEYOR_BAKE_IMAGE: vs2026-master
+    - job_name: VS 2026 on Hyper-V - Part II
+      bake_phase: 3
+      job_depends_on: VS 2026 on Hyper-V - Wait for Part I image to be ready
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2026-temp-p1
+      APPVEYOR_BAKE_IMAGE: vs2026-master
 
-    # # GCE (WS2022)
-    # # =======
+    # GCE (WS2022)
+    # =======
 
-    # - job_name: VS 2026 on GCE us-central1 - Part I
-    #   bake_phase: 1
-    #   APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2022-dc-gce-us-central1
-    #   APPVEYOR_BAKE_IMAGE: vs2026-temp-p1-gce-us-central1
+    - job_name: VS 2026 on GCE us-central1 - Part I
+      bake_phase: 1
+      APPVEYOR_BUILD_WORKER_IMAGE: base-windows-server-2022-dc-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2026-temp-p1-gce-us-central1
 
-    # - job_name: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
-    #   bake_phase: wait-15-min
-    #   job_depends_on: VS 2026 on GCE us-central1 - Part I
+    - job_name: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
+      bake_phase: wait-15-min
+      job_depends_on: VS 2026 on GCE us-central1 - Part I
 
-    # - job_name: VS 2026 on GCE us-central1 - Part II
-    #   bake_phase: 3
-    #   job_depends_on: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
-    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2026-temp-p1-gce-us-central1
-    #   APPVEYOR_BAKE_IMAGE: vs2026-master-gce-us-central1
+    - job_name: VS 2026 on GCE us-central1 - Part II
+      bake_phase: 3
+      job_depends_on: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
+      APPVEYOR_BUILD_WORKER_IMAGE: vs2026-temp-p1-gce-us-central1
+      APPVEYOR_BAKE_IMAGE: vs2026-master-gce-us-central1
 
     # GCE (WS2019)
     # =======
@@ -48,11 +48,11 @@ environment:
     #   bake_phase: wait-15-min
     #   job_depends_on: VS 2026 on GCE us-central1 - Part I
 
-    - job_name: VS 2026 on GCE us-central1 - Part II
-      bake_phase: 3
-      job_depends_on: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
-      APPVEYOR_BUILD_WORKER_IMAGE: vs2026-temp-p1-gce-us-central1
-      APPVEYOR_BAKE_IMAGE: vs2026-master-gce-us-central1
+    # - job_name: VS 2026 on GCE us-central1 - Part II
+    #   bake_phase: 3
+    #   job_depends_on: VS 2026 on GCE us-central1 - Wait for Part I image to be ready
+    #   APPVEYOR_BUILD_WORKER_IMAGE: vs2026-temp-p1-gce-us-central1
+    #   APPVEYOR_BAKE_IMAGE: vs2026-master-gce-us-central1
 
     # Azure
     # =======
@@ -136,6 +136,8 @@ for:
       - ps: Start-Sleep -s 5
 
       # WSL
+      #- ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { wsl.exe --update }
+      - ps: if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') { wsl.exe --set-default-version 1 }
       - ps: .\install_wsl.ps1
 
       # Restart VM
@@ -169,6 +171,15 @@ for:
       - ps: .\install_nunit3.ps1
       - ps: .\install_vstest_console_logger.ps1
       - ps: .\install_qt_minimal_windows.ps1
+      - dir C:\Qt\6.11.1
+      - dir C:\Qt\6.11.1\bin
+      - dir C:\Qt\6.11.1\mingw_64
+      - dir C:\Qt\6.11.1\mingw_64\bin
+      - dir C:\Qt\6.11.1\msvc2022_64
+      - dir C:\Qt\6.11.1\msvc2022_64\bin
+      - dir C:\Qt\6.11.1\msvc2022_arm64
+      - ps: C:\Qt\6.11.1\msvc2022_64\bin\moc.exe -h
+      - ps: C:\Qt\6.11.1\mingw_64\bin\moc.exe -h
       - ps: .\install_ruby.ps1
 
   - matrix:

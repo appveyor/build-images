@@ -174,6 +174,10 @@ $distros = @(
     }
 )
 
+if ($env:cloud_type -eq 'GCE' -or $env:cloud_type -eq 'AmazonEC2') {
+    $distros = $distros | Where-Object { $_.DisplayName -ne "openSUSE Leap 15.6" }
+}
+
 foreach ($distro in $distros) {
     Install-WslDistro `
         -DisplayName $distro.DisplayName `
@@ -196,8 +200,13 @@ wsl lsb_release -a
 wslconfig /setdefault Ubuntu-24.04
 wsl lsb_release -a
 
-wslconfig /setdefault openSUSE-Leap-15.6
-wsl cat /etc/os-release
+if (Get-Command wslconfig -ErrorAction SilentlyContinue) {
+    $installedDistros = wslconfig /l | Out-String
+    if ($installedDistros -match 'openSUSE-Leap-15.6') {
+        wslconfig /setdefault openSUSE-Leap-15.6
+        wsl cat /etc/os-release
+    }
+}
 
 # Rename C:\Windows\System32\bash.exe to avoid conflicts with default Git's bash
 # ===========
